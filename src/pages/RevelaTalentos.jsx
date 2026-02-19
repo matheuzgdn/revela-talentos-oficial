@@ -17,6 +17,8 @@ import AthleteStories from "../components/content/AthleteStories";
 import InstallBanner from "../components/pwa/InstallBanner";
 import PendingApproval from "../components/auth/PendingApproval";
 import RevelaTalentosLanding from "../components/revelatalentos/RevelaTalentosLanding";
+import MobileBottomNav from "../components/mobile/MobileBottomNav";
+import VideoUploadModal from "../components/mobile/VideoUploadModal";
 import { createPageUrl } from "@/utils";
 
 const translations = {
@@ -119,6 +121,7 @@ export default function RevelaTalentosPage() {
   const [liveCardImage, setLiveCardImage] = useState(null);
   const [liveCardSchedule, setLiveCardSchedule] = useState("Todas as segundas às 20h");
   const [showLiveSection, setShowLiveSection] = useState(true);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const mentoriaScrollRef = React.useRef(null);
   const treinoScrollRef = React.useRef(null);
@@ -951,47 +954,14 @@ export default function RevelaTalentosPage() {
       )}
 
       {/* Mobile Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-t border-gray-800/50">
-        <div className="grid grid-cols-4 gap-1 px-2 py-2">
-          <button 
-            onClick={() => window.location.href = createPageUrl("RevelaTalentos")}
-            className="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <Star className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">Início</span>
-          </button>
+      <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
 
-          <button 
-            onClick={() => {
-              const section = document.querySelector('[data-section="progress"]');
-              section?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <Play className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">{t.watch}</span>
-          </button>
-
-          <button 
-            onClick={() => {
-              const section = document.querySelector('[data-section="categories"]');
-              section?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <Trophy className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">{t.explore}</span>
-          </button>
-
-          <button 
-            onClick={() => window.location.href = createPageUrl("SeletivaOnline")}
-            className="flex flex-col items-center justify-center py-2 text-yellow-400 hover:text-yellow-300 transition-colors"
-          >
-            <Trophy className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">{t.seletiva}</span>
-          </button>
-        </div>
-      </nav>
+      {/* Upload Modal */}
+      <VideoUploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        user={user}
+      />
     </div>
   );
 }
