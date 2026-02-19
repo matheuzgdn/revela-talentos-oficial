@@ -187,88 +187,77 @@ export default function RevelaTalentosPage() {
         </div>
       </motion.header>
 
-      {/* Hero Carousel */}
-      {featuredContents.length > 0 && (
-        <section className="px-4 md:px-6 py-4">
-          <div className="max-w-7xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlideIndex}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.5 }}
-                onClick={() => activeSlide && handleContentSelect(activeSlide)}
-                className="relative aspect-[16/9] md:aspect-[21/9] rounded-[24px] overflow-hidden cursor-pointer group"
-              >
-                <img 
-                  src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
-                  alt={activeSlide?.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#00E5FF]/10 via-transparent to-[#0066FF]/10" />
-                
-                {/* Content Info */}
-                <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
-                  <motion.h2 
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-xl md:text-3xl font-black text-white mb-2 line-clamp-2"
-                  >
-                    {activeSlide?.title}
-                  </motion.h2>
-                  {activeSlide?.description && (
-                    <p className="text-[#B3B3B3] text-sm md:text-base line-clamp-2 mb-4 max-w-2xl">
-                      {activeSlide.description}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-4">
-                    {activeSlide?.duration && (
-                      <span className="flex items-center gap-1.5 text-[#B3B3B3] text-sm">
-                        <Clock className="w-4 h-4 text-[#00E5FF]" />
-                        {activeSlide.duration} min
-                      </span>
-                    )}
-                    {activeSlide?.instructor && (
-                      <span className="flex items-center gap-1.5 text-[#B3B3B3] text-sm">
-                        <UserIcon className="w-4 h-4 text-[#00E5FF]" />
-                        {activeSlide.instructor}
-                      </span>
-                    )}
+      {/* Hero Carousel - Netflix/OTT Style */}
+      <section className="px-4 md:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          {featuredContents.length > 0 ? (
+            <>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlideIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  onClick={() => activeSlide && handleContentSelect(activeSlide)}
+                  className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden cursor-pointer group"
+                >
+                  <img 
+                    src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
+                    alt={activeSlide?.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+                  
+                  {/* Title Overlay at Bottom */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <motion.h2 
+                      initial={{ y: 10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="text-2xl md:text-4xl font-black text-white tracking-tight"
+                    >
+                      {activeSlide?.title}
+                    </motion.h2>
                   </div>
-                </div>
+                </motion.div>
+              </AnimatePresence>
 
-                {/* Play Button */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <motion.div 
-                    whileHover={{ scale: 1.1 }}
-                    className="w-16 h-16 md:w-20 md:h-20 bg-[#00E5FF]/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-[#00E5FF]/30 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Play className="w-8 h-8 md:w-10 md:h-10 text-[#00E5FF] ml-1" fill="#00E5FF" />
-                  </motion.div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Carousel Dots */}
-            <div className="flex justify-center gap-2 mt-4">
-              {featuredContents.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlideIndex(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    currentSlideIndex === index 
-                      ? 'w-8 bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50' 
-                      : 'w-2 bg-[#333] hover:bg-[#444]'
-                  }`}
-                />
-              ))}
+              {/* Carousel Dots */}
+              <div className="flex justify-center gap-2 mt-4">
+                {featuredContents.slice(0, 5).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlideIndex(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      currentSlideIndex === index 
+                        ? 'w-6 bg-[#00E5FF]' 
+                        : 'w-2 bg-[#444]'
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          ) : (
+            /* Default Hero when no featured content */
+            <div className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#222]">
+              <video
+                src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
+                autoPlay muted loop playsInline
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                <h2 className="text-2xl md:text-4xl font-black text-white">REVELA TALENTOS</h2>
+              </div>
+              <div className="flex justify-center gap-2 absolute bottom-[-20px] left-0 right-0">
+                <div className="w-2 h-2 rounded-full bg-[#00E5FF]" />
+                <div className="w-2 h-2 rounded-full bg-[#444]" />
+                <div className="w-2 h-2 rounded-full bg-[#444]" />
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* Categories */}
       <section className="px-4 md:px-6 py-4">
@@ -347,30 +336,18 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
-      {/* All Content */}
+      {/* All Content - Carousel Style */}
       <section className="px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-bold text-white">
               {activeCategory === "all" ? "Conteúdos" : categories.find(c => c.id === activeCategory)?.name}
             </h3>
-            <span className="text-[#666] text-sm">{filteredContents.length} vídeos</span>
+            <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors">View All</button>
           </div>
           
-          {/* Grid for larger screens, horizontal scroll for mobile */}
-          <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filteredContents.map((content, index) => (
-              <ContentCard 
-                key={content.id} 
-                content={content} 
-                index={index}
-                onClick={() => handleContentSelect(content)}
-                variant="grid"
-              />
-            ))}
-          </div>
-          
-          <div className="md:hidden flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4">
+          {/* Always Carousel Style */}
+          <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
             {filteredContents.map((content, index) => (
               <ContentCard 
                 key={content.id} 
@@ -396,64 +373,51 @@ export default function RevelaTalentosPage() {
   );
 }
 
-// Content Card Component
-function ContentCard({ content, index, onClick, progress, showRank, rank, variant = "carousel" }) {
+// Content Card Component - Compact Carousel Style
+function ContentCard({ content, index, onClick, progress, showRank, rank }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.03 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className={`relative flex-shrink-0 cursor-pointer group ${
-        variant === "grid" ? "w-full" : "w-40 md:w-44"
-      }`}
+      className="relative flex-shrink-0 cursor-pointer group w-[140px] md:w-[160px]"
     >
-      <div className="relative aspect-[3/4] rounded-[16px] overflow-hidden bg-[#111111] border border-[#1a1a1a]">
+      <div className="relative aspect-[2/3] rounded-[12px] overflow-hidden bg-[#111111]">
         <img 
           src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"}
           alt={content.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
         
         {/* Rank Badge */}
         {showRank && (
-          <div className="absolute top-2 left-2 w-7 h-7 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center shadow-lg shadow-[#00E5FF]/30">
-            <span className="text-xs font-black text-black">{rank}</span>
+          <div className="absolute top-2 left-2 w-6 h-6 bg-[#00E5FF] rounded-md flex items-center justify-center">
+            <span className="text-[10px] font-black text-black">{rank}</span>
           </div>
         )}
 
         {/* Progress Bar */}
         {progress && progress > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#222]">
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#333]">
             <div 
-              className="h-full bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50"
+              className="h-full bg-[#00E5FF]"
               style={{ width: `${progress}%` }}
             />
           </div>
         )}
 
-        {/* Play Button on Hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="w-12 h-12 bg-[#00E5FF] rounded-full flex items-center justify-center shadow-lg shadow-[#00E5FF]/50">
-            <Play className="w-5 h-5 text-black ml-0.5" fill="black" />
+        {/* Duration Badge */}
+        {content.duration && (
+          <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/70 rounded text-[9px] text-white font-medium">
+            {content.duration}:00
           </div>
-        </div>
-
-        {/* Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <h4 className="text-white font-bold text-sm line-clamp-2 mb-1">{content.title}</h4>
-          <div className="flex items-center gap-2 text-[#666] text-[11px]">
-            {content.duration && (
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {content.duration}m
-              </span>
-            )}
-          </div>
-        </div>
+        )}
       </div>
+      
+      {/* Title Below Card */}
+      <h4 className="text-white font-medium text-xs mt-2 line-clamp-1">{content.title}</h4>
     </motion.div>
   );
 }
