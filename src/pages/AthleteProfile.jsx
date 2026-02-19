@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { 
-  User, Settings, Video, Eye, Heart, Edit2, 
-  Camera, LogOut, ChevronRight, Shield, Award,
-  Clock, Calendar
+  User, Settings, Video, Eye, Heart, Share2,
+  ChevronLeft, Award, MapPin, Calendar, Flag,
+  Play, Star, TrendingUp, LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,6 @@ export default function AthleteProfile() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     base44.auth.me()
@@ -42,7 +41,6 @@ export default function AthleteProfile() {
   const totalViews = myVideos.reduce((acc, v) => acc + (v.views_count || 0), 0);
   const totalLikes = myVideos.reduce((acc, v) => acc + (v.likes_count || 0), 0);
   const approvedVideos = myVideos.filter(v => v.status === "approved");
-  const pendingVideos = myVideos.filter(v => v.status === "pending");
 
   const handleLogout = () => {
     base44.auth.logout(createPageUrl("RevelaTalentos"));
@@ -50,7 +48,7 @@ export default function AthleteProfile() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500" />
       </div>
     );
@@ -58,18 +56,18 @@ export default function AthleteProfile() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white pb-24">
+      <div className="min-h-screen bg-[#0a0a0a] text-white pb-24">
         <div className="flex flex-col items-center justify-center min-h-[70vh] px-6">
-          <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mb-6">
+          <div className="w-24 h-24 bg-[#1a1a1a] rounded-full flex items-center justify-center mb-6 border border-gray-800">
             <User className="w-12 h-12 text-gray-600" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Faça Login</h2>
-          <p className="text-gray-400 text-center mb-6">
+          <p className="text-gray-500 text-center mb-6">
             Entre para acessar seu perfil e enviar seus vídeos
           </p>
           <Button
             onClick={() => base44.auth.redirectToLogin()}
-            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold px-8 py-6 rounded-xl"
+            className="bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 text-black font-bold px-8 py-6 rounded-2xl"
           >
             Entrar com Google
           </Button>
@@ -80,84 +78,131 @@ export default function AthleteProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white pb-24">
-      {/* Profile Header */}
-      <div className="relative">
-        {/* Cover */}
-        <div className="h-32 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600" />
+    <div className="min-h-screen bg-[#0a0a0a] text-white pb-24">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 pt-6">
+        <Link to={createPageUrl("RevelaTalentos")}>
+          <ChevronLeft className="w-6 h-6 text-white" />
+        </Link>
+        <button className="w-10 h-10 bg-[#1a1a1a] rounded-full flex items-center justify-center border border-gray-800">
+          <Share2 className="w-5 h-5 text-gray-400" />
+        </button>
+      </div>
 
-        {/* Profile Info */}
-        <div className="px-4 -mt-16 relative z-10">
-          <div className="flex items-end gap-4 mb-4">
-            <Avatar className="w-28 h-28 border-4 border-black">
-              <AvatarImage src={user.profile_picture_url} />
-              <AvatarFallback className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-3xl">
-                {user.full_name?.charAt(0) || "A"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 pb-2">
-              <h1 className="text-2xl font-bold text-white">{user.full_name}</h1>
-              <p className="text-gray-400 text-sm">{user.email}</p>
+      {/* Profile Card */}
+      <div className="px-4 pb-6">
+        <div className="relative bg-gradient-to-b from-[#1a1a1a] to-[#0f0f0f] rounded-3xl overflow-hidden border border-gray-800/50">
+          {/* Badge Number */}
+          <div className="absolute top-4 right-4 flex items-center gap-1">
+            <div className="w-16 h-16 flex items-center justify-center">
+              <span className="text-5xl font-black text-cyan-400/20">10</span>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/50">
-              <p className="text-2xl font-bold text-white">{myVideos.length}</p>
-              <p className="text-gray-400 text-xs">Vídeos</p>
+          {/* Profile Image */}
+          <div className="flex flex-col items-center pt-8 pb-6">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-2xl overflow-hidden border-4 border-cyan-500/30 shadow-lg shadow-cyan-500/20">
+                {user.profile_picture_url ? (
+                  <img 
+                    src={user.profile_picture_url} 
+                    alt={user.full_name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-cyan-600 to-blue-700 flex items-center justify-center">
+                    <span className="text-4xl font-bold text-white">{user.full_name?.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+              {/* Status indicator */}
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-cyan-500 rounded-full">
+                <span className="text-xs font-bold text-black">ATLETA</span>
+              </div>
             </div>
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/50">
-              <p className="text-2xl font-bold text-white">{totalViews}</p>
-              <p className="text-gray-400 text-xs">Views</p>
-            </div>
-            <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/50">
-              <p className="text-2xl font-bold text-white">{totalLikes}</p>
-              <p className="text-gray-400 text-xs">Curtidas</p>
+
+            {/* Name */}
+            <h1 className="text-2xl font-black text-white mt-6 tracking-wide uppercase">
+              {user.full_name}
+            </h1>
+            
+            {/* Location */}
+            <div className="flex items-center gap-2 mt-2">
+              <Flag className="w-4 h-4 text-cyan-400" />
+              <span className="text-gray-400 text-sm">BRASIL</span>
             </div>
           </div>
 
-          {/* Badges */}
-          <div className="flex gap-2 flex-wrap mb-6">
-            {user.has_plano_carreira_access && (
-              <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black">
-                <Award className="w-3 h-3 mr-1" />
-                Plano Carreira
-              </Badge>
-            )}
-            {user.role === "admin" && (
-              <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white">
-                <Shield className="w-3 h-3 mr-1" />
-                Admin
-              </Badge>
-            )}
+          {/* Stats Row */}
+          <div className="grid grid-cols-3 gap-4 px-6 py-4 border-t border-gray-800/50">
+            <div className="text-center">
+              <p className="text-2xl font-black text-white">{myVideos.length}</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">Vídeos</p>
+            </div>
+            <div className="text-center border-x border-gray-800/50">
+              <p className="text-2xl font-black text-white">{totalViews}</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">Views</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-black text-white">{totalLikes}</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">Curtidas</p>
+            </div>
           </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#1a1a1a] rounded-2xl p-4 border border-gray-800/50"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs text-gray-500 uppercase tracking-wider">Impacto</span>
+              <Star className="w-4 h-4 text-cyan-400" />
+            </div>
+            <p className="text-3xl font-black text-cyan-400">25%</p>
+            <div className="flex items-center gap-1 mt-2">
+              <div className="flex-1 h-1 bg-gray-800 rounded-full overflow-hidden">
+                <div className="w-1/4 h-full bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-[#1a1a1a] rounded-2xl p-4 border border-gray-800/50"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs text-gray-500 uppercase tracking-wider">Progresso</span>
+              <TrendingUp className="w-4 h-4 text-cyan-400" />
+            </div>
+            <p className="text-3xl font-black text-white">{approvedVideos.length}</p>
+            <p className="text-xs text-gray-500 mt-1">vídeos aprovados</p>
+          </motion.div>
         </div>
       </div>
 
       {/* My Videos */}
-      <section className="px-4 py-6">
-        <h2 className="text-lg font-bold text-white mb-4">Meus Vídeos</h2>
-
-        {pendingVideos.length > 0 && (
-          <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-            <div className="flex items-center gap-2 text-yellow-400 mb-2">
-              <Clock className="w-5 h-5" />
-              <span className="font-medium">{pendingVideos.length} vídeo(s) em análise</span>
-            </div>
-            <p className="text-gray-400 text-sm">
-              Seus vídeos serão publicados após aprovação
-            </p>
-          </div>
-        )}
+      <section className="px-4 py-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-white uppercase tracking-wider">Meus Vídeos</h2>
+          <Badge className="bg-cyan-500/20 text-cyan-400 border-0">
+            {myVideos.length}
+          </Badge>
+        </div>
 
         {myVideos.length === 0 ? (
-          <div className="text-center py-12 bg-gray-900/30 rounded-2xl border border-gray-800/50">
-            <Video className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-            <p className="text-gray-400 mb-2">Você ainda não enviou vídeos</p>
+          <div className="bg-[#1a1a1a] rounded-2xl p-8 text-center border border-gray-800/50">
+            <div className="w-16 h-16 bg-[#252525] rounded-full flex items-center justify-center mx-auto mb-4">
+              <Video className="w-8 h-8 text-gray-600" />
+            </div>
+            <p className="text-gray-400 mb-4">Nenhum vídeo enviado ainda</p>
             <Button
               onClick={() => setShowUploadModal(true)}
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-bold mt-4"
+              className="bg-gradient-to-r from-cyan-500 to-cyan-400 text-black font-bold rounded-xl"
             >
               Enviar Primeiro Vídeo
             </Button>
@@ -165,9 +210,10 @@ export default function AthleteProfile() {
         ) : (
           <div className="grid grid-cols-3 gap-2">
             {myVideos.map((video) => (
-              <div
+              <motion.div
                 key={video.id}
-                className="relative aspect-[3/4] rounded-lg overflow-hidden"
+                whileTap={{ scale: 0.95 }}
+                className="relative aspect-[3/4] rounded-xl overflow-hidden bg-[#1a1a1a]"
               >
                 <img
                   src={video.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200"}
@@ -176,24 +222,23 @@ export default function AthleteProfile() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 
-                {/* Status Badge */}
                 {video.status === "pending" && (
-                  <Badge className="absolute top-1 left-1 bg-yellow-500/80 text-black text-[10px] px-1.5">
-                    Pendente
-                  </Badge>
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-yellow-500/90 rounded-full">
+                    <span className="text-[10px] font-bold text-black">PENDENTE</span>
+                  </div>
                 )}
 
-                <div className="absolute bottom-1 left-1 right-1">
-                  <div className="flex items-center gap-2 text-white text-[10px]">
+                <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-[10px] text-white">
                     <span className="flex items-center gap-0.5">
                       <Eye className="w-3 h-3" /> {video.views_count || 0}
                     </span>
-                    <span className="flex items-center gap-0.5">
-                      <Heart className="w-3 h-3" /> {video.likes_count || 0}
-                    </span>
+                  </div>
+                  <div className="w-6 h-6 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+                    <Play className="w-3 h-3 text-white ml-0.5" fill="white" />
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
@@ -201,30 +246,32 @@ export default function AthleteProfile() {
 
       {/* Menu Options */}
       <section className="px-4 py-4">
-        <div className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800/50 overflow-hidden">
+        <div className="bg-[#1a1a1a] rounded-2xl overflow-hidden border border-gray-800/50">
           <Link
             to={createPageUrl("MeusServicos")}
-            className="flex items-center gap-4 p-4 border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors"
+            className="flex items-center gap-4 p-4 border-b border-gray-800/50 active:bg-gray-800/30"
           >
-            <Settings className="w-5 h-5 text-gray-400" />
+            <div className="w-10 h-10 bg-[#252525] rounded-xl flex items-center justify-center">
+              <Settings className="w-5 h-5 text-gray-400" />
+            </div>
             <span className="text-white flex-1">Configurações</span>
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronLeft className="w-5 h-5 text-gray-600 rotate-180" />
           </Link>
           
           <button
             onClick={handleLogout}
-            className="flex items-center gap-4 p-4 w-full hover:bg-gray-800/30 transition-colors text-left"
+            className="flex items-center gap-4 p-4 w-full active:bg-gray-800/30"
           >
-            <LogOut className="w-5 h-5 text-red-400" />
-            <span className="text-red-400">Sair</span>
+            <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
+              <LogOut className="w-5 h-5 text-red-400" />
+            </div>
+            <span className="text-red-400">Sair da conta</span>
           </button>
         </div>
       </section>
 
-      {/* Bottom Navigation */}
       <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
 
-      {/* Upload Modal */}
       <VideoUploadModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}

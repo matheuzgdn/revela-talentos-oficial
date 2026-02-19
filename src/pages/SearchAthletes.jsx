@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Search, User, MapPin, Calendar, Video, Filter, X, ChevronRight } from "lucide-react";
+import { Search, User, Video, Filter, ChevronRight, Flame, Star, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
@@ -57,7 +56,6 @@ export default function SearchAthletes() {
 
   const athletes = Object.values(athleteMap);
 
-  // Filter athletes
   const filteredAthletes = athletes.filter(athlete => {
     const matchesSearch = !searchQuery || 
       athlete.name?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -67,15 +65,21 @@ export default function SearchAthletes() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white pb-24">
+    <div className="min-h-screen bg-[#0a0a0a] text-white pb-24">
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { scrollbar-width: none; }
       `}</style>
 
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-black/90 backdrop-blur-xl border-b border-gray-800/50 px-4 py-4 pt-20 md:pt-4">
-        <h1 className="text-2xl font-bold text-white mb-4">Buscar Atletas</h1>
+      <div className="sticky top-0 z-30 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-gray-800/50 px-4 py-4 pt-6">
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-lg">🔥</span>
+          <h1 className="text-xl font-black text-white uppercase tracking-wider">Top Atletas</h1>
+          <Badge className="bg-[#1a1a1a] text-gray-400 border border-gray-800 text-xs">
+            {filteredAthletes.length} encontrados
+          </Badge>
+        </div>
         
         {/* Search Bar */}
         <div className="relative mb-4">
@@ -83,13 +87,13 @@ export default function SearchAthletes() {
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar por nome..."
-            className="w-full pl-12 pr-12 py-6 bg-gray-900/50 border-gray-800 text-white placeholder:text-gray-500 rounded-xl"
+            placeholder="Buscar atleta..."
+            className="w-full pl-12 pr-12 py-6 bg-[#1a1a1a] border-gray-800/50 text-white placeholder:text-gray-600 rounded-2xl focus:border-cyan-500/50 focus:ring-cyan-500/20"
           />
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors ${
-              showFilters ? "bg-cyan-500 text-black" : "bg-gray-800 text-gray-400"
+            className={`absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-xl transition-colors ${
+              showFilters ? "bg-cyan-500 text-black" : "bg-[#252525] text-gray-400"
             }`}
           >
             <Filter className="w-5 h-5" />
@@ -101,16 +105,15 @@ export default function SearchAthletes() {
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="space-y-3 pb-4"
+            className="pb-4"
           >
             <Select value={selectedPosition} onValueChange={setSelectedPosition}>
-              <SelectTrigger className="bg-gray-900/50 border-gray-800 text-white">
+              <SelectTrigger className="bg-[#1a1a1a] border-gray-800/50 text-white rounded-xl">
                 <SelectValue placeholder="Posição" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-[#1a1a1a] border-gray-800">
                 {positions.map((pos) => (
-                  <SelectItem key={pos.value} value={pos.value}>
+                  <SelectItem key={pos.value} value={pos.value} className="text-white hover:bg-gray-800">
                     {pos.label}
                   </SelectItem>
                 ))}
@@ -125,10 +128,10 @@ export default function SearchAthletes() {
             <button
               key={pos.value}
               onClick={() => setSelectedPosition(pos.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+              className={`px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${
                 selectedPosition === pos.value
-                  ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-black"
-                  : "bg-gray-800/50 text-gray-400 hover:text-white"
+                  ? "bg-gradient-to-r from-cyan-500 to-cyan-400 text-black"
+                  : "bg-[#1a1a1a] text-gray-400 border border-gray-800/50"
               }`}
             >
               {pos.label}
@@ -139,50 +142,55 @@ export default function SearchAthletes() {
 
       {/* Results */}
       <section className="px-4 py-6">
-        <p className="text-gray-400 text-sm mb-4">
-          {filteredAthletes.length} atleta{filteredAthletes.length !== 1 ? 's' : ''} encontrado{filteredAthletes.length !== 1 ? 's' : ''}
-        </p>
-
         {isLoading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-cyan-500" />
           </div>
         ) : filteredAthletes.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="bg-[#1a1a1a] rounded-2xl p-8 text-center border border-gray-800/50">
             <User className="w-16 h-16 text-gray-700 mx-auto mb-4" />
             <p className="text-gray-500 mb-2">Nenhum atleta encontrado</p>
-            <p className="text-gray-600 text-sm">Tente ajustar os filtros</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredAthletes.map((athlete, index) => (
               <motion.div
                 key={athlete.id || athlete.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800/50 overflow-hidden"
+                className="bg-[#1a1a1a] rounded-2xl border border-gray-800/50 overflow-hidden"
               >
                 <div className="p-4">
                   <div className="flex items-center gap-4">
-                    {/* Avatar */}
-                    <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="w-8 h-8 text-white" />
+                    {/* Avatar with rank */}
+                    <div className="relative">
+                      <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                        <span className="text-2xl font-black text-white">{athlete.name?.charAt(0)}</span>
+                      </div>
+                      {index < 3 && (
+                        <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full flex items-center justify-center border-2 border-[#1a1a1a]">
+                          <span className="text-[10px] font-black text-black">{index + 1}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-white font-bold text-lg truncate">{athlete.name}</h3>
+                      <h3 className="text-white font-bold text-lg truncate uppercase">{athlete.name}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         {athlete.position && (
-                          <Badge className="bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 text-xs">
+                          <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-xs font-bold rounded-lg border border-cyan-500/30">
                             {positions.find(p => p.value === athlete.position)?.label || athlete.position}
-                          </Badge>
+                          </span>
                         )}
                       </div>
                       <div className="flex items-center gap-4 mt-2 text-gray-500 text-sm">
                         <span className="flex items-center gap-1">
-                          <Video className="w-4 h-4" /> {athlete.videos.length} vídeo{athlete.videos.length !== 1 ? 's' : ''}
+                          <Video className="w-4 h-4" /> {athlete.videos.length}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Eye className="w-4 h-4" /> {athlete.totalViews}
                         </span>
                       </div>
                     </div>
@@ -199,7 +207,7 @@ export default function SearchAthletes() {
                         <Link
                           key={video.id}
                           to={createPageUrl("AthleteVideos")}
-                          className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden"
+                          className="relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-[#252525]"
                         >
                           <img
                             src={video.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=100"}
@@ -207,14 +215,14 @@ export default function SearchAthletes() {
                             className="w-full h-full object-cover"
                           />
                           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                            <div className="w-6 h-6 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center">
+                            <div className="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
                               <Video className="w-3 h-3 text-white" />
                             </div>
                           </div>
                         </Link>
                       ))}
                       {athlete.videos.length > 4 && (
-                        <div className="flex-shrink-0 w-20 h-20 rounded-lg bg-gray-800 flex items-center justify-center">
+                        <div className="flex-shrink-0 w-20 h-20 rounded-xl bg-[#252525] flex items-center justify-center">
                           <span className="text-white text-sm font-bold">+{athlete.videos.length - 4}</span>
                         </div>
                       )}
@@ -227,10 +235,8 @@ export default function SearchAthletes() {
         )}
       </section>
 
-      {/* Bottom Navigation */}
       <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
 
-      {/* Upload Modal */}
       <VideoUploadModal
         isOpen={showUploadModal}
         onClose={() => setShowUploadModal(false)}
