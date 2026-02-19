@@ -50,6 +50,8 @@
 import Admin from './pages/Admin';
 import AdminDashboard from './pages/AdminDashboard';
 import AnalisePerformance from './pages/AnalisePerformance';
+import AthleteProfile from './pages/AthleteProfile';
+import AthleteVideos from './pages/AthleteVideos';
 import DatacenterDocumentation from './pages/DatacenterDocumentation';
 import Home from './pages/Home';
 import Hub from './pages/Hub';
@@ -59,10 +61,8 @@ import PlanoCarreira from './pages/PlanoCarreira';
 import PlanoInternacional from './pages/PlanoInternacional';
 import RenderPage from './pages/RenderPage';
 import RevelaTalentos from './pages/RevelaTalentos';
-import SeletivaOnline from './pages/SeletivaOnline';
-import AthleteVideos from './pages/AthleteVideos';
 import SearchAthletes from './pages/SearchAthletes';
-import AthleteProfile from './pages/AthleteProfile';
+import SeletivaOnline from './pages/SeletivaOnline';
 import __Layout from './Layout.jsx';
 
 
@@ -70,6 +70,8 @@ export const PAGES = {
     "Admin": Admin,
     "AdminDashboard": AdminDashboard,
     "AnalisePerformance": AnalisePerformance,
+    "AthleteProfile": AthleteProfile,
+    "AthleteVideos": AthleteVideos,
     "DatacenterDocumentation": DatacenterDocumentation,
     "Home": Home,
     "Hub": Hub,
@@ -79,10 +81,8 @@ export const PAGES = {
     "PlanoInternacional": PlanoInternacional,
     "RenderPage": RenderPage,
     "RevelaTalentos": RevelaTalentos,
-    "SeletivaOnline": SeletivaOnline,
-    "AthleteVideos": AthleteVideos,
     "SearchAthletes": SearchAthletes,
-    "AthleteProfile": AthleteProfile,
+    "SeletivaOnline": SeletivaOnline,
 }
 
 export const pagesConfig = {
