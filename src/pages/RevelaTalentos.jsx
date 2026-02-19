@@ -103,6 +103,16 @@ export default function RevelaTalentosPage() {
   const featuredContents = useMemo(() => contents.filter(c => c.is_featured).slice(0, 5), [contents]);
   const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
   
+  // Hero contents: featured + mentorias gravadas (lives ended)
+  const heroContents = useMemo(() => {
+    const featured = contents.filter(c => c.is_featured);
+    const mentoriasGravadas = contents.filter(c => 
+      c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended')
+    );
+    const combined = [...featured, ...mentoriasGravadas.filter(m => !featured.some(f => f.id === m.id))];
+    return combined.slice(0, 10);
+  }, [contents]);
+  
   const filteredContents = useMemo(() => {
     if (activeCategory === "all") return regularContents;
     return regularContents.filter(content => content.category === activeCategory);
@@ -120,13 +130,13 @@ export default function RevelaTalentosPage() {
   const top10Contents = useMemo(() => regularContents.filter(c => c.is_top_10).slice(0, 10), [regularContents]);
 
   useEffect(() => {
-    if (featuredContents.length > 1) {
+    if (heroContents.length > 1) {
       const timer = setInterval(() => {
-        setCurrentSlideIndex(prevIndex => (prevIndex + 1) % featuredContents.length);
+        setCurrentSlideIndex(prevIndex => (prevIndex + 1) % heroContents.length);
       }, 6000);
       return () => clearInterval(timer);
     }
-  }, [featuredContents.length]);
+  }, [heroContents.length]);
 
   // Loading State
   if (isCheckingAccess) {
@@ -157,7 +167,7 @@ export default function RevelaTalentosPage() {
     return <VideoPlayer content={selectedContent} onClose={() => setSelectedContent(null)} onProgress={checkAccess} />;
   }
 
-  const activeSlide = featuredContents[currentSlideIndex] || null;
+  const activeSlide = heroContents[currentSlideIndex] || null;
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white pb-24 md:pb-0 overflow-x-hidden">
@@ -187,10 +197,10 @@ export default function RevelaTalentosPage() {
         </div>
       </motion.header>
 
-      {/* Hero Carousel - Netflix/OTT Style */}
+      {/* HERO - Carousel com Mentorias */}
       <section className="px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto">
-          {featuredContents.length > 0 ? (
+          {heroContents.length > 0 ? (
             <>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -224,7 +234,7 @@ export default function RevelaTalentosPage() {
 
               {/* Carousel Dots */}
               <div className="flex justify-center gap-2 mt-4">
-                {featuredContents.slice(0, 5).map((_, index) => (
+                {heroContents.slice(0, 5).map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlideIndex(index)}
@@ -238,7 +248,7 @@ export default function RevelaTalentosPage() {
               </div>
             </>
           ) : (
-            /* Default Hero when no featured content */
+            /* Default Hero when no content */
             <div className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#222]">
               <video
                 src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
