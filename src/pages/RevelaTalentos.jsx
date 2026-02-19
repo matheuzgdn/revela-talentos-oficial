@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Play, Clock, User as UserIcon, Bell, ChevronRight, Heart, Bookmark, Star, Flame, Dumbbell, Brain, Trophy } from "lucide-react";
 import VideoPlayer from "../components/content/VideoPlayer";
 import LiveStreamPlayer from "../components/content/LiveStreamPlayer";
 import PendingApproval from "../components/auth/PendingApproval";
@@ -20,21 +18,23 @@ export default function RevelaTalentosPage() {
   
   const [contents, setContents] = useState([]);
   const [userProgress, setUserProgress] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   const [selectedContent, setSelectedContent] = useState(null);
   const [selectedLiveContent, setSelectedLiveContent] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("all");
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [showUploadModal, setShowUploadModal] = useState(false);
+
+  const heroRef = useRef(null);
 
   const loadContentData = useCallback(async (currentUser) => {
     try {
       const fetchedContents = await base44.entities.Content.filter({ 
         is_published: true 
-      }, "-created_date", 50).catch(() => []);
+      }, "-created_date", 100).catch(() => []);
       setContents(fetchedContents);
       
       if (currentUser) {
-        base44.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).then(progress => {
+        base44.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 30).then(progress => {
           setUserProgress(progress);
         }).catch(() => {});
       }
@@ -56,18 +56,10 @@ export default function RevelaTalentosPage() {
       
       setUser(currentUser);
       setShowLandingPage(false);
-      
-      base44.entities.PlatformSettings.list().then(platformSettings => {
-        const restrictionSetting = platformSettings.find(s => s.setting_key === 'is_platform_restricted');
-        const isRestricted = restrictionSetting?.setting_value === 'true';
-        setIsPlatformRestricted(isRestricted);
-      }).catch(() => {});
-      
       loadContentData(currentUser);
       setIsCheckingAccess(false);
       
     } catch (error) {
-      console.error('Error checking access:', error);
       setUser(null);
       setShowLandingPage(true);
       setIsCheckingAccess(false);
@@ -93,42 +85,37 @@ export default function RevelaTalentosPage() {
     }
   }, [user]);
 
-  const categories = useMemo(() => [
-    { id: "all", name: "All" },
-    { id: "mentoria", name: "Mentorias" },
-    { id: "treino_tatico", name: "Tático" },
-    { id: "preparacao_fisica", name: "Físico" },
-  ], []);
-
-  const featuredContents = useMemo(() => contents.filter(c => c.is_featured).slice(0, 5), [contents]);
-  const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
+  // Content Categories
+  const featuredContents = useMemo(() => contents.filter(c => c.is_featured).slice(0, 6), [contents]);
+  const mentoriaContents = useMemo(() => contents.filter(c => c.category === 'mentoria'), [contents]);
+  const treinoContents = useMemo(() => contents.filter(c => c.category === 'treino_tatico'), [contents]);
+  const fisicoContents = useMemo(() => contents.filter(c => c.category === 'preparacao_fisica'), [contents]);
+  const psicologiaContents = useMemo(() => contents.filter(c => c.category === 'psicologia'), [contents]);
+  const top10Contents = useMemo(() => contents.filter(c => c.is_top_10).slice(0, 10), [contents]);
   
-  const filteredContents = useMemo(() => {
-    if (activeCategory === "all") return regularContents;
-    return regularContents.filter(content => content.category === activeCategory);
-  }, [activeCategory, regularContents]);
-
   const continueWatchingContents = useMemo(() => {
     if (!userProgress.length) return [];
     return userProgress
-      .filter(p => p.progress_percent < 100)
-      .map(p => contents.find(c => c.id === p.content_id))
+      .filter(p => p.progress_percentage > 0 && p.progress_percentage < 100)
+      .map(p => {
+        const content = contents.find(c => c.id === p.content_id);
+        return content ? { ...content, progress: p.progress_percentage } : null;
+      })
       .filter(Boolean)
-      .slice(0, 6);
+      .slice(0, 10);
   }, [userProgress, contents]);
 
-  const top10Contents = useMemo(() => regularContents.filter(c => c.is_top_10).slice(0, 10), [regularContents]);
-
+  // Auto-rotate hero
   useEffect(() => {
     if (featuredContents.length > 1) {
       const timer = setInterval(() => {
-        setCurrentSlideIndex(prevIndex => (prevIndex + 1) % featuredContents.length);
-      }, 6000);
+        setCurrentSlideIndex(prev => (prev + 1) % featuredContents.length);
+      }, 5000);
       return () => clearInterval(timer);
     }
   }, [featuredContents.length]);
 
-  // Loading State
+  // Loading
   if (isCheckingAccess) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
@@ -164,201 +151,166 @@ export default function RevelaTalentosPage() {
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+        .glow-cyan { box-shadow: 0 0 20px rgba(0, 229, 255, 0.3); }
       `}</style>
 
       {/* Header */}
-      <motion.header 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-40 bg-[#0A0A0A]/90 backdrop-blur-xl px-4 py-4 md:px-6"
-      >
+      <header className="sticky top-0 z-40 bg-[#0A0A0A]/95 backdrop-blur-xl px-4 py-4 md:px-6">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
-            <p className="text-[#666] text-xs font-medium">Hello</p>
-            <h1 className="text-lg font-bold text-white">{user?.full_name || "Atleta"}</h1>
+            <p className="text-[#666] text-xs font-medium tracking-wide">Hello</p>
+            <h1 className="text-xl font-bold text-white">{user?.full_name || "Atleta"}</h1>
           </div>
           <motion.button 
             whileTap={{ scale: 0.9 }}
-            className="w-11 h-11 bg-[#111111] rounded-full flex items-center justify-center border border-[#222] relative"
+            className="w-12 h-12 bg-[#111] rounded-full flex items-center justify-center border border-[#222] relative"
           >
             <Bell className="w-5 h-5 text-white" />
-            <div className="absolute top-2 right-2 w-2 h-2 bg-[#00E5FF] rounded-full" />
+            <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#00E5FF] rounded-full border-2 border-[#0A0A0A]" />
           </motion.button>
         </div>
-      </motion.header>
+      </header>
 
-      {/* Hero Carousel - Netflix/OTT Style */}
-      <section className="px-4 md:px-6 py-4">
+      {/* Hero Carousel */}
+      <section className="px-4 md:px-6 py-2">
         <div className="max-w-7xl mx-auto">
-          {featuredContents.length > 0 ? (
-            <>
-              <AnimatePresence mode="wait">
+          <div ref={heroRef} className="relative">
+            <AnimatePresence mode="wait">
+              {activeSlide && (
                 <motion.div
                   key={currentSlideIndex}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  onClick={() => activeSlide && handleContentSelect(activeSlide)}
-                  className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden cursor-pointer group"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.4 }}
+                  onClick={() => handleContentSelect(activeSlide)}
+                  className="relative aspect-[16/10] md:aspect-[21/9] rounded-[20px] overflow-hidden cursor-pointer group"
                 >
                   <img 
-                    src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
-                    alt={activeSlide?.title}
+                    src={activeSlide.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
+                    alt={activeSlide.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/60 to-transparent" />
                   
-                  {/* Title Overlay at Bottom */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <motion.h2 
-                      initial={{ y: 10, opacity: 0 }}
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8">
+                    <motion.div
+                      initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      className="text-2xl md:text-4xl font-black text-white tracking-tight"
+                      transition={{ delay: 0.2 }}
                     >
-                      {activeSlide?.title}
-                    </motion.h2>
+                      <h2 className="text-2xl md:text-4xl font-black text-white mb-2 line-clamp-2 tracking-tight">
+                        {activeSlide.title}
+                      </h2>
+                      <div className="flex items-center gap-3 text-[#999] text-sm mb-4">
+                        {activeSlide.duration && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4 text-[#00E5FF]" />
+                            {activeSlide.duration} min
+                          </span>
+                        )}
+                        {activeSlide.instructor && (
+                          <span className="flex items-center gap-1">
+                            <UserIcon className="w-4 h-4 text-[#00E5FF]" />
+                            {activeSlide.instructor}
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1">
+                          <Star className="w-4 h-4 text-yellow-500" fill="#EAB308" />
+                          4.8
+                        </span>
+                      </div>
+                      <button className="px-6 py-3 bg-[#00E5FF] text-black font-bold rounded-xl flex items-center gap-2 hover:bg-[#00D4ED] transition-colors glow-cyan">
+                        <Play className="w-5 h-5" fill="black" />
+                        Assistir Agora
+                      </button>
+                    </motion.div>
                   </div>
                 </motion.div>
-              </AnimatePresence>
+              )}
+            </AnimatePresence>
 
-              {/* Carousel Dots */}
-              <div className="flex justify-center gap-2 mt-4">
-                {featuredContents.slice(0, 5).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlideIndex(index)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      currentSlideIndex === index 
-                        ? 'w-6 bg-[#00E5FF]' 
-                        : 'w-2 bg-[#444]'
-                    }`}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            /* Default Hero when no featured content */
-            <div className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#222]">
-              <video
-                src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-                autoPlay muted loop playsInline
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4">
-                <h2 className="text-2xl md:text-4xl font-black text-white">REVELA TALENTOS</h2>
-              </div>
-              <div className="flex justify-center gap-2 absolute bottom-[-20px] left-0 right-0">
-                <div className="w-2 h-2 rounded-full bg-[#00E5FF]" />
-                <div className="w-2 h-2 rounded-full bg-[#444]" />
-                <div className="w-2 h-2 rounded-full bg-[#444]" />
-              </div>
+            {/* Dots */}
+            <div className="flex justify-center gap-2 mt-4">
+              {featuredContents.slice(0, 6).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlideIndex(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    currentSlideIndex === index 
+                      ? 'w-8 bg-[#00E5FF]' 
+                      : 'w-2 bg-[#333] hover:bg-[#444]'
+                  }`}
+                />
+              ))}
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
-            {categories.map((cat, index) => (
-              <motion.button
-                key={cat.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => setActiveCategory(cat.id)}
-                className="relative whitespace-nowrap"
-              >
-                <span className={`text-sm font-medium transition-colors ${
-                  activeCategory === cat.id ? 'text-white' : 'text-[#666]'
-                }`}>
-                  {cat.name}
-                </span>
-                {activeCategory === cat.id && (
-                  <motion.div 
-                    layoutId="categoryIndicator"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#00E5FF] rounded-full shadow-lg shadow-[#00E5FF]/50"
-                  />
-                )}
-              </motion.button>
-            ))}
           </div>
         </div>
       </section>
 
       {/* Continue Watching */}
       {continueWatchingContents.length > 0 && (
-        <section className="px-4 md:px-6 py-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white">Continue Watching</h3>
-              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors">View All</button>
-            </div>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
-              {continueWatchingContents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
-                  index={index}
-                  onClick={() => handleContentSelect(content)}
-                  progress={userProgress.find(p => p.content_id === content.id)?.progress_percent}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
+        <ContentSection 
+          title="Continue Assistindo"
+          icon={<Clock className="w-5 h-5 text-[#00E5FF]" />}
+          contents={continueWatchingContents}
+          onSelect={handleContentSelect}
+          showProgress
+        />
       )}
 
-      {/* Top Trending */}
+      {/* Top 10 Trending */}
       {top10Contents.length > 0 && (
-        <section className="px-4 md:px-6 py-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white">🔥 Top Trending</h3>
-              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors">View All</button>
-            </div>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
-              {top10Contents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
-                  index={index}
-                  onClick={() => handleContentSelect(content)}
-                  showRank={true}
-                  rank={index + 1}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
+        <ContentSection 
+          title="Top 10 Trending"
+          icon={<Flame className="w-5 h-5 text-orange-500" />}
+          contents={top10Contents}
+          onSelect={handleContentSelect}
+          showRank
+        />
       )}
 
-      {/* All Content - Carousel Style */}
-      <section className="px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-white">
-              {activeCategory === "all" ? "Conteúdos" : categories.find(c => c.id === activeCategory)?.name}
-            </h3>
-            <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors">View All</button>
-          </div>
-          
-          {/* Always Carousel Style */}
-          <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
-            {filteredContents.map((content, index) => (
-              <ContentCard 
-                key={content.id} 
-                content={content} 
-                index={index}
-                onClick={() => handleContentSelect(content)}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Mentorias */}
+      {mentoriaContents.length > 0 && (
+        <ContentSection 
+          title="Mentorias"
+          icon={<Brain className="w-5 h-5 text-purple-500" />}
+          contents={mentoriaContents}
+          onSelect={handleContentSelect}
+        />
+      )}
+
+      {/* Treino Tático */}
+      {treinoContents.length > 0 && (
+        <ContentSection 
+          title="Treino Tático"
+          icon={<Trophy className="w-5 h-5 text-yellow-500" />}
+          contents={treinoContents}
+          onSelect={handleContentSelect}
+        />
+      )}
+
+      {/* Preparação Física */}
+      {fisicoContents.length > 0 && (
+        <ContentSection 
+          title="Preparação Física"
+          icon={<Dumbbell className="w-5 h-5 text-green-500" />}
+          contents={fisicoContents}
+          onSelect={handleContentSelect}
+        />
+      )}
+
+      {/* Psicologia */}
+      {psicologiaContents.length > 0 && (
+        <ContentSection 
+          title="Psicologia Esportiva"
+          icon={<Brain className="w-5 h-5 text-pink-500" />}
+          contents={psicologiaContents}
+          onSelect={handleContentSelect}
+        />
+      )}
 
       {/* Bottom Navigation */}
       <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
@@ -373,51 +325,98 @@ export default function RevelaTalentosPage() {
   );
 }
 
-// Content Card Component - Compact Carousel Style
-function ContentCard({ content, index, onClick, progress, showRank, rank }) {
+// Content Section Component
+function ContentSection({ title, icon, contents, onSelect, showProgress, showRank }) {
+  return (
+    <section className="py-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between px-4 md:px-6 mb-3">
+          <div className="flex items-center gap-2">
+            {icon}
+            <h3 className="text-base font-bold text-white">{title}</h3>
+          </div>
+          <button className="text-[#00E5FF] text-sm font-medium flex items-center gap-1 hover:underline">
+            Ver Todos <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+        
+        <div className="flex gap-3 overflow-x-auto no-scrollbar px-4 md:px-6">
+          {contents.map((content, index) => (
+            <ContentCard 
+              key={content.id} 
+              content={content} 
+              index={index}
+              onClick={() => onSelect(content)}
+              showProgress={showProgress}
+              showRank={showRank}
+              rank={index + 1}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Content Card Component
+function ContentCard({ content, index, onClick, showProgress, showRank, rank }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.97 }}
       onClick={onClick}
-      className="relative flex-shrink-0 cursor-pointer group w-[140px] md:w-[160px]"
+      className="relative flex-shrink-0 cursor-pointer group w-[140px] md:w-[165px]"
     >
-      <div className="relative aspect-[2/3] rounded-[12px] overflow-hidden bg-[#111111]">
+      <div className="relative aspect-[2/3] rounded-[14px] overflow-hidden bg-[#111] border border-[#1a1a1a] group-hover:border-[#00E5FF]/50 transition-colors">
         <img 
           src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"}
           alt={content.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent opacity-80" />
+        
         {/* Rank Badge */}
         {showRank && (
-          <div className="absolute top-2 left-2 w-6 h-6 bg-[#00E5FF] rounded-md flex items-center justify-center">
-            <span className="text-[10px] font-black text-black">{rank}</span>
+          <div className="absolute top-2 left-2 w-7 h-7 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center shadow-lg">
+            <span className="text-xs font-black text-black">{rank}</span>
+          </div>
+        )}
+
+        {/* Play Button on Hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="w-12 h-12 bg-[#00E5FF]/90 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <Play className="w-5 h-5 text-black ml-0.5" fill="black" />
+          </div>
+        </div>
+
+        {/* Duration Badge */}
+        {content.duration && (
+          <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/80 backdrop-blur-sm rounded-md text-[10px] text-white font-medium">
+            {content.duration}:00
           </div>
         )}
 
         {/* Progress Bar */}
-        {progress && progress > 0 && (
+        {showProgress && content.progress && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#333]">
-            <div 
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${content.progress}%` }}
               className="h-full bg-[#00E5FF]"
-              style={{ width: `${progress}%` }}
             />
-          </div>
-        )}
-
-        {/* Duration Badge */}
-        {content.duration && (
-          <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/70 rounded text-[9px] text-white font-medium">
-            {content.duration}:00
           </div>
         )}
       </div>
       
-      {/* Title Below Card */}
-      <h4 className="text-white font-medium text-xs mt-2 line-clamp-1">{content.title}</h4>
+      {/* Title */}
+      <h4 className="text-white font-medium text-xs mt-2 line-clamp-2 leading-tight">{content.title}</h4>
+      {content.instructor && (
+        <p className="text-[#666] text-[10px] mt-0.5 truncate">{content.instructor}</p>
+      )}
     </motion.div>
   );
 }
