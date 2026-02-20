@@ -432,16 +432,22 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
         </div>
       )}
 
-      {/* Seletiva Card Destaque */}
+      {/* Seletiva Card Destaque - Futebol Theme */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="relative overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 via-[#0066FF]/20 to-[#00E5FF]/20 border-2 border-[#00E5FF] rounded-2xl p-4"
+        className="relative overflow-hidden bg-gradient-to-br from-green-500/20 via-green-600/20 to-emerald-500/20 border-2 border-green-500 rounded-2xl p-4"
       >
+        {/* Campo de futebol pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_49px,rgba(255,255,255,0.1)_49px,rgba(255,255,255,0.1)_50px)]" />
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_49px,rgba(255,255,255,0.1)_49px,rgba(255,255,255,0.1)_50px)]" />
+        </div>
+        
         {/* Glow effect */}
         <motion.div
-          className="absolute inset-0 bg-[#00E5FF]/10"
+          className="absolute inset-0 bg-green-500/10"
           animate={{ opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 2, repeat: Infinity }}
         />
@@ -449,30 +455,35 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-[#00E5FF] rounded-xl flex items-center justify-center">
-                <Star className="w-5 h-5 text-black" />
+              <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/50">
+                <Trophy className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h4 className="text-white font-black text-sm">Seletiva Online</h4>
-                <p className="text-[#00E5FF] text-[10px] font-bold">VAGAS LIMITADAS</p>
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-400 text-[10px]">⚽</span>
+                  <p className="text-yellow-400 text-[10px] font-bold">VAGAS LIMITADAS</p>
+                </div>
               </div>
             </div>
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-2 h-2 bg-red-500 rounded-full"
-            />
+              className="px-2 py-0.5 bg-red-500 rounded-full"
+            >
+              <span className="text-white text-[8px] font-black">LIVE</span>
+            </motion.div>
           </div>
           
-          <p className="text-gray-300 text-xs mb-3">
+          <p className="text-gray-200 text-xs mb-3">
             Participe da nossa próxima seletiva e seja visto por clubes profissionais
           </p>
           
           <Button 
             onClick={() => window.location.href = createPageUrl("SeletivaOnline")}
-            className="w-full bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-black text-sm"
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-black text-sm shadow-lg shadow-green-500/30"
           >
-            INSCREVER-SE AGORA
+            ⚽ INSCREVER-SE AGORA
           </Button>
         </div>
       </motion.div>
@@ -482,13 +493,13 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
         <QuickActionCard 
           icon={Calendar}
           label="Check-in Diário"
-          color="from-blue-500 to-cyan-500"
+          color="from-cyan-500 to-blue-500"
           onClick={onCheckinClick}
         />
         <QuickActionCard 
           icon={Target}
           label="Assessoria Semanal"
-          color="from-purple-500 to-pink-500"
+          color="from-pink-500 to-purple-500"
           onClick={onAssessClick}
         />
       </div>
