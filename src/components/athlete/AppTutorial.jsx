@@ -152,22 +152,14 @@ export default function AppTutorial({ isOpen, onClose }) {
     const isMobile = window.innerWidth < 768;
 
     if (isMobile) {
-      // No mobile, sempre posicionar na parte inferior da tela
-      if (currentStepData.position === 'top') {
-        return {
-          bottom: '80px', // Acima da barra de navegação
-          left: '16px',
-          right: '16px',
-          width: 'auto'
-        };
-      } else {
-        return {
-          top: `${rect.bottom + padding}px`,
-          left: '16px',
-          right: '16px',
-          width: 'auto'
-        };
-      }
+      // No mobile, sempre centralizar na parte inferior da tela
+      return {
+        bottom: '90px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 'calc(100vw - 32px)',
+        maxWidth: '380px'
+      };
     }
 
     // Desktop
@@ -224,16 +216,18 @@ export default function AppTutorial({ isOpen, onClose }) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: -20 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed z-[92] left-4 right-4 md:left-auto md:right-auto md:w-80"
-          style={{
-            ...(currentStepData.target ? tooltipStyle : { 
-              top: '50%', 
-              left: '50%', 
-              transform: 'translate(-50%, -50%)',
-              width: 'calc(100vw - 32px)',
-              maxWidth: '360px'
-            })
-          }}
+          className="fixed z-[92]"
+          style={
+            currentStepData.target 
+              ? tooltipStyle 
+              : { 
+                  top: '50%', 
+                  left: '50%', 
+                  transform: 'translate(-50%, -50%)',
+                  width: 'calc(100vw - 32px)',
+                  maxWidth: '360px'
+                }
+          }
         >
           <div className={`relative bg-gradient-to-br ${currentStepData.color} p-[2px] rounded-3xl shadow-2xl`}>
             <div className="bg-[#0A1A2A] rounded-3xl p-5">
