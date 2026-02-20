@@ -100,17 +100,15 @@ export default function RevelaTalentosPage() {
     { id: "preparacao_fisica", name: "Físico" },
   ], []);
 
-  const featuredContents = useMemo(() => contents.filter(c => c.is_featured).slice(0, 5), [contents]);
   const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
   
-  // Hero contents: featured + mentorias gravadas (lives ended)
-  const heroContents = useMemo(() => {
-    const featured = contents.filter(c => c.is_featured);
-    const mentoriasGravadas = contents.filter(c => 
+  // Mentorias e Planos - seção destacada
+  const mentoriasEPlanos = useMemo(() => {
+    const mentorias = contents.filter(c => 
       c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended')
     );
-    const combined = [...featured, ...mentoriasGravadas.filter(m => !featured.some(f => f.id === m.id))];
-    return combined.slice(0, 10);
+    const planos = contents.filter(c => c.category === 'planos');
+    return [...mentorias, ...planos];
   }, [contents]);
   
   const filteredContents = useMemo(() => {
@@ -129,14 +127,7 @@ export default function RevelaTalentosPage() {
 
   const top10Contents = useMemo(() => regularContents.filter(c => c.is_top_10).slice(0, 10), [regularContents]);
 
-  useEffect(() => {
-    if (heroContents.length > 1) {
-      const timer = setInterval(() => {
-        setCurrentSlideIndex(prevIndex => (prevIndex + 1) % heroContents.length);
-      }, 6000);
-      return () => clearInterval(timer);
-    }
-  }, [heroContents.length]);
+
 
   // Loading State
   if (isCheckingAccess) {
@@ -167,7 +158,7 @@ export default function RevelaTalentosPage() {
     return <VideoPlayer content={selectedContent} onClose={() => setSelectedContent(null)} onProgress={checkAccess} />;
   }
 
-  const activeSlide = heroContents[currentSlideIndex] || null;
+
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-white pb-24 md:pb-0 overflow-x-hidden">
@@ -197,77 +188,53 @@ export default function RevelaTalentosPage() {
         </div>
       </motion.header>
 
-      {/* HERO - Carousel com Mentorias */}
-      <section className="px-4 md:px-6 py-4">
+      {/* HERO - Vídeo Principal EC10 */}
+      <section className="px-4 md:px-6 py-6">
         <div className="max-w-7xl mx-auto">
-          {heroContents.length > 0 ? (
-            <>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlideIndex}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  onClick={() => activeSlide && handleContentSelect(activeSlide)}
-                  className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden cursor-pointer group"
-                >
-                  <img 
-                    src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
-                    alt={activeSlide?.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-                  
-                  {/* Title Overlay at Bottom */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <motion.h2 
-                      initial={{ y: 10, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="text-2xl md:text-4xl font-black text-white tracking-tight"
-                    >
-                      {activeSlide?.title}
-                    </motion.h2>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Carousel Dots */}
-              <div className="flex justify-center gap-2 mt-4">
-                {heroContents.slice(0, 5).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlideIndex(index)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      currentSlideIndex === index 
-                        ? 'w-6 bg-[#00E5FF]' 
-                        : 'w-2 bg-[#444]'
-                    }`}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            /* Default Hero when no content */
-            <div className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#222]">
-              <video
-                src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-                autoPlay muted loop playsInline
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4">
-                <h2 className="text-2xl md:text-4xl font-black text-white">REVELA TALENTOS</h2>
-              </div>
-              <div className="flex justify-center gap-2 absolute bottom-[-20px] left-0 right-0">
-                <div className="w-2 h-2 rounded-full bg-[#00E5FF]" />
-                <div className="w-2 h-2 rounded-full bg-[#444]" />
-                <div className="w-2 h-2 rounded-full bg-[#444]" />
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="relative aspect-[4/3] md:aspect-[16/9] rounded-[24px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#222]"
+          >
+            <video
+              src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
+              autoPlay muted loop playsInline
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/20 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-3">
+                REVELA TALENTOS
+              </h2>
+              <p className="text-[#B3B3B3] text-sm md:text-base max-w-2xl">
+                Descubra seu potencial e seja descoberto pelos maiores clubes do mundo
+              </p>
             </div>
-          )}
+          </motion.div>
         </div>
       </section>
+
+      {/* Mentorias & Planos - Seção Especial */}
+      {mentoriasEPlanos.length > 0 && (
+        <section className="px-4 md:px-6 py-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-1 h-7 bg-gradient-to-b from-[#00E5FF] to-[#0066FF] rounded-full" />
+              <h3 className="text-xl font-black text-white">Mentorias & Planos</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {mentoriasEPlanos.slice(0, 4).map((content, index) => (
+                <MentoriaPlanoCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Categories */}
       <section className="px-4 md:px-6 py-4">
@@ -380,6 +347,64 @@ export default function RevelaTalentosPage() {
         user={user}
       />
     </div>
+  );
+}
+
+// Mentoria/Plano Card - UI Diferenciado
+function MentoriaPlanoCard({ content, index, onClick }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="relative group cursor-pointer"
+    >
+      <div className="relative aspect-[16/9] rounded-[20px] overflow-hidden bg-[#111111] border border-[#1a1a1a]">
+        <img 
+          src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800"}
+          alt={content.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
+        
+        {/* Category Badge */}
+        <div className="absolute top-4 left-4">
+          <div className="px-3 py-1.5 bg-[#00E5FF] rounded-full">
+            <span className="text-[10px] font-black text-black uppercase tracking-wider">
+              {content.category === 'planos' ? 'Plano' : 'Mentoria'}
+            </span>
+          </div>
+        </div>
+
+        {/* Play Button */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="w-16 h-16 bg-[#00E5FF] rounded-full flex items-center justify-center shadow-lg shadow-[#00E5FF]/50">
+            <Play className="w-7 h-7 text-black ml-1" fill="black" />
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <h4 className="text-white font-black text-lg mb-2 line-clamp-2">{content.title}</h4>
+          <div className="flex items-center gap-3 text-[#B3B3B3] text-xs">
+            {content.duration && (
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#00E5FF]" />
+                {content.duration} min
+              </span>
+            )}
+            {content.instructor && (
+              <span className="flex items-center gap-1.5">
+                <UserIcon className="w-3.5 h-3.5 text-[#00E5FF]" />
+                {content.instructor}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
