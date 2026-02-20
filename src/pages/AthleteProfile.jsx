@@ -5,7 +5,8 @@ import {
   ArrowLeft, Share2, Bookmark, Edit3, Trophy, Target, 
   TrendingUp, Calendar, CheckCircle2, Zap, Award,
   Clock, Activity, Heart, Droplet, Brain, Users,
-  ChevronRight, Plus, Star, Flame, Shield
+  ChevronRight, Plus, Star, Flame, Shield, BarChart3, 
+  TrendingDown, Footprints, Wind, Eye
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -305,6 +306,7 @@ export default function AthleteProfile() {
         <div className="flex gap-1.5 overflow-x-auto no-scrollbar max-w-sm mx-auto">
           {[
             { id: "overview", label: "Geral", icon: Activity },
+            { id: "performance", label: "Performance", icon: TrendingUp },
             { id: "assessoria", label: "Diário", icon: Calendar },
             { id: "tasks", label: "Tarefas", icon: CheckCircle2 },
             { id: "trophies", label: "Troféus", icon: Trophy },
@@ -332,6 +334,7 @@ export default function AthleteProfile() {
         <div className="max-w-sm mx-auto">
           <AnimatePresence mode="wait">
             {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} onCheckinClick={() => setShowCheckinModal(true)} onAssessClick={() => setActiveTab("assessoria")} />}
+            {activeTab === "performance" && <PerformanceTab user={user} weeklyAssessments={weeklyAssessments} dailyCheckins={dailyCheckins} />}
             {activeTab === "assessoria" && <AssessoriaTab userId={user.id} dailyCheckins={dailyCheckins} weeklyAssessments={weeklyAssessments} onUpdate={loadUserData} onCheckinClick={() => setShowCheckinModal(true)} />}
             {activeTab === "tasks" && <TasksTab tasks={tasks} userId={user.id} onUpdate={loadUserData} />}
             {activeTab === "trophies" && <TrophiesTab trophies={trophies} />}
@@ -795,5 +798,274 @@ function FifaStat({ label, value, color }) {
         />
       </div>
     </div>
+  );
+}
+
+// PERFORMANCE TAB
+function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
+  // Calcular IMC
+  const calculateIMC = () => {
+    if (!user.weight || !user.height) return null;
+    const heightInMeters = user.height / 100;
+    const imc = user.weight / (heightInMeters * heightInMeters);
+    return imc.toFixed(1);
+  };
+
+  const getIMCStatus = (imc) => {
+    if (!imc) return { label: "N/A", color: "text-gray-400" };
+    if (imc < 18.5) return { label: "Abaixo", color: "text-blue-400" };
+    if (imc < 25) return { label: "Ideal", color: "text-green-400" };
+    if (imc < 30) return { label: "Acima", color: "text-yellow-400" };
+    return { label: "Obesidade", color: "text-red-400" };
+  };
+
+  const imc = calculateIMC();
+  const imcStatus = getIMCStatus(imc);
+
+  // Calcular estatísticas de performance
+  const totalGames = weeklyAssessments.filter(w => w.had_game).length;
+  const totalGoals = weeklyAssessments.reduce((sum, w) => sum + (w.goals || 0), 0);
+  const totalAssists = weeklyAssessments.reduce((sum, w) => sum + (w.assists || 0), 0);
+  const totalTraining = weeklyAssessments.reduce((sum, w) => sum + (w.training_sessions || 0), 0);
+  const avgRating = weeklyAssessments.length > 0 
+    ? (weeklyAssessments.reduce((sum, w) => sum + (w.self_rating || 0), 0) / weeklyAssessments.length).toFixed(1)
+    : 0;
+
+  // Estilo de jogo baseado em posição e stats
+  const getPlayingStyle = () => {
+    const position = user.position || "";
+    const goalsPerGame = totalGames > 0 ? (totalGoals / totalGames) : 0;
+    const assistsPerGame = totalGames > 0 ? (totalAssists / totalGames) : 0;
+
+    if (position === "atacante") {
+      if (goalsPerGame > 0.7) return { style: "Finalizador Nato", icon: Target, color: "from-red-500 to-orange-500" };
+      return { style: "Artilheiro", icon: Zap, color: "from-orange-500 to-yellow-500" };
+    } else if (position === "meia") {
+      if (assistsPerGame > 0.5) return { style: "Criador de Jogadas", icon: Brain, color: "from-cyan-500 to-blue-500" };
+      return { style: "Organizador", icon: Eye, color: "from-blue-500 to-purple-500" };
+    } else if (position === "zagueiro" || position === "lateral") {
+      return { style: "Defensor Sólido", icon: Shield, color: "from-blue-500 to-indigo-500" };
+    } else if (position === "volante") {
+      return { style: "Equilibrador", icon: Activity, color: "from-purple-500 to-pink-500" };
+    }
+    return { style: "Versátil", icon: Star, color: "from-gray-500 to-gray-600" };
+  };
+
+  const playingStyle = getPlayingStyle();
+
+  // Dados para gráficos (últimas 8 semanas)
+  const chartData = weeklyAssessments.slice(0, 8).reverse().map((w, idx) => ({
+    week: `S${idx + 1}`,
+    goals: w.goals || 0,
+    assists: w.assists || 0,
+    rating: w.self_rating || 0,
+    training: w.training_sessions || 0
+  }));
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="space-y-4"
+    >
+      {/* Header com Estilo de Jogo */}
+      <div className={`relative overflow-hidden bg-gradient-to-br ${playingStyle.color} rounded-2xl p-4`}>
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <playingStyle.icon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-white/80 text-xs font-bold uppercase tracking-wider">Estilo de Jogo</p>
+              <p className="text-white text-lg font-black">{playingStyle.style}</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-white/80 text-xs">Avaliação</p>
+            <p className="text-white text-2xl font-black">{avgRating}</p>
+          </div>
+        </div>
+        <div className="absolute inset-0 opacity-10">
+          <img 
+            src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=200&fit=crop" 
+            alt="Campo"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
+              <Target className="w-4 h-4 text-red-400" />
+            </div>
+            <p className="text-gray-400 text-xs font-bold">Gols</p>
+          </div>
+          <p className="text-white text-2xl font-black">{totalGoals}</p>
+          <p className="text-gray-500 text-[10px] mt-1">{totalGames} jogos</p>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+              <Zap className="w-4 h-4 text-blue-400" />
+            </div>
+            <p className="text-gray-400 text-xs font-bold">Assistências</p>
+          </div>
+          <p className="text-white text-2xl font-black">{totalAssists}</p>
+          <p className="text-gray-500 text-[10px] mt-1">Total</p>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <Activity className="w-4 h-4 text-green-400" />
+            </div>
+            <p className="text-gray-400 text-xs font-bold">Treinos</p>
+          </div>
+          <p className="text-white text-2xl font-black">{totalTraining}</p>
+          <p className="text-gray-500 text-[10px] mt-1">Sessões</p>
+        </div>
+
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+              <BarChart3 className="w-4 h-4 text-purple-400" />
+            </div>
+            <p className="text-gray-400 text-xs font-bold">Média</p>
+          </div>
+          <p className="text-white text-2xl font-black">{avgRating}</p>
+          <p className="text-gray-500 text-[10px] mt-1">Avaliação</p>
+        </div>
+      </div>
+
+      {/* Dados Biométricos e IMC */}
+      <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Ruler className="w-5 h-5 text-[#00E5FF]" />
+          <h4 className="text-white font-bold text-sm">Dados Biométricos</h4>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="text-center">
+            <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-1">Altura</p>
+            <p className="text-white text-lg font-black">{user.height || "--"}<span className="text-xs text-gray-400">cm</span></p>
+          </div>
+          <div className="text-center">
+            <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-1">Peso</p>
+            <p className="text-white text-lg font-black">{user.weight || "--"}<span className="text-xs text-gray-400">kg</span></p>
+          </div>
+          <div className="text-center">
+            <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-1">Pé</p>
+            <p className="text-white text-lg font-black capitalize">{user.foot?.charAt(0) || "D"}</p>
+          </div>
+        </div>
+
+        {imc && (
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-xs font-bold">Índice de Massa Corporal</p>
+              <p className={`${imcStatus.color} text-xs font-bold`}>{imcStatus.label}</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <p className="text-white text-3xl font-black">{imc}</p>
+              <p className="text-gray-400 text-sm">kg/m²</p>
+            </div>
+            <div className="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min((imc / 30) * 100, 100)}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className={`h-full ${imcStatus.color.replace('text-', 'bg-')}`}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Gráfico de Performance */}
+      {chartData.length > 0 && (
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-[#00E5FF]" />
+              <h4 className="text-white font-bold text-sm">Evolução Semanal</h4>
+            </div>
+            <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-[10px]">
+              {chartData.length} semanas
+            </Badge>
+          </div>
+
+          {/* Mini Chart - Goals & Assists */}
+          <div className="space-y-3">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-400 text-xs font-bold">Gols</span>
+                <span className="text-red-400 text-xs font-bold">{totalGoals}</span>
+              </div>
+              <div className="flex items-end gap-1 h-16">
+                {chartData.map((data, idx) => (
+                  <div key={idx} className="flex-1 bg-white/5 rounded-t-lg relative group">
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: `${(data.goals / Math.max(...chartData.map(d => d.goals || 1))) * 100}%` }}
+                      transition={{ duration: 0.5, delay: idx * 0.1 }}
+                      className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-red-500 to-orange-500 rounded-t-lg"
+                    />
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-white text-[10px] font-bold">{data.goals}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-400 text-xs font-bold">Assistências</span>
+                <span className="text-blue-400 text-xs font-bold">{totalAssists}</span>
+              </div>
+              <div className="flex items-end gap-1 h-16">
+                {chartData.map((data, idx) => (
+                  <div key={idx} className="flex-1 bg-white/5 rounded-t-lg relative group">
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: `${(data.assists / Math.max(...chartData.map(d => d.assists || 1))) * 100}%` }}
+                      transition={{ duration: 0.5, delay: idx * 0.1 }}
+                      className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-blue-500 to-cyan-500 rounded-t-lg"
+                    />
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="text-white text-[10px] font-bold">{data.assists}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-between mt-3 px-1">
+            {chartData.map((data, idx) => (
+              <span key={idx} className="text-gray-500 text-[9px] font-bold">{data.week}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Conquistas Recentes */}
+      <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Trophy className="w-5 h-5 text-yellow-500" />
+          <h4 className="text-white font-bold text-sm">Destaques da Carreira</h4>
+        </div>
+        {user.career_highlights ? (
+          <p className="text-gray-300 text-xs leading-relaxed">{user.career_highlights}</p>
+        ) : (
+          <p className="text-gray-500 text-xs italic">Nenhum destaque registrado ainda</p>
+        )}
+      </div>
+    </motion.div>
   );
 }
