@@ -12,11 +12,15 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import VideoUploadModal from "@/components/mobile/VideoUploadModal";
+import EditProfileModal from "@/components/athlete/EditProfileModal";
+import DailyCheckinModal from "@/components/athlete/DailyCheckinModal";
 
 export default function AthleteProfile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [dailyCheckins, setDailyCheckins] = useState([]);
   const [weeklyAssessments, setWeeklyAssessments] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -123,11 +127,11 @@ export default function AthleteProfile() {
   return (
     <div className="min-h-screen bg-[#070A12] pb-24 md:pb-8">
       {/* HERO SECTION - CINEMATOGRÁFICO */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden min-h-[60vh] md:min-h-[70vh]">
         {/* Background layers */}
         <div className="absolute inset-0">
           {/* Gradient base */}
-          <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/25 via-[#1A1F2E] to-[#070A12]" />
+          <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/20 via-[#0A0F1A] to-[#070A12]" />
           
           {/* Club crest watermark */}
           {user.current_club_crest_url && (
@@ -180,7 +184,8 @@ export default function AthleteProfile() {
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="w-11 h-11 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center"
+                onClick={() => setShowEditModal(true)}
+                className="w-11 h-11 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
               >
                 <Edit3 className="w-5 h-5 text-white" />
               </motion.button>
@@ -211,12 +216,12 @@ export default function AthleteProfile() {
               </div>
 
               {/* Name */}
-              <h1 className="text-4xl md:text-5xl font-black text-white leading-none tracking-tight">
+              <h1 className="text-3xl md:text-5xl font-black text-white leading-none tracking-tighter">
                 {user.full_name || "Atleta"}
               </h1>
 
               {/* Subtitle */}
-              <div className="flex items-center gap-2 text-gray-400 text-sm uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm uppercase tracking-widest">
                 <span>{user.position || "Posição"}</span>
                 {user.jersey_number && (
                   <>
@@ -265,8 +270,8 @@ export default function AthleteProfile() {
       </section>
 
       {/* STATS CARDS */}
-      <section className="px-4 -mt-4 mb-6">
-        <div className="grid grid-cols-3 gap-3 max-w-4xl mx-auto">
+      <section className="px-3 md:px-4 -mt-4 mb-4 md:mb-6">
+        <div className="grid grid-cols-3 gap-2 md:gap-3 max-w-4xl mx-auto">
           <StatCard 
             label="Idade" 
             value={age || "--"} 
@@ -286,22 +291,22 @@ export default function AthleteProfile() {
       </section>
 
       {/* TOTAL POINTS CARD */}
-      <section className="px-4 mb-6">
+      <section className="px-3 md:px-4 mb-4 md:mb-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="max-w-4xl mx-auto bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#00E5FF]/30 rounded-[24px] p-6 shadow-xl shadow-[#00E5FF]/10"
+          className="max-w-4xl mx-auto bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#00E5FF]/30 rounded-[20px] md:rounded-[24px] p-4 md:p-6 shadow-xl shadow-[#00E5FF]/10"
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-[#00E5FF]/20 rounded-2xl flex items-center justify-center">
-                <Star className="w-7 h-7 text-[#00E5FF]" fill="#00E5FF" />
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="w-12 md:w-14 h-12 md:h-14 bg-[#00E5FF]/20 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Star className="w-6 md:w-7 h-6 md:h-7 text-[#00E5FF]" fill="#00E5FF" />
               </div>
               <div>
-                <p className="text-gray-400 text-xs uppercase tracking-wider font-bold mb-1">Pontuação Total</p>
+                <p className="text-gray-400 text-[10px] md:text-xs uppercase tracking-wider font-bold mb-1">Pontuação Total</p>
                 <motion.p 
-                  className="text-3xl font-black text-[#00E5FF]"
+                  className="text-2xl md:text-3xl font-black text-[#00E5FF]"
                   initial={{ scale: 1 }}
                   animate={{ scale: [1, 1.05, 1] }}
                   transition={{ duration: 0.5 }}
@@ -310,45 +315,39 @@ export default function AthleteProfile() {
                 </motion.p>
               </div>
             </div>
-            <Button
-              size="sm"
-              className="bg-transparent border-2 border-[#00E5FF] text-[#00E5FF] hover:bg-[#00E5FF]/10 font-bold"
-            >
-              EDITAR
-            </Button>
           </div>
         </motion.div>
       </section>
 
       {/* TABS NAVIGATION */}
-      <section className="px-4 mb-6">
-        <div className="flex gap-2 overflow-x-auto no-scrollbar max-w-4xl mx-auto">
+      <section className="px-3 md:px-4 mb-4 md:mb-6">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar max-w-4xl mx-auto pb-2">
           {[
             { id: "overview", label: "Visão Geral", icon: Activity },
             { id: "assessoria", label: "Assessoria", icon: Calendar },
             { id: "tasks", label: "Tarefas", icon: CheckCircle2 },
             { id: "trophies", label: "Troféus", icon: Trophy },
-            { id: "stats", label: "Estatísticas", icon: TrendingUp }
+            { id: "stats", label: "FIFA", icon: TrendingUp }
           ].map((tab) => (
             <motion.button
               key={tab.id}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-bold text-sm whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-full font-bold text-xs md:text-sm whitespace-nowrap transition-all ${
                 activeTab === tab.id
                   ? 'bg-[#00E5FF] text-black shadow-lg shadow-[#00E5FF]/40'
                   : 'bg-white/5 text-gray-400 border border-white/10'
               }`}
             >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
+              <tab.icon className="w-3.5 md:w-4 h-3.5 md:h-4" />
+              <span className="hidden sm:inline">{tab.label}</span>
             </motion.button>
           ))}
         </div>
       </section>
 
       {/* TAB CONTENT */}
-      <section className="px-4">
+      <section className="px-3 md:px-4">
         <div className="max-w-4xl mx-auto">
           <AnimatePresence mode="wait">
             {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} />}
@@ -366,6 +365,18 @@ export default function AthleteProfile() {
         onClose={() => setShowUploadModal(false)} 
         user={user} 
       />
+      <EditProfileModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        user={user}
+        onUpdate={loadUserData}
+      />
+      <DailyCheckinModal
+        isOpen={showCheckinModal}
+        onClose={() => setShowCheckinModal(false)}
+        userId={user?.id}
+        onComplete={loadUserData}
+      />
     </div>
   );
 }
@@ -377,14 +388,14 @@ function StatCard({ label, value, delay }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      whileHover={{ scale: 1.03 }}
-      className="bg-white/5 backdrop-blur-xl border border-[#00E5FF]/15 rounded-[22px] p-4 text-center"
+      whileHover={{ scale: 1.02 }}
+      className="bg-white/5 backdrop-blur-xl border border-[#00E5FF]/15 rounded-[16px] md:rounded-[22px] p-3 md:p-4 text-center"
     >
-      <p className="text-[10px] uppercase tracking-[0.22em] text-gray-400 font-bold mb-2">
+      <p className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1 md:mb-2">
         {label}
       </p>
       <motion.p 
-        className="text-[32px] font-black text-white"
+        className="text-2xl md:text-[32px] font-black text-white"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", delay: delay + 0.2 }}
@@ -427,25 +438,28 @@ function OverviewTab({ user, checkinStreak }) {
           icon={Calendar}
           label="Check-in Diário"
           color="from-blue-500 to-cyan-500"
+          onClick={() => setShowCheckinModal(true)}
         />
         <QuickActionCard 
           icon={Target}
           label="Assessoria Semanal"
           color="from-purple-500 to-pink-500"
+          onClick={() => setActiveTab("assessoria")}
         />
       </div>
     </motion.div>
   );
 }
 
-function QuickActionCard({ icon: Icon, label, color }) {
+function QuickActionCard({ icon: Icon, label, color, onClick }) {
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
-      className={`bg-gradient-to-br ${color} rounded-[20px] p-6 text-left shadow-lg`}
+      onClick={onClick}
+      className={`bg-gradient-to-br ${color} rounded-[20px] p-6 text-left shadow-lg hover:shadow-xl transition-shadow`}
     >
       <Icon className="w-8 h-8 text-white mb-3" />
-      <p className="text-white font-bold">{label}</p>
+      <p className="text-white font-bold text-sm">{label}</p>
     </motion.button>
   );
 }
