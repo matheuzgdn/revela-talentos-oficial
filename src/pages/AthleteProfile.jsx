@@ -304,7 +304,7 @@ export default function AthleteProfile() {
 
           {/* Nome */}
           <h1 className="text-2xl font-black text-white text-center mb-3">
-            {user.full_name || "SEU NOME"}
+            {user?.full_name || user?.name || "Atleta"}
           </h1>
 
           {/* Posição badge */}
