@@ -6,7 +6,7 @@ import {
   TrendingUp, Calendar, CheckCircle2, Zap, Award,
   Clock, Activity, Heart, Droplet, Brain, Users,
   ChevronRight, Plus, Star, Flame, Shield, BarChart3, 
-  TrendingDown, Footprints, Wind, Eye
+  TrendingDown, Footprints, Wind, Eye, Ruler
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
