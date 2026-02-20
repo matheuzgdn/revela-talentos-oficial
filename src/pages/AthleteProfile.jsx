@@ -64,7 +64,7 @@ export default function AthleteProfile() {
         setShowOnboarding(true);
       } else {
         // Verificar se deve mostrar tutorial (só após onboarding completo)
-        const tutorialCompleted = localStorage.getItem('tutorialCompleted');
+        const tutorialCompleted = localStorage.getItem('tutorial_completed');
         if (!tutorialCompleted) {
           setTimeout(() => setShowTutorial(true), 1000);
         }
