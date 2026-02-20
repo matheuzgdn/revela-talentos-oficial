@@ -462,9 +462,9 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate("performance")}
-            className="relative overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-2xl p-3 text-center"
+            className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-2xl p-3 text-center"
           >
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <TrendingUp className="w-5 h-5 text-purple-400" />
             </div>
             <p className="text-white font-bold text-[10px]">Performance</p>
@@ -473,9 +473,9 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={onCheckinClick}
-            className="relative overflow-hidden bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-2xl p-3 text-center"
+            className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-2xl p-3 text-center"
           >
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <Calendar className="w-5 h-5 text-blue-400" />
             </div>
             <p className="text-white font-bold text-[10px]">Diário</p>
@@ -484,9 +484,9 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate("tasks")}
-            className="relative overflow-hidden bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-2xl p-3 text-center"
+            className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-2xl p-3 text-center"
           >
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <CheckCircle2 className="w-5 h-5 text-green-400" />
             </div>
             <p className="text-white font-bold text-[10px]">Tarefas</p>
@@ -495,9 +495,9 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate("trophies")}
-            className="relative overflow-hidden bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-2xl p-3 text-center"
+            className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-2xl p-3 text-center"
           >
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <Trophy className="w-5 h-5 text-yellow-400" />
             </div>
             <p className="text-white font-bold text-[10px]">Troféus</p>
@@ -506,9 +506,9 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate("assessoria")}
-            className="relative overflow-hidden bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-2xl p-3 text-center"
+            className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-2xl p-3 text-center"
           >
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <Target className="w-5 h-5 text-cyan-400" />
             </div>
             <p className="text-white font-bold text-[10px]">Relatório</p>
@@ -517,9 +517,9 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate("stats")}
-            className="relative overflow-hidden bg-gradient-to-br from-gray-500/20 to-slate-500/20 border border-gray-500/30 rounded-2xl p-3 text-center"
+            className="bg-gradient-to-br from-gray-500/20 to-slate-500/20 border border-gray-500/30 rounded-2xl p-3 text-center"
           >
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <ChevronRight className="w-5 h-5 text-gray-400" />
             </div>
             <p className="text-white font-bold text-[10px]">Ver mais</p>
