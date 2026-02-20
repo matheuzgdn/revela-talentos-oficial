@@ -60,9 +60,9 @@ import MeusServicos from './pages/MeusServicos';
 import PlanoCarreira from './pages/PlanoCarreira';
 import PlanoInternacional from './pages/PlanoInternacional';
 import RenderPage from './pages/RenderPage';
-import RevelaTalentos from './pages/RevelaTalentos';
 import SearchAthletes from './pages/SearchAthletes';
 import SeletivaOnline from './pages/SeletivaOnline';
+import RevelaTalentos from './pages/RevelaTalentos';
 import __Layout from './Layout.jsx';
 
 
@@ -80,9 +80,9 @@ export const PAGES = {
     "PlanoCarreira": PlanoCarreira,
     "PlanoInternacional": PlanoInternacional,
     "RenderPage": RenderPage,
-    "RevelaTalentos": RevelaTalentos,
     "SearchAthletes": SearchAthletes,
     "SeletivaOnline": SeletivaOnline,
+    "RevelaTalentos": RevelaTalentos,
 }
 
 export const pagesConfig = {
