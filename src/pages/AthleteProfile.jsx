@@ -197,18 +197,38 @@ export default function AthleteProfile() {
             />
           </div>
 
-          {/* Player Card Premium */}
+          {/* Player Card - Football Sticker Style */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            transition={{ duration: 0.6, type: "spring" }}
             className="flex justify-center mb-4"
           >
-            <div className="relative">
-              {/* Moldura com cantos */}
-              <div className="relative p-0.5 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-2xl">
-                <div className="bg-black rounded-[14px] p-1">
-                  <div className="w-32 h-32 rounded-xl overflow-hidden">
+            <div className="relative" style={{ perspective: "1000px" }}>
+              {/* Glow effect background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF] via-[#0066FF] to-[#FFD700] rounded-[24px] blur-xl opacity-40 animate-pulse" />
+              
+              {/* Main card with hexagonal style cuts */}
+              <div 
+                className="relative w-36 h-44 overflow-hidden"
+                style={{
+                  clipPath: "polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)",
+                  filter: "drop-shadow(0 10px 30px rgba(0, 229, 255, 0.4))"
+                }}
+              >
+                {/* Border gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF] via-[#0066FF] to-[#FFD700] p-[3px]"
+                  style={{
+                    clipPath: "polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)"
+                  }}
+                >
+                  {/* Inner background */}
+                  <div className="w-full h-full bg-gradient-to-br from-[#0A0A0A] via-[#111111] to-[#0A0A0A] relative overflow-hidden"
+                    style={{
+                      clipPath: "polygon(15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%, 0% 15%)"
+                    }}
+                  >
+                    {/* Player photo */}
                     {user.profile_picture_url || user.player_cutout_url ? (
                       <img 
                         src={user.profile_picture_url || user.player_cutout_url}
@@ -217,22 +237,43 @@ export default function AthleteProfile() {
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 flex items-center justify-center">
-                        <span className="text-4xl font-black text-[#00E5FF]">
+                        <span className="text-5xl font-black text-[#00E5FF]">
                           {user.full_name?.charAt(0) || "A"}
                         </span>
                       </div>
                     )}
+                    
+                    {/* Holographic overlay effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/10 via-transparent to-[#FFD700]/10 opacity-60 mix-blend-overlay pointer-events-none" />
+                    
+                    {/* Shine effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent -translate-x-full animate-shine pointer-events-none" />
                   </div>
                 </div>
               </div>
+
+              {/* Corner accent details */}
+              <div className="absolute top-2 left-2 w-6 h-[2px] bg-gradient-to-r from-[#00E5FF] to-transparent" />
+              <div className="absolute top-2 left-2 h-6 w-[2px] bg-gradient-to-b from-[#00E5FF] to-transparent" />
+              <div className="absolute bottom-2 right-2 w-6 h-[2px] bg-gradient-to-l from-[#FFD700] to-transparent" />
+              <div className="absolute bottom-2 right-2 h-6 w-[2px] bg-gradient-to-t from-[#FFD700] to-transparent" />
               
-              {/* Cantos decorativos */}
-              <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-[#00E5FF]" />
-              <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-[#00E5FF]" />
+              {/* Star rating badge */}
+              <div className="absolute -top-2 -right-2 w-9 h-9 bg-gradient-to-br from-[#FFD700] to-[#FFA500] rounded-xl flex items-center justify-center shadow-xl shadow-[#FFD700]/40 border border-white/20">
+                <Star className="w-5 h-5 text-white fill-white drop-shadow-lg" />
+              </div>
             </div>
           </motion.div>
+
+          <style>{`
+            @keyframes shine {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(100%); }
+            }
+            .animate-shine {
+              animation: shine 3s infinite;
+            }
+          `}</style>
 
           {/* Nome */}
           <h1 className="text-2xl font-black text-white text-center mb-3">
