@@ -216,26 +216,21 @@ export default function AppTutorial({ isOpen, onClose }) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: -20 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed z-[92] left-1/2 -translate-x-1/2"
+          className="fixed z-[92]"
           style={
             !currentStepData.target 
               ? { 
                   top: '50%', 
+                  left: '50%', 
                   transform: 'translate(-50%, -50%)',
                   width: 'calc(100vw - 32px)',
                   maxWidth: '360px'
                 }
-              : { 
-                  ...tooltipStyle,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: 'calc(100vw - 32px)',
-                  maxWidth: '380px'
-                }
+              : tooltipStyle
           }
         >
-          <div className={`relative bg-gradient-to-br ${currentStepData.color} p-[2px] rounded-3xl shadow-2xl w-full`}>
-            <div className="bg-[#0A1A2A] rounded-3xl p-5 w-full">
+          <div className={`relative bg-gradient-to-br ${currentStepData.color} p-[2px] rounded-3xl shadow-2xl mx-auto`}>
+            <div className="bg-[#0A1A2A] rounded-3xl p-5">
               {/* Close button */}
               <button
                 onClick={handleSkip}
