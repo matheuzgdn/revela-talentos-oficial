@@ -204,33 +204,28 @@ export default function AthleteProfile() {
             transition={{ duration: 0.5 }}
             className="flex justify-center mb-4"
           >
-            <div className="relative">
-              {/* Moldura com cantos */}
-              <div className="relative p-0.5 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-2xl">
-                <div className="bg-black rounded-[14px] p-1">
-                  <div className="w-32 h-32 rounded-xl overflow-hidden">
-                    {user.profile_picture_url || user.player_cutout_url ? (
-                      <img 
-                        src={user.profile_picture_url || user.player_cutout_url}
-                        alt={user.full_name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 flex items-center justify-center">
-                        <span className="text-4xl font-black text-[#00E5FF]">
-                          {user.full_name?.charAt(0) || "A"}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+            <div className="relative group">
+              {/* Glow effect externo */}
+              <div className="absolute -inset-1 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-full blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500" />
+
+              {/* Moldura principal */}
+              <div className="relative w-36 h-36 rounded-full p-1 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] shadow-2xl">
+                <div className="w-full h-full rounded-full overflow-hidden bg-black ring-4 ring-black/50">
+                  {user.profile_picture_url || user.player_cutout_url ? (
+                    <img 
+                      src={user.profile_picture_url || user.player_cutout_url}
+                      alt={user.full_name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 flex items-center justify-center">
+                      <span className="text-5xl font-black text-[#00E5FF]">
+                        {user.full_name?.charAt(0) || "A"}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
-              
-              {/* Cantos decorativos */}
-              <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-[#00E5FF]" />
-              <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-[#00E5FF]" />
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-[#00E5FF]" />
             </div>
           </motion.div>
 
