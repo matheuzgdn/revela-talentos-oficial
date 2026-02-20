@@ -123,6 +123,13 @@ export default function RevelaTalentosPage() {
 
   const planosContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
   
+  // Conteúdos por categoria
+  const mentoriaContents = useMemo(() => regularContents.filter(c => c.category === 'mentoria'), [regularContents]);
+  const preparacaoFisicaContents = useMemo(() => regularContents.filter(c => c.category === 'preparacao_fisica'), [regularContents]);
+  const treinoTaticoContents = useMemo(() => regularContents.filter(c => c.category === 'treino_tatico'), [regularContents]);
+  const psicologiaContents = useMemo(() => regularContents.filter(c => c.category === 'psicologia'), [regularContents]);
+  const nutricaoContents = useMemo(() => regularContents.filter(c => c.category === 'nutricao'), [regularContents]);
+  
   const filteredContents = useMemo(() => {
     if (activeCategory === "all") return regularContents;
     return regularContents.filter(content => content.category === activeCategory);
@@ -374,6 +381,126 @@ export default function RevelaTalentosPage() {
                   plano={plano} 
                   index={index}
                   onClick={() => handleContentSelect(plano)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Mentoria Section */}
+      {mentoriaContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">🎯 Mentoria</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                Ver Todos <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {mentoriaContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Preparação Física Section */}
+      {preparacaoFisicaContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">💪 Preparação Física</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                Ver Todos <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {preparacaoFisicaContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Treino Tático Section */}
+      {treinoTaticoContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">⚽ Treino Tático</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                Ver Todos <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {treinoTaticoContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Psicologia Section */}
+      {psicologiaContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">🧠 Psicologia Esportiva</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                Ver Todos <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {psicologiaContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Nutrição Section */}
+      {nutricaoContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">🥗 Nutrição</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                Ver Todos <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {nutricaoContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
                 />
               ))}
             </div>
