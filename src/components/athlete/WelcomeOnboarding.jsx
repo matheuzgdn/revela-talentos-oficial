@@ -386,16 +386,17 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" style={{
+    <div className="fixed inset-0 z-[80] flex items-end md:items-center justify-center overflow-hidden" style={{
       background: "radial-gradient(circle at center, #0A2E0A 0%, #051505 50%, #000000 100%)"
     }}>
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        className="w-full max-w-md bg-gradient-to-b from-[#0A1A2A] to-[#05111A] rounded-3xl border-2 border-[#00E5FF]/30 shadow-2xl overflow-hidden"
+        initial={{ y: "100%", opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="w-full md:max-w-md h-[95vh] md:h-auto md:max-h-[90vh] bg-gradient-to-b from-[#0A1A2A] to-[#05111A] rounded-t-3xl md:rounded-3xl border-2 border-[#00E5FF]/30 shadow-2xl overflow-hidden flex flex-col"
       >
         {/* Progress */}
-        <div className="h-1.5 bg-white/10">
+        <div className="h-1.5 bg-white/10 flex-shrink-0">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
@@ -403,7 +404,12 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
           />
         </div>
 
-        <div className="p-6">
+        <div className="flex-1 overflow-y-auto p-6 pb-safe"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain'
+          }}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStep}
@@ -432,7 +438,7 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-6">
                 {currentStep > 0 && currentStep < steps.length - 1 && (
                   <Button
                     onClick={() => setCurrentStep(currentStep - 1)}
@@ -468,7 +474,7 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
           </AnimatePresence>
 
           {/* Step indicator */}
-          <div className="flex justify-center gap-1.5 mt-6">
+          <div className="flex justify-center gap-1.5 mt-6 mb-2">
             {steps.map((_, idx) => (
               <div
                 key={idx}

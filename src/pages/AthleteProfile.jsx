@@ -6,7 +6,7 @@ import {
   TrendingUp, Calendar, CheckCircle2, Zap, Award,
   Clock, Activity, Heart, Droplet, Brain, Users,
   ChevronRight, Plus, Star, Flame, Shield, BarChart3, 
-  TrendingDown, Footprints, Wind, Eye, Ruler, Sparkles
+  TrendingDown, Footprints, Wind, Eye, Ruler, Sparkles, Video
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import WeeklyAssessmentChat from "@/components/athlete/WeeklyAssessmentChat";
 import WeeklyAssessmentNotification from "@/components/athlete/WeeklyAssessmentNotification";
 import WelcomeOnboarding from "@/components/athlete/WelcomeOnboarding";
 import CompleteProfilePrompt from "@/components/athlete/CompleteProfilePrompt";
+import AppTutorial from "@/components/athlete/AppTutorial";
 
 export default function AthleteProfile() {
   const [user, setUser] = useState(null);
@@ -29,6 +30,7 @@ export default function AthleteProfile() {
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showWeeklyAssessment, setShowWeeklyAssessment] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [dailyCheckins, setDailyCheckins] = useState([]);
   const [weeklyAssessments, setWeeklyAssessments] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -60,6 +62,12 @@ export default function AthleteProfile() {
       const isFirstTime = !currentUser.birth_date || !currentUser.position;
       if (isFirstTime) {
         setShowOnboarding(true);
+      } else {
+        // Verificar se deve mostrar tutorial (só após onboarding completo)
+        const tutorialCompleted = localStorage.getItem('tutorialCompleted');
+        if (!tutorialCompleted) {
+          setTimeout(() => setShowTutorial(true), 1000);
+        }
       }
 
       // Load related data
@@ -167,7 +175,7 @@ export default function AthleteProfile() {
         />
       )}
       {/* HERO SECTION - PREMIUM MINIMALISTA */}
-      <section className="relative overflow-hidden pb-6">
+      <section id="profile-card" className="relative overflow-hidden pb-6">
         {/* Background simples */}
         <div className="absolute inset-0 h-[50vh]">
           <img 
@@ -442,7 +450,7 @@ export default function AthleteProfile() {
       </section>
 
       {/* STATS CARDS */}
-      <section className="px-3 md:px-4 mb-3 md:mb-4">
+      <section id="stats-section" className="px-3 md:px-4 mb-3 md:mb-4">
         <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
           <StatCard 
             label="Gols" 
@@ -475,7 +483,18 @@ export default function AthleteProfile() {
         </div>
       </section>
 
-      <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
+      <div id="bottom-nav">
+        <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
+      </div>
+      <div id="upload-button" className="fixed bottom-20 right-4 md:hidden">
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setShowUploadModal(true)}
+          className="w-14 h-14 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-2xl shadow-[#00E5FF]/50"
+        >
+          <Video className="w-6 h-6 text-black" />
+        </motion.button>
+      </div>
       <VideoUploadModal 
         isOpen={showUploadModal} 
         onClose={() => setShowUploadModal(false)} 
@@ -506,9 +525,17 @@ export default function AthleteProfile() {
       />
       <WelcomeOnboarding
         isOpen={showOnboarding}
-        onClose={() => setShowOnboarding(false)}
+        onClose={() => {
+          setShowOnboarding(false);
+          // Mostrar tutorial após onboarding
+          setTimeout(() => setShowTutorial(true), 500);
+        }}
         user={user}
         onComplete={loadUserData}
+      />
+      <AppTutorial
+        isOpen={showTutorial}
+        onClose={() => setShowTutorial(false)}
       />
     </div>
   );
@@ -543,7 +570,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
       className="space-y-4"
     >
       {/* Daily streak */}
-      <div className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
+      <div id="daily-checkin" className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 md:w-12 h-10 md:h-12 bg-orange-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -675,6 +702,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
           </motion.button>
 
           <motion.button
+            id="tasks-card"
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate("tasks")}
             className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-2xl p-3 text-center"
@@ -686,6 +714,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
           </motion.button>
 
           <motion.button
+            id="trophies-card"
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate("trophies")}
             className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-2xl p-3 text-center"
@@ -697,6 +726,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
           </motion.button>
 
           <motion.button
+            id="weekly-assessment"
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               // Abrir chat de assessoria semanal
