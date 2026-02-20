@@ -251,53 +251,132 @@ export default function AthleteProfile() {
           {/* Info grid - estilo campo de futebol */}
           <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto mb-4">
             {/* Idade */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center backdrop-blur-sm">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowEditModal(true)}
+              className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
+            >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Idade</p>
               <p className="text-xl font-black text-white">{age || "--"}</p>
-            </div>
+            </motion.button>
             
             {/* Nacionalidade */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center backdrop-blur-sm">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowEditModal(true)}
+              className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
+            >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">País</p>
               <p className="text-2xl">{user.nationality || "🌍"}</p>
-            </div>
+            </motion.button>
             
             {/* Jogos */}
-            <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center backdrop-blur-sm">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowEditModal(true)}
+              className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
+            >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Jogos</p>
               <p className="text-xl font-black text-white">{totalGames}</p>
-            </div>
+            </motion.button>
+          </div>
+
+          {/* Segunda linha de info cards */}
+          <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto mb-4">
+            {/* Pé Dominante */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowEditModal(true)}
+              className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
+            >
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Pé</p>
+              <p className="text-xs font-black text-white capitalize">{user.foot || "Direito"}</p>
+            </motion.button>
+
+            {/* Altura */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowEditModal(true)}
+              className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
+            >
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Altura</p>
+              <p className="text-xl font-black text-white">{user.height || "--"}<span className="text-xs text-gray-400">cm</span></p>
+            </motion.button>
+
+            {/* Peso */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowEditModal(true)}
+              className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
+            >
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Peso</p>
+              <p className="text-xl font-black text-white">{user.weight || "--"}<span className="text-xs text-gray-400">kg</span></p>
+            </motion.button>
           </div>
 
           {/* Clube atual */}
           {user.current_club_name && (
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3 max-w-sm mx-auto mb-3 backdrop-blur-sm">
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowEditModal(true)}
+              className="w-full bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-3 max-w-sm mx-auto mb-3 backdrop-blur-sm transition-colors"
+            >
               <div className="flex items-center gap-3">
                 {user.current_club_crest_url && (
                   <div className="w-10 h-10 bg-white/5 rounded-lg p-1.5 flex-shrink-0">
                     <img src={user.current_club_crest_url} alt="Clube" className="w-full h-full object-contain" />
                   </div>
                 )}
-                <div className="flex-1">
+                <div className="flex-1 text-left">
                   <p className="text-[9px] text-gray-400 uppercase tracking-wider font-bold">Clube Atual</p>
                   <p className="text-white font-bold text-sm">{user.current_club_name}</p>
                 </div>
+                <Edit3 className="w-4 h-4 text-gray-500" />
               </div>
-            </div>
+            </motion.button>
           )}
 
           {/* Clubes anteriores */}
           {user.previous_clubs && user.previous_clubs.length > 0 && (
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3 max-w-sm mx-auto backdrop-blur-sm">
-              <p className="text-[9px] text-gray-400 uppercase tracking-wider font-bold mb-2">Clubes Anteriores</p>
-              <div className="flex flex-wrap gap-2">
-                {user.previous_clubs.map((club, idx) => (
-                  <span key={idx} className="text-xs text-gray-300 bg-white/5 px-2 py-1 rounded-lg">
-                    {club}
-                  </span>
-                ))}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowEditModal(true)}
+              className="w-full bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-3 max-w-sm mx-auto mb-3 backdrop-blur-sm transition-colors text-left"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-[9px] text-gray-400 uppercase tracking-wider font-bold mb-2">Clubes Anteriores</p>
+                  <div className="flex flex-wrap gap-2">
+                    {user.previous_clubs.map((club, idx) => (
+                      <span key={idx} className="text-xs text-gray-300 bg-white/5 px-2 py-1 rounded-lg">
+                        {club}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <Edit3 className="w-4 h-4 text-gray-500 flex-shrink-0 ml-2" />
               </div>
-            </div>
+            </motion.button>
+          )}
+
+          {/* Últimas Conquistas */}
+          {user.achievements && (
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowEditModal(true)}
+              className="w-full bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 hover:border-yellow-500/50 rounded-xl p-3 max-w-sm mx-auto backdrop-blur-sm transition-colors text-left"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Trophy className="w-4 h-4 text-yellow-500" />
+                    <p className="text-[9px] text-yellow-400 uppercase tracking-wider font-bold">Últimos Campeonatos</p>
+                  </div>
+                  <p className="text-gray-300 text-xs leading-relaxed line-clamp-2">{user.achievements}</p>
+                </div>
+                <Edit3 className="w-4 h-4 text-yellow-500/50 flex-shrink-0 ml-2" />
+              </div>
+            </motion.button>
           )}
         </div>
       </section>
