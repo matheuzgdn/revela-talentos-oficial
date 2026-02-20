@@ -20,7 +20,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
     // Dados Pessoais
     full_name: user?.full_name || "",
     profile_picture_url: user?.profile_picture_url || "",
-    player_cutout_url: user?.player_cutout_url || "",
+    cover_photo_url: user?.cover_photo_url || "",
     birth_date: user?.birth_date || "",
     nationality: user?.nationality || "",
     phone: user?.phone || "",
@@ -52,7 +52,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
       setFormData({
         full_name: user.full_name || "",
         profile_picture_url: user.profile_picture_url || "",
-        player_cutout_url: user.player_cutout_url || "",
+        cover_photo_url: user.cover_photo_url || "",
         birth_date: user.birth_date || "",
         nationality: user.nationality || "",
         phone: user.phone || "",
@@ -139,7 +139,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
         initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", duration: 0.5 }}
-        className="w-full max-w-4xl bg-[#0A0A0A] rounded-3xl border border-white/10 overflow-hidden shadow-2xl"
+        className="w-full max-w-lg md:max-w-4xl bg-[#0A0A0A] rounded-3xl md:rounded-3xl rounded-t-3xl border border-white/10 overflow-hidden shadow-2xl"
       >
         {/* Header Cinematográfico */}
         <div className="relative overflow-hidden bg-gradient-to-br from-[#00E5FF]/10 via-[#0066FF]/10 to-transparent p-6 border-b border-white/10">
@@ -205,7 +205,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 md:p-6 max-h-[65vh] overflow-y-auto">
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
               <motion.div
@@ -215,23 +215,24 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-[#00E5FF]/20 rounded-2xl flex items-center justify-center">
-                    <User className="w-6 h-6 text-[#00E5FF]" />
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-[#00E5FF]/20 rounded-xl md:rounded-2xl flex items-center justify-center">
+                    <User className="w-5 h-5 md:w-6 md:h-6 text-[#00E5FF]" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-black text-white">Dados Pessoais</h4>
-                    <p className="text-gray-400 text-sm">Informações básicas do atleta</p>
+                    <h4 className="text-lg md:text-xl font-black text-white">Dados Pessoais</h4>
+                    <p className="text-gray-400 text-xs md:text-sm">Informações básicas do atleta</p>
                   </div>
                 </div>
 
                 {/* Uploads de Imagem */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  {/* Foto de Perfil */}
                   <div>
                     <Label className="text-gray-400 text-xs uppercase tracking-wider mb-2 block flex items-center gap-2">
                       <Camera className="w-3 h-3" /> Foto de Perfil
                     </Label>
-                    <div className="relative aspect-square bg-white/5 border border-white/10 rounded-2xl overflow-hidden group cursor-pointer hover:border-[#00E5FF]/50 transition-colors">
+                    <div className="relative w-32 h-32 mx-auto bg-white/5 border border-white/10 rounded-2xl overflow-hidden group cursor-pointer hover:border-[#00E5FF]/50 transition-colors">
                       {formData.profile_picture_url ? (
                         <>
                           <img src={formData.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
@@ -242,7 +243,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       ) : (
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                           <Camera className="w-8 h-8 text-gray-500 mb-2" />
-                          <p className="text-xs text-gray-500">Clique para adicionar</p>
+                          <p className="text-xs text-gray-500 text-center px-2">Clique aqui</p>
                         </div>
                       )}
                       <input
@@ -255,14 +256,15 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                     </div>
                   </div>
 
+                  {/* Imagem de Capa */}
                   <div>
                     <Label className="text-gray-400 text-xs uppercase tracking-wider mb-2 block flex items-center gap-2">
-                      <Upload className="w-3 h-3" /> Foto Recortada (PNG)
+                      <Upload className="w-3 h-3" /> Imagem de Capa
                     </Label>
-                    <div className="relative aspect-square bg-white/5 border border-white/10 rounded-2xl overflow-hidden group cursor-pointer hover:border-[#00E5FF]/50 transition-colors">
-                      {formData.player_cutout_url ? (
+                    <div className="relative aspect-[16/9] bg-white/5 border border-white/10 rounded-2xl overflow-hidden group cursor-pointer hover:border-[#00E5FF]/50 transition-colors">
+                      {formData.cover_photo_url ? (
                         <>
-                          <img src={formData.player_cutout_url} alt="Cutout" className="w-full h-full object-contain" />
+                          <img src={formData.cover_photo_url} alt="Capa" className="w-full h-full object-cover" />
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                             <Upload className="w-8 h-8 text-white" />
                           </div>
@@ -270,13 +272,13 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       ) : (
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                           <Upload className="w-8 h-8 text-gray-500 mb-2" />
-                          <p className="text-xs text-gray-500 text-center px-2">PNG sem fundo</p>
+                          <p className="text-xs text-gray-500 text-center px-2">Adicione uma capa personalizada</p>
                         </div>
                       )}
                       <input
                         type="file"
-                        accept="image/png,image/*"
-                        onChange={(e) => handleImageUpload(e, 'player_cutout_url')}
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, 'cover_photo_url')}
                         className="absolute inset-0 opacity-0 cursor-pointer"
                         disabled={uploading}
                       />
@@ -285,15 +287,15 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 </div>
 
                 {/* Campos de Dados Pessoais */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                  <div className="col-span-1 md:col-span-2">
                     <Label className="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-2">
                       <User className="w-3 h-3" /> Nome Completo *
                     </Label>
                     <Input
                       value={formData.full_name}
                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                       placeholder="Digite seu nome completo"
                     />
                   </div>
@@ -306,7 +308,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       type="date"
                       value={formData.birth_date}
                       onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
@@ -318,7 +320,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.nationality}
                       onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
                       placeholder="Ex: 🇧🇷"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
@@ -330,7 +332,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="(00) 00000-0000"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
@@ -343,7 +345,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="seu@email.com"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
@@ -355,7 +357,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                       placeholder="Sua cidade"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
@@ -368,7 +370,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                       placeholder="UF"
                       maxLength={2}
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
                 </div>
@@ -383,17 +385,17 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-green-500/20 rounded-2xl flex items-center justify-center">
-                    <Activity className="w-6 h-6 text-green-500" />
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500/20 rounded-xl md:rounded-2xl flex items-center justify-center">
+                    <Activity className="w-5 h-5 md:w-6 md:h-6 text-green-500" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-black text-white">Dados Biométricos</h4>
-                    <p className="text-gray-400 text-sm">Medidas físicas do atleta</p>
+                    <h4 className="text-lg md:text-xl font-black text-white">Dados Biométricos</h4>
+                    <p className="text-gray-400 text-xs md:text-sm">Medidas físicas do atleta</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                   <div>
                     <Label className="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-2">
                       <Ruler className="w-3 h-3" /> Altura (cm)
@@ -403,7 +405,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.height}
                       onChange={(e) => setFormData({ ...formData, height: e.target.value })}
                       placeholder="175"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
@@ -416,7 +418,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.weight}
                       onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
                       placeholder="70"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
@@ -425,7 +427,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       <Target className="w-3 h-3" /> Pé Dominante
                     </Label>
                     <Select value={formData.foot} onValueChange={(v) => setFormData({ ...formData, foot: v })}>
-                      <SelectTrigger className="mt-2 bg-white/5 border-white/10 text-white rounded-xl">
+                      <SelectTrigger className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0A0A0A] border-white/10">
@@ -437,12 +439,12 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                   </div>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mt-6">
-                  <div className="flex items-start gap-3 text-sm text-gray-400">
-                    <Activity className="w-5 h-5 text-[#00E5FF] mt-0.5" />
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 mt-4 md:mt-6">
+                  <div className="flex items-start gap-2 md:gap-3 text-sm text-gray-400">
+                    <Activity className="w-4 h-4 md:w-5 md:h-5 text-[#00E5FF] mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-bold text-white mb-1">Por que esses dados são importantes?</p>
-                      <p className="text-xs leading-relaxed">
+                      <p className="font-bold text-white mb-1 text-xs md:text-sm">Por que esses dados são importantes?</p>
+                      <p className="text-[10px] md:text-xs leading-relaxed">
                         Clubes e olheiros utilizam essas informações para avaliar o perfil físico do atleta e 
                         compatibilidade com suas necessidades táticas.
                       </p>
@@ -460,23 +462,23 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center">
-                    <Briefcase className="w-6 h-6 text-purple-500" />
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500/20 rounded-xl md:rounded-2xl flex items-center justify-center">
+                    <Briefcase className="w-5 h-5 md:w-6 md:h-6 text-purple-500" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-black text-white">Carreira Profissional</h4>
-                    <p className="text-gray-400 text-sm">Histórico e conquistas</p>
+                    <h4 className="text-lg md:text-xl font-black text-white">Carreira Profissional</h4>
+                    <p className="text-gray-400 text-xs md:text-sm">Histórico e conquistas</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div>
                     <Label className="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-2">
                       <Target className="w-3 h-3" /> Posição Principal *
                     </Label>
                     <Select value={formData.position} onValueChange={(v) => setFormData({ ...formData, position: v })}>
-                      <SelectTrigger className="mt-2 bg-white/5 border-white/10 text-white rounded-xl">
+                      <SelectTrigger className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#0A0A0A] border-white/10">
@@ -499,11 +501,11 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.jersey_number}
                       onChange={(e) => setFormData({ ...formData, jersey_number: parseInt(e.target.value) })}
                       placeholder="10"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 md:col-span-2">
                     <Label className="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-2">
                       <TrendingUp className="w-3 h-3" /> Clube Atual
                     </Label>
@@ -511,37 +513,37 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                       value={formData.current_club_name}
                       onChange={(e) => setFormData({ ...formData, current_club_name: e.target.value })}
                       placeholder="Nome do clube"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 md:col-span-2">
                     <Label className="text-gray-400 text-xs uppercase tracking-wider">URL do Escudo do Clube</Label>
                     <Input
                       value={formData.current_club_crest_url || ""}
                       onChange={(e) => setFormData({ ...formData, current_club_crest_url: e.target.value })}
                       placeholder="https://..."
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
                     />
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 md:col-span-2">
                     <Label className="text-gray-400 text-xs uppercase tracking-wider">Destaques da Carreira</Label>
                     <Textarea
                       value={formData.career_highlights}
                       onChange={(e) => setFormData({ ...formData, career_highlights: e.target.value })}
                       placeholder="Ex: Artilheiro do campeonato sub-17, convocação para seleção estadual..."
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl min-h-[100px]"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl min-h-[80px] md:min-h-[100px]"
                     />
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 md:col-span-2">
                     <Label className="text-gray-400 text-xs uppercase tracking-wider">Principais Conquistas</Label>
                     <Textarea
                       value={formData.achievements}
                       onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
                       placeholder="Ex: Campeão municipal 2023, vice-campeão estadual 2024..."
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl min-h-[100px]"
+                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl min-h-[80px] md:min-h-[100px]"
                     />
                   </div>
                 </div>
@@ -556,13 +558,13 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center">
-                    <Video className="w-6 h-6 text-red-500" />
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-red-500/20 rounded-xl md:rounded-2xl flex items-center justify-center">
+                    <Video className="w-5 h-5 md:w-6 md:h-6 text-red-500" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-black text-white">Vídeo Destaque</h4>
-                    <p className="text-gray-400 text-sm">Mostre suas melhores jogadas</p>
+                    <h4 className="text-lg md:text-xl font-black text-white">Vídeo Destaque</h4>
+                    <p className="text-gray-400 text-xs md:text-sm">Mostre suas melhores jogadas</p>
                   </div>
                 </div>
 
@@ -606,12 +608,12 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                   />
                 </div>
 
-                <div className="bg-gradient-to-br from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/20 rounded-2xl p-6">
-                  <div className="flex items-start gap-3">
-                    <Video className="w-5 h-5 text-[#00E5FF] mt-0.5" />
+                <div className="bg-gradient-to-br from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/20 rounded-2xl p-4 md:p-6">
+                  <div className="flex items-start gap-2 md:gap-3">
+                    <Video className="w-4 h-4 md:w-5 md:h-5 text-[#00E5FF] mt-0.5 flex-shrink-0" />
                     <div className="text-sm">
-                      <p className="font-bold text-white mb-2">Dicas para um bom vídeo:</p>
-                      <ul className="space-y-1 text-gray-300 text-xs">
+                      <p className="font-bold text-white mb-2 text-xs md:text-sm">Dicas para um bom vídeo:</p>
+                      <ul className="space-y-1 text-gray-300 text-[10px] md:text-xs">
                         <li>• Mostre suas melhores jogadas e habilidades</li>
                         <li>• Vídeo com boa qualidade e iluminação</li>
                         <li>• Duração ideal: 1-3 minutos</li>
@@ -626,37 +628,39 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
         </div>
 
         {/* Footer com Navegação */}
-        <div className="p-6 border-t border-white/10 bg-white/5">
-          <div className="flex items-center justify-between gap-3">
+        <div className="p-4 md:p-6 border-t border-white/10 bg-white/5">
+          <div className="flex items-center justify-between gap-2 md:gap-3">
             <Button 
               onClick={prevStep}
               disabled={currentStep === 1}
-              className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 disabled:opacity-50"
+              className="flex items-center gap-1 md:gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 disabled:opacity-50 h-10 md:h-11 text-xs md:text-sm px-3 md:px-4"
             >
-              <ChevronLeft className="w-4 h-4" />
-              Anterior
+              <ChevronLeft className="w-3 h-3 md:w-4 md:h-4" />
+              <span className="hidden sm:inline">Anterior</span>
             </Button>
 
-            <div className="text-sm text-gray-400 font-medium">
-              Etapa {currentStep} de {steps.length}
+            <div className="text-xs md:text-sm text-gray-400 font-medium">
+              {currentStep}/{steps.length}
             </div>
 
             {currentStep < steps.length ? (
               <Button 
                 onClick={nextStep}
-                className="flex items-center gap-2 bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-bold"
+                className="flex items-center gap-1 md:gap-2 bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-bold h-10 md:h-11 text-xs md:text-sm px-3 md:px-4"
               >
-                Próximo
-                <ChevronRight className="w-4 h-4" />
+                <span className="hidden sm:inline">Próximo</span>
+                <span className="sm:hidden">Avançar</span>
+                <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
               </Button>
             ) : (
               <Button 
                 onClick={handleSave}
                 disabled={uploading}
-                className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold shadow-lg"
+                className="flex items-center gap-1 md:gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold shadow-lg h-10 md:h-11 text-xs md:text-sm px-3 md:px-4"
               >
-                <Save className="w-4 h-4" />
-                Salvar Perfil
+                <Save className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">Salvar Perfil</span>
+                <span className="sm:hidden">Salvar</span>
               </Button>
             )}
           </div>
