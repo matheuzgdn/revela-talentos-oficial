@@ -21,7 +21,7 @@ export default function MobileBottomNav({ onUploadClick }) {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0A0A0A]/95 backdrop-blur-xl border-t border-[#1a1a1a]">
-      <div className="flex items-center justify-around px-2 py-3 relative">
+      <div className="flex items-center justify-around px-2 py-2 relative">
         {navItems.map((item) => {
           if (item.isUpload) {
             return (
@@ -29,13 +29,12 @@ export default function MobileBottomNav({ onUploadClick }) {
                 key={item.id}
                 whileTap={{ scale: 0.85 }}
                 onClick={onUploadClick}
-                className="relative -mt-8"
+                className="relative -mt-6"
               >
-                <div className="w-16 h-16 bg-[#00E5FF] rounded-[20px] flex items-center justify-center shadow-lg shadow-[#00E5FF]/40 border-4 border-[#0A0A0A]">
-                  <Plus className="w-8 h-8 text-black" strokeWidth={3} />
+                <div className="w-12 h-12 bg-[#00E5FF] rounded-2xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/40 border-4 border-[#0A0A0A]">
+                  <Plus className="w-6 h-6 text-black" strokeWidth={3} />
                 </div>
-                {/* Glow effect */}
-                <div className="absolute inset-0 bg-[#00E5FF]/30 rounded-[20px] blur-xl -z-10" />
+                <div className="absolute inset-0 bg-[#00E5FF]/30 rounded-2xl blur-xl -z-10" />
               </motion.button>
             );
           }
@@ -46,18 +45,18 @@ export default function MobileBottomNav({ onUploadClick }) {
             <Link
               key={item.id}
               to={createPageUrl(item.path)}
-              className="flex flex-col items-center justify-center py-1 px-4 min-w-[56px]"
+              className="flex flex-col items-center justify-center py-0.5 px-3 min-w-[48px]"
             >
               <motion.div 
                 whileTap={{ scale: 0.85 }}
-                className={`relative p-2.5 rounded-2xl transition-all ${
+                className={`relative p-2 rounded-xl transition-all ${
                   active 
                     ? 'bg-[#00E5FF]/10' 
                     : ''
                 }`}
               >
                 <item.icon 
-                  className={`w-6 h-6 transition-colors ${
+                  className={`w-5 h-5 transition-colors ${
                     active 
                       ? 'text-[#00E5FF]' 
                       : 'text-[#666]'
@@ -66,11 +65,11 @@ export default function MobileBottomNav({ onUploadClick }) {
                 {active && (
                   <motion.div 
                     layoutId="navGlow"
-                    className="absolute inset-0 bg-[#00E5FF]/20 rounded-2xl blur-lg -z-10"
+                    className="absolute inset-0 bg-[#00E5FF]/20 rounded-xl blur-lg -z-10"
                   />
                 )}
               </motion.div>
-              <span className={`text-[10px] mt-1 font-bold uppercase tracking-wider ${
+              <span className={`text-[9px] font-bold uppercase tracking-wider ${
                 active 
                   ? 'text-[#00E5FF]' 
                   : 'text-[#444]'

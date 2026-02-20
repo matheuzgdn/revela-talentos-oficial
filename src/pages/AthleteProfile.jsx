@@ -126,312 +126,185 @@ export default function AthleteProfile() {
 
   return (
     <div className="min-h-screen bg-[#070A12] pb-24 md:pb-8">
-      {/* HERO SECTION - CINEMATOGRÁFICO NEON FUTEBOLÍSTICO */}
-      <section className="relative overflow-hidden min-h-[75vh]">
-        {/* Background - Campo com efeitos */}
-        <div className="absolute inset-0">
+      {/* HERO SECTION - PREMIUM MINIMALISTA */}
+      <section className="relative overflow-hidden pb-6">
+        {/* Background simples */}
+        <div className="absolute inset-0 h-[50vh]">
           <img 
             src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&h=800&fit=crop"
             alt="Campo"
             className="w-full h-full object-cover"
           />
-          {/* Overlay neon gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#00E5FF]/10 via-[#0A1628]/90 to-[#070A12]" />
-          
-          {/* Particle effects - estrelas neon */}
-          <div className="absolute inset-0">
-            {[...Array(15)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-1 h-1 bg-[#00E5FF] rounded-full"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 60}%`,
-                }}
-                animate={{
-                  opacity: [0.2, 1, 0.2],
-                  scale: [1, 1.5, 1],
-                }}
-                transition={{
-                  duration: 2 + Math.random() * 2,
-                  repeat: Infinity,
-                  delay: Math.random() * 2,
-                }}
-              />
-            ))}
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-[#070A12]" />
         </div>
 
-        {/* Scanning lines effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E5FF]/5 to-transparent h-32"
-          animate={{ y: ['-100%', '200%'] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-        />
-
         {/* Content */}
-        <div className="relative z-10 pt-4 pb-8">
-          {/* Top nav */}
-          <div className="flex items-center justify-between px-4 mb-6">
+        <div className="relative z-10 pt-3 px-4">
+          {/* Top nav minimalista */}
+          <div className="flex items-center justify-between mb-4">
             <motion.button
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => window.history.back()}
-              className="flex items-center gap-2 px-3 py-2 bg-black/60 backdrop-blur-xl border border-[#00E5FF]/30 rounded-full"
+              className="w-8 h-8 flex items-center justify-center"
             >
-              <ArrowLeft className="w-4 h-4 text-[#00E5FF]" />
-              <span className="text-xs font-black uppercase tracking-wider text-[#00E5FF]">BACK</span>
+              <ArrowLeft className="w-5 h-5 text-white" />
             </motion.button>
 
             <div className="flex gap-2">
               <motion.button
-                whileTap={{ scale: 0.9 }}
-                className="w-9 h-9 bg-black/60 backdrop-blur-xl border border-[#00E5FF]/30 rounded-full flex items-center justify-center"
+                whileTap={{ scale: 0.95 }}
+                className="w-8 h-8 flex items-center justify-center"
               >
-                <Share2 className="w-4 h-4 text-[#00E5FF]" />
+                <Share2 className="w-4 h-4 text-white" />
               </motion.button>
               <motion.button
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setShowEditModal(true)}
-                className="w-9 h-9 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-lg shadow-[#00E5FF]/50"
+                className="w-8 h-8 bg-[#00E5FF] rounded-full flex items-center justify-center"
               >
-                <Edit3 className="w-4 h-4 text-black" />
+                <Edit3 className="w-3.5 h-3.5 text-black" />
               </motion.button>
             </div>
           </div>
 
-          {/* Main content */}
-          <div className="px-4 text-center space-y-8">
-            {/* Logo com glow */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex justify-center"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 blur-2xl bg-[#00E5FF]/30" />
-                <img 
-                  src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" 
-                  alt="EC10" 
-                  className="relative h-10 md:h-12 w-auto"
-                />
-              </div>
-            </motion.div>
-
-            {/* Player Card - Moldura Futebolística FIFA Style */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, type: "spring" }}
-              className="flex justify-center"
-            >
-              <div className="relative">
-                {/* Outer glow layers - múltiplas camadas de neon */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-b from-[#00E5FF] to-[#0066FF] blur-3xl opacity-40"
-                  animate={{ scale: [1, 1.1, 1], opacity: [0.4, 0.6, 0.4] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                />
-                <motion.div 
-                  className="absolute inset-0 bg-[#00E5FF] blur-2xl opacity-30"
-                  animate={{ scale: [1.1, 1, 1.1], opacity: [0.3, 0.5, 0.3] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                
-                {/* Card container - formato hexagonal/futebolístico */}
-                <div className="relative">
-                  {/* Corner decorations - cantos estilo FIFA */}
-                  <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-[#00E5FF]" />
-                  <div className="absolute -top-2 -right-2 w-8 h-8 border-t-4 border-r-4 border-[#00E5FF]" />
-                  <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-4 border-l-4 border-[#00E5FF]" />
-                  <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-[#00E5FF]" />
-                  
-                  {/* Main frame */}
-                  <div className="relative p-1 bg-gradient-to-br from-[#00E5FF] via-[#0088FF] to-[#0066FF]" style={{
-                    clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)'
-                  }}>
-                    {/* Inner frame */}
-                    <div className="bg-black/80 backdrop-blur-sm p-1" style={{
-                      clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)'
-                    }}>
-                      {/* Image container */}
-                      <div className="relative w-40 h-40 md:w-48 md:h-48 overflow-hidden" style={{
-                        clipPath: 'polygon(10% 0%, 90% 0%, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0% 90%, 0% 10%)'
-                      }}>
-                        {user.profile_picture_url || user.player_cutout_url ? (
-                          <img 
-                            src={user.profile_picture_url || user.player_cutout_url}
-                            alt={user.full_name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 flex items-center justify-center">
-                            <span className="text-6xl font-black text-[#00E5FF]">
-                              {user.full_name?.charAt(0) || "A"}
-                            </span>
-                          </div>
-                        )}
-                        
-                        {/* Overlay scan effect */}
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00E5FF]/20 to-transparent"
-                          animate={{ y: ['-100%', '100%'] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Jersey number badge */}
-                  {user.jersey_number && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.5, type: "spring" }}
-                      className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-12 h-12 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center border-4 border-black shadow-lg shadow-[#00E5FF]/50"
-                    >
-                      <span className="text-xl font-black text-black">#{user.jersey_number}</span>
-                    </motion.div>
-                  )}
-                </div>
-
-                {/* Shadow under card */}
-                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-40 h-12 bg-black/80 blur-3xl" />
-              </div>
-            </motion.div>
-
-            {/* Player info */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="space-y-4 mt-8"
-            >
-              {/* Name with neon effect */}
-              <div className="relative inline-block">
-                <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight relative z-10" style={{
-                  textShadow: '0 0 20px rgba(0, 229, 255, 0.5), 0 0 40px rgba(0, 229, 255, 0.3)'
-                }}>
-                  {user.full_name || "SEU NOME"}
-                </h1>
-              </div>
-
-              {/* Position tag neon */}
-              <motion.div
-                animate={{ 
-                  boxShadow: [
-                    '0 0 20px rgba(0, 229, 255, 0.5)',
-                    '0 0 30px rgba(0, 229, 255, 0.8)',
-                    '0 0 20px rgba(0, 229, 255, 0.5)'
-                  ]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="inline-block px-6 py-2 bg-black/60 backdrop-blur-xl border-2 border-[#00E5FF] rounded-full"
-              >
-                <span className="text-[#00E5FF] text-sm md:text-base font-black uppercase tracking-[0.3em]">
-                  {user.position || "POSIÇÃO"}
-                </span>
-              </motion.div>
-
-              {/* Club info */}
-              {(user.current_club_name || user.current_club_crest_url || user.nationality) && (
-                <div className="flex items-center justify-center gap-3 text-gray-300">
-                  {user.current_club_crest_url && (
-                    <div className="w-8 h-8 bg-white/10 rounded-lg p-1 backdrop-blur-sm border border-[#00E5FF]/20">
-                      <img src={user.current_club_crest_url} alt="Club" className="w-full h-full object-contain" />
-                    </div>
-                  )}
-                  {user.current_club_name && (
-                    <span className="text-sm font-bold">{user.current_club_name}</span>
-                  )}
-                  {user.nationality && (
-                    <span className="text-2xl">{user.nationality}</span>
-                  )}
-                </div>
-              )}
-
-              {/* Level badge */}
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Badge className={`bg-gradient-to-r ${levelBadge.color} text-white border-0 font-black uppercase text-xs px-5 py-2 shadow-2xl`} style={{
-                  boxShadow: '0 0 30px rgba(0, 229, 255, 0.6)'
-                }}>
-                  <motion.span
-                    animate={{ opacity: [1, 0.7, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    ⚡ {levelBadge.label}
-                  </motion.span>
-                </Badge>
-              </motion.div>
-            </motion.div>
+          {/* Logo pequeno */}
+          <div className="flex justify-center mb-4">
+            <img 
+              src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" 
+              alt="EC10" 
+              className="h-8 w-auto opacity-90"
+            />
           </div>
-        </div>
 
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#070A12] via-[#070A12]/80 to-transparent pointer-events-none z-20" />
+          {/* Player Card Premium */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center mb-4"
+          >
+            <div className="relative">
+              {/* Moldura com cantos */}
+              <div className="relative p-0.5 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-2xl">
+                <div className="bg-black rounded-[14px] p-1">
+                  <div className="w-32 h-32 rounded-xl overflow-hidden">
+                    {user.profile_picture_url || user.player_cutout_url ? (
+                      <img 
+                        src={user.profile_picture_url || user.player_cutout_url}
+                        alt={user.full_name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 flex items-center justify-center">
+                        <span className="text-4xl font-black text-[#00E5FF]">
+                          {user.full_name?.charAt(0) || "A"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Cantos decorativos */}
+              <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-[#00E5FF]" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-[#00E5FF]" />
+              <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-[#00E5FF]" />
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-[#00E5FF]" />
+            </div>
+          </motion.div>
+
+          {/* Nome */}
+          <h1 className="text-2xl font-black text-white text-center mb-3">
+            {user.full_name || "SEU NOME"}
+          </h1>
+
+          {/* Posição badge */}
+          <div className="flex justify-center mb-4">
+            <div className="px-4 py-1.5 bg-[#00E5FF]/20 border border-[#00E5FF] rounded-full backdrop-blur-sm">
+              <span className="text-[#00E5FF] text-xs font-black uppercase tracking-wider">
+                {user.position || "POSIÇÃO"}
+              </span>
+            </div>
+          </div>
+
+          {/* Info grid - estilo campo de futebol */}
+          <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto mb-4">
+            {/* Idade */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center backdrop-blur-sm">
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Idade</p>
+              <p className="text-xl font-black text-white">{age || "--"}</p>
+            </div>
+            
+            {/* Nacionalidade */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center backdrop-blur-sm">
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">País</p>
+              <p className="text-2xl">{user.nationality || "🌍"}</p>
+            </div>
+            
+            {/* Jogos */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center backdrop-blur-sm">
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Jogos</p>
+              <p className="text-xl font-black text-white">{totalGames}</p>
+            </div>
+          </div>
+
+          {/* Clube atual */}
+          {user.current_club_name && (
+            <div className="bg-white/5 border border-white/10 rounded-xl p-3 max-w-sm mx-auto mb-3 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                {user.current_club_crest_url && (
+                  <div className="w-10 h-10 bg-white/5 rounded-lg p-1.5 flex-shrink-0">
+                    <img src={user.current_club_crest_url} alt="Clube" className="w-full h-full object-contain" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <p className="text-[9px] text-gray-400 uppercase tracking-wider font-bold">Clube Atual</p>
+                  <p className="text-white font-bold text-sm">{user.current_club_name}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Clubes anteriores */}
+          {user.previous_clubs && user.previous_clubs.length > 0 && (
+            <div className="bg-white/5 border border-white/10 rounded-xl p-3 max-w-sm mx-auto backdrop-blur-sm">
+              <p className="text-[9px] text-gray-400 uppercase tracking-wider font-bold mb-2">Clubes Anteriores</p>
+              <div className="flex flex-wrap gap-2">
+                {user.previous_clubs.map((club, idx) => (
+                  <span key={idx} className="text-xs text-gray-300 bg-white/5 px-2 py-1 rounded-lg">
+                    {club}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </section>
 
       {/* STATS CARDS */}
-      <section className="px-3 md:px-4 -mt-4 mb-4 md:mb-6">
-        <div className="grid grid-cols-3 gap-2 md:gap-3 max-w-4xl mx-auto">
-          <StatCard 
-            label="Idade" 
-            value={age || "--"} 
-            delay={0}
-          />
-          <StatCard 
-            label="Jogos" 
-            value={totalGames} 
-            delay={0.1}
-          />
+      <section className="px-3 md:px-4 mb-3 md:mb-4">
+        <div className="grid grid-cols-2 gap-2 max-w-sm mx-auto">
           <StatCard 
             label="Gols" 
             value={totalGoals} 
-            delay={0.2}
+            delay={0}
+          />
+          <StatCard 
+            label="Pontos" 
+            value={user.total_points || 0} 
+            delay={0.1}
           />
         </div>
       </section>
 
-      {/* TOTAL POINTS CARD */}
-      <section className="px-3 md:px-4 mb-4 md:mb-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="max-w-4xl mx-auto bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#00E5FF]/30 rounded-[20px] md:rounded-[24px] p-4 md:p-6 shadow-xl shadow-[#00E5FF]/10"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 md:gap-4">
-              <div className="w-12 md:w-14 h-12 md:h-14 bg-[#00E5FF]/20 rounded-xl md:rounded-2xl flex items-center justify-center flex-shrink-0">
-                <Star className="w-6 md:w-7 h-6 md:h-7 text-[#00E5FF]" fill="#00E5FF" />
-              </div>
-              <div>
-                <p className="text-gray-400 text-[10px] md:text-xs uppercase tracking-wider font-bold mb-1">Pontuação Total</p>
-                <motion.p 
-                  className="text-2xl md:text-3xl font-black text-[#00E5FF]"
-                  initial={{ scale: 1 }}
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {user.total_points?.toLocaleString() || "0"}
-                </motion.p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </section>
+
 
       {/* TABS NAVIGATION */}
-      <section className="px-3 md:px-4 mb-4 md:mb-6">
-        <div className="flex gap-2 overflow-x-auto no-scrollbar max-w-4xl mx-auto pb-2">
+      <section className="px-3 mb-3">
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar max-w-sm mx-auto">
           {[
-            { id: "overview", label: "Visão Geral", icon: Activity },
-            { id: "assessoria", label: "Assessoria", icon: Calendar },
+            { id: "overview", label: "Geral", icon: Activity },
+            { id: "assessoria", label: "Diário", icon: Calendar },
             { id: "tasks", label: "Tarefas", icon: CheckCircle2 },
             { id: "trophies", label: "Troféus", icon: Trophy },
             { id: "stats", label: "FIFA", icon: TrendingUp }
@@ -440,22 +313,22 @@ export default function AthleteProfile() {
               key={tab.id}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 rounded-full font-bold text-xs md:text-sm whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1 px-3 py-2 rounded-full font-bold text-[10px] whitespace-nowrap transition-all ${
                 activeTab === tab.id
-                  ? 'bg-[#00E5FF] text-black shadow-lg shadow-[#00E5FF]/40'
+                  ? 'bg-[#00E5FF] text-black'
                   : 'bg-white/5 text-gray-400 border border-white/10'
               }`}
             >
-              <tab.icon className="w-3.5 md:w-4 h-3.5 md:h-4" />
-              <span className="hidden sm:inline">{tab.label}</span>
+              <tab.icon className="w-3 h-3" />
+              <span>{tab.label}</span>
             </motion.button>
           ))}
         </div>
       </section>
 
       {/* TAB CONTENT */}
-      <section className="px-3 md:px-4">
-        <div className="max-w-4xl mx-auto">
+      <section className="px-3">
+        <div className="max-w-sm mx-auto">
           <AnimatePresence mode="wait">
             {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} onCheckinClick={() => setShowCheckinModal(true)} onAssessClick={() => setActiveTab("assessoria")} />}
             {activeTab === "assessoria" && <AssessoriaTab userId={user.id} dailyCheckins={dailyCheckins} weeklyAssessments={weeklyAssessments} onUpdate={loadUserData} onCheckinClick={() => setShowCheckinModal(true)} />}
@@ -495,20 +368,14 @@ function StatCard({ label, value, delay }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      whileHover={{ scale: 1.02 }}
-      className="bg-white/5 backdrop-blur-xl border border-[#00E5FF]/15 rounded-[16px] md:rounded-[22px] p-3 md:p-4 text-center"
+      className="bg-white/5 border border-white/10 rounded-xl p-2.5 text-center backdrop-blur-sm"
     >
-      <p className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-1 md:mb-2">
+      <p className="text-[8px] uppercase tracking-wider text-gray-400 font-bold mb-0.5">
         {label}
       </p>
-      <motion.p 
-        className="text-2xl md:text-[32px] font-black text-white"
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", delay: delay + 0.2 }}
-      >
+      <p className="text-xl font-black text-white">
         {value}
-      </motion.p>
+      </p>
     </motion.div>
   );
 }
