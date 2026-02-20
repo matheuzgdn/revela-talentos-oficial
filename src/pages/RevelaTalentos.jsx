@@ -100,18 +100,28 @@ export default function RevelaTalentosPage() {
     { id: "preparacao_fisica", name: "Físico" },
   ], []);
 
-  const featuredContents = useMemo(() => contents.filter(c => c.is_featured).slice(0, 5), [contents]);
   const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
   
-  // Hero contents: featured + mentorias gravadas (lives ended)
+  // Hero: EC10 destaque + mentorias gravadas recentes
   const heroContents = useMemo(() => {
-    const featured = contents.filter(c => c.is_featured);
-    const mentoriasGravadas = contents.filter(c => 
-      c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended')
-    );
-    const combined = [...featured, ...mentoriasGravadas.filter(m => !featured.some(f => f.id === m.id))];
-    return combined.slice(0, 10);
+    const ec10Hero = {
+      id: 'ec10-hero',
+      title: 'EC10 TALENTOS',
+      thumbnail_url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200',
+      video_url: 'https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4',
+      category: 'hero',
+      is_featured: true
+    };
+    
+    const mentoriasRecentes = contents
+      .filter(c => c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended'))
+      .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
+      .slice(0, 9);
+    
+    return [ec10Hero, ...mentoriasRecentes];
   }, [contents]);
+
+  const planosContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
   
   const filteredContents = useMemo(() => {
     if (activeCategory === "all") return regularContents;
@@ -180,119 +190,114 @@ export default function RevelaTalentosPage() {
       <motion.header 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-40 bg-[#0A0A0A]/90 backdrop-blur-xl px-4 py-4 md:px-6"
+        className="sticky top-0 z-40 bg-[#0A0A0A]/95 backdrop-blur-2xl px-4 py-5 md:px-6 border-b border-[#1a1a1a]"
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
-            <p className="text-[#666] text-xs font-medium">Hello</p>
-            <h1 className="text-lg font-bold text-white">{user?.full_name || "Atleta"}</h1>
+            <p className="text-[#666] text-[10px] font-bold uppercase tracking-widest mb-0.5">Olá</p>
+            <h1 className="text-xl font-black text-white tracking-tight">{user?.full_name || "Atleta"}</h1>
           </div>
           <motion.button 
             whileTap={{ scale: 0.9 }}
-            className="w-11 h-11 bg-[#111111] rounded-full flex items-center justify-center border border-[#222] relative"
+            className="w-12 h-12 bg-[#111111] rounded-2xl flex items-center justify-center border border-[#222] relative hover:border-[#00E5FF]/50 transition-colors shadow-lg"
           >
             <Bell className="w-5 h-5 text-white" />
-            <div className="absolute top-2 right-2 w-2 h-2 bg-[#00E5FF] rounded-full" />
+            <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#00E5FF] rounded-full shadow-lg shadow-[#00E5FF]/50 animate-pulse" />
           </motion.button>
         </div>
       </motion.header>
 
-      {/* HERO - Carousel com Mentorias */}
-      <section className="px-4 md:px-6 py-4">
+      {/* HERO - EC10 + Mentorias Recentes */}
+      <section className="px-4 md:px-6 pt-2 pb-6">
         <div className="max-w-7xl mx-auto">
-          {heroContents.length > 0 ? (
-            <>
-              <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlideIndex}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.6 }}
+              onClick={() => activeSlide?.id !== 'ec10-hero' && handleContentSelect(activeSlide)}
+              className="relative aspect-[4/3] md:aspect-[16/9] rounded-[24px] overflow-hidden cursor-pointer group shadow-2xl"
+            >
+              {activeSlide?.id === 'ec10-hero' ? (
+                <video
+                  src={activeSlide.video_url}
+                  autoPlay muted loop playsInline
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <img 
+                  src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
+                  alt={activeSlide?.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              )}
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/20 to-transparent" />
+              
+              {/* Neon glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/10 via-transparent to-[#0066FF]/10 opacity-60" />
+              
+              {/* Title with tech effect */}
+              <div className="absolute bottom-6 left-6 right-6">
                 <motion.div
-                  key={currentSlideIndex}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  onClick={() => activeSlide && handleContentSelect(activeSlide)}
-                  className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden cursor-pointer group"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="space-y-2"
                 >
-                  <img 
-                    src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
-                    alt={activeSlide?.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-                  
-                  {/* Title Overlay at Bottom */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <motion.h2 
-                      initial={{ y: 10, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      className="text-2xl md:text-4xl font-black text-white tracking-tight"
-                    >
-                      {activeSlide?.title}
-                    </motion.h2>
-                  </div>
+                  <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl">
+                    {activeSlide?.title}
+                  </h2>
+                  {activeSlide?.id !== 'ec10-hero' && (
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/40 backdrop-blur-sm">
+                        MENTORIA
+                      </Badge>
+                      <Play className="w-4 h-4 text-[#00E5FF]" />
+                    </div>
+                  )}
                 </motion.div>
-              </AnimatePresence>
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
-              {/* Carousel Dots */}
-              <div className="flex justify-center gap-2 mt-4">
-                {heroContents.slice(0, 5).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlideIndex(index)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      currentSlideIndex === index 
-                        ? 'w-6 bg-[#00E5FF]' 
-                        : 'w-2 bg-[#444]'
-                    }`}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            /* Default Hero when no content */
-            <div className="relative aspect-[4/3] md:aspect-[16/9] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#222]">
-              <video
-                src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-                autoPlay muted loop playsInline
-                className="w-full h-full object-cover"
+          {/* Carousel Indicators */}
+          <div className="flex justify-center gap-2 mt-5">
+            {heroContents.slice(0, 10).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlideIndex(index)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  currentSlideIndex === index 
+                    ? 'w-8 bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50' 
+                    : 'w-1.5 bg-[#333] hover:bg-[#555]'
+                }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4">
-                <h2 className="text-2xl md:text-4xl font-black text-white">REVELA TALENTOS</h2>
-              </div>
-              <div className="flex justify-center gap-2 absolute bottom-[-20px] left-0 right-0">
-                <div className="w-2 h-2 rounded-full bg-[#00E5FF]" />
-                <div className="w-2 h-2 rounded-full bg-[#444]" />
-                <div className="w-2 h-2 rounded-full bg-[#444]" />
-              </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="px-4 md:px-6 py-4">
+      <section className="px-4 md:px-6 py-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
             {categories.map((cat, index) => (
               <motion.button
                 key={cat.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.04 }}
                 onClick={() => setActiveCategory(cat.id)}
-                className="relative whitespace-nowrap"
+                className={`relative whitespace-nowrap px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${
+                  activeCategory === cat.id 
+                    ? 'bg-[#00E5FF] text-black shadow-lg shadow-[#00E5FF]/40' 
+                    : 'bg-[#111111] text-[#666] border border-[#222] hover:border-[#00E5FF]/50 hover:text-white'
+                }`}
               >
-                <span className={`text-sm font-medium transition-colors ${
-                  activeCategory === cat.id ? 'text-white' : 'text-[#666]'
-                }`}>
-                  {cat.name}
-                </span>
-                {activeCategory === cat.id && (
-                  <motion.div 
-                    layoutId="categoryIndicator"
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#00E5FF] rounded-full shadow-lg shadow-[#00E5FF]/50"
-                  />
-                )}
+                {cat.name}
               </motion.button>
             ))}
           </div>
@@ -303,9 +308,11 @@ export default function RevelaTalentosPage() {
       {continueWatchingContents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white">Continue Watching</h3>
-              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors">View All</button>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">Continue Assistindo</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                Ver Todos <ChevronRight className="w-3 h-3" />
+              </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {continueWatchingContents.map((content, index) => (
@@ -326,9 +333,11 @@ export default function RevelaTalentosPage() {
       {top10Contents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white">🔥 Top Trending</h3>
-              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors">View All</button>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">🔥 Top 10 Mais Assistidos</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                Ver Todos <ChevronRight className="w-3 h-3" />
+              </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {top10Contents.map((content, index) => (
@@ -346,17 +355,44 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
+      {/* Planos Section */}
+      {planosContents.length > 0 && (
+        <section className="px-4 md:px-6 py-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tight">Nossos Planos</h3>
+                <p className="text-[#666] text-xs mt-1">Escolha o melhor para sua carreira</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-[#00E5FF]" />
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {planosContents.map((plano, index) => (
+                <PlanCard 
+                  key={plano.id} 
+                  plano={plano} 
+                  index={index}
+                  onClick={() => handleContentSelect(plano)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* All Content - Carousel Style */}
       <section className="px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-white">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-lg font-black text-white tracking-tight">
               {activeCategory === "all" ? "Conteúdos" : categories.find(c => c.id === activeCategory)?.name}
             </h3>
-            <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors">View All</button>
+            <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+              Ver Todos <ChevronRight className="w-3 h-3" />
+            </button>
           </div>
           
-          {/* Always Carousel Style */}
           <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
             {filteredContents.map((content, index) => (
               <ContentCard 
@@ -383,36 +419,42 @@ export default function RevelaTalentosPage() {
   );
 }
 
-// Content Card Component - Compact Carousel Style
+// Content Card Component - Modern with Title Inside
 function ContentCard({ content, index, onClick, progress, showRank, rank }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.03 }}
-      whileTap={{ scale: 0.95 }}
+      transition={{ delay: index * 0.02 }}
+      whileTap={{ scale: 0.97 }}
       onClick={onClick}
-      className="relative flex-shrink-0 cursor-pointer group w-[140px] md:w-[160px]"
+      className="relative flex-shrink-0 cursor-pointer group w-[150px] md:w-[180px]"
     >
-      <div className="relative aspect-[2/3] rounded-[12px] overflow-hidden bg-[#111111]">
+      <div className="relative aspect-[2/3] rounded-[16px] overflow-hidden bg-[#111111] border border-[#222] shadow-lg hover:shadow-[#00E5FF]/20 transition-all duration-300">
         <img 
           src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"}
           alt={content.title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
+        
+        {/* Dark gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent opacity-90" />
+        
+        {/* Neon accent on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/0 to-[#0066FF]/0 group-hover:from-[#00E5FF]/10 group-hover:to-[#0066FF]/10 transition-all duration-300" />
         
         {/* Rank Badge */}
         {showRank && (
-          <div className="absolute top-2 left-2 w-6 h-6 bg-[#00E5FF] rounded-md flex items-center justify-center">
-            <span className="text-[10px] font-black text-black">{rank}</span>
+          <div className="absolute top-3 left-3 w-8 h-8 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/50">
+            <span className="text-xs font-black text-black">{rank}</span>
           </div>
         )}
 
         {/* Progress Bar */}
         {progress && progress > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#333]">
+          <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#222]">
             <div 
-              className="h-full bg-[#00E5FF]"
+              className="h-full bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -420,14 +462,73 @@ function ContentCard({ content, index, onClick, progress, showRank, rank }) {
 
         {/* Duration Badge */}
         {content.duration && (
-          <div className="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/70 rounded text-[9px] text-white font-medium">
-            {content.duration}:00
+          <div className="absolute top-3 right-3 px-2 py-1 bg-black/80 backdrop-blur-sm rounded-lg border border-[#333]">
+            <span className="text-[10px] text-white font-bold">{content.duration}min</span>
           </div>
         )}
+
+        {/* Title Inside Card - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
+          <h4 className="text-white font-bold text-sm leading-tight line-clamp-2 drop-shadow-lg">
+            {content.title}
+          </h4>
+        </div>
+
+        {/* Play icon on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="w-14 h-14 bg-[#00E5FF]/90 rounded-full flex items-center justify-center backdrop-blur-sm shadow-2xl shadow-[#00E5FF]/50">
+            <Play className="w-6 h-6 text-black fill-black ml-1" />
+          </div>
+        </div>
       </div>
-      
-      {/* Title Below Card */}
-      <h4 className="text-white font-medium text-xs mt-2 line-clamp-1">{content.title}</h4>
+    </motion.div>
+  );
+}
+
+// Plan Card Component - Distinct Design
+function PlanCard({ plano, index, onClick }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="relative flex-shrink-0 cursor-pointer group w-[280px] md:w-[320px]"
+    >
+      <div className="relative aspect-[16/10] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 via-[#0066FF]/20 to-[#0033FF]/20 border-2 border-[#00E5FF]/30 shadow-xl hover:shadow-[#00E5FF]/40 transition-all duration-300">
+        <img 
+          src={plano.thumbnail_url || "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600"}
+          alt={plano.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
+        
+        {/* Neon glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/20 via-transparent to-[#0066FF]/20 opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+        
+        {/* Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+          <Badge className="mb-3 bg-[#00E5FF] text-black font-black text-[10px] uppercase tracking-wider">
+            Plano
+          </Badge>
+          <h4 className="text-white font-black text-xl leading-tight mb-2 drop-shadow-lg">
+            {plano.title}
+          </h4>
+          {plano.description && (
+            <p className="text-[#999] text-xs line-clamp-2">
+              {plano.description}
+            </p>
+          )}
+        </div>
+
+        {/* Arrow icon */}
+        <div className="absolute top-4 right-4 w-10 h-10 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center border border-[#00E5FF]/30 group-hover:bg-[#00E5FF] group-hover:border-[#00E5FF] transition-all duration-300">
+          <ChevronRight className="w-5 h-5 text-[#00E5FF] group-hover:text-black transition-colors" />
+        </div>
+      </div>
     </motion.div>
   );
 }
