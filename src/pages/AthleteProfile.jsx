@@ -7,6 +7,7 @@ import {
   Clock, Activity, Heart, Droplet, Brain, Users,
   ChevronRight, Plus, Star, Flame, Shield
 } from "lucide-react";
+import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -430,6 +431,51 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
           </div>
         </div>
       )}
+
+      {/* Seletiva Card Destaque */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2 }}
+        className="relative overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 via-[#0066FF]/20 to-[#00E5FF]/20 border-2 border-[#00E5FF] rounded-2xl p-4"
+      >
+        {/* Glow effect */}
+        <motion.div
+          className="absolute inset-0 bg-[#00E5FF]/10"
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+        
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-[#00E5FF] rounded-xl flex items-center justify-center">
+                <Star className="w-5 h-5 text-black" />
+              </div>
+              <div>
+                <h4 className="text-white font-black text-sm">Seletiva Online</h4>
+                <p className="text-[#00E5FF] text-[10px] font-bold">VAGAS LIMITADAS</p>
+              </div>
+            </div>
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="w-2 h-2 bg-red-500 rounded-full"
+            />
+          </div>
+          
+          <p className="text-gray-300 text-xs mb-3">
+            Participe da nossa próxima seletiva e seja visto por clubes profissionais
+          </p>
+          
+          <Button 
+            onClick={() => window.location.href = createPageUrl("SeletivaOnline")}
+            className="w-full bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-black text-sm"
+          >
+            INSCREVER-SE AGORA
+          </Button>
+        </div>
+      </motion.div>
 
       {/* Quick actions */}
       <div className="grid grid-cols-2 gap-3">
