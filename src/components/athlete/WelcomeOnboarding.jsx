@@ -199,19 +199,25 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
       gradient: "from-indigo-500 to-purple-500",
       field: "nationality",
       content: (
-        <Select value={formData.nationality} onValueChange={(v) => setFormData({ ...formData, nationality: v })}>
-          <SelectTrigger className="bg-white/5 border-2 border-[#00E5FF]/30 text-white rounded-2xl h-14 text-3xl text-center hover:border-[#00E5FF]">
-            <SelectValue placeholder="Selecione sua bandeira" />
-          </SelectTrigger>
-          <SelectContent className="bg-[#0A1A2A] border-2 border-[#00E5FF]/50">
-            {countries.map(country => (
-              <SelectItem key={country.code} value={country.code} className="text-white text-lg py-3 cursor-pointer hover:bg-[#00E5FF]/20">
-                <span className="text-3xl mr-3">{country.code}</span>
-                <span>{country.name}</span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="grid grid-cols-3 gap-3">
+          {countries.map(country => (
+            <motion.button
+              key={country.code}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setFormData({ ...formData, nationality: country.code })}
+              className={`p-4 rounded-2xl border-2 transition-all ${
+                formData.nationality === country.code
+                  ? 'bg-gradient-to-br from-[#00E5FF] to-[#0066FF] border-[#00E5FF] shadow-xl shadow-[#00E5FF]/50'
+                  : 'bg-white/5 border-white/10 hover:border-[#00E5FF]/50'
+              }`}
+            >
+              <div className="text-5xl mb-1">{country.code}</div>
+              <div className={`text-[10px] font-bold ${formData.nationality === country.code ? 'text-black' : 'text-white'}`}>
+                {country.name}
+              </div>
+            </motion.button>
+          ))}
+        </div>
       )
     },
     {
