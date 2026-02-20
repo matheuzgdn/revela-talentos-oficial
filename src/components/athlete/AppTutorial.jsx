@@ -36,10 +36,19 @@ const tutorialSteps = [
 
 export default function AppTutorial({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [hasSeenTutorial, setHasSeenTutorial] = useState(false);
   const currentStepData = tutorialSteps[currentStep];
 
   useEffect(() => {
-    if (isOpen) {
+    const tutorialCompleted = localStorage.getItem('tutorial_completed');
+    if (tutorialCompleted === 'true') {
+      setHasSeenTutorial(true);
+      onClose();
+    }
+  }, [onClose]);
+
+  useEffect(() => {
+    if (isOpen && !hasSeenTutorial) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -47,7 +56,7 @@ export default function AppTutorial({ isOpen, onClose }) {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, hasSeenTutorial]);
 
   const handleNext = () => {
     if (currentStep < tutorialSteps.length - 1) {
@@ -73,7 +82,7 @@ export default function AppTutorial({ isOpen, onClose }) {
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || hasSeenTutorial) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
