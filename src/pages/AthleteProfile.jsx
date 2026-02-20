@@ -301,31 +301,43 @@ export default function AthleteProfile() {
 
 
 
-      {/* TABS NAVIGATION */}
+      {/* FERRAMENTAS */}
       <section className="px-3 mb-3">
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar max-w-sm mx-auto">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar max-w-sm mx-auto">
           {[
             { id: "overview", label: "Geral", icon: Activity },
             { id: "performance", label: "Performance", icon: TrendingUp },
             { id: "assessoria", label: "Diário", icon: Calendar },
             { id: "tasks", label: "Tarefas", icon: CheckCircle2 },
-            { id: "trophies", label: "Troféus", icon: Trophy },
-            { id: "stats", label: "FIFA", icon: TrendingUp }
+            { id: "trophies", label: "Troféus", icon: Trophy }
           ].map((tab) => (
             <motion.button
               key={tab.id}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1 px-3 py-2 rounded-full font-bold text-[10px] whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap transition-all ${
                 activeTab === tab.id
                   ? 'bg-[#00E5FF] text-black'
-                  : 'bg-white/5 text-gray-400 border border-white/10'
+                  : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
               }`}
             >
-              <tab.icon className="w-3 h-3" />
+              <tab.icon className="w-4 h-4" />
               <span>{tab.label}</span>
             </motion.button>
           ))}
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setActiveTab("stats")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap transition-all ${
+              activeTab === "stats"
+                ? 'bg-[#00E5FF] text-black'
+                : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10'
+            }`}
+          >
+            <ChevronRight className="w-4 h-4" />
+            <span>Ver mais</span>
+          </motion.button>
         </div>
       </section>
 
