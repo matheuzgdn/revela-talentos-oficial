@@ -16,6 +16,8 @@ import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import VideoUploadModal from "@/components/mobile/VideoUploadModal";
 import EditProfileModal from "@/components/athlete/EditProfileModal";
 import DailyCheckinModal from "@/components/athlete/DailyCheckinModal";
+import WeeklyAssessmentChat from "@/components/athlete/WeeklyAssessmentChat";
+import WeeklyAssessmentNotification from "@/components/athlete/WeeklyAssessmentNotification";
 
 export default function AthleteProfile() {
   const [user, setUser] = useState(null);
@@ -23,6 +25,7 @@ export default function AthleteProfile() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
+  const [showWeeklyAssessment, setShowWeeklyAssessment] = useState(false);
   const [dailyCheckins, setDailyCheckins] = useState([]);
   const [weeklyAssessments, setWeeklyAssessments] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -31,6 +34,18 @@ export default function AthleteProfile() {
 
   useEffect(() => {
     loadUserData();
+    
+    // Listener para abrir upload modal via evento
+    const handleOpenUpload = () => setShowUploadModal(true);
+    const handleOpenWeekly = () => setShowWeeklyAssessment(true);
+    
+    window.addEventListener('openUploadModal', handleOpenUpload);
+    window.addEventListener('openWeeklyAssessment', handleOpenWeekly);
+    
+    return () => {
+      window.removeEventListener('openUploadModal', handleOpenUpload);
+      window.removeEventListener('openWeeklyAssessment', handleOpenWeekly);
+    };
   }, []);
 
   const loadUserData = async () => {
@@ -335,6 +350,17 @@ export default function AthleteProfile() {
         userId={user?.id}
         onComplete={loadUserData}
       />
+      <WeeklyAssessmentChat
+        isOpen={showWeeklyAssessment}
+        onClose={() => setShowWeeklyAssessment(false)}
+        userId={user?.id}
+        userName={user?.full_name?.split(' ')[0] || 'Atleta'}
+        onComplete={loadUserData}
+      />
+      <WeeklyAssessmentNotification
+        user={user}
+        onOpen={() => setShowWeeklyAssessment(true)}
+      />
     </div>
   );
 }
@@ -505,9 +531,14 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
 
           <motion.button
             whileTap={{ scale: 0.95 }}
-            onClick={() => onNavigate("assessoria")}
-            className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-2xl p-3 text-center"
+            onClick={() => {
+              // Abrir chat de assessoria semanal
+              const event = new CustomEvent('openWeeklyAssessment');
+              window.dispatchEvent(event);
+            }}
+            className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-2xl p-3 text-center relative"
           >
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
             <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <Target className="w-5 h-5 text-cyan-400" />
             </div>
