@@ -5,7 +5,8 @@ import {
   ChevronRight, Star, Trophy, Target, Zap,
   User, Calendar, Globe, MapPin, Phone, Mail,
   Ruler, Activity, Award, TrendingUp, Video,
-  Camera, Upload
+  Camera, Upload, Shield, Navigation, Footprints, 
+  Gauge, Crosshair, Flame
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,17 +103,26 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
             Complete seu perfil em poucos passos e comece sua jornada rumo ao sucesso no futebol! 🚀
           </p>
           <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3">
-              <Target className="w-6 h-6 text-[#00E5FF] mx-auto mb-2" />
-              <p className="text-xs text-gray-400">Defina metas</p>
+            <div className="relative bg-white/5 border border-[#00E5FF]/30 rounded-xl p-3 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/10 to-transparent" />
+              <div className="relative w-10 h-10 mx-auto mb-2 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center">
+                <Target className="w-5 h-5 text-white" />
+              </div>
+              <p className="relative text-xs text-[#00E5FF] font-bold">Defina metas</p>
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3">
-              <TrendingUp className="w-6 h-6 text-green-400 mx-auto mb-2" />
-              <p className="text-xs text-gray-400">Evolua</p>
+            <div className="relative bg-white/5 border border-green-500/30 rounded-xl p-3 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent" />
+              <div className="relative w-10 h-10 mx-auto mb-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-white" />
+              </div>
+              <p className="relative text-xs text-green-400 font-bold">Evolua</p>
             </div>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3">
-              <Zap className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
-              <p className="text-xs text-gray-400">Destaque-se</p>
+            <div className="relative bg-white/5 border border-yellow-500/30 rounded-xl p-3 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-transparent" />
+              <div className="relative w-10 h-10 mx-auto mb-2 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <p className="relative text-xs text-yellow-400 font-bold">Destaque-se</p>
             </div>
           </div>
         </motion.div>
@@ -231,29 +241,48 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
       content: (
         <div className="grid grid-cols-2 gap-3">
           {[
-            { value: "goleiro", label: "Goleiro", emoji: "🧤" },
-            { value: "zagueiro", label: "Zagueiro", emoji: "🛡️" },
-            { value: "lateral", label: "Lateral", emoji: "🏃" },
-            { value: "volante", label: "Volante", emoji: "⚙️" },
-            { value: "meia", label: "Meia", emoji: "🎯" },
-            { value: "atacante", label: "Atacante", emoji: "⚡" }
-          ].map(pos => (
-            <motion.button
-              key={pos.value}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setFormData({ ...formData, position: pos.value })}
-              className={`p-4 rounded-2xl border-2 transition-all ${
-                formData.position === pos.value
-                  ? 'bg-gradient-to-br from-[#00E5FF] to-[#0066FF] border-[#00E5FF] shadow-xl shadow-[#00E5FF]/50'
-                  : 'bg-white/5 border-white/10 hover:border-[#00E5FF]/50'
-              }`}
-            >
-              <div className="text-4xl mb-2">{pos.emoji}</div>
-              <div className={`text-sm font-bold ${formData.position === pos.value ? 'text-black' : 'text-white'}`}>
-                {pos.label}
-              </div>
-            </motion.button>
-          ))}
+            { value: "goleiro", label: "Goleiro", icon: Shield, color: "from-yellow-500 to-orange-500" },
+            { value: "zagueiro", label: "Zagueiro", icon: Shield, color: "from-blue-500 to-cyan-500" },
+            { value: "lateral", label: "Lateral", icon: Navigation, color: "from-green-500 to-emerald-500" },
+            { value: "volante", label: "Volante", icon: Gauge, color: "from-purple-500 to-pink-500" },
+            { value: "meia", label: "Meia", icon: Crosshair, color: "from-cyan-500 to-blue-500" },
+            { value: "atacante", label: "Atacante", icon: Flame, color: "from-red-500 to-orange-500" }
+          ].map(pos => {
+            const IconComponent = pos.icon;
+            return (
+              <motion.button
+                key={pos.value}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setFormData({ ...formData, position: pos.value })}
+                className={`relative p-4 rounded-2xl border-2 transition-all overflow-hidden ${
+                  formData.position === pos.value
+                    ? 'border-[#00E5FF] shadow-2xl shadow-[#00E5FF]/50'
+                    : 'bg-white/5 border-white/10 hover:border-[#00E5FF]/50'
+                }`}
+              >
+                {/* Background gradient */}
+                {formData.position === pos.value && (
+                  <div className={`absolute inset-0 bg-gradient-to-br ${pos.color} opacity-80`} />
+                )}
+                
+                {/* Icon */}
+                <div className="relative">
+                  <div className={`w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center ${
+                    formData.position === pos.value 
+                      ? 'bg-white/20' 
+                      : `bg-gradient-to-br ${pos.color}`
+                  }`}>
+                    <IconComponent className={`w-6 h-6 ${
+                      formData.position === pos.value ? 'text-white' : 'text-white'
+                    }`} />
+                  </div>
+                  <div className={`text-sm font-bold ${formData.position === pos.value ? 'text-white' : 'text-white'}`}>
+                    {pos.label}
+                  </div>
+                </div>
+              </motion.button>
+            );
+          })}
         </div>
       )
     },
@@ -309,23 +338,42 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
       content: (
         <div className="grid grid-cols-3 gap-3">
           {[
-            { value: "direito", label: "Direito", emoji: "👟" },
-            { value: "esquerdo", label: "Esquerdo", emoji: "👟" },
-            { value: "ambidestro", label: "Ambos", emoji: "👟👟" }
+            { value: "direito", label: "Direito", rotation: 0 },
+            { value: "esquerdo", label: "Esquerdo", rotation: 180 },
+            { value: "ambidestro", label: "Ambos", rotation: 0 }
           ].map(foot => (
             <motion.button
               key={foot.value}
               whileTap={{ scale: 0.95 }}
               onClick={() => setFormData({ ...formData, foot: foot.value })}
-              className={`p-6 rounded-2xl border-2 transition-all ${
+              className={`relative p-6 rounded-2xl border-2 transition-all overflow-hidden ${
                 formData.foot === foot.value
-                  ? 'bg-gradient-to-br from-[#00E5FF] to-[#0066FF] border-[#00E5FF] shadow-xl shadow-[#00E5FF]/50'
+                  ? 'border-[#00E5FF] shadow-2xl shadow-[#00E5FF]/50'
                   : 'bg-white/5 border-white/10 hover:border-[#00E5FF]/50'
               }`}
             >
-              <div className="text-4xl mb-2">{foot.emoji}</div>
-              <div className={`text-sm font-bold ${formData.foot === foot.value ? 'text-black' : 'text-white'}`}>
-                {foot.label}
+              {/* Background gradient */}
+              {formData.foot === foot.value && (
+                <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] opacity-80" />
+              )}
+              
+              {/* Icon */}
+              <div className="relative">
+                <div className={`w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center ${
+                  formData.foot === foot.value ? 'bg-white/20' : 'bg-gradient-to-br from-purple-500 to-pink-500'
+                }`}>
+                  {foot.value === "ambidestro" ? (
+                    <div className="flex gap-1">
+                      <Footprints className="w-4 h-4 text-white" style={{ transform: 'rotate(0deg)' }} />
+                      <Footprints className="w-4 h-4 text-white" style={{ transform: 'rotate(180deg)' }} />
+                    </div>
+                  ) : (
+                    <Footprints className="w-6 h-6 text-white" style={{ transform: `rotate(${foot.rotation}deg)` }} />
+                  )}
+                </div>
+                <div className={`text-xs font-bold ${formData.foot === foot.value ? 'text-white' : 'text-white'}`}>
+                  {foot.label}
+                </div>
               </div>
             </motion.button>
           ))}
@@ -374,11 +422,26 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
             Agora você pode acessar todas as funcionalidades da plataforma
           </p>
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 max-w-sm mx-auto">
-            <p className="text-sm text-gray-400 mb-2">Próximos passos:</p>
+            <p className="text-sm text-gray-400 mb-3">Próximos passos:</p>
             <ul className="text-sm text-white space-y-2 text-left">
-              <li className="flex items-center gap-2"><Zap className="w-4 h-4 text-[#00E5FF]" /> Faça seu primeiro check-in diário</li>
-              <li className="flex items-center gap-2"><Video className="w-4 h-4 text-[#00E5FF]" /> Envie vídeos dos seus jogos</li>
-              <li className="flex items-center gap-2"><Trophy className="w-4 h-4 text-[#00E5FF]" /> Complete sua assessoria semanal</li>
+              <li className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Zap className="w-4 h-4 text-white" />
+                </div>
+                <span>Faça seu primeiro check-in diário</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Video className="w-4 h-4 text-white" />
+                </div>
+                <span>Envie vídeos dos seus jogos</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Trophy className="w-4 h-4 text-white" />
+                </div>
+                <span>Complete sua assessoria semanal</span>
+              </li>
             </ul>
           </div>
         </motion.div>
