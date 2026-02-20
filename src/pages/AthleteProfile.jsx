@@ -18,6 +18,8 @@ import EditProfileModal from "@/components/athlete/EditProfileModal";
 import DailyCheckinModal from "@/components/athlete/DailyCheckinModal";
 import WeeklyAssessmentChat from "@/components/athlete/WeeklyAssessmentChat";
 import WeeklyAssessmentNotification from "@/components/athlete/WeeklyAssessmentNotification";
+import WelcomeOnboarding from "@/components/athlete/WelcomeOnboarding";
+import CompleteProfilePrompt from "@/components/athlete/CompleteProfilePrompt";
 
 export default function AthleteProfile() {
   const [user, setUser] = useState(null);
@@ -26,6 +28,7 @@ export default function AthleteProfile() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showWeeklyAssessment, setShowWeeklyAssessment] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [dailyCheckins, setDailyCheckins] = useState([]);
   const [weeklyAssessments, setWeeklyAssessments] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -52,6 +55,12 @@ export default function AthleteProfile() {
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
+
+      // Verificar se é primeiro acesso (perfil incompleto)
+      const isFirstTime = !currentUser.birth_date || !currentUser.position;
+      if (isFirstTime) {
+        setShowOnboarding(true);
+      }
 
       // Load related data
       const [checkinsData, assessmentsData, tasksData, trophiesData] = await Promise.all([
@@ -145,8 +154,18 @@ export default function AthleteProfile() {
   
   const checkinStreak = dailyCheckins.length > 0 ? dailyCheckins[0].streak_days : 0;
 
+  // Verificar se perfil está incompleto (mas não é primeira vez)
+  const isProfileIncomplete = !showOnboarding && (!user.birth_date || !user.position || !user.height || !user.weight);
+
   return (
     <div className="min-h-screen bg-[#070A12] pb-24 md:pb-8">
+      {/* Prompt para completar perfil */}
+      {isProfileIncomplete && (
+        <CompleteProfilePrompt 
+          user={user} 
+          onComplete={() => setShowEditModal(true)} 
+        />
+      )}
       {/* HERO SECTION - PREMIUM MINIMALISTA */}
       <section className="relative overflow-hidden pb-6">
         {/* Background simples */}
@@ -484,6 +503,12 @@ export default function AthleteProfile() {
       <WeeklyAssessmentNotification
         user={user}
         onOpen={() => setShowWeeklyAssessment(true)}
+      />
+      <WelcomeOnboarding
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        user={user}
+        onComplete={loadUserData}
       />
     </div>
   );
