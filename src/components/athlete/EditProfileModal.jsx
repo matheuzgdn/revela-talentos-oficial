@@ -133,79 +133,142 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
 
   if (!isOpen) return null;
 
+  const countries = [
+    { code: "🇧🇷", name: "Brasil" },
+    { code: "🇦🇷", name: "Argentina" },
+    { code: "🇵🇹", name: "Portugal" },
+    { code: "🇪🇸", name: "Espanha" },
+    { code: "🇮🇹", name: "Itália" },
+    { code: "🇫🇷", name: "França" },
+    { code: "🇩🇪", name: "Alemanha" },
+    { code: "🇬🇧", name: "Inglaterra" },
+    { code: "🇳🇱", name: "Holanda" },
+    { code: "🇧🇪", name: "Bélgica" },
+    { code: "🇺🇾", name: "Uruguai" },
+    { code: "🇨🇴", name: "Colômbia" },
+    { code: "🇲🇽", name: "México" },
+    { code: "🇺🇸", name: "EUA" },
+    { code: "🇨🇱", name: "Chile" },
+    { code: "🇵🇪", name: "Peru" },
+    { code: "🇪🇨", name: "Equador" },
+    { code: "🇻🇪", name: "Venezuela" },
+    { code: "🇵🇾", name: "Paraguai" },
+    { code: "🇧🇴", name: "Bolívia" }
+  ];
+
   return (
-    <div className="fixed inset-0 z-[70] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" style={{
+      background: "radial-gradient(circle at center, #0A2E0A 0%, #051505 50%, #000000 100%)"
+    }}>
+      {/* Campo de futebol pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="field-lines" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+              <rect width="100" height="100" fill="none" stroke="#00E5FF" strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#field-lines)" />
+          <circle cx="50%" cy="50%" r="15%" fill="none" stroke="#00E5FF" strokeWidth="2" opacity="0.3" />
+          <line x1="50%" y1="0" x2="50%" y2="100%" stroke="#00E5FF" strokeWidth="2" opacity="0.2" />
+        </svg>
+      </div>
+
       <motion.div
         initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", duration: 0.5 }}
-        className="w-full max-w-lg md:max-w-4xl bg-[#0A0A0A] rounded-3xl md:rounded-3xl rounded-t-3xl border border-white/10 overflow-hidden shadow-2xl"
+        className="relative w-full max-w-lg md:max-w-4xl rounded-3xl overflow-hidden shadow-2xl"
+        style={{
+          background: "linear-gradient(135deg, #0A1A2A 0%, #05111A 50%, #000810 100%)",
+          border: "2px solid",
+          borderImageSource: "linear-gradient(135deg, #00E5FF, #0066FF, #00E5FF)",
+          borderImageSlice: 1
+        }}
       >
-        {/* Header Cinematográfico */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#00E5FF]/10 via-[#0066FF]/10 to-transparent p-6 border-b border-white/10">
-          <div className="absolute inset-0 opacity-5">
-            <img 
-              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=200&fit=crop" 
-              alt="Campo"
-              className="w-full h-full object-cover"
-            />
+        {/* Header Estilo Campo */}
+        <div className="relative overflow-hidden p-6 border-b-2 border-[#00E5FF]/30">
+          {/* Campo background pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/20 via-transparent to-[#0066FF]/20" />
+            <div className="absolute top-0 left-1/2 w-px h-full bg-[#00E5FF]/30 transform -translate-x-1/2" />
+            <div className="absolute top-1/2 left-0 w-full h-px bg-[#00E5FF]/30 transform -translate-y-1/2" />
           </div>
           
           <div className="relative z-10 flex items-center justify-between">
-            <div>
-              <h3 className="text-2xl font-black text-white mb-1">Configurar Perfil</h3>
-              <p className="text-gray-400 text-sm">Preencha suas informações de atleta</p>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-2xl flex items-center justify-center shadow-xl shadow-[#00E5FF]/50">
+                <User className="w-6 h-6 text-black" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-white mb-1 tracking-tight">PERFIL DO ATLETA</h3>
+                <p className="text-[#00E5FF] text-xs font-bold uppercase tracking-wider">Configure suas informações</p>
+              </div>
             </div>
-            <button 
+            <motion.button 
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
               onClick={onClose} 
-              className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center transition-colors backdrop-blur-sm"
+              className="w-10 h-10 bg-red-500/20 hover:bg-red-500/30 border-2 border-red-500/50 rounded-xl flex items-center justify-center transition-colors"
             >
-              <X className="w-5 h-5 text-white" />
-            </button>
+              <X className="w-5 h-5 text-red-400" />
+            </motion.button>
           </div>
 
-          {/* Progress Steps */}
+          {/* Progress Steps - Campo Style */}
           <div className="relative z-10 flex items-center gap-2 mt-6">
             {steps.map((step, idx) => (
               <React.Fragment key={step.id}>
                 <motion.div
                   initial={false}
-                  animate={{ 
-                    scale: currentStep === step.id ? 1 : 0.9,
-                  }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all ${
+                  animate={{ scale: currentStep === step.id ? 1.05 : 0.95 }}
+                  className={`relative flex items-center gap-2 px-3 py-2 rounded-2xl transition-all ${
                     currentStep === step.id 
-                      ? 'bg-white/10 border border-white/20' 
+                      ? 'bg-gradient-to-r from-[#00E5FF]/20 to-[#0066FF]/20 border-2 border-[#00E5FF]' 
                       : currentStep > step.id
-                      ? 'bg-green-500/20 border border-green-500/30'
-                      : 'bg-white/5 border border-white/10'
+                      ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-2 border-green-500'
+                      : 'bg-white/5 border-2 border-white/10'
                   }`}
                 >
-                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
+                  {/* Corner accents */}
+                  {currentStep === step.id && (
+                    <>
+                      <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-[#00E5FF]" />
+                      <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#00E5FF]" />
+                      <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-[#00E5FF]" />
+                      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-[#00E5FF]" />
+                    </>
+                  )}
+                  <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-black shadow-lg ${
                     currentStep === step.id 
-                      ? 'bg-[#00E5FF] text-black' 
+                      ? 'bg-gradient-to-br from-[#00E5FF] to-[#0066FF] text-black shadow-[#00E5FF]/50' 
                       : currentStep > step.id
-                      ? 'bg-green-500 text-white'
-                      : 'bg-white/10 text-gray-400'
+                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-green-500/50'
+                      : 'bg-white/10 text-gray-500'
                   }`}>
-                    {currentStep > step.id ? <Check className="w-3 h-3" /> : step.id}
+                    {currentStep > step.id ? <Check className="w-4 h-4" /> : step.id}
                   </div>
-                  <span className={`text-xs font-bold hidden md:inline ${
-                    currentStep === step.id ? 'text-white' : 'text-gray-400'
+                  <span className={`text-xs font-black hidden md:inline uppercase tracking-wider ${
+                    currentStep === step.id ? 'text-[#00E5FF]' : 'text-gray-500'
                   }`}>
                     {step.title}
                   </span>
                 </motion.div>
                 {idx < steps.length - 1 && (
-                  <div className="flex-1 h-0.5 bg-white/10 max-w-[20px]" />
+                  <div className="flex-1 h-1 bg-gradient-to-r from-white/20 to-white/5 max-w-[20px] rounded-full" />
                 )}
               </React.Fragment>
             ))}
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-4 md:p-6 max-h-[65vh] overflow-y-auto">
+        {/* Content com padrão de campo */}
+        <div className="relative p-4 md:p-6 max-h-[65vh] overflow-y-auto bg-gradient-to-b from-[#0A1A2A]/50 to-[#05111A]/50">
+          {/* Campo background subtle */}
+          <div className="absolute inset-0 opacity-5 pointer-events-none">
+            <div className="absolute top-1/2 left-0 w-full h-px bg-[#00E5FF]" />
+            <div className="absolute top-0 left-1/2 w-px h-full bg-[#00E5FF]" />
+          </div>
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
               <motion.div
@@ -215,13 +278,18 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                  <div className="w-10 h-10 md:w-12 md:h-12 bg-[#00E5FF]/20 rounded-xl md:rounded-2xl flex items-center justify-center">
-                    <User className="w-5 h-5 md:w-6 md:h-6 text-[#00E5FF]" />
+                <div className="relative flex items-center gap-3 mb-6 p-4 rounded-2xl bg-gradient-to-r from-[#00E5FF]/10 to-[#0066FF]/10 border-2 border-[#00E5FF]/30">
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute left-1/4 top-0 w-px h-full bg-[#00E5FF]/50" />
+                    <div className="absolute left-1/2 top-0 w-px h-full bg-[#00E5FF]/50" />
+                    <div className="absolute left-3/4 top-0 w-px h-full bg-[#00E5FF]/50" />
+                  </div>
+                  <div className="relative w-12 h-12 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-2xl flex items-center justify-center shadow-xl shadow-[#00E5FF]/50">
+                    <User className="w-6 h-6 text-black" />
                   </div>
                   <div>
-                    <h4 className="text-lg md:text-xl font-black text-white">Dados Pessoais</h4>
-                    <p className="text-gray-400 text-xs md:text-sm">Informações básicas do atleta</p>
+                    <h4 className="text-xl font-black text-white tracking-tight">DADOS PESSOAIS</h4>
+                    <p className="text-[#00E5FF] text-xs font-bold">Informações básicas do atleta</p>
                   </div>
                 </div>
 
@@ -289,13 +357,13 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 {/* Campos de Dados Pessoais */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                   <div className="col-span-1 md:col-span-2">
-                    <Label className="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-2">
+                    <Label className="text-[#00E5FF] text-xs uppercase tracking-wider font-black flex items-center gap-2">
                       <User className="w-3 h-3" /> Nome Completo *
                     </Label>
                     <Input
                       value={formData.full_name}
                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
+                      className="mt-2 bg-gradient-to-r from-[#00E5FF]/10 to-[#0066FF]/10 border-2 border-[#00E5FF]/30 text-white rounded-xl h-12 font-bold hover:border-[#00E5FF] transition-colors focus:border-[#00E5FF] focus:ring-2 focus:ring-[#00E5FF]/50"
                       placeholder="Digite seu nome completo"
                     />
                   </div>
@@ -313,15 +381,26 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                   </div>
 
                   <div>
-                    <Label className="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-2">
+                    <Label className="text-[#00E5FF] text-xs uppercase tracking-wider font-black flex items-center gap-2">
                       <Globe className="w-3 h-3" /> Nacionalidade
                     </Label>
-                    <Input
-                      value={formData.nationality}
-                      onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                      placeholder="Ex: 🇧🇷"
-                      className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11"
-                    />
+                    <Select value={formData.nationality} onValueChange={(v) => setFormData({ ...formData, nationality: v })}>
+                      <SelectTrigger className="mt-2 bg-gradient-to-r from-[#00E5FF]/10 to-[#0066FF]/10 border-2 border-[#00E5FF]/30 text-white rounded-xl h-11 text-2xl hover:border-[#00E5FF] transition-colors">
+                        <SelectValue placeholder="Selecione sua bandeira" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#0A1A2A] border-2 border-[#00E5FF]/50 max-h-[300px]">
+                        {countries.map(country => (
+                          <SelectItem 
+                            key={country.code} 
+                            value={country.code}
+                            className="text-white hover:bg-[#00E5FF]/20 cursor-pointer py-3 text-lg"
+                          >
+                            <span className="text-2xl mr-3">{country.code}</span>
+                            <span className="text-sm">{country.name}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
@@ -627,15 +706,16 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
           </AnimatePresence>
         </div>
 
-        {/* Footer com Navegação */}
-        <div className="p-4 md:p-6 border-t border-white/10 bg-white/5">
+        {/* Footer com Navegação - Estilo linha de campo */}
+        <div className="relative p-4 md:p-6 border-t-2 border-[#00E5FF]/30 bg-gradient-to-r from-[#0A1A2A] to-[#05111A]">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#00E5FF] to-transparent" />
           <div className="flex items-center justify-between gap-2 md:gap-3">
             <Button 
               onClick={prevStep}
               disabled={currentStep === 1}
-              className="flex items-center gap-1 md:gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 disabled:opacity-50 h-10 md:h-11 text-xs md:text-sm px-3 md:px-4"
+              className="flex items-center gap-2 bg-gradient-to-r from-[#00E5FF]/20 to-[#0066FF]/20 hover:from-[#00E5FF]/30 hover:to-[#0066FF]/30 text-white border-2 border-[#00E5FF]/50 disabled:opacity-30 h-11 font-black uppercase tracking-wider px-4 rounded-xl shadow-lg hover:shadow-[#00E5FF]/50 transition-all"
             >
-              <ChevronLeft className="w-3 h-3 md:w-4 md:h-4" />
+              <ChevronLeft className="w-4 h-4" />
               <span className="hidden sm:inline">Anterior</span>
             </Button>
 
@@ -646,19 +726,19 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
             {currentStep < steps.length ? (
               <Button 
                 onClick={nextStep}
-                className="flex items-center gap-1 md:gap-2 bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-bold h-10 md:h-11 text-xs md:text-sm px-3 md:px-4"
+                className="flex items-center gap-2 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0088FF] text-black font-black h-11 uppercase tracking-wider px-5 rounded-xl shadow-xl shadow-[#00E5FF]/50 hover:shadow-[#00E5FF]/70 transition-all"
               >
                 <span className="hidden sm:inline">Próximo</span>
                 <span className="sm:hidden">Avançar</span>
-                <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
+                <ChevronRight className="w-4 h-4" />
               </Button>
             ) : (
               <Button 
                 onClick={handleSave}
                 disabled={uploading}
-                className="flex items-center gap-1 md:gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold shadow-lg h-10 md:h-11 text-xs md:text-sm px-3 md:px-4"
+                className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-black shadow-2xl h-11 uppercase tracking-wider px-5 rounded-xl shadow-green-500/50 hover:shadow-green-500/70 transition-all disabled:opacity-50"
               >
-                <Save className="w-3 h-3 md:w-4 md:h-4" />
+                <Save className="w-4 h-4" />
                 <span className="hidden sm:inline">Salvar Perfil</span>
                 <span className="sm:hidden">Salvar</span>
               </Button>
