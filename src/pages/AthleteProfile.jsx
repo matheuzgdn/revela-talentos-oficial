@@ -126,163 +126,301 @@ export default function AthleteProfile() {
 
   return (
     <div className="min-h-screen bg-[#070A12] pb-24 md:pb-8">
-      {/* HERO SECTION - CINEMATOGRÁFICO */}
-      <section className="relative overflow-hidden min-h-[60vh] md:min-h-[70vh]">
-        {/* Background layers */}
-        <div className="absolute inset-0">
-          {/* Gradient base */}
-          <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/20 via-[#0A0F1A] to-[#070A12]" />
+      {/* HERO SECTION - CINEMATOGRÁFICO ESTILO FUTEBOL */}
+      <section className="relative overflow-hidden pb-8">
+        {/* Background - Campo de futebol estilizado */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0D1B2A] via-[#1B263B] to-[#0D1B2A]">
+          {/* Grid pattern - linhas de campo */}
+          <div className="absolute inset-0 opacity-5" style={{
+            backgroundImage: `
+              linear-gradient(to right, #00E5FF 1px, transparent 1px),
+              linear-gradient(to bottom, #00E5FF 1px, transparent 1px)
+            `,
+            backgroundSize: '80px 80px'
+          }} />
           
-          {/* Club crest watermark */}
-          {user.current_club_crest_url && (
-            <motion.img
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 0.06 }}
-              transition={{ duration: 1 }}
-              src={user.current_club_crest_url}
-              alt="Club crest"
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 object-contain grayscale blur-sm"
-            />
-          )}
-          
-          {/* Jersey number watermark */}
-          {user.jersey_number && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[280px] font-black text-white opacity-[0.04] pointer-events-none">
-              {user.jersey_number}
-            </div>
-          )}
-          
-          {/* Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#070A12]" />
+          {/* Glow spots - holofotes */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#00E5FF]/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#0066FF]/10 rounded-full blur-[120px]" />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 px-4 pt-4 pb-8">
+        {/* Club crest - gigante e estilizado */}
+        {user.current_club_crest_url ? (
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+            <motion.img
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 0.08 }}
+              transition={{ duration: 1.2 }}
+              src={user.current_club_crest_url}
+              alt="Club"
+              className="w-[500px] h-[500px] object-contain grayscale blur-[2px]"
+            />
+          </div>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-[400px] h-[400px] rounded-full bg-gradient-to-br from-[#00E5FF]/5 to-[#0066FF]/5 blur-3xl" />
+          </div>
+        )}
+        
+        {/* Jersey number - watermark gigante */}
+        {user.jersey_number && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[200px] md:text-[300px] font-black text-white/[0.03] pointer-events-none select-none">
+            {user.jersey_number}
+          </div>
+        )}
+
+        {/* Content container */}
+        <div className="relative z-10">
           {/* Top actions */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between px-4 pt-4 mb-6 md:mb-12">
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => window.history.back()}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full"
+              className="flex items-center gap-2 px-4 py-2.5 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full hover:bg-black/60 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 text-white" />
-              <span className="text-white text-sm font-bold">BACK</span>
+              <span className="text-white text-xs md:text-sm font-bold uppercase tracking-wider">Voltar</span>
             </motion.button>
 
             <div className="flex gap-2">
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="w-11 h-11 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center"
+                className="w-10 md:w-11 h-10 md:h-11 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors"
               >
-                <Share2 className="w-5 h-5 text-white" />
+                <Share2 className="w-4 md:w-5 h-4 md:h-5 text-white" />
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="w-11 h-11 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center"
+                className="w-10 md:w-11 h-10 md:h-11 bg-black/40 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center hover:bg-black/60 transition-colors"
               >
-                <Bookmark className="w-5 h-5 text-white" />
+                <Bookmark className="w-4 md:w-5 h-4 md:h-5 text-white" />
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowEditModal(true)}
-                className="w-11 h-11 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 md:w-11 h-10 md:h-11 bg-[#00E5FF]/90 backdrop-blur-xl border border-[#00E5FF] rounded-full flex items-center justify-center hover:bg-[#00E5FF] transition-colors shadow-lg shadow-[#00E5FF]/30"
               >
-                <Edit3 className="w-5 h-5 text-white" />
+                <Edit3 className="w-4 md:w-5 h-4 md:h-5 text-black" />
               </motion.button>
             </div>
           </div>
 
-          {/* Hero content */}
-          <div className="flex items-end justify-between gap-6 max-w-4xl mx-auto">
-            {/* Left side - Info */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex-1 space-y-4"
-            >
-              {/* Club and nationality */}
-              <div className="flex items-center gap-3">
-                {user.current_club_crest_url && (
-                  <img 
-                    src={user.current_club_crest_url} 
-                    alt="Club" 
-                    className="w-10 h-10 object-contain"
-                  />
-                )}
-                {user.nationality && (
-                  <span className="text-2xl">{user.nationality}</span>
-                )}
-              </div>
-
-              {/* Name */}
-              <h1 className="text-3xl md:text-5xl font-black text-white leading-none tracking-tighter">
-                {user.full_name || "Atleta"}
-              </h1>
-
-              {/* Subtitle */}
-              <div className="flex items-center gap-2 text-gray-400 text-xs md:text-sm uppercase tracking-widest">
-                <span>{user.position || "Posição"}</span>
-                {user.jersey_number && (
-                  <>
-                    <span>•</span>
-                    <span>#{user.jersey_number}</span>
-                  </>
-                )}
-              </div>
-
-              {/* Badges */}
-              <div className="flex flex-wrap gap-2">
-                {user.position && (
-                  <Badge className={`${getPositionBadgeColor(user.position)} border font-bold uppercase text-xs px-3 py-1`}>
-                    {user.position}
-                  </Badge>
-                )}
-                
-                <Badge className={`bg-gradient-to-r ${levelBadge.color} text-white border-0 font-bold uppercase text-xs px-3 py-1 shadow-lg shadow-[#00E5FF]/30 animate-pulse`}>
-                  ⚡ {levelBadge.label}
-                </Badge>
-              </div>
-            </motion.div>
-
-            {/* Right side - Player image */}
-            <motion.div
-              initial={{ opacity: 0, y: 40, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative hidden sm:block"
-            >
-              {user.player_cutout_url ? (
-                <>
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/40 via-[#00E5FF]/10 to-transparent blur-3xl scale-110" />
-                  
-                  {/* Player image */}
-                  <img 
-                    src={user.player_cutout_url}
-                    alt={user.full_name}
-                    className="relative z-10 h-[220px] md:h-[280px] w-auto object-contain drop-shadow-2xl"
-                    style={{ filter: 'drop-shadow(0 20px 60px rgba(0, 229, 255, 0.5))' }}
-                  />
-                </>
-              ) : user.profile_picture_url ? (
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-[#00E5FF]/30 shadow-2xl">
-                  <img 
-                    src={user.profile_picture_url}
-                    alt={user.full_name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border-4 border-[#00E5FF]/30 flex items-center justify-center">
-                  <span className="text-5xl font-black text-[#00E5FF]">
-                    {user.full_name?.charAt(0) || "A"}
-                  </span>
-                </div>
+          {/* Hero Main Content - Layout Mobile First */}
+          <div className="px-4 pb-6">
+            {/* Mobile: Stacked layout */}
+            <div className="sm:hidden space-y-6">
+              {/* Player image on mobile */}
+              {(user.player_cutout_url || user.profile_picture_url) && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="flex justify-center"
+                >
+                  {user.player_cutout_url ? (
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/30 via-[#00E5FF]/5 to-transparent blur-3xl scale-125" />
+                      <img 
+                        src={user.player_cutout_url}
+                        alt={user.full_name}
+                        className="relative z-10 h-[200px] w-auto object-contain"
+                        style={{ filter: 'drop-shadow(0 10px 40px rgba(0, 229, 255, 0.4))' }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-[#00E5FF]/40 shadow-2xl shadow-[#00E5FF]/20">
+                      <img 
+                        src={user.profile_picture_url}
+                        alt={user.full_name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </motion.div>
               )}
-            </motion.div>
+
+              {/* Info */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-center space-y-3"
+              >
+                {/* Club badge + Nationality */}
+                <div className="flex items-center justify-center gap-3">
+                  {user.current_club_crest_url && (
+                    <div className="w-12 h-12 bg-white/10 rounded-xl p-2 backdrop-blur-sm border border-white/20">
+                      <img 
+                        src={user.current_club_crest_url} 
+                        alt="Club" 
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
+                  {user.nationality && (
+                    <span className="text-3xl">{user.nationality}</span>
+                  )}
+                </div>
+
+                {/* Name */}
+                <h1 className="text-4xl font-black text-white leading-none tracking-tighter">
+                  {user.full_name || "Seu Nome"}
+                </h1>
+
+                {/* Position + Number */}
+                <div className="flex items-center justify-center gap-2 text-[#00E5FF] text-sm uppercase tracking-[0.3em] font-bold">
+                  <span>{user.position || "SUA POSIÇÃO"}</span>
+                  {user.jersey_number && (
+                    <>
+                      <span className="text-white/40">•</span>
+                      <span>#{user.jersey_number}</span>
+                    </>
+                  )}
+                </div>
+
+                {/* Badges */}
+                <div className="flex flex-wrap gap-2 justify-center">
+                  <Badge className={`${getPositionBadgeColor(user.position)} border-2 font-black uppercase text-[10px] px-3 py-1.5 tracking-wider`}>
+                    {user.position || "Posição"}
+                  </Badge>
+                  
+                  <Badge className={`bg-gradient-to-r ${levelBadge.color} text-white border-0 font-black uppercase text-[10px] px-3 py-1.5 shadow-xl shadow-[#00E5FF]/40`}>
+                    <motion.span
+                      animate={{ opacity: [1, 0.5, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      ⚡ {levelBadge.label}
+                    </motion.span>
+                  </Badge>
+                </div>
+
+                {user.current_club_name && (
+                  <p className="text-gray-400 text-sm">
+                    {user.current_club_name}
+                  </p>
+                )}
+              </motion.div>
+            </div>
+
+            {/* Desktop: Side-by-side layout */}
+            <div className="hidden sm:flex items-end justify-between gap-8 max-w-5xl mx-auto">
+              {/* Left - Info */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                className="flex-1 space-y-5 max-w-md"
+              >
+                {/* Club badge + Nationality */}
+                <div className="flex items-center gap-4">
+                  {user.current_club_crest_url && (
+                    <div className="w-16 h-16 bg-white/10 rounded-2xl p-3 backdrop-blur-sm border border-white/20 shadow-xl">
+                      <img 
+                        src={user.current_club_crest_url} 
+                        alt="Club" 
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  )}
+                  {user.nationality && (
+                    <span className="text-4xl">{user.nationality}</span>
+                  )}
+                </div>
+
+                {/* Name */}
+                <h1 className="text-5xl md:text-6xl font-black text-white leading-[0.95] tracking-tighter">
+                  {user.full_name || "Seu Nome"}
+                </h1>
+
+                {/* Position + Number */}
+                <div className="flex items-center gap-3 text-[#00E5FF] text-base uppercase tracking-[0.3em] font-black">
+                  <span>{user.position || "SUA POSIÇÃO"}</span>
+                  {user.jersey_number && (
+                    <>
+                      <span className="text-white/40">•</span>
+                      <span>#{user.jersey_number}</span>
+                    </>
+                  )}
+                </div>
+
+                {/* Club name */}
+                {user.current_club_name && (
+                  <p className="text-gray-300 text-lg font-semibold">
+                    {user.current_club_name}
+                  </p>
+                )}
+
+                {/* Badges */}
+                <div className="flex flex-wrap gap-2">
+                  <Badge className={`${getPositionBadgeColor(user.position)} border-2 font-black uppercase text-xs px-4 py-2 tracking-wider`}>
+                    {user.position || "Posição"}
+                  </Badge>
+                  
+                  <Badge className={`bg-gradient-to-r ${levelBadge.color} text-white border-0 font-black uppercase text-xs px-4 py-2 shadow-2xl`}>
+                    <motion.span
+                      animate={{ opacity: [1, 0.7, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="flex items-center gap-1"
+                    >
+                      ⚡ {levelBadge.label}
+                    </motion.span>
+                  </Badge>
+                </div>
+              </motion.div>
+
+              {/* Right - Player Image */}
+              <motion.div
+                initial={{ opacity: 0, y: 50, scale: 0.85 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.9, delay: 0.3, type: "spring" }}
+                className="relative flex items-end justify-center"
+              >
+                {user.player_cutout_url ? (
+                  <div className="relative">
+                    {/* Multi-layer glow */}
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-gradient-radial from-[#00E5FF]/40 via-[#00E5FF]/10 to-transparent blur-3xl" />
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-[#00E5FF]/20 rounded-full blur-2xl" />
+                    
+                    {/* Player cutout */}
+                    <motion.img 
+                      animate={{ y: [0, -8, 0] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      src={user.player_cutout_url}
+                      alt={user.full_name}
+                      className="relative z-10 h-[280px] md:h-[360px] w-auto object-contain"
+                      style={{ 
+                        filter: 'drop-shadow(0 25px 80px rgba(0, 229, 255, 0.6)) drop-shadow(0 10px 30px rgba(0, 0, 0, 0.8))'
+                      }}
+                    />
+                  </div>
+                ) : user.profile_picture_url ? (
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/30 to-transparent blur-2xl scale-125" />
+                    <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-[#00E5FF]/50 shadow-2xl shadow-[#00E5FF]/30">
+                      <img 
+                        src={user.profile_picture_url}
+                        alt={user.full_name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/20 to-transparent blur-2xl scale-125" />
+                    <div className="relative w-48 h-48 rounded-full bg-gradient-to-br from-[#00E5FF]/30 to-[#0066FF]/30 border-4 border-[#00E5FF]/50 flex items-center justify-center shadow-2xl">
+                      <span className="text-7xl font-black text-[#00E5FF]">
+                        {user.full_name?.charAt(0) || "A"}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </div>
           </div>
         </div>
+
+        {/* Bottom fade to content */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#070A12] to-transparent pointer-events-none" />
       </section>
 
       {/* STATS CARDS */}
