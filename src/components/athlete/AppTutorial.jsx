@@ -218,18 +218,18 @@ export default function AppTutorial({ isOpen, onClose }) {
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           className="fixed z-[92]"
           style={
-            currentStepData.target 
-              ? tooltipStyle 
-              : { 
+            !currentStepData.target 
+              ? { 
                   top: '50%', 
                   left: '50%', 
                   transform: 'translate(-50%, -50%)',
                   width: 'calc(100vw - 32px)',
                   maxWidth: '360px'
                 }
+              : tooltipStyle
           }
         >
-          <div className={`relative bg-gradient-to-br ${currentStepData.color} p-[2px] rounded-3xl shadow-2xl`}>
+          <div className={`relative bg-gradient-to-br ${currentStepData.color} p-[2px] rounded-3xl shadow-2xl mx-auto`}>
             <div className="bg-[#0A1A2A] rounded-3xl p-5">
               {/* Close button */}
               <button
