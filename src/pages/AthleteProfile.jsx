@@ -326,7 +326,7 @@ export default function AthleteProfile() {
       <section className="px-3">
         <div className="max-w-sm mx-auto">
           <AnimatePresence mode="wait">
-            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} onCheckinClick={() => setShowCheckinModal(true)} onNavigate={(tab) => setActiveTab(tab)} />}
+            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} lastFeedback={lastFeedback} onCheckinClick={() => setShowCheckinModal(true)} onNavigate={(tab) => setActiveTab(tab)} />}
             {activeTab === "performance" && <PerformanceTab user={user} weeklyAssessments={weeklyAssessments} dailyCheckins={dailyCheckins} />}
             {activeTab === "assessoria" && <AssessoriaTab userId={user.id} dailyCheckins={dailyCheckins} weeklyAssessments={weeklyAssessments} onUpdate={loadUserData} onCheckinClick={() => setShowCheckinModal(true)} />}
             {activeTab === "tasks" && <TasksTab tasks={tasks} userId={user.id} onUpdate={loadUserData} />}
@@ -389,7 +389,7 @@ function StatCard({ label, value, delay }) {
 }
 
 // OVERVIEW TAB
-function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
+function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavigate }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
