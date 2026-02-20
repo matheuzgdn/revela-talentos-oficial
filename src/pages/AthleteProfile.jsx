@@ -301,41 +301,13 @@ export default function AthleteProfile() {
 
 
 
-      {/* FERRAMENTAS CARD */}
-      <section className="px-3 mb-3">
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setActiveTab("tools")}
-          className="w-full max-w-sm mx-auto relative overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#00E5FF]/30 rounded-2xl p-4 text-left"
-        >
-          <div className="absolute inset-0 opacity-5">
-            <img 
-              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=200&fit=crop" 
-              alt="Campo"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-[#00E5FF]/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                <Zap className="w-7 h-7 text-[#00E5FF]" />
-              </div>
-              <div>
-                <p className="text-white font-bold mb-1">Ferramentas</p>
-                <p className="text-gray-400 text-sm">Acesse suas ferramentas de atleta</p>
-              </div>
-            </div>
-            <ChevronRight className="w-6 h-6 text-[#00E5FF]" />
-          </div>
-        </motion.button>
-      </section>
+
 
       {/* TAB CONTENT */}
       <section className="px-3">
         <div className="max-w-sm mx-auto">
           <AnimatePresence mode="wait">
-            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} onCheckinClick={() => setShowCheckinModal(true)} onAssessClick={() => setActiveTab("assessoria")} />}
-            {activeTab === "tools" && <ToolsTab onNavigate={(tab) => setActiveTab(tab)} />}
+            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} onCheckinClick={() => setShowCheckinModal(true)} onNavigate={(tab) => setActiveTab(tab)} />}
             {activeTab === "performance" && <PerformanceTab user={user} weeklyAssessments={weeklyAssessments} dailyCheckins={dailyCheckins} />}
             {activeTab === "assessoria" && <AssessoriaTab userId={user.id} dailyCheckins={dailyCheckins} weeklyAssessments={weeklyAssessments} onUpdate={loadUserData} onCheckinClick={() => setShowCheckinModal(true)} />}
             {activeTab === "tasks" && <TasksTab tasks={tasks} userId={user.id} onUpdate={loadUserData} />}
@@ -386,97 +358,8 @@ function StatCard({ label, value, delay }) {
   );
 }
 
-// TOOLS TAB
-function ToolsTab({ onNavigate }) {
-  const tools = [
-    { id: "overview", label: "Geral", icon: Activity, description: "Visão geral do seu perfil", color: "from-cyan-500/20 to-blue-500/20", borderColor: "border-cyan-500/30", iconColor: "text-cyan-400" },
-    { id: "performance", label: "Performance", icon: TrendingUp, description: "Estatísticas e evolução", color: "from-purple-500/20 to-pink-500/20", borderColor: "border-purple-500/30", iconColor: "text-purple-400" },
-    { id: "assessoria", label: "Diário", icon: Calendar, description: "Check-ins e relatórios", color: "from-blue-500/20 to-cyan-500/20", borderColor: "border-blue-500/30", iconColor: "text-blue-400" },
-    { id: "tasks", label: "Tarefas", icon: CheckCircle2, description: "Suas tarefas pendentes", color: "from-green-500/20 to-emerald-500/20", borderColor: "border-green-500/30", iconColor: "text-green-400" },
-    { id: "trophies", label: "Troféus", icon: Trophy, description: "Conquistas e prêmios", color: "from-yellow-500/20 to-orange-500/20", borderColor: "border-yellow-500/30", iconColor: "text-yellow-400" }
-  ];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="space-y-3"
-    >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-black text-white">Suas Ferramentas</h3>
-        <Badge className="bg-[#00E5FF]/20 text-[#00E5FF]">
-          {tools.length} disponíveis
-        </Badge>
-      </div>
-
-      {tools.map((tool, idx) => (
-        <motion.button
-          key={tool.id}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: idx * 0.1 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => onNavigate(tool.id)}
-          className={`w-full relative overflow-hidden bg-gradient-to-br ${tool.color} border ${tool.borderColor} rounded-2xl p-4 text-left`}
-        >
-          <div className="absolute inset-0 opacity-5">
-            <img 
-              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=200&fit=crop" 
-              alt="Campo"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className={`w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm`}>
-                <tool.icon className={`w-7 h-7 ${tool.iconColor}`} />
-              </div>
-              <div>
-                <p className="text-white font-bold mb-0.5">{tool.label}</p>
-                <p className="text-gray-400 text-xs">{tool.description}</p>
-              </div>
-            </div>
-            <ChevronRight className={`w-6 h-6 ${tool.iconColor}`} />
-          </div>
-        </motion.button>
-      ))}
-
-      {/* Ver Mais - Stats FIFA */}
-      <motion.button
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.5 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => onNavigate("stats")}
-        className="w-full relative overflow-hidden bg-gradient-to-br from-gray-500/20 to-slate-500/20 border border-gray-500/30 rounded-2xl p-4 text-left"
-      >
-        <div className="absolute inset-0 opacity-5">
-          <img 
-            src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=200&fit=crop" 
-            alt="Campo"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-              <BarChart3 className="w-7 h-7 text-gray-400" />
-            </div>
-            <div>
-              <p className="text-white font-bold mb-0.5">Ver mais</p>
-              <p className="text-gray-400 text-xs">Estatísticas FIFA e mais</p>
-            </div>
-          </div>
-          <ChevronRight className="w-6 h-6 text-gray-400" />
-        </div>
-      </motion.button>
-    </motion.div>
-  );
-}
-
 // OVERVIEW TAB
-function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
+function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -571,49 +454,77 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
         </div>
       </motion.div>
 
-      {/* Quick actions */}
-      <div className="grid grid-cols-2 gap-3">
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={onCheckinClick}
-          className="relative overflow-hidden bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm text-left"
-        >
-          <div className="absolute inset-0 opacity-5">
-            <img 
-              src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200&h=200&fit=crop" 
-              alt="Futebol"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative z-10">
-            <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
-              <Calendar className="w-5 h-5 text-white" />
+      {/* Ferramentas */}
+      <div className="space-y-3">
+        <h4 className="text-white font-bold text-sm">Ferramentas</h4>
+        
+        <div className="grid grid-cols-3 gap-2">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onNavigate("performance")}
+            className="relative overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-2xl p-3 text-center"
+          >
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+              <TrendingUp className="w-5 h-5 text-purple-400" />
             </div>
-            <p className="text-white font-bold text-sm">Check-in Diário</p>
-            <p className="text-gray-400 text-[10px] mt-1">Registre seu dia</p>
-          </div>
-        </motion.button>
+            <p className="text-white font-bold text-[10px]">Performance</p>
+          </motion.button>
 
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          onClick={onAssessClick}
-          className="relative overflow-hidden bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm text-left"
-        >
-          <div className="absolute inset-0 opacity-5">
-            <img 
-              src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=200&h=200&fit=crop" 
-              alt="Campo"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="relative z-10">
-            <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
-              <Target className="w-5 h-5 text-white" />
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={onCheckinClick}
+            className="relative overflow-hidden bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-2xl p-3 text-center"
+          >
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+              <Calendar className="w-5 h-5 text-blue-400" />
             </div>
-            <p className="text-white font-bold text-sm">Assessoria Semanal</p>
-            <p className="text-gray-400 text-[10px] mt-1">Avalie sua semana</p>
-          </div>
-        </motion.button>
+            <p className="text-white font-bold text-[10px]">Diário</p>
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onNavigate("tasks")}
+            className="relative overflow-hidden bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-2xl p-3 text-center"
+          >
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+              <CheckCircle2 className="w-5 h-5 text-green-400" />
+            </div>
+            <p className="text-white font-bold text-[10px]">Tarefas</p>
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onNavigate("trophies")}
+            className="relative overflow-hidden bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-2xl p-3 text-center"
+          >
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+              <Trophy className="w-5 h-5 text-yellow-400" />
+            </div>
+            <p className="text-white font-bold text-[10px]">Troféus</p>
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onNavigate("assessoria")}
+            className="relative overflow-hidden bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 rounded-2xl p-3 text-center"
+          >
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+              <Target className="w-5 h-5 text-cyan-400" />
+            </div>
+            <p className="text-white font-bold text-[10px]">Relatório</p>
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onNavigate("stats")}
+            className="relative overflow-hidden bg-gradient-to-br from-gray-500/20 to-slate-500/20 border border-gray-500/30 rounded-2xl p-3 text-center"
+          >
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto backdrop-blur-sm">
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </div>
+            <p className="text-white font-bold text-[10px]">Ver mais</p>
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   );
