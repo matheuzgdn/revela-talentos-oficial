@@ -40,7 +40,8 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
     position: user?.position || "",
     jersey_number: user?.jersey_number || "",
     current_club_name: user?.current_club_name || "",
-    profile_picture_url: user?.profile_picture_url || ""
+    profile_picture_url: user?.profile_picture_url || "",
+    highlight_video_url: user?.highlight_video_url || ""
   });
   const [uploading, setUploading] = useState(false);
 
@@ -396,6 +397,63 @@ export default function WelcomeOnboarding({ isOpen, onClose, user, onComplete })
           className="bg-white/5 border-2 border-[#00E5FF]/30 text-white rounded-2xl h-14 text-lg text-center font-bold focus:border-[#00E5FF]"
           autoFocus
         />
+      )
+    },
+    {
+      id: "video",
+      title: "Adicione um vídeo destaque",
+      subtitle: "Mostre suas melhores jogadas (opcional)",
+      icon: Video,
+      gradient: "from-red-500 to-orange-500",
+      field: "highlight_video_url",
+      canSkip: true,
+      content: (
+        <div className="space-y-4">
+          {formData.highlight_video_url ? (
+            <div className="relative aspect-video bg-white/5 border-2 border-[#00E5FF]/30 rounded-2xl overflow-hidden">
+              <video 
+                src={formData.highlight_video_url} 
+                controls 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="relative aspect-video bg-white/5 border-2 border-dashed border-[#00E5FF]/30 rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl flex items-center justify-center mb-3 shadow-xl">
+                  <Video className="w-8 h-8 text-white" />
+                </div>
+                <p className="text-white font-bold mb-1 text-sm">Adicione seu vídeo</p>
+                <p className="text-gray-400 text-xs">MP4, MOV ou AVI • Máx 100MB</p>
+              </div>
+              <input
+                type="file"
+                accept="video/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setUploading(true);
+                  try {
+                    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+                    setFormData(prev => ({ ...prev, highlight_video_url: file_url }));
+                    toast.success("Vídeo enviado!");
+                  } catch (error) {
+                    toast.error("Erro ao enviar vídeo");
+                  }
+                  setUploading(false);
+                }}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                disabled={uploading}
+              />
+            </div>
+          )}
+          {uploading && (
+            <div className="text-center">
+              <div className="inline-block w-6 h-6 border-2 border-[#00E5FF] border-t-transparent rounded-full animate-spin" />
+              <p className="text-gray-400 text-xs mt-2">Enviando vídeo...</p>
+            </div>
+          )}
+        </div>
       )
     },
     {

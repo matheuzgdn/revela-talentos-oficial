@@ -145,12 +145,34 @@ export default function AppTutorial({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   const getTooltipPosition = () => {
-    if (!targetElement || !currentStepData.target) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+    if (!targetElement || !currentStepData.target) return null;
 
     const rect = targetElement.getBoundingClientRect();
+    const padding = 16;
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+      // No mobile, sempre posicionar na parte inferior da tela
+      if (currentStepData.position === 'top') {
+        return {
+          bottom: '80px', // Acima da barra de navegação
+          left: '16px',
+          right: '16px',
+          width: 'auto'
+        };
+      } else {
+        return {
+          top: `${rect.bottom + padding}px`,
+          left: '16px',
+          right: '16px',
+          width: 'auto'
+        };
+      }
+    }
+
+    // Desktop
     const tooltipWidth = 320;
     const tooltipHeight = 200;
-    const padding = 16;
 
     if (currentStepData.position === 'top') {
       return {
@@ -164,14 +186,10 @@ export default function AppTutorial({ isOpen, onClose }) {
       };
     }
 
-    return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+    return null;
   };
 
-  const tooltipStyle = currentStepData.target ? getTooltipPosition() : {
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)'
-  };
+  const tooltipStyle = getTooltipPosition() || {};
 
   return (
     <div className="fixed inset-0 z-[90]">
@@ -206,10 +224,15 @@ export default function AppTutorial({ isOpen, onClose }) {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: -20 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed w-[calc(100%-32px)] md:w-80 z-[92]"
+          className="fixed z-[92] left-4 right-4 md:left-auto md:right-auto md:w-80"
           style={{
-            ...tooltipStyle,
-            maxWidth: 'calc(100vw - 32px)'
+            ...(currentStepData.target ? tooltipStyle : { 
+              top: '50%', 
+              left: '50%', 
+              transform: 'translate(-50%, -50%)',
+              width: 'calc(100vw - 32px)',
+              maxWidth: '360px'
+            })
           }}
         >
           <div className={`relative bg-gradient-to-br ${currentStepData.color} p-[2px] rounded-3xl shadow-2xl`}>
