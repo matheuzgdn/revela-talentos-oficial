@@ -154,7 +154,7 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
         add_context_from_internet: false
       });
 
-      // Salvar assessment no banco
+      // Salvar assessment no banco com todos os dados
       const assessmentData = {
         user_id: userId,
         week_start_date: new Date().toISOString().split('T')[0],
@@ -165,18 +165,34 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
         training_sessions: parseInt(finalResponses.training) || 0,
         self_rating: finalResponses.training_quality || 5,
         physical_condition: getPhysicalCondition(finalResponses.life_status),
-        notes: `${finalResponses.life_status || ''}\n\nObservações: ${finalResponses.notes || 'Nenhuma'}`,
+        notes: `Clube: ${finalResponses.has_club === 'sim' ? (finalResponses.club_name || 'Sim') : 'Não'}\n\nVida: ${finalResponses.life_status || 'Não informado'}\n\nObservações: ${finalResponses.notes || 'Nenhuma'}\n\nTem vídeos: ${finalResponses.has_videos}`,
         admin_feedback: aiResponse,
         points_earned: 50
       };
 
-      await base44.entities.WeeklyAssessment.create(assessmentData);
+      const newAssessment = await base44.entities.WeeklyAssessment.create(assessmentData);
 
-      // Atualizar pontos do usuário
+      // Atualizar dados do usuário com estatísticas acumuladas
       const currentUser = await base44.auth.me();
+      
+      // Buscar todos os assessments para calcular totais
+      const allAssessments = await base44.entities.WeeklyAssessment.filter({ user_id: userId });
+      const totalGamesPlayed = allAssessments.filter(a => a.had_game).length + (finalResponses.had_game === 'sim' ? 1 : 0);
+      const totalGoalsScored = allAssessments.reduce((sum, a) => sum + (a.goals || 0), 0) + (finalResponses.game_performance?.goals || 0);
+      
       await base44.auth.updateMe({
         total_points: (currentUser.total_points || 0) + 50,
-        last_weekly_assessment: new Date().toISOString()
+        last_weekly_assessment: new Date().toISOString(),
+        // Atualizar clube se informado
+        ...(finalResponses.has_club === 'sim' && finalResponses.club_name ? {
+          current_club_name: finalResponses.club_name
+        } : {}),
+        // Atualizar estatísticas gerais
+        career_stats: {
+          total_games: totalGamesPlayed,
+          total_goals: totalGoalsScored,
+          last_assessment_feedback: aiResponse
+        }
       });
 
       // Criar notificação para admin

@@ -6,7 +6,7 @@ import {
   TrendingUp, Calendar, CheckCircle2, Zap, Award,
   Clock, Activity, Heart, Droplet, Brain, Users,
   ChevronRight, Plus, Star, Flame, Shield, BarChart3, 
-  TrendingDown, Footprints, Wind, Eye, Ruler
+  TrendingDown, Footprints, Wind, Eye, Ruler, Sparkles
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -137,8 +137,12 @@ export default function AthleteProfile() {
 
   const age = calculateAge(user.birth_date);
   const levelBadge = getLevelBadge(user.career_level);
-  const totalGames = weeklyAssessments.reduce((sum, w) => sum + (w.had_game ? 1 : 0), 0);
-  const totalGoals = weeklyAssessments.reduce((sum, w) => sum + (w.goals || 0), 0);
+  
+  // Calcular estatísticas dos assessments
+  const totalGames = user.career_stats?.total_games || weeklyAssessments.reduce((sum, w) => sum + (w.had_game ? 1 : 0), 0);
+  const totalGoals = user.career_stats?.total_goals || weeklyAssessments.reduce((sum, w) => sum + (w.goals || 0), 0);
+  const lastFeedback = user.career_stats?.last_assessment_feedback;
+  
   const checkinStreak = dailyCheckins.length > 0 ? dailyCheckins[0].streak_days : 0;
 
   return (
@@ -433,6 +437,24 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onNavigate }) {
             )}
           </div>
         </div>
+      )}
+
+      {/* Último Feedback da Assessoria */}
+      {lastFeedback && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gradient-to-br from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/30 rounded-2xl p-4"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-[#00E5FF]/20 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-[#00E5FF]" />
+            </div>
+            <h4 className="text-white font-bold text-sm">Feedback do Analista</h4>
+          </div>
+          <p className="text-gray-300 text-xs leading-relaxed">{lastFeedback}</p>
+        </motion.div>
       )}
 
       {/* Seletiva Card - Premium Minimalista */}
