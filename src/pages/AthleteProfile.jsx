@@ -246,25 +246,41 @@ export default function AthleteProfile() {
             </motion.div>
 
             {/* Right side - Player image */}
-            {user.player_cutout_url && (
-              <motion.div
-                initial={{ opacity: 0, y: 40, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="relative"
-              >
-                {/* Glow effect */}
-                <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/40 via-[#00E5FF]/10 to-transparent blur-3xl scale-110" />
-                
-                {/* Player image */}
-                <img 
-                  src={user.player_cutout_url}
-                  alt={user.full_name}
-                  className="relative z-10 h-[220px] md:h-[280px] w-auto object-contain drop-shadow-2xl"
-                  style={{ filter: 'drop-shadow(0 20px 60px rgba(0, 229, 255, 0.5))' }}
-                />
-              </motion.div>
-            )}
+            <motion.div
+              initial={{ opacity: 0, y: 40, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative hidden sm:block"
+            >
+              {user.player_cutout_url ? (
+                <>
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-radial from-[#00E5FF]/40 via-[#00E5FF]/10 to-transparent blur-3xl scale-110" />
+                  
+                  {/* Player image */}
+                  <img 
+                    src={user.player_cutout_url}
+                    alt={user.full_name}
+                    className="relative z-10 h-[220px] md:h-[280px] w-auto object-contain drop-shadow-2xl"
+                    style={{ filter: 'drop-shadow(0 20px 60px rgba(0, 229, 255, 0.5))' }}
+                  />
+                </>
+              ) : user.profile_picture_url ? (
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-[#00E5FF]/30 shadow-2xl">
+                  <img 
+                    src={user.profile_picture_url}
+                    alt={user.full_name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border-4 border-[#00E5FF]/30 flex items-center justify-center">
+                  <span className="text-5xl font-black text-[#00E5FF]">
+                    {user.full_name?.charAt(0) || "A"}
+                  </span>
+                </div>
+              )}
+            </motion.div>
           </div>
         </div>
       </section>
@@ -350,8 +366,8 @@ export default function AthleteProfile() {
       <section className="px-3 md:px-4">
         <div className="max-w-4xl mx-auto">
           <AnimatePresence mode="wait">
-            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} />}
-            {activeTab === "assessoria" && <AssessoriaTab userId={user.id} dailyCheckins={dailyCheckins} weeklyAssessments={weeklyAssessments} onUpdate={loadUserData} />}
+            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} onCheckinClick={() => setShowCheckinModal(true)} onAssessClick={() => setActiveTab("assessoria")} />}
+            {activeTab === "assessoria" && <AssessoriaTab userId={user.id} dailyCheckins={dailyCheckins} weeklyAssessments={weeklyAssessments} onUpdate={loadUserData} onCheckinClick={() => setShowCheckinModal(true)} />}
             {activeTab === "tasks" && <TasksTab tasks={tasks} userId={user.id} onUpdate={loadUserData} />}
             {activeTab === "trophies" && <TrophiesTab trophies={trophies} />}
             {activeTab === "stats" && <StatsTab user={user} weeklyAssessments={weeklyAssessments} />}
@@ -407,7 +423,7 @@ function StatCard({ label, value, delay }) {
 }
 
 // OVERVIEW TAB
-function OverviewTab({ user, checkinStreak }) {
+function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -416,21 +432,46 @@ function OverviewTab({ user, checkinStreak }) {
       className="space-y-4"
     >
       {/* Daily streak */}
-      <div className="bg-white/5 border border-white/10 rounded-[20px] p-6">
+      <div className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
-              <Flame className="w-6 h-6 text-orange-500" />
+            <div className="w-10 md:w-12 h-10 md:h-12 bg-orange-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Flame className="w-5 md:w-6 h-5 md:h-6 text-orange-500" />
             </div>
             <div>
-              <p className="text-white font-bold">Sequência de Check-ins</p>
-              <p className="text-gray-400 text-sm">{checkinStreak} dias consecutivos</p>
+              <p className="text-white font-bold text-sm md:text-base">Sequência de Check-ins</p>
+              <p className="text-gray-400 text-xs md:text-sm">{checkinStreak} dias consecutivos</p>
             </div>
           </div>
-          <p className="text-3xl font-black text-orange-500">{checkinStreak}</p>
+          <p className="text-2xl md:text-3xl font-black text-orange-500">{checkinStreak}</p>
         </div>
         <Progress value={(checkinStreak / 30) * 100} className="h-2" />
       </div>
+
+      {/* Profile info card */}
+      {user.current_club_name && (
+        <div className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
+          <h4 className="text-white font-bold mb-3 text-sm">Informações do Perfil</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Clube Atual:</span>
+              <span className="text-white font-bold">{user.current_club_name}</span>
+            </div>
+            {user.nationality && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Nacionalidade:</span>
+                <span className="text-white font-bold">{user.nationality}</span>
+              </div>
+            )}
+            {user.jersey_number && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Camisa:</span>
+                <span className="text-white font-bold">#{user.jersey_number}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Quick actions */}
       <div className="grid grid-cols-2 gap-3">
@@ -438,13 +479,13 @@ function OverviewTab({ user, checkinStreak }) {
           icon={Calendar}
           label="Check-in Diário"
           color="from-blue-500 to-cyan-500"
-          onClick={() => setShowCheckinModal(true)}
+          onClick={onCheckinClick}
         />
         <QuickActionCard 
           icon={Target}
           label="Assessoria Semanal"
           color="from-purple-500 to-pink-500"
-          onClick={() => setActiveTab("assessoria")}
+          onClick={onAssessClick}
         />
       </div>
     </motion.div>
@@ -456,16 +497,18 @@ function QuickActionCard({ icon: Icon, label, color, onClick }) {
     <motion.button
       whileTap={{ scale: 0.97 }}
       onClick={onClick}
-      className={`bg-gradient-to-br ${color} rounded-[20px] p-6 text-left shadow-lg hover:shadow-xl transition-shadow`}
+      className={`bg-gradient-to-br ${color} rounded-[16px] md:rounded-[20px] p-4 md:p-6 text-left shadow-lg hover:shadow-xl transition-shadow`}
     >
-      <Icon className="w-8 h-8 text-white mb-3" />
-      <p className="text-white font-bold text-sm">{label}</p>
+      <Icon className="w-6 md:w-8 h-6 md:h-8 text-white mb-2 md:mb-3" />
+      <p className="text-white font-bold text-xs md:text-sm">{label}</p>
     </motion.button>
   );
 }
 
 // ASSESSORIA TAB
-function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate }) {
+function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate, onCheckinClick }) {
+  const [showWeeklyForm, setShowWeeklyForm] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -473,10 +516,107 @@ function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate }) {
       exit={{ opacity: 0 }}
       className="space-y-4"
     >
-      <h3 className="text-xl font-black text-white mb-4">Ferramentas de Assessoria</h3>
-      
-      <div className="bg-white/5 border border-white/10 rounded-[20px] p-6">
-        <p className="text-gray-400">Ferramentas em desenvolvimento...</p>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg md:text-xl font-black text-white">Ferramentas de Assessoria</h3>
+        <Badge className="bg-purple-500/20 text-purple-400">
+          {weeklyAssessments.length} semanas
+        </Badge>
+      </div>
+
+      {/* Daily check-in card */}
+      <motion.button
+        whileTap={{ scale: 0.98 }}
+        onClick={onCheckinClick}
+        className="w-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-[20px] p-6 text-left"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center">
+              <Calendar className="w-7 h-7 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-white font-bold mb-1">Check-in Diário</p>
+              <p className="text-gray-400 text-sm">Registre seu dia a dia</p>
+            </div>
+          </div>
+          <ChevronRight className="w-6 h-6 text-blue-400" />
+        </div>
+      </motion.button>
+
+      {/* Weekly assessment */}
+      <div className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <Target className="w-6 h-6 text-purple-400" />
+            <h4 className="text-white font-bold">Relatório Semanal</h4>
+          </div>
+          <Button
+            onClick={() => setShowWeeklyForm(!showWeeklyForm)}
+            size="sm"
+            className="bg-purple-500 hover:bg-purple-600 text-white"
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            Novo
+          </Button>
+        </div>
+
+        {weeklyAssessments.length === 0 ? (
+          <p className="text-gray-400 text-sm text-center py-4">Nenhum relatório ainda</p>
+        ) : (
+          <div className="space-y-2">
+            {weeklyAssessments.map((assessment) => (
+              <div key={assessment.id} className="bg-[#1a1a1a] rounded-xl p-3 border border-[#333]">
+                <div className="flex justify-between items-start mb-2">
+                  <p className="text-white text-sm font-bold">
+                    {new Date(assessment.week_start_date).toLocaleDateString('pt-BR')}
+                  </p>
+                  <Badge className="bg-green-500/20 text-green-400 text-xs">
+                    +{assessment.points_earned} pts
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div>
+                    <p className="text-gray-500">Gols</p>
+                    <p className="text-white font-bold">{assessment.goals || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Assists</p>
+                    <p className="text-white font-bold">{assessment.assists || 0}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500">Treinos</p>
+                    <p className="text-white font-bold">{assessment.training_sessions || 0}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Recent check-ins */}
+      <div className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
+        <h4 className="text-white font-bold mb-3 flex items-center gap-2">
+          <Activity className="w-5 h-5 text-cyan-400" />
+          Últimos Check-ins
+        </h4>
+        {dailyCheckins.length === 0 ? (
+          <p className="text-gray-400 text-sm text-center py-4">Nenhum check-in ainda</p>
+        ) : (
+          <div className="space-y-2">
+            {dailyCheckins.map((checkin) => (
+              <div key={checkin.id} className="bg-[#1a1a1a] rounded-xl p-3 border border-[#333] flex items-center justify-between">
+                <div>
+                  <p className="text-white text-sm font-bold">{new Date(checkin.checkin_date).toLocaleDateString('pt-BR')}</p>
+                  <p className="text-gray-400 text-xs capitalize">{checkin.mood}</p>
+                </div>
+                <Badge className="bg-blue-500/20 text-blue-400 text-xs">
+                  Energia: {checkin.energy_level}/5
+                </Badge>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );

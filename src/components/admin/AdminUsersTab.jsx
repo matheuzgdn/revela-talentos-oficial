@@ -934,7 +934,7 @@ export default function AdminUsersTab() {
               <ScrollArea className="max-h-[60vh] p-1">
                 <TabsContent value="profile" className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
+                    <div className="col-span-2">
                       <Label htmlFor="full_name">Nome Completo</Label>
                       <Input id="full_name" value={editingUser.full_name || ""} onChange={(e) => handleFieldChange('full_name', e.target.value)} className="bg-gray-800 border-gray-700" />
                     </div>
@@ -946,22 +946,47 @@ export default function AdminUsersTab() {
                           <SelectItem value="goleiro">Goleiro</SelectItem>
                           <SelectItem value="zagueiro">Zagueiro</SelectItem>
                           <SelectItem value="lateral">Lateral</SelectItem>
-                          <SelectItem value="meio-campo">Meio-campo</SelectItem>
+                          <SelectItem value="volante">Volante</SelectItem>
+                          <SelectItem value="meia">Meia</SelectItem>
                           <SelectItem value="atacante">Atacante</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="age">Idade</Label>
-                      <Input id="age" type="number" value={editingUser.age || ""} onChange={(e) => handleFieldChange('age', parseInt(e.target.value))} className="bg-gray-800 border-gray-700" />
+                      <Label htmlFor="jersey_number">Número da Camisa</Label>
+                      <Input id="jersey_number" type="number" value={editingUser.jersey_number || ""} onChange={(e) => handleFieldChange('jersey_number', parseInt(e.target.value))} className="bg-gray-800 border-gray-700" />
                     </div>
                     <div>
-                      <Label htmlFor="club">Clube</Label>
-                      <Input id="club" value={editingUser.club || ""} onChange={(e) => handleFieldChange('club', e.target.value)} className="bg-gray-800 border-gray-700" />
+                      <Label htmlFor="nationality">Nacionalidade</Label>
+                      <Input id="nationality" value={editingUser.nationality || ""} onChange={(e) => handleFieldChange('nationality', e.target.value)} placeholder="Ex: 🇧🇷" className="bg-gray-800 border-gray-700" />
                     </div>
                     <div>
-                      <Label htmlFor="phone">Telefone</Label>
-                      <Input id="phone" value={editingUser.phone || ""} onChange={(e) => handleFieldChange('phone', e.target.value)} className="bg-gray-800 border-gray-700" />
+                      <Label htmlFor="birth_date">Data de Nascimento</Label>
+                      <Input id="birth_date" type="date" value={editingUser.birth_date || ""} onChange={(e) => handleFieldChange('birth_date', e.target.value)} className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div className="col-span-2">
+                      <Label htmlFor="current_club_name">Clube Atual</Label>
+                      <Input id="current_club_name" value={editingUser.current_club_name || ""} onChange={(e) => handleFieldChange('current_club_name', e.target.value)} className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div className="col-span-2">
+                      <Label htmlFor="current_club_crest_url">URL Escudo do Clube</Label>
+                      <Input id="current_club_crest_url" value={editingUser.current_club_crest_url || ""} onChange={(e) => handleFieldChange('current_club_crest_url', e.target.value)} placeholder="https://..." className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div className="col-span-2">
+                      <Label htmlFor="player_cutout_url">URL Imagem Recortada (PNG)</Label>
+                      <Input id="player_cutout_url" value={editingUser.player_cutout_url || ""} onChange={(e) => handleFieldChange('player_cutout_url', e.target.value)} placeholder="https://..." className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div>
+                      <Label htmlFor="career_level">Nível de Carreira</Label>
+                      <Select value={editingUser.career_level || "iniciante"} onValueChange={(v) => handleFieldChange('career_level', v)}>
+                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="iniciante">Iniciante</SelectItem>
+                          <SelectItem value="promessa">Promessa</SelectItem>
+                          <SelectItem value="destaque">Destaque</SelectItem>
+                          <SelectItem value="elite">Elite</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label htmlFor="role">Função</Label>
@@ -981,6 +1006,31 @@ export default function AdminUsersTab() {
                       </Select>
                     </div>
                   </div>
+                  
+                  {/* FIFA Attributes Section */}
+                  <Card className="bg-gray-800/50 border-gray-700 mt-6">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2 text-blue-400">
+                        <Trophy className="w-5 h-5" />
+                        Atributos FIFA
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physicality'].map((attr) => (
+                        <div key={attr}>
+                          <Label className="text-xs text-gray-400 capitalize">{attr === 'pace' ? 'Velocidade' : attr === 'shooting' ? 'Finalização' : attr === 'passing' ? 'Passe' : attr === 'dribbling' ? 'Drible' : attr === 'defending' ? 'Defesa' : 'Físico'}</Label>
+                          <Input
+                            type="number"
+                            min="0"
+                            max="99"
+                            value={editingUser.fifa_attributes?.[attr] || 50}
+                            onChange={(e) => handleFieldChange('fifa_attributes', { ...editingUser.fifa_attributes, [attr]: parseInt(e.target.value) })}
+                            className="bg-gray-800 border-gray-700 mt-1"
+                          />
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
                   
                   <Card className="bg-gray-800/50 border-gray-700 mt-6">
                     <CardHeader>

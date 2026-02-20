@@ -11,13 +11,33 @@ import { toast } from "sonner";
 export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
   const [formData, setFormData] = useState({
     full_name: user?.full_name || "",
+    profile_picture_url: user?.profile_picture_url || "",
+    player_cutout_url: user?.player_cutout_url || "",
     position: user?.position || "",
     nationality: user?.nationality || "",
     jersey_number: user?.jersey_number || "",
     current_club_name: user?.current_club_name || "",
+    current_club_crest_url: user?.current_club_crest_url || "",
     birth_date: user?.birth_date || ""
   });
   const [uploading, setUploading] = useState(false);
+
+  // Update formData when user prop changes
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        full_name: user.full_name || "",
+        profile_picture_url: user.profile_picture_url || "",
+        player_cutout_url: user.player_cutout_url || "",
+        position: user.position || "",
+        nationality: user.nationality || "",
+        jersey_number: user.jersey_number || "",
+        current_club_name: user.current_club_name || "",
+        current_club_crest_url: user.current_club_crest_url || "",
+        birth_date: user.birth_date || ""
+      });
+    }
+  }, [user]);
 
   const handleSave = async () => {
     try {
@@ -68,9 +88,14 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label className="text-gray-400 text-xs uppercase tracking-wider mb-2 block">Foto de Perfil</Label>
-              <div className="relative aspect-square bg-[#1a1a1a] rounded-2xl border-2 border-dashed border-[#333] overflow-hidden">
+              <div className="relative aspect-square bg-[#1a1a1a] rounded-2xl border-2 border-dashed border-[#333] overflow-hidden group cursor-pointer">
                 {formData.profile_picture_url ? (
-                  <img src={formData.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
+                  <>
+                    <img src={formData.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Camera className="w-8 h-8 text-white" />
+                    </div>
+                  </>
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <Camera className="w-8 h-8 text-gray-600 mb-2" />
@@ -82,15 +107,21 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, 'profile_picture_url')}
                   className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={uploading}
                 />
               </div>
             </div>
 
             <div>
-              <Label className="text-gray-400 text-xs uppercase tracking-wider mb-2 block">Imagem Recortada</Label>
-              <div className="relative aspect-square bg-[#1a1a1a] rounded-2xl border-2 border-dashed border-[#333] overflow-hidden">
+              <Label className="text-gray-400 text-xs uppercase tracking-wider mb-2 block">Imagem Recortada (PNG)</Label>
+              <div className="relative aspect-square bg-[#1a1a1a] rounded-2xl border-2 border-dashed border-[#333] overflow-hidden group cursor-pointer">
                 {formData.player_cutout_url ? (
-                  <img src={formData.player_cutout_url} alt="Cutout" className="w-full h-full object-contain" />
+                  <>
+                    <img src={formData.player_cutout_url} alt="Cutout" className="w-full h-full object-contain bg-gradient-to-br from-[#00E5FF]/5 to-[#0066FF]/5" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Upload className="w-8 h-8 text-white" />
+                    </div>
+                  </>
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <Upload className="w-8 h-8 text-gray-600 mb-2" />
@@ -99,9 +130,10 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                 )}
                 <input
                   type="file"
-                  accept="image/png"
+                  accept="image/png,image/*"
                   onChange={(e) => handleImageUpload(e, 'player_cutout_url')}
                   className="absolute inset-0 opacity-0 cursor-pointer"
+                  disabled={uploading}
                 />
               </div>
             </div>
