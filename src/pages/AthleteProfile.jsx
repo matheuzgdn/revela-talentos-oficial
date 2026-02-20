@@ -432,76 +432,94 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
         </div>
       )}
 
-      {/* Seletiva Card Destaque - Futebol Theme */}
+      {/* Seletiva Card - Premium Minimalista */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="relative overflow-hidden bg-gradient-to-br from-green-500/20 via-green-600/20 to-emerald-500/20 border-2 border-green-500 rounded-2xl p-4"
+        className="relative overflow-hidden bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm"
       >
-        {/* Campo de futebol pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent,transparent_49px,rgba(255,255,255,0.1)_49px,rgba(255,255,255,0.1)_50px)]" />
-          <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_49px,rgba(255,255,255,0.1)_49px,rgba(255,255,255,0.1)_50px)]" />
+        {/* Background image sutil */}
+        <div className="absolute inset-0 opacity-5">
+          <img 
+            src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop" 
+            alt="Campo"
+            className="w-full h-full object-cover"
+          />
         </div>
-        
-        {/* Glow effect */}
-        <motion.div
-          className="absolute inset-0 bg-green-500/10"
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        />
         
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/50">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                 <Trophy className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h4 className="text-white font-black text-sm">Seletiva Online</h4>
-                <div className="flex items-center gap-1">
-                  <span className="text-yellow-400 text-[10px]">⚽</span>
-                  <p className="text-yellow-400 text-[10px] font-bold">VAGAS LIMITADAS</p>
-                </div>
+                <h4 className="text-white font-bold text-sm">Seletiva Online</h4>
+                <p className="text-gray-400 text-[10px] font-medium">Vagas limitadas</p>
               </div>
             </div>
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="px-2 py-0.5 bg-red-500 rounded-full"
-            >
-              <span className="text-white text-[8px] font-black">LIVE</span>
-            </motion.div>
+            <div className="px-2 py-0.5 bg-white/10 border border-white/20 rounded-full backdrop-blur-sm">
+              <span className="text-white text-[8px] font-bold">NOVO</span>
+            </div>
           </div>
           
-          <p className="text-gray-200 text-xs mb-3">
+          <p className="text-gray-300 text-xs mb-3">
             Participe da nossa próxima seletiva e seja visto por clubes profissionais
           </p>
           
           <Button 
             onClick={() => window.location.href = createPageUrl("SeletivaOnline")}
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-black text-sm shadow-lg shadow-green-500/30"
+            className="w-full bg-white/10 hover:bg-white/15 border border-white/20 text-white font-bold text-sm backdrop-blur-sm"
           >
-            ⚽ INSCREVER-SE AGORA
+            Inscrever-se agora
           </Button>
         </div>
       </motion.div>
 
       {/* Quick actions */}
       <div className="grid grid-cols-2 gap-3">
-        <QuickActionCard 
-          icon={Calendar}
-          label="Check-in Diário"
-          color="from-cyan-500 to-blue-500"
+        <motion.button
+          whileTap={{ scale: 0.98 }}
           onClick={onCheckinClick}
-        />
-        <QuickActionCard 
-          icon={Target}
-          label="Assessoria Semanal"
-          color="from-pink-500 to-purple-500"
+          className="relative overflow-hidden bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm text-left"
+        >
+          <div className="absolute inset-0 opacity-5">
+            <img 
+              src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=200&h=200&fit=crop" 
+              alt="Futebol"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="relative z-10">
+            <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
+              <Calendar className="w-5 h-5 text-white" />
+            </div>
+            <p className="text-white font-bold text-sm">Check-in Diário</p>
+            <p className="text-gray-400 text-[10px] mt-1">Registre seu dia</p>
+          </div>
+        </motion.button>
+
+        <motion.button
+          whileTap={{ scale: 0.98 }}
           onClick={onAssessClick}
-        />
+          className="relative overflow-hidden bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm text-left"
+        >
+          <div className="absolute inset-0 opacity-5">
+            <img 
+              src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=200&h=200&fit=crop" 
+              alt="Campo"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="relative z-10">
+            <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center mb-3 backdrop-blur-sm">
+              <Target className="w-5 h-5 text-white" />
+            </div>
+            <p className="text-white font-bold text-sm">Assessoria Semanal</p>
+            <p className="text-gray-400 text-[10px] mt-1">Avalie sua semana</p>
+          </div>
+        </motion.button>
       </div>
     </motion.div>
   );
