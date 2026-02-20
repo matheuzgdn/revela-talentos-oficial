@@ -525,18 +525,7 @@ function OverviewTab({ user, checkinStreak, onCheckinClick, onAssessClick }) {
   );
 }
 
-function QuickActionCard({ icon: Icon, label, color, onClick }) {
-  return (
-    <motion.button
-      whileTap={{ scale: 0.97 }}
-      onClick={onClick}
-      className={`bg-gradient-to-br ${color} rounded-[16px] md:rounded-[20px] p-4 md:p-6 text-left shadow-lg hover:shadow-xl transition-shadow`}
-    >
-      <Icon className="w-6 md:w-8 h-6 md:h-8 text-white mb-2 md:mb-3" />
-      <p className="text-white font-bold text-xs md:text-sm">{label}</p>
-    </motion.button>
-  );
-}
+
 
 // ASSESSORIA TAB
 function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate, onCheckinClick }) {
