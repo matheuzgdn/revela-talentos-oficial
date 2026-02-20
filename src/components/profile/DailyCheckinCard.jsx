@@ -58,16 +58,16 @@ export default function DailyCheckinCard({ user, checkins, onSuccess }) {
     >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">
-          Daily Check-In
+          Check-in Diário
         </h2>
         
         {canCheckin ? (
           <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">
-            AVAILABLE
+            DISPONÍVEL
           </span>
         ) : (
           <span className="px-3 py-1 bg-gray-700/50 text-gray-400 rounded-full text-xs font-bold">
-            COMPLETED
+            COMPLETO
           </span>
         )}
       </div>
@@ -78,7 +78,7 @@ export default function DailyCheckinCard({ user, checkins, onSuccess }) {
           className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 rounded-xl font-black text-white text-sm uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20"
         >
           <Zap className="inline-block w-5 h-5 mr-2" />
-          Start Check-in (+10 pts)
+          Iniciar Check-in (+10 pts)
         </button>
       )}
 
@@ -92,7 +92,7 @@ export default function DailyCheckinCard({ user, checkins, onSuccess }) {
           >
             {/* TrainedToggle */}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-300 font-medium">Trained today?</span>
+              <span className="text-sm text-gray-300 font-medium">Treinou hoje?</span>
               <button
                 onClick={() => setFormData({ ...formData, had_training: !formData.had_training })}
                 className={`w-14 h-8 rounded-full transition-all ${
@@ -107,22 +107,22 @@ export default function DailyCheckinCard({ user, checkins, onSuccess }) {
 
             {/* IntensitySlider */}
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Training Intensity</label>
+              <label className="text-sm text-gray-400 mb-2 block">Intensidade do Treino</label>
               <select
                 value={formData.training_intensity}
                 onChange={(e) => setFormData({ ...formData, training_intensity: e.target.value })}
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white"
               >
-                <option value="light">Light</option>
-                <option value="moderate">Moderate</option>
-                <option value="intense">Intense</option>
-                <option value="very_intense">Very Intense</option>
+                <option value="light">Leve</option>
+                <option value="moderate">Moderado</option>
+                <option value="intense">Intenso</option>
+                <option value="very_intense">Muito Intenso</option>
               </select>
             </div>
 
             {/* EnergySlider */}
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Energy Level: {formData.energy_level}/10</label>
+              <label className="text-sm text-gray-400 mb-2 block">Nível de Energia: {formData.energy_level}/10</label>
               <input
                 type="range"
                 min="1"
@@ -138,7 +138,7 @@ export default function DailyCheckinCard({ user, checkins, onSuccess }) {
               className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 rounded-xl font-black text-white text-sm uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/20"
             >
               <CheckCircle2 className="inline-block w-5 h-5 mr-2" />
-              Submit Check-in
+              Enviar Check-in
             </button>
           </motion.div>
         )}
@@ -148,8 +148,8 @@ export default function DailyCheckinCard({ user, checkins, onSuccess }) {
         <div className="flex items-center gap-3 py-3">
           <CheckCircle2 className="w-8 h-8 text-green-400" />
           <div>
-            <p className="text-sm text-white font-bold">Today's check-in completed!</p>
-            <p className="text-xs text-gray-400">Come back tomorrow for +10 points</p>
+            <p className="text-sm text-white font-bold">Check-in de hoje completo!</p>
+            <p className="text-xs text-gray-400">Volte amanhã para +10 pontos</p>
           </div>
         </div>
       )}

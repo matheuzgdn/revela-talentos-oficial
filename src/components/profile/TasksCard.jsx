@@ -16,9 +16,9 @@ export default function TasksCard({ tasks }) {
         style={{ borderTop: "1px solid rgba(255,255,255,0.2)" }}
       >
         <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-4">
-          Tasks & Training
+          Tarefas e Treinos
         </h2>
-        <p className="text-sm text-gray-500 text-center py-4">No pending tasks</p>
+        <p className="text-sm text-gray-500 text-center py-4">Nenhuma tarefa pendente</p>
       </motion.div>
     );
   }
@@ -34,10 +34,10 @@ export default function TasksCard({ tasks }) {
     >
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">
-          Tasks & Training
+          Tarefas e Treinos
         </h2>
         <Badge className="bg-cyan-500/20 text-cyan-400 border-0">
-          {pendingTasks.length} pending
+          {pendingTasks.length} pendentes
         </Badge>
       </div>
 

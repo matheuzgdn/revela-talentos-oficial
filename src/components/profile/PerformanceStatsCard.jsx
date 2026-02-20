@@ -23,16 +23,16 @@ export default function PerformanceStatsCard({ performanceData }) {
       style={{ borderTop: "1px solid rgba(255,255,255,0.2)" }}
     >
       <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-5">
-        Performance Snapshot
+        Estatísticas de Desempenho
       </h2>
 
       <div className="grid grid-cols-2 gap-4">
-        <StatItem icon={Trophy} label="Games" value={totalGames} delay={0.2} />
-        <StatItem icon={Target} label="Goals" value={totalGoals} delay={0.25} />
-        <StatItem icon={Activity} label="Assists" value={totalAssists} delay={0.3} />
-        <StatItem icon={Clock} label="Minutes" value={totalMinutes} delay={0.35} />
-        <StatItem icon={Star} label="Avg Rating" value={avgRating} delay={0.4} />
-        <StatItem icon={TrendingUp} label="Consistency" value={`${consistency}%`} delay={0.45} />
+        <StatItem icon={Trophy} label="Jogos" value={totalGames} delay={0.2} />
+        <StatItem icon={Target} label="Gols" value={totalGoals} delay={0.25} />
+        <StatItem icon={Activity} label="Assistências" value={totalAssists} delay={0.3} />
+        <StatItem icon={Clock} label="Minutos" value={totalMinutes} delay={0.35} />
+        <StatItem icon={Star} label="Nota Média" value={avgRating} delay={0.4} />
+        <StatItem icon={TrendingUp} label="Consistência" value={`${consistency}%`} delay={0.45} />
       </div>
     </motion.div>
   );

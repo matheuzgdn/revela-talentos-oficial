@@ -34,7 +34,7 @@ export default function PlatformScoreCard({ user }) {
 
       <div className="relative z-10">
         <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-5">
-          Platform Score
+          Pontuação da Plataforma
         </h2>
 
         <div className="flex items-center gap-4 mb-6">
@@ -72,7 +72,7 @@ export default function PlatformScoreCard({ user }) {
               />
             </div>
             <p className="text-xs text-gray-500 mt-1 text-center">
-              {nextLevel.min - points} points to next level
+              {nextLevel.min - points} pontos para o próximo nível
             </p>
           </div>
         )}
@@ -83,7 +83,7 @@ export default function PlatformScoreCard({ user }) {
             <Award className="w-5 h-5 text-yellow-500" />
             <span className="text-2xl font-bold text-yellow-500">#12</span>
           </div>
-          <p className="text-xs text-gray-400 uppercase tracking-wide">Global Ranking</p>
+          <p className="text-xs text-gray-400 uppercase tracking-wide">Ranking Global</p>
         </div>
       </div>
     </motion.div>

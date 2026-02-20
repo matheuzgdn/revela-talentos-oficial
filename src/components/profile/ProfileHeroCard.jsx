@@ -76,16 +76,16 @@ export default function ProfileHeroCard({ user, onEdit }) {
         {/* Top actions */}
         <div className="flex items-center justify-between">
           <IconCircleButton ariaLabel="Compartilhar">
-            <Share2 className="h-4 w-4 text-white" />
+            <Share2 className="h-4 w-4 text-white/90" />
           </IconCircleButton>
 
           <div className="flex gap-2">
             <IconCircleButton ariaLabel="Editar perfil" onClick={onEdit}>
-              <Edit2 className="h-4 w-4 text-white" />
+              <Edit2 className="h-4 w-4 text-white/90" />
             </IconCircleButton>
 
-            <IconCircleButton ariaLabel="Salvar">
-              <Bookmark className="h-4 w-4 text-white" />
+            <IconCircleButton ariaLabel="Favoritar">
+              <Bookmark className="h-4 w-4 text-white/90" />
             </IconCircleButton>
           </div>
         </div>
@@ -190,9 +190,9 @@ export default function ProfileHeroCard({ user, onEdit }) {
 
         {/* Stats row (cinematic cards) */}
         <div className="mt-5 grid grid-cols-3 gap-3">
-          <StatCard label="AGE" value={user?.age ?? "—"} />
-          <StatCard label="GAMES" value={user?.total_games ?? 0} />
-          <StatCard label="GOALS" value={user?.total_goals ?? 0} />
+          <StatCard label="IDADE" value={user?.age ?? "—"} />
+          <StatCard label="JOGOS" value={user?.total_games ?? 0} />
+          <StatCard label="GOLS" value={user?.total_goals ?? 0} />
         </div>
 
         {/* Platform score strip */}
@@ -211,7 +211,7 @@ export default function ProfileHeroCard({ user, onEdit }) {
             </div>
             <div className="leading-tight">
               <p className="text-[10px] font-bold uppercase tracking-[0.20em] text-white/60">
-                Platform Score
+                Pontuação Total
               </p>
               <p className="text-xl font-black text-white">
                 {user?.total_points ?? 0} pts
@@ -221,9 +221,9 @@ export default function ProfileHeroCard({ user, onEdit }) {
 
           <Button
             onClick={onEdit}
-            className="rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-black uppercase tracking-widest text-xs px-4"
+            className="rounded-2xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-black uppercase tracking-widest text-xs px-4 transition-all"
           >
-            Edit
+            Editar
           </Button>
         </motion.div>
       </div>

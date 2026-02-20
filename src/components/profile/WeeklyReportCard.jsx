@@ -58,14 +58,14 @@ export default function WeeklyReportCard({ user, assessments, onSuccess }) {
           <Calendar className="w-5 h-5 text-white" />
         </div>
         <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">
-          Weekly Report
+          Relatório Semanal
         </h2>
       </div>
 
       <div className="space-y-3 mb-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-400 mb-1 block uppercase">Games</label>
+            <label className="text-xs text-gray-400 mb-1 block uppercase">Jogos</label>
             <Input
               type="number"
               value={formData.games_played}
@@ -74,7 +74,7 @@ export default function WeeklyReportCard({ user, assessments, onSuccess }) {
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block uppercase">Goals</label>
+            <label className="text-xs text-gray-400 mb-1 block uppercase">Gols</label>
             <Input
               type="number"
               value={formData.goals_scored}
@@ -86,7 +86,7 @@ export default function WeeklyReportCard({ user, assessments, onSuccess }) {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-gray-400 mb-1 block uppercase">Assists</label>
+            <label className="text-xs text-gray-400 mb-1 block uppercase">Assistências</label>
             <Input
               type="number"
               value={formData.assists}
@@ -95,7 +95,7 @@ export default function WeeklyReportCard({ user, assessments, onSuccess }) {
             />
           </div>
           <div>
-            <label className="text-xs text-gray-400 mb-1 block uppercase">Minutes</label>
+            <label className="text-xs text-gray-400 mb-1 block uppercase">Minutos</label>
             <Input
               type="number"
               value={formData.minutes_played}
@@ -106,11 +106,11 @@ export default function WeeklyReportCard({ user, assessments, onSuccess }) {
         </div>
 
         <div>
-          <label className="text-xs text-gray-400 mb-1 block uppercase">Highlights</label>
+          <label className="text-xs text-gray-400 mb-1 block uppercase">Destaques</label>
           <Textarea
             value={formData.highlights}
             onChange={(e) => setFormData({ ...formData, highlights: e.target.value })}
-            placeholder="What went well this week?"
+            placeholder="O que foi bom nesta semana?"
             className="bg-gray-800 border-gray-700 text-white rounded-xl min-h-[80px]"
           />
         </div>
@@ -121,12 +121,12 @@ export default function WeeklyReportCard({ user, assessments, onSuccess }) {
         className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 rounded-xl font-black text-white text-sm uppercase tracking-wider transition-all shadow-lg shadow-purple-500/20"
       >
         <Send className="inline-block w-5 h-5 mr-2" />
-        Submit Report (+50 pts)
+        Enviar Relatório (+50 pts)
       </button>
 
       {lastAssessment?.admin_feedback && (
         <div className="mt-4 bg-gradient-to-r from-cyan-500/10 to-blue-600/10 border border-cyan-500/30 rounded-xl p-4">
-          <p className="text-xs text-cyan-400 font-bold mb-2 uppercase">Admin Feedback</p>
+          <p className="text-xs text-cyan-400 font-bold mb-2 uppercase">Feedback do Treinador</p>
           <p className="text-sm text-white">{lastAssessment.admin_feedback}</p>
         </div>
       )}

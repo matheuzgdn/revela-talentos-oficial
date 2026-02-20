@@ -28,12 +28,12 @@ export default function EvolutionSectionCard({ performanceData, checkins }) {
       style={{ borderTop: "1px solid rgba(255,255,255,0.2)" }}
     >
       <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-5">
-        Performance Evolution
+        Evolução de Performance
       </h2>
 
       {/* MonthlyLineChart */}
       <div className="mb-6">
-        <p className="text-sm text-gray-400 mb-3 font-medium">Monthly Progress</p>
+        <p className="text-sm text-gray-400 mb-3 font-medium">Progresso Mensal</p>
         <ResponsiveContainer width="100%" height={120}>
           <LineChart data={monthlyData}>
             <XAxis 
@@ -64,7 +64,7 @@ export default function EvolutionSectionCard({ performanceData, checkins }) {
       {/* Last5MatchesBarChart */}
       {last5Games.length > 0 && (
         <div className="mb-6">
-          <p className="text-sm text-gray-400 mb-3 font-medium">Last 5 Matches</p>
+          <p className="text-sm text-gray-400 mb-3 font-medium">Últimas 5 Partidas</p>
           <ResponsiveContainer width="100%" height={100}>
             <BarChart data={last5Games}>
               <XAxis 
@@ -88,8 +88,8 @@ export default function EvolutionSectionCard({ performanceData, checkins }) {
 
       {/* Mini progress indicators */}
       <div className="grid grid-cols-2 gap-3">
-        <MiniProgressCard label="Physical" value={85} color="from-green-500 to-emerald-500" />
-        <MiniProgressCard label="Technical" value={78} color="from-cyan-500 to-blue-500" />
+        <MiniProgressCard label="Físico" value={85} color="from-green-500 to-emerald-500" />
+        <MiniProgressCard label="Técnico" value={78} color="from-cyan-500 to-blue-500" />
       </div>
     </motion.div>
   );

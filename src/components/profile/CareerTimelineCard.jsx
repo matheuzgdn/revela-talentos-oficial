@@ -17,7 +17,7 @@ export default function CareerTimelineCard({ clubHistory }) {
       style={{ borderTop: "1px solid rgba(255,255,255,0.2)" }}
     >
       <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest mb-5">
-        Career History
+        Histórico de Carreira
       </h2>
 
       {/* YearChipsHorizontalScroll */}
@@ -104,7 +104,7 @@ export default function CareerTimelineCard({ clubHistory }) {
             {club.goals !== undefined && (
               <div className="text-right">
                 <p className="text-cyan-400 text-xl font-bold">{club.goals}</p>
-                <p className="text-gray-500 text-[10px] uppercase">Goals</p>
+                <p className="text-gray-500 text-[10px] uppercase">Gols</p>
               </div>
             )}
           </motion.div>

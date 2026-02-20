@@ -35,7 +35,7 @@ export default function FifaOverallCard({ stats }) {
     >
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">
-          FIFA Overall
+          Avaliação Técnica
         </h2>
         
         {/* EvolutionIndicator */}
@@ -111,7 +111,7 @@ export default function FifaOverallCard({ stats }) {
 
       {/* LastUpdatedByAdmin */}
       <p className="text-xs text-gray-500 mt-4 text-center">
-        Last updated by admin • 2 days ago
+        Última atualização • há 2 dias
       </p>
     </motion.div>
   );
