@@ -1313,10 +1313,6 @@ export default function AdminUsersTab() {
     </div>);
 
 }
-                  const userData = getUserData(editingUser.id);
-                  return (
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Performance do Atleta</h3>
                         <div className="grid grid-cols-3 gap-4">
                           <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.length}</p><p className="text-xs text-gray-300">Total de Jogos</p></CardContent></Card>
                           <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Target className="w-8 h-8 text-green-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.reduce((sum, p) => sum + (p.goals || 0), 0)}</p><p className="text-xs text-gray-300">Total de Gols</p></CardContent></Card>
