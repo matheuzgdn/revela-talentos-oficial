@@ -740,6 +740,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
               <motion.div
                 key={video.id}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.href = createPageUrl("AthleteVideos")}
                 className="relative aspect-video bg-white/5 border border-white/10 rounded-xl overflow-hidden group cursor-pointer"
               >
                 {/* Thumbnail */}
@@ -766,6 +767,16 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
                      '✗ Rejeitado'}
                   </Badge>
                 </div>
+
+                {/* AI Analysis Badge */}
+                {video.ai_analysis && (
+                  <div className="absolute top-2 left-2">
+                    <Badge className="bg-purple-500/80 text-white text-[8px] flex items-center gap-1">
+                      <Sparkles className="w-2.5 h-2.5" />
+                      IA
+                    </Badge>
+                  </div>
+                )}
 
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
