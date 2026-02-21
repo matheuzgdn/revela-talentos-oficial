@@ -7,7 +7,7 @@ import {
   BarChart3, Activity, Zap, Lock, Unlock, Users,
   Upload, Eye, Heart, Sparkles, MessageCircle,
   ChevronRight, Video, CircleDot, Footprints, Wind,
-  Crosshair, UserPlus, Gauge, Move, Dumbbell, MapPin
+  Crosshair, UserPlus, Gauge, Move, Dumbbell, MapPin, Clock
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
