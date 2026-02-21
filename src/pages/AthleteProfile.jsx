@@ -70,7 +70,7 @@ export default function AthleteProfile() {
         base44.entities.WeeklyAssessment.filter({ user_id: currentUser.id }, '-week_start_date', 4),
         base44.entities.AthleteTask.filter({ user_id: currentUser.id, status: 'pendente' }),
         base44.entities.AthleteTrophy.filter({ user_id: currentUser.id }),
-        base44.entities.AthleteUpload.filter({ user_id: currentUser.id }, '-created_date', 20)
+        base44.entities.AthleteVideo.filter({ athlete_id: currentUser.id }, '-created_date', 20)
       ]);
 
       setDailyCheckins(checkinsData);
@@ -743,9 +743,9 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
                 className="relative aspect-video bg-white/5 border border-white/10 rounded-xl overflow-hidden group cursor-pointer"
               >
                 {/* Thumbnail */}
-                {video.processed_file_url || video.file_url ? (
+                {video.video_url ? (
                   <video
-                    src={video.processed_file_url || video.file_url}
+                    src={video.video_url}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -754,11 +754,24 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
                   </div>
                 )}
 
+                {/* Status Badge */}
+                <div className="absolute top-2 right-2">
+                  <Badge className={`text-[8px] ${
+                    video.status === 'approved' ? 'bg-green-500/80 text-white' :
+                    video.status === 'pending' ? 'bg-yellow-500/80 text-black' :
+                    'bg-red-500/80 text-white'
+                  }`}>
+                    {video.status === 'approved' ? '✓ Aprovado' :
+                     video.status === 'pending' ? '⏳ Análise' :
+                     '✗ Rejeitado'}
+                  </Badge>
+                </div>
+
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute bottom-2 left-2 right-2">
                     <p className="text-white text-[10px] font-bold line-clamp-2">
-                      {video.description || video.file_name || "Vídeo"}
+                      {video.title || video.description || "Vídeo"}
                     </p>
                     {video.category && (
                       <Badge className="bg-[#00E5FF]/80 text-black text-[8px] mt-1">

@@ -80,6 +80,8 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
         setTimeout(() => {
           onClose();
           resetForm();
+          // Recarregar a página para mostrar o novo vídeo
+          window.location.reload();
         }, 2000);
       }, 500);
 
@@ -229,9 +231,9 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
                       <SelectTrigger className="bg-[#111111] border-[#222] text-white rounded-2xl h-12">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#111111] border-[#222]">
+                      <SelectContent className="bg-[#111111] border-[#222] z-[70]">
                         {positions.map((pos) => (
-                          <SelectItem key={pos.value} value={pos.value} className="text-white hover:bg-[#1a1a1a]">
+                          <SelectItem key={pos.value} value={pos.value} className="text-white hover:bg-[#1a1a1a] focus:bg-[#1a1a1a]">
                             {pos.icon} {pos.label}
                           </SelectItem>
                         ))}
@@ -248,9 +250,9 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
                       <SelectTrigger className="bg-[#111111] border-[#222] text-white rounded-2xl h-12">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#111111] border-[#222]">
+                      <SelectContent className="bg-[#111111] border-[#222] z-[70]">
                         {categories.map((cat) => (
-                          <SelectItem key={cat.value} value={cat.value} className="text-white hover:bg-[#1a1a1a]">
+                          <SelectItem key={cat.value} value={cat.value} className="text-white hover:bg-[#1a1a1a] focus:bg-[#1a1a1a]">
                             {cat.icon} {cat.label}
                           </SelectItem>
                         ))}
