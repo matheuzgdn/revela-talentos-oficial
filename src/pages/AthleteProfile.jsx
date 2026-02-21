@@ -153,8 +153,7 @@ export default function AthleteProfile() {
   
   const checkinStreak = dailyCheckins.length > 0 ? dailyCheckins[0].streak_days : 0;
 
-  // Verificar se perfil está incompleto (mas não é primeira vez)
-  const isProfileIncomplete = !showOnboarding && (!user.birth_date || !user.position || !user.height || !user.weight);
+
 
   return (
     <div className="min-h-screen bg-[#070A12] pb-24 md:pb-8">
@@ -370,7 +369,7 @@ export default function AthleteProfile() {
           {user.current_club_name && (
             <motion.button
               whileTap={{ scale: 0.98 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="w-full bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-3 max-w-sm mx-auto mb-3 backdrop-blur-sm transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -392,7 +391,7 @@ export default function AthleteProfile() {
           {user.previous_clubs && user.previous_clubs.length > 0 && (
             <motion.button
               whileTap={{ scale: 0.98 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="w-full bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-3 max-w-sm mx-auto mb-3 backdrop-blur-sm transition-colors text-left"
             >
               <div className="flex items-start justify-between">
@@ -415,7 +414,7 @@ export default function AthleteProfile() {
           {user.achievements && (
             <motion.button
               whileTap={{ scale: 0.98 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="w-full bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 hover:border-yellow-500/50 rounded-xl p-3 max-w-sm mx-auto backdrop-blur-sm transition-colors text-left"
             >
               <div className="flex items-start justify-between">
