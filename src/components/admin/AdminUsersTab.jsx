@@ -939,7 +939,7 @@ export default function AdminUsersTab() {
                 {/* Dados Pessoais */}
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
-                    <User className="w-5 h-5" />
+                    <Users className="w-5 h-5" />
                     Dados Pessoais
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
