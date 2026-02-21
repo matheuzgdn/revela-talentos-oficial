@@ -1,147 +1,239 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Calendar, TrendingUp } from "lucide-react";
+import { X, Trophy, TrendingUp, Sparkles, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function WeeklyAssessmentNotification({ user, onOpen, onDismiss }) {
+export default function WeeklyAssessmentNotification({ user, onOpen }) {
   const [show, setShow] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Verificar se precisa mostrar notificação
-    if (!user) return;
-    
+    if (!user || dismissed) return;
+
     const lastAssessment = user.last_weekly_assessment;
     const now = new Date();
-    
+
     if (!lastAssessment) {
-      // Nunca fez assessment
-      setShow(true);
-      return;
+      const timer = setTimeout(() => setShow(true), 3000);
+      return () => clearTimeout(timer);
     }
 
     const lastDate = new Date(lastAssessment);
     const daysSinceLastAssessment = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
-    
-    // Mostrar se passou 7 dias ou mais
-    if (daysSinceLastAssessment >= 7) {
-      setShow(true);
-    }
-  }, [user]);
 
-  const handleOpen = () => {
+    if (daysSinceLastAssessment >= 7) {
+      const timer = setTimeout(() => setShow(true), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [user, dismissed]);
+
+  const handleDismiss = () => {
+    setShow(false);
+    setDismissed(true);
+  };
+
+  const handleStart = () => {
     setShow(false);
     onOpen();
   };
 
-  const handleDismiss = () => {
-    setShow(false);
-    onDismiss?.();
-    // Permitir dismiss temporário por 24h
-    localStorage.setItem('weeklyAssessmentDismissed', Date.now().toString());
+  if (!show) return null;
+
+  const getTimeMessage = () => {
+    const lastAssessment = user?.last_weekly_assessment;
+    if (!lastAssessment) return "Seu primeiro relatório semanal aguarda!";
+    
+    const lastDate = new Date(lastAssessment);
+    const now = new Date();
+    const daysSince = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+    
+    return `Já se passaram ${daysSince} dias desde seu último relatório.`;
   };
 
-  if (!show) return null;
+  const timeMessage = getTimeMessage();
 
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="fixed bottom-20 md:bottom-8 left-4 right-4 md:left-auto md:right-8 md:max-w-md z-50"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        style={{ 
+          backgroundColor: "rgba(0, 0, 0, 0.95)",
+          backdropFilter: "blur(20px)"
+        }}
       >
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#00E5FF]/10 via-[#0066FF]/10 to-[#00E5FF]/5 backdrop-blur-xl border border-[#00E5FF]/30 rounded-3xl p-4 shadow-2xl shadow-[#00E5FF]/20">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <img 
-              src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=200&fit=crop" 
-              alt="Campo"
-              className="w-full h-full object-cover"
+        {/* Partículas de fundo */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(30)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-cyan-500/40 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                scale: [0, 1.5, 0],
+                opacity: [0, 1, 0],
+                y: [0, -50, -100],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                delay: Math.random() * 3,
+              }}
             />
-          </div>
+          ))}
+        </div>
 
-          {/* Glow Effect */}
-          <div className="absolute inset-0 bg-[#00E5FF]/10 blur-2xl opacity-50" />
+        {/* Conteúdo Principal */}
+        <motion.div
+          initial={{ scale: 0.8, y: 50, opacity: 0 }}
+          animate={{ scale: 1, y: 0, opacity: 1 }}
+          exit={{ scale: 0.8, y: 50, opacity: 0 }}
+          transition={{ type: "spring", damping: 20, stiffness: 300 }}
+          className="relative max-w-md w-full"
+        >
+          {/* Glow effect VIP */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/40 via-blue-500/40 to-purple-500/40 blur-3xl rounded-3xl" />
+          
+          {/* Card principal */}
+          <div className="relative bg-gradient-to-br from-[#1A1A1A] via-[#0A0A0A] to-[#1A1A1A] border-2 border-cyan-500/50 rounded-3xl p-8 overflow-hidden">
+            {/* Border glow animation */}
+            <div className="absolute inset-0 rounded-3xl">
+              <motion.div
+                className="absolute inset-0 opacity-50"
+                style={{
+                  background: "linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.5), transparent)",
+                }}
+                animate={{
+                  x: ["-200%", "200%"],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+            </div>
 
-          {/* Content */}
-          <div className="relative z-10">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <motion.div
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 10, -10, 0]
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                  className="w-12 h-12 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-2xl flex items-center justify-center"
-                >
-                  <Sparkles className="w-6 h-6 text-black" />
-                </motion.div>
-                <div>
-                  <h4 className="text-white font-black text-base">Assessoria Semanal</h4>
-                  <p className="text-gray-300 text-xs">É hora de conversar! 💬</p>
+            {/* Botão fechar */}
+            <button
+              onClick={handleDismiss}
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-full transition-colors z-10"
+            >
+              <X className="w-4 h-4 text-white" />
+            </button>
+
+            {/* Icon épico */}
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 10, -10, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="flex justify-center mb-6"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-500 blur-2xl opacity-60" />
+                <div className="relative w-24 h-24 bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-3xl flex items-center justify-center">
+                  <Trophy className="w-12 h-12 text-white drop-shadow-2xl" />
                 </div>
+                <motion.div
+                  className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                  }}
+                >
+                  <Sparkles className="w-4 h-4 text-white" />
+                </motion.div>
               </div>
+            </motion.div>
+
+            {/* Title épico */}
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-3xl font-black text-center mb-3 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 text-transparent bg-clip-text"
+            >
+              Momento de Evolução
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-gray-300 text-center mb-6 text-sm leading-relaxed"
+            >
+              {timeMessage} Complete seu relatório semanal e receba feedback personalizado dos analistas.
+            </motion.p>
+
+            {/* Stats preview cinematográfico */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+              className="grid grid-cols-2 gap-3 mb-6"
+            >
+              <div className="bg-white/5 border border-cyan-500/30 rounded-2xl p-4 text-center">
+                <TrendingUp className="w-6 h-6 text-cyan-500 mx-auto mb-2" />
+                <p className="text-2xl font-black text-white">+50</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider">Pontos XP</p>
+              </div>
+              <div className="bg-white/5 border border-cyan-500/30 rounded-2xl p-4 text-center">
+                <Sparkles className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                <p className="text-2xl font-black text-white">IA</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider">Feedback</p>
+              </div>
+            </motion.div>
+
+            {/* CTA Cinematográfico */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Button
+                onClick={handleStart}
+                className="w-full h-14 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white font-black text-lg rounded-2xl shadow-2xl shadow-cyan-500/50 relative overflow-hidden group"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-white/20"
+                  animate={{
+                    x: ["-100%", "100%"],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <Trophy className="w-6 h-6" />
+                  Começar Avaliação
+                </span>
+              </Button>
+
               <button
                 onClick={handleDismiss}
-                className="w-7 h-7 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg flex items-center justify-center transition-colors"
+                className="w-full mt-3 text-gray-400 hover:text-white text-sm transition-colors"
               >
-                <X className="w-3.5 h-3.5 text-white" />
+                Fazer mais tarde
               </button>
-            </div>
-
-            <p className="text-gray-200 text-sm mb-4 leading-relaxed">
-              Como foi sua semana? Vamos conversar sobre seus treinos, jogos e evolução! ⚽
-            </p>
-
-            <div className="flex gap-2">
-              <Button
-                onClick={handleOpen}
-                className="flex-1 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055FF] text-black font-bold shadow-lg shadow-[#00E5FF]/30"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Começar Agora
-              </Button>
-              <Button
-                onClick={handleDismiss}
-                variant="ghost"
-                className="text-gray-400 hover:text-white hover:bg-white/5"
-              >
-                Depois
-              </Button>
-            </div>
-
-            {/* Stats Preview */}
-            <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/10">
-              <div className="text-center">
-                <p className="text-[#00E5FF] text-xs font-bold">+50 Pontos</p>
-                <p className="text-gray-400 text-[10px]">Por completar</p>
-              </div>
-              <div className="text-center">
-                <p className="text-[#00E5FF] text-xs font-bold">5 min</p>
-                <p className="text-gray-400 text-[10px]">Tempo estimado</p>
-              </div>
-            </div>
+            </motion.div>
           </div>
-
-          {/* Animated Border */}
-          <motion.div
-            className="absolute inset-0 border-2 border-[#00E5FF]/30 rounded-3xl"
-            animate={{
-              boxShadow: [
-                "0 0 20px rgba(0, 229, 255, 0.3)",
-                "0 0 40px rgba(0, 229, 255, 0.5)",
-                "0 0 20px rgba(0, 229, 255, 0.3)",
-              ]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
+        </motion.div>
       </motion.div>
     </AnimatePresence>
   );
