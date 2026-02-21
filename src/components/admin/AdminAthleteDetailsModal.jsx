@@ -32,6 +32,8 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [weeklyAssessments, setWeeklyAssessments] = useState([]);
+  const [adminVideoFeedback, setAdminVideoFeedback] = useState("");
+  const [isProcessingAnalysis, setIsProcessingAnalysis] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -40,6 +42,12 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
       loadAthleteData(user.id);
     }
   }, [user, isOpen]);
+
+  useEffect(() => {
+    if (selectedVideo) {
+      setAdminVideoFeedback(selectedVideo.admin_feedback || "");
+    }
+  }, [selectedVideo]);
 
   const loadAthleteData = async (userId) => {
     try {
@@ -106,6 +114,126 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
     if (videoRef.current) {
       videoRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
+    }
+  };
+
+  const handleProcessAIAnalysis = async () => {
+    if (!selectedVideo) return;
+    setIsProcessingAnalysis(true);
+    
+    try {
+      const prompt = `Você é um analista de desempenho esportivo especializado em futebol. Analise este vídeo de ${selectedVideo.athlete_name}, ${selectedVideo.position}.
+
+Título: ${selectedVideo.title}
+Descrição: ${selectedVideo.description || 'Sem descrição'}
+Categoria: ${selectedVideo.category}
+
+Forneça uma análise DETALHADA no seguinte formato JSON:
+{
+  "overall_score": número de 0 a 100,
+  "video_quality": {
+    "score": número de 0 a 100,
+    "resolution": "boa/média/ruim",
+    "lighting": "boa/média/ruim",
+    "angle": "boa/média/ruim",
+    "stability": "boa/média/ruim"
+  },
+  "performance_analysis": {
+    "technical_skills": número de 0 a 100,
+    "positioning": número de 0 a 100,
+    "decision_making": número de 0 a 100,
+    "physical_condition": número de 0 a 100
+  },
+  "detected_events": [
+    {
+      "type": "gol/assistencia/defesa/passe/drible/finalizacao",
+      "timestamp": "00:00",
+      "description": "descrição do evento",
+      "quality": "excelente/boa/regular"
+    }
+  ],
+  "strengths": ["ponto forte 1", "ponto forte 2", "ponto forte 3"],
+  "weaknesses": ["ponto fraco 1", "ponto fraco 2"],
+  "recommendations": ["recomendação 1", "recomendação 2", "recomendação 3"],
+  "summary": "resumo completo da análise"
+}`;
+
+      const analysisResult = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            overall_score: { type: "number" },
+            video_quality: { type: "object" },
+            performance_analysis: { type: "object" },
+            detected_events: { type: "array" },
+            strengths: { type: "array" },
+            weaknesses: { type: "array" },
+            recommendations: { type: "array" },
+            summary: { type: "string" }
+          }
+        }
+      });
+
+      await base44.entities.AthleteVideo.update(selectedVideo.id, {
+        ai_analysis: analysisResult,
+        status: 'approved'
+      });
+
+      toast.success("Análise de IA processada com sucesso!");
+      
+      // Recarregar dados
+      await loadAthleteData(user.id);
+      const updatedVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
+      setVideos(updatedVideos || []);
+      setSelectedVideo(updatedVideos.find(v => v.id === selectedVideo.id));
+      
+    } catch (error) {
+      console.error("Erro ao processar análise:", error);
+      toast.error("Erro ao processar análise de IA");
+    }
+    
+    setIsProcessingAnalysis(false);
+  };
+
+  const handleSaveVideoFeedback = async () => {
+    if (!selectedVideo) return;
+    
+    try {
+      await base44.entities.AthleteVideo.update(selectedVideo.id, {
+        admin_feedback: adminVideoFeedback,
+        status: adminVideoFeedback ? 'approved' : selectedVideo.status
+      });
+
+      toast.success("Feedback salvo com sucesso!");
+      
+      // Atualizar o vídeo selecionado
+      setSelectedVideo({ ...selectedVideo, admin_feedback: adminVideoFeedback });
+      
+      // Recarregar lista de vídeos
+      const updatedVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
+      setVideos(updatedVideos || []);
+      
+    } catch (error) {
+      console.error("Erro ao salvar feedback:", error);
+      toast.error("Erro ao salvar feedback");
+    }
+  };
+
+  const handleApproveVideo = async (videoId, status) => {
+    try {
+      await base44.entities.AthleteVideo.update(videoId, { status });
+      toast.success(`Vídeo ${status === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso!`);
+      
+      // Recarregar dados
+      const updatedVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
+      setVideos(updatedVideos || []);
+      if (selectedVideo?.id === videoId) {
+        setSelectedVideo(updatedVideos.find(v => v.id === videoId));
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar status:", error);
+      toast.error("Erro ao atualizar status do vídeo");
     }
   };
 
@@ -547,27 +675,80 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                     </div>
                   )}
 
-                  {/* Admin Feedback Section */}
-                  {selectedVideo.admin_feedback && (
-                    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-6">
-                      <h4 className="text-white font-bold mb-3 flex items-center gap-2 text-sm md:text-base">
+                  {/* Admin Feedback & Analysis Controls */}
+                  <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
                         <Shield className="w-5 h-5 text-purple-400" />
-                        Feedback do Analista
+                        Painel do Analista
                       </h4>
-                      <p className="text-gray-300 text-xs md:text-sm leading-relaxed">{selectedVideo.admin_feedback}</p>
+                      <div className="flex gap-2">
+                        {selectedVideo.status !== 'approved' && (
+                          <Button
+                            onClick={() => handleApproveVideo(selectedVideo.id, 'approved')}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <Check className="w-4 h-4 mr-1" />
+                            Aprovar
+                          </Button>
+                        )}
+                        {selectedVideo.status !== 'rejected' && (
+                          <Button
+                            onClick={() => handleApproveVideo(selectedVideo.id, 'rejected')}
+                            size="sm"
+                            variant="destructive"
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            Rejeitar
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  )}
 
-                  {/* Sem Análise */}
-                  {!selectedVideo.ai_analysis && (
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
-                      <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-gray-600 mx-auto mb-4" />
-                      <h4 className="text-white font-bold text-base md:text-lg mb-2">Análise em Andamento</h4>
-                      <p className="text-gray-400 text-xs md:text-sm">
-                        A análise de IA ainda não foi processada para este vídeo. Aguarde ou processe manualmente.
-                      </p>
+                    {!selectedVideo.ai_analysis && (
+                      <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-gray-300 text-sm">Este vídeo ainda não foi analisado pela IA</p>
+                          <Button
+                            onClick={handleProcessAIAnalysis}
+                            disabled={isProcessingAnalysis}
+                            size="sm"
+                            className="bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-bold"
+                          >
+                            {isProcessingAnalysis ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin mr-2" />
+                                Processando...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-4 h-4 mr-2" />
+                                Processar Análise IA
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-3">
+                      <Label className="text-white font-medium text-sm">Feedback do Analista</Label>
+                      <Textarea
+                        value={adminVideoFeedback}
+                        onChange={(e) => setAdminVideoFeedback(e.target.value)}
+                        placeholder="Escreva seu feedback sobre a performance do atleta neste vídeo..."
+                        className="bg-white/5 border-white/20 text-white placeholder:text-gray-500 min-h-[120px] focus:border-[#00E5FF]"
+                      />
+                      <Button
+                        onClick={handleSaveVideoFeedback}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                      >
+                        <Check className="w-4 h-4 mr-2" />
+                        Salvar Feedback
+                      </Button>
                     </div>
-                  )}
+                  </div>
 
                   <Button
                     onClick={() => setSelectedVideo(null)}
