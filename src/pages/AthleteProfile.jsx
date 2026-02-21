@@ -56,6 +56,7 @@ export default function AthleteProfile() {
   const loadUserData = async () => {
     try {
       const currentUser = await base44.auth.me();
+      console.log("Loaded user data:", currentUser);
       setUser(currentUser);
 
       // Verificar se é primeiro acesso (perfil incompleto)

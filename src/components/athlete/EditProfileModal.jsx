@@ -76,12 +76,14 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
 
   const handleSave = async () => {
     try {
+      console.log("Saving profile data:", formData);
       await base44.auth.updateMe(formData);
       toast.success("Perfil atualizado com sucesso!");
-      onUpdate();
+      await onUpdate();
       onClose();
       setCurrentStep(1);
     } catch (error) {
+      console.error("Error updating profile:", error);
       toast.error("Erro ao atualizar perfil");
     }
   };
