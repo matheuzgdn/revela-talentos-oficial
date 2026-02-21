@@ -1313,8 +1313,6 @@ export default function AdminUsersTab() {
     </div>);
 
 }
-
-                  {(() => {
                   const userData = getUserData(editingUser.id);
                   return (
                     <div className="space-y-4">
