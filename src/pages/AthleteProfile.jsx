@@ -56,19 +56,27 @@ export default function AthleteProfile() {
   const loadUserData = async () => {
     try {
       const currentUser = await base44.auth.me();
-      console.log("Loaded user data:", currentUser);
+      console.log("📥 Usuário carregado:", {
+        id: currentUser.id,
+        full_name: currentUser.full_name,
+        birth_date: currentUser.birth_date,
+        position: currentUser.position,
+        email: currentUser.email
+      });
       setUser(currentUser);
 
       // Verificar se é primeiro acesso (perfil incompleto)
       const isFirstTime = !currentUser.birth_date || !currentUser.position;
       if (isFirstTime) {
+        console.log("⚠️ Perfil incompleto - mostrando onboarding");
         setShowOnboarding(true);
       } else {
+        console.log("✅ Perfil completo");
         // Verificar se deve mostrar tutorial (só após onboarding completo e apenas uma vez)
         const tutorialCompleted = localStorage.getItem('tutorial_completed');
-        const hasSeenOnboarding = !isFirstTime;
         
-        if (!tutorialCompleted && hasSeenOnboarding) {
+        if (!tutorialCompleted) {
+          console.log("📖 Mostrando tutorial pela primeira vez");
           setTimeout(() => setShowTutorial(true), 1000);
         }
       }
@@ -527,11 +535,14 @@ export default function AthleteProfile() {
         isOpen={showOnboarding}
         onClose={() => {
           setShowOnboarding(false);
+        }}
+        user={user}
+        onComplete={async () => {
+          console.log("🔄 Recarregando dados após onboarding");
+          await loadUserData();
           // Mostrar tutorial após onboarding
           setTimeout(() => setShowTutorial(true), 500);
         }}
-        user={user}
-        onComplete={loadUserData}
       />
       <AppTutorial
         isOpen={showTutorial}
