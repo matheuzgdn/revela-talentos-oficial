@@ -1069,7 +1069,7 @@ export default function AdminUsersTab() {
                       <Input 
                         type="number" 
                         value={editingUser.weight || ""} 
-                        onChange=(e) => handleFieldChange('weight', parseInt(e.target.value))} 
+                        onChange={(e) => handleFieldChange('weight', parseInt(e.target.value))} 
                         placeholder="70"
                         className="bg-white/5 border-white/10 text-white" 
                       />
