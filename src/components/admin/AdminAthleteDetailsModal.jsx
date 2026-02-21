@@ -6,7 +6,8 @@ import {
   TrendingUp, Target, Shield, Trophy, Crown, Star,
   BarChart3, Activity, Zap, Lock, Unlock, Users,
   Upload, Eye, Heart, Sparkles, MessageCircle,
-  ChevronRight, Video
+  ChevronRight, Video, CircleDot, Footprints, Wind,
+  Crosshair, UserPlus, Gauge, Move, Dumbbell, MapPin
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -146,7 +147,7 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-[1400px] max-h-[95vh] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border-2 border-[#00E5FF]/30 text-white p-0 overflow-hidden">
+      <DialogContent className="max-w-[95vw] w-full md:w-[1400px] max-h-[95vh] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border-2 border-[#00E5FF]/30 text-white p-0 overflow-hidden">
         {/* HEADER ESTILO FIFA */}
         <div className="relative overflow-hidden">
           {/* BackgroundPattern */}
@@ -157,57 +158,57 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
             }} />
           </div>
 
-          <div className="relative p-6 pb-4">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-6">
+          <div className="relative p-4 md:p-6 pb-4">
+            <div className="flex flex-col md:flex-row items-start justify-between mb-4 gap-4">
+              <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto">
                 {/* Player Card Style */}
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] blur-xl opacity-40" />
-                  <Avatar className="relative h-24 w-24 border-4 border-[#00E5FF] shadow-2xl shadow-[#00E5FF]/50">
+                  <Avatar className="relative h-16 md:h-24 w-16 md:w-24 border-4 border-[#00E5FF] shadow-2xl shadow-[#00E5FF]/50">
                     <AvatarImage src={editingUser.profile_picture_url} />
-                    <AvatarFallback className="bg-gradient-to-br from-cyan-600 to-blue-600 text-white text-3xl font-black">
+                    <AvatarFallback className="bg-gradient-to-br from-cyan-600 to-blue-600 text-white text-2xl md:text-3xl font-black">
                       {editingUser.full_name?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
                   {/* Overall Rating Badge */}
-                  <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#FFD700] to-[#FFA500] rounded-xl flex items-center justify-center border-4 border-[#0A0A0A] shadow-xl">
-                    <span className="text-black font-black text-lg">{overallRating}</span>
+                  <div className="absolute -bottom-1 -right-1 md:-bottom-2 md:-right-2 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-[#FFD700] to-[#FFA500] rounded-xl flex items-center justify-center border-2 md:border-4 border-[#0A0A0A] shadow-xl">
+                    <span className="text-black font-black text-base md:text-lg">{overallRating}</span>
                   </div>
                 </div>
 
-                <div className="flex-1">
-                  <h2 className="text-3xl font-black text-white mb-1 tracking-tight uppercase">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-xl md:text-3xl font-black text-white mb-1 tracking-tight uppercase truncate">
                     {editingUser.full_name}
                   </h2>
                   <div className="flex items-center gap-2 flex-wrap mb-2">
-                    <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/30 font-bold">
+                    <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/30 font-bold text-[10px] md:text-xs">
                       {editingUser.position?.toUpperCase() || 'SEM POSIÇÃO'}
                     </Badge>
                     {editingUser.current_club_name && (
-                      <Badge className="bg-white/10 text-white border border-white/20">
+                      <Badge className="bg-white/10 text-white border border-white/20 text-[10px] md:text-xs">
                         {editingUser.current_club_name}
                       </Badge>
                     )}
                     {editingUser.nationality && (
-                      <span className="text-2xl">{editingUser.nationality}</span>
+                      <span className="text-xl md:text-2xl">{editingUser.nationality}</span>
                     )}
                   </div>
-                  <p className="text-gray-400 text-sm">{editingUser.email}</p>
+                  <p className="text-gray-400 text-xs md:text-sm truncate">{editingUser.email}</p>
                 </div>
 
                 {/* Quick Stats FIFA Style */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-center backdrop-blur-sm">
-                    <p className="text-[#00E5FF] text-2xl font-black">{age || '--'}</p>
-                    <p className="text-gray-400 text-[10px] uppercase tracking-wider font-bold">Idade</p>
+                <div className="grid grid-cols-3 gap-2 md:gap-3 w-full md:w-auto">
+                  <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3 text-center backdrop-blur-sm">
+                    <p className="text-[#00E5FF] text-lg md:text-2xl font-black">{age || '--'}</p>
+                    <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider font-bold">Idade</p>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-center backdrop-blur-sm">
-                    <p className="text-green-400 text-2xl font-black">{editingUser.height || '--'}</p>
-                    <p className="text-gray-400 text-[10px] uppercase tracking-wider font-bold">Altura</p>
+                  <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3 text-center backdrop-blur-sm">
+                    <p className="text-green-400 text-lg md:text-2xl font-black">{editingUser.height || '--'}</p>
+                    <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider font-bold">Altura</p>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-center backdrop-blur-sm">
-                    <p className="text-purple-400 text-2xl font-black">{editingUser.weight || '--'}</p>
-                    <p className="text-gray-400 text-[10px] uppercase tracking-wider font-bold">Peso</p>
+                  <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3 text-center backdrop-blur-sm">
+                    <p className="text-purple-400 text-lg md:text-2xl font-black">{editingUser.weight || '--'}</p>
+                    <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider font-bold">Peso</p>
                   </div>
                 </div>
               </div>
@@ -226,31 +227,32 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
               <TabsList className="w-full bg-white/5 border border-white/10 p-1 grid grid-cols-4 gap-1">
                 <TabsTrigger 
                   value="overview" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
-                  <BarChart3 className="w-4 h-4 mr-2" />
-                  Overview
+                  <BarChart3 className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                  <span className="hidden md:inline">Overview</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="videos" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
-                  <Video className="w-4 h-4 mr-2" />
-                  Vídeos ({videos.length})
+                  <Video className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                  <span className="hidden md:inline">Vídeos ({videos.length})</span>
+                  <span className="md:hidden">({videos.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="attributes" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
-                  <Trophy className="w-4 h-4 mr-2" />
-                  Atributos
+                  <Trophy className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                  <span className="hidden md:inline">Atributos</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="settings" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
-                  <Shield className="w-4 h-4 mr-2" />
-                  Permissões
+                  <Shield className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
+                  <span className="hidden md:inline">Permissões</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -258,11 +260,11 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
         </div>
 
         {/* CONTENT AREA */}
-        <ScrollArea className="h-[calc(95vh-250px)] px-6">
+        <ScrollArea className="h-[calc(95vh-200px)] md:h-[calc(95vh-250px)] px-3 md:px-6">
           <Tabs value={activeTab} className="w-full">
             {/* OVERVIEW TAB */}
-            <TabsContent value="overview" className="mt-0 space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <TabsContent value="overview" className="mt-0 space-y-3 md:space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
                 {/* FIFA Stats Radar */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -333,10 +335,10 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
               </div>
 
               {/* Quick Stats Grid */}
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                 {[
-                  { label: 'Gols', value: weeklyAssessments.reduce((s, w) => s + (w.goals || 0), 0), icon: Target, color: 'from-red-500 to-orange-500' },
-                  { label: 'Assistências', value: weeklyAssessments.reduce((s, w) => s + (w.assists || 0), 0), icon: Zap, color: 'from-blue-500 to-cyan-500' },
+                  { label: 'Gols', value: weeklyAssessments.reduce((s, w) => s + (w.goals || 0), 0), icon: CircleDot, color: 'from-red-500 to-orange-500' },
+                  { label: 'Assistências', value: weeklyAssessments.reduce((s, w) => s + (w.assists || 0), 0), icon: Footprints, color: 'from-blue-500 to-cyan-500' },
                   { label: 'Jogos', value: weeklyAssessments.filter(w => w.had_game).length, icon: Trophy, color: 'from-purple-500 to-pink-500' },
                   { label: 'Vídeos', value: videos.length, icon: Video, color: 'from-green-500 to-emerald-500' },
                 ].map((stat, idx) => (
@@ -345,18 +347,19 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className={`bg-gradient-to-br ${stat.color} bg-opacity-10 border border-white/10 rounded-xl p-4 text-center`}
+                    className={`bg-gradient-to-br ${stat.color} bg-opacity-10 border border-white/10 rounded-xl p-3 md:p-4 text-center relative overflow-hidden`}
                   >
-                    <stat.icon className="w-8 h-8 mx-auto mb-2 text-white" />
-                    <p className="text-3xl font-black text-white">{stat.value}</p>
-                    <p className="text-xs text-white/70 uppercase tracking-wider font-bold">{stat.label}</p>
+                    <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/20" />
+                    <stat.icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 text-white relative z-10" />
+                    <p className="text-2xl md:text-3xl font-black text-white relative z-10">{stat.value}</p>
+                    <p className="text-[10px] md:text-xs text-white/70 uppercase tracking-wider font-bold relative z-10">{stat.label}</p>
                   </motion.div>
                 ))}
               </div>
             </TabsContent>
 
             {/* VIDEOS TAB */}
-            <TabsContent value="videos" className="mt-0 space-y-4">
+            <TabsContent value="videos" className="mt-0 space-y-3 md:space-y-4">
               {selectedVideo ? (
                 <div className="space-y-4">
                   {/* Video Player Cinematográfico */}
@@ -420,54 +423,74 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
 
                   {/* Video Analysis */}
                   {selectedVideo.ai_analysis && (
-                    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-6">
+                    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-6">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-white font-bold flex items-center gap-2">
-                          <Sparkles className="w-5 h-5 text-purple-400" />
+                        <h3 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
+                          <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
                           Análise da IA
                         </h3>
-                        <Badge className="bg-purple-500/20 text-purple-300 text-lg px-4 py-1">
+                        <Badge className="bg-purple-500/20 text-purple-300 text-base md:text-lg px-3 md:px-4 py-1">
                           {selectedVideo.ai_analysis.overall_score}/100
                         </Badge>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        {selectedVideo.ai_analysis.performance_analysis && Object.entries(selectedVideo.ai_analysis.performance_analysis).map(([key, value]) => (
-                          <div key={key} className="bg-white/5 rounded-xl p-3">
-                            <div className="flex justify-between mb-2">
-                              <span className="text-gray-300 text-sm capitalize">{key.replace(/_/g, ' ')}</span>
-                              <span className="text-white font-bold">{value}/100</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
+                        {selectedVideo.ai_analysis.performance_analysis && Object.entries(selectedVideo.ai_analysis.performance_analysis).map(([key, value]) => {
+                          const icon = key === 'technical_skills' ? Target : 
+                                      key === 'positioning' ? MapPin : 
+                                      key === 'decision_making' ? Activity : 
+                                      key === 'physical_condition' ? Dumbbell : Wind;
+                          return (
+                            <div key={key} className="bg-white/5 rounded-xl p-3 border border-[#00E5FF]/20">
+                              <div className="flex justify-between items-center mb-2">
+                                <div className="flex items-center gap-2">
+                                  {React.createElement(icon, { className: "w-4 h-4 text-[#00E5FF]" })}
+                                  <span className="text-gray-300 text-xs md:text-sm capitalize font-medium">{key.replace(/_/g, ' ')}</span>
+                                </div>
+                                <span className="text-white font-black text-sm md:text-base">{value}/100</span>
+                              </div>
+                              <Progress value={value} className="h-2" />
                             </div>
-                            <Progress value={value} className="h-2" />
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
 
                       {selectedVideo.ai_analysis.detected_events && selectedVideo.ai_analysis.detected_events.length > 0 && (
                         <div className="mb-4">
-                          <h4 className="text-white font-bold text-sm mb-3">Eventos Detectados</h4>
+                          <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-[#00E5FF]" />
+                            Eventos Detectados
+                          </h4>
                           <div className="space-y-2">
-                            {selectedVideo.ai_analysis.detected_events.map((event, idx) => (
-                              <div key={idx} className="bg-white/5 rounded-lg p-3 flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center">
-                                  {event.type === 'gol' ? '⚽' : event.type === 'assistencia' ? '🎯' : '⚡'}
+                            {selectedVideo.ai_analysis.detected_events.map((event, idx) => {
+                              const eventIcon = event.type === 'gol' ? CircleDot : 
+                                              event.type === 'assistencia' ? Footprints : 
+                                              event.type === 'defesa' ? Shield : 
+                                              event.type === 'passe' ? Move : 
+                                              event.type === 'drible' ? Wind : 
+                                              Crosshair;
+                              return (
+                                <div key={idx} className="bg-white/5 rounded-lg p-3 flex items-center gap-3 border border-white/10">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center flex-shrink-0">
+                                    {React.createElement(eventIcon, { className: "w-5 h-5 text-black" })}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-white text-xs md:text-sm font-bold capitalize">{event.type}</p>
+                                    <p className="text-gray-400 text-[10px] md:text-xs truncate">{event.description}</p>
+                                  </div>
+                                  <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-[10px] md:text-xs flex-shrink-0">
+                                    {event.timestamp}
+                                  </Badge>
                                 </div>
-                                <div className="flex-1">
-                                  <p className="text-white text-sm font-bold capitalize">{event.type}</p>
-                                  <p className="text-gray-400 text-xs">{event.description}</p>
-                                </div>
-                                <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-xs">
-                                  {event.timestamp}
-                                </Badge>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}
 
                       {selectedVideo.ai_analysis.summary && (
-                        <div className="bg-white/5 rounded-xl p-4">
-                          <p className="text-gray-300 text-sm leading-relaxed">{selectedVideo.ai_analysis.summary}</p>
+                        <div className="bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
+                          <p className="text-gray-300 text-xs md:text-sm leading-relaxed">{selectedVideo.ai_analysis.summary}</p>
                         </div>
                       )}
                     </div>
@@ -482,7 +505,7 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
                   {videos.map((video, idx) => (
                     <motion.div
                       key={video.id}
@@ -492,40 +515,40 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setSelectedVideo(video)}
-                      className="relative aspect-video bg-gradient-to-br from-white/5 to-white/10 border border-white/10 rounded-xl overflow-hidden cursor-pointer group"
+                      className="relative aspect-video bg-gradient-to-br from-white/5 to-white/10 border-2 border-[#00E5FF]/20 rounded-xl overflow-hidden cursor-pointer group shadow-lg shadow-[#00E5FF]/10 hover:shadow-[#00E5FF]/30 transition-all"
                     >
                       <video src={video.video_url} className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-16 h-16 bg-[#00E5FF] rounded-full flex items-center justify-center">
-                            <Play className="w-8 h-8 text-black ml-1" fill="black" />
+                          <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-xl shadow-[#00E5FF]/50">
+                            <Play className="w-6 h-6 md:w-8 md:h-8 text-black ml-1" fill="black" />
                           </div>
                         </div>
-                        <div className="absolute bottom-3 left-3 right-3">
-                          <p className="text-white text-xs font-bold line-clamp-2">{video.title}</p>
+                        <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3 right-2 md:right-3">
+                          <p className="text-white text-[10px] md:text-xs font-bold line-clamp-2">{video.title}</p>
                           {video.ai_analysis && (
-                            <Badge className="bg-purple-500/80 text-white text-[9px] mt-1">
-                              <Sparkles className="w-2.5 h-2.5 mr-1" />
+                            <Badge className="bg-purple-500/90 text-white text-[8px] md:text-[9px] mt-1 border border-purple-400/50">
+                              <Sparkles className="w-2 h-2 md:w-2.5 md:h-2.5 mr-1" />
                               IA: {video.ai_analysis.overall_score}/100
                             </Badge>
                           )}
                         </div>
                       </div>
                       <div className="absolute top-2 right-2">
-                        <Badge className={`text-[9px] ${
-                          video.status === 'approved' ? 'bg-green-500/80 text-white' :
-                          video.status === 'pending' ? 'bg-yellow-500/80 text-black' :
-                          'bg-red-500/80 text-white'
+                        <Badge className={`text-[8px] md:text-[9px] ${
+                          video.status === 'approved' ? 'bg-green-500/90 text-white border border-green-400/50' :
+                          video.status === 'pending' ? 'bg-yellow-500/90 text-black border border-yellow-400/50' :
+                          'bg-red-500/90 text-white border border-red-400/50'
                         }`}>
-                          {video.status === 'approved' ? '✓' : video.status === 'pending' ? '⏳' : '✗'}
+                          {video.status === 'approved' ? <Check className="w-2.5 h-2.5" /> : video.status === 'pending' ? <Clock className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
                         </Badge>
                       </div>
                     </motion.div>
                   ))}
                   {videos.length === 0 && (
-                    <div className="col-span-full bg-white/5 border border-white/10 rounded-2xl p-12 text-center">
-                      <Video className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                      <p className="text-gray-400">Nenhum vídeo enviado ainda</p>
+                    <div className="col-span-full bg-white/5 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
+                      <Video className="w-12 h-12 md:w-16 md:h-16 text-gray-600 mx-auto mb-4" />
+                      <p className="text-gray-400 text-sm md:text-base">Nenhum vídeo enviado ainda</p>
                     </div>
                   )}
                 </div>
@@ -607,12 +630,42 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#1A1A1A] border-white/10">
-                        <SelectItem value="goleiro">🧤 Goleiro</SelectItem>
-                        <SelectItem value="zagueiro">🛡️ Zagueiro</SelectItem>
-                        <SelectItem value="lateral">🏃 Lateral</SelectItem>
-                        <SelectItem value="volante">⚙️ Volante</SelectItem>
-                        <SelectItem value="meia">🎯 Meia</SelectItem>
-                        <SelectItem value="atacante">⚡ Atacante</SelectItem>
+                        <SelectItem value="goleiro">
+                          <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4" />
+                            Goleiro
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="zagueiro">
+                          <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4" />
+                            Zagueiro
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="lateral">
+                          <div className="flex items-center gap-2">
+                            <Wind className="w-4 h-4" />
+                            Lateral
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="volante">
+                          <div className="flex items-center gap-2">
+                            <Activity className="w-4 h-4" />
+                            Volante
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="meia">
+                          <div className="flex items-center gap-2">
+                            <Target className="w-4 h-4" />
+                            Meia
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="atacante">
+                          <div className="flex items-center gap-2">
+                            <Zap className="w-4 h-4" />
+                            Atacante
+                          </div>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -674,27 +727,27 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
               </div>
 
               {/* FIFA Attributes Editor */}
-              <div className="bg-gradient-to-br from-[#00E5FF]/5 to-[#0066FF]/5 border border-[#00E5FF]/20 rounded-2xl p-6">
-                <h3 className="text-white font-bold mb-6 flex items-center gap-2 text-lg">
-                  <BarChart3 className="w-6 h-6 text-[#00E5FF]" />
+              <div className="bg-gradient-to-br from-[#00E5FF]/5 to-[#0066FF]/5 border border-[#00E5FF]/20 rounded-2xl p-4 md:p-6">
+                <h3 className="text-white font-bold mb-4 md:mb-6 flex items-center gap-2 text-base md:text-lg">
+                  <BarChart3 className="w-5 h-5 md:w-6 md:h-6 text-[#00E5FF]" />
                   Editar Atributos FIFA
                 </h3>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   {[
-                    { key: 'pace', label: 'Velocidade', icon: '⚡', color: 'green' },
-                    { key: 'shooting', label: 'Finalização', icon: '🎯', color: 'red' },
-                    { key: 'passing', label: 'Passe', icon: '🎯', color: 'blue' },
-                    { key: 'dribbling', label: 'Drible', icon: '⚽', color: 'purple' },
-                    { key: 'defending', label: 'Defesa', icon: '🛡️', color: 'cyan' },
-                    { key: 'physicality', label: 'Físico', icon: '💪', color: 'orange' }
+                    { key: 'pace', label: 'Velocidade', icon: Wind, color: 'green' },
+                    { key: 'shooting', label: 'Finalização', icon: CircleDot, color: 'red' },
+                    { key: 'passing', label: 'Passe', icon: Move, color: 'blue' },
+                    { key: 'dribbling', label: 'Drible', icon: Footprints, color: 'purple' },
+                    { key: 'defending', label: 'Defesa', icon: Shield, color: 'cyan' },
+                    { key: 'physicality', label: 'Físico', icon: Dumbbell, color: 'orange' }
                   ].map((attr) => (
-                    <div key={attr.key} className="space-y-2">
+                    <div key={attr.key} className="space-y-2 bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
                       <div className="flex items-center justify-between">
-                        <Label className="text-white font-bold flex items-center gap-2">
-                          <span className="text-lg">{attr.icon}</span>
+                        <Label className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
+                          {React.createElement(attr.icon, { className: "w-4 h-4 md:w-5 md:h-5 text-[#00E5FF]" })}
                           {attr.label}
                         </Label>
-                        <span className="text-2xl font-black text-[#00E5FF]">
+                        <span className="text-xl md:text-2xl font-black text-[#00E5FF]">
                           {editingUser.fifa_attributes?.[attr.key] || 50}
                         </span>
                       </div>
@@ -711,7 +764,7 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                       />
                       <Progress 
                         value={editingUser.fifa_attributes?.[attr.key] || 50} 
-                        className="h-3"
+                        className="h-2 md:h-3"
                       />
                     </div>
                   ))}
@@ -879,26 +932,26 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
         </ScrollArea>
 
         {/* FOOTER ESTILO FIFA */}
-        <div className="border-t border-[#00E5FF]/20 bg-gradient-to-r from-[#0A0A0A] to-[#0D1117] p-6">
-          <div className="flex items-center justify-between">
+        <div className="border-t border-[#00E5FF]/20 bg-gradient-to-r from-[#0A0A0A] to-[#0D1117] p-3 md:p-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-gray-400 text-sm">Última atualização: {new Date(editingUser.updated_date || Date.now()).toLocaleDateString('pt-BR')}</span>
+              <span className="text-gray-400 text-xs md:text-sm">Última atualização: {new Date(editingUser.updated_date || Date.now()).toLocaleDateString('pt-BR')}</span>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 md:gap-3 w-full md:w-auto">
               <Button 
                 onClick={onClose}
                 variant="outline" 
-                className="border-white/20 text-white hover:bg-white/10 px-8"
+                className="border-white/20 text-white hover:bg-white/10 flex-1 md:flex-none md:px-8"
               >
                 Cancelar
               </Button>
               <Button 
                 onClick={handleSave}
-                className="bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-black px-8 shadow-xl shadow-[#00E5FF]/30"
+                className="bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-black flex-1 md:flex-none md:px-8 shadow-xl shadow-[#00E5FF]/30"
               >
-                <Check className="w-5 h-5 mr-2" />
-                Salvar Alterações
+                <Check className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                Salvar
               </Button>
             </div>
           </div>
