@@ -14,23 +14,18 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import VideoUploadModal from "@/components/mobile/VideoUploadModal";
-import EditProfileModal from "@/components/athlete/EditProfileModal";
+import ProfileSetup from "@/components/athlete/ProfileSetup";
 import DailyCheckinModal from "@/components/athlete/DailyCheckinModal";
 import WeeklyAssessmentChat from "@/components/athlete/WeeklyAssessmentChat";
 import WeeklyAssessmentNotification from "@/components/athlete/WeeklyAssessmentNotification";
-import WelcomeOnboarding from "@/components/athlete/WelcomeOnboarding";
-import CompleteProfilePrompt from "@/components/athlete/CompleteProfilePrompt";
-import AppTutorial from "@/components/athlete/AppTutorial";
 
 export default function AthleteProfile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
   const [showCheckinModal, setShowCheckinModal] = useState(false);
   const [showWeeklyAssessment, setShowWeeklyAssessment] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
   const [dailyCheckins, setDailyCheckins] = useState([]);
   const [weeklyAssessments, setWeeklyAssessments] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -56,32 +51,17 @@ export default function AthleteProfile() {
   const loadUserData = async () => {
     try {
       const currentUser = await base44.auth.me();
-      console.log("📥 Usuário carregado:", {
-        id: currentUser.id,
-        full_name: currentUser.full_name,
-        birth_date: currentUser.birth_date,
-        position: currentUser.position,
-        email: currentUser.email
-      });
+      console.log("📥 Usuário:", currentUser);
       setUser(currentUser);
 
-      // Verificar se é primeiro acesso (perfil incompleto)
-      const isFirstTime = !currentUser.birth_date || !currentUser.position;
-      if (isFirstTime) {
-        console.log("⚠️ Perfil incompleto - mostrando onboarding");
-        setShowOnboarding(true);
-      } else {
-        console.log("✅ Perfil completo");
-        // Verificar se deve mostrar tutorial (só após onboarding completo e apenas uma vez)
-        const tutorialCompleted = localStorage.getItem('tutorial_completed');
-        
-        if (!tutorialCompleted) {
-          console.log("📖 Mostrando tutorial pela primeira vez");
-          setTimeout(() => setShowTutorial(true), 1000);
-        }
+      // Verificar se precisa configurar perfil
+      const needsSetup = !currentUser.birth_date || !currentUser.position;
+      if (needsSetup) {
+        console.log("⚠️ Perfil incompleto");
+        setShowProfileSetup(true);
       }
 
-      // Load related data
+      // Carregar dados relacionados
       const [checkinsData, assessmentsData, tasksData, trophiesData] = await Promise.all([
         base44.entities.DailyCheckin.filter({ user_id: currentUser.id }, '-checkin_date', 7),
         base44.entities.WeeklyAssessment.filter({ user_id: currentUser.id }, '-week_start_date', 4),
@@ -95,7 +75,7 @@ export default function AthleteProfile() {
       setTrophies(trophiesData);
       setLoading(false);
     } catch (error) {
-      console.error("Error loading user data:", error);
+      console.error("❌ Erro ao carregar:", error);
       setLoading(false);
     }
   };
@@ -178,13 +158,6 @@ export default function AthleteProfile() {
 
   return (
     <div className="min-h-screen bg-[#070A12] pb-24 md:pb-8">
-      {/* Prompt para completar perfil */}
-      {isProfileIncomplete && (
-        <CompleteProfilePrompt 
-          user={user} 
-          onComplete={() => setShowEditModal(true)} 
-        />
-      )}
       {/* HERO SECTION - PREMIUM MINIMALISTA */}
       <section id="profile-card" className="relative overflow-hidden pb-6">
         {/* Background simples */}
@@ -218,7 +191,7 @@ export default function AthleteProfile() {
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setShowEditModal(true)}
+                onClick={() => setShowProfileSetup(true)}
                 className="w-8 h-8 bg-[#00E5FF] rounded-full flex items-center justify-center"
               >
                 <Edit3 className="w-3.5 h-3.5 text-black" />
@@ -332,7 +305,7 @@ export default function AthleteProfile() {
             {/* Idade */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
             >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Idade</p>
@@ -342,7 +315,7 @@ export default function AthleteProfile() {
             {/* Nacionalidade */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
             >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">País</p>
@@ -352,7 +325,7 @@ export default function AthleteProfile() {
             {/* Jogos */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
             >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Jogos</p>
@@ -365,7 +338,7 @@ export default function AthleteProfile() {
             {/* Pé Dominante */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
             >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Pé</p>
@@ -375,7 +348,7 @@ export default function AthleteProfile() {
             {/* Altura */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
             >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Altura</p>
@@ -385,7 +358,7 @@ export default function AthleteProfile() {
             {/* Peso */}
             <motion.button
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowEditModal(true)}
+              onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors"
             >
               <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Peso</p>
@@ -502,17 +475,11 @@ export default function AthleteProfile() {
         onClose={() => setShowUploadModal(false)} 
         user={user} 
       />
-      <EditProfileModal
-        isOpen={showEditModal}
-        onClose={() => {
-          setShowEditModal(false);
-          // Não reativar tutorial após edição
-        }}
+      <ProfileSetup
+        isOpen={showProfileSetup}
+        onClose={() => setShowProfileSetup(false)}
         user={user}
-        onUpdate={async () => {
-          await loadUserData();
-          // Não mostrar tutorial após edição de perfil
-        }}
+        onSave={loadUserData}
       />
       <DailyCheckinModal
         isOpen={showCheckinModal}
@@ -530,23 +497,6 @@ export default function AthleteProfile() {
       <WeeklyAssessmentNotification
         user={user}
         onOpen={() => setShowWeeklyAssessment(true)}
-      />
-      <WelcomeOnboarding
-        isOpen={showOnboarding}
-        onClose={() => {
-          setShowOnboarding(false);
-        }}
-        user={user}
-        onComplete={async () => {
-          console.log("🔄 Recarregando dados após onboarding");
-          await loadUserData();
-          // Mostrar tutorial após onboarding
-          setTimeout(() => setShowTutorial(true), 500);
-        }}
-      />
-      <AppTutorial
-        isOpen={showTutorial}
-        onClose={() => setShowTutorial(false)}
       />
     </div>
   );
