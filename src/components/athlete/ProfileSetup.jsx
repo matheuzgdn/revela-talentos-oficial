@@ -116,16 +116,20 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
 
       await base44.auth.updateMe(updateData);
 
-      console.log("✅ Perfil salvo!");
-      toast.success("✅ Perfil salvo com sucesso!", { duration: 2000 });
-
-      setTimeout(async () => {
-        await onSave();
-        onClose();
-      }, 500);
+      console.log("✅ Perfil salvo no banco!");
+      
+      // Recarregar dados do usuário ANTES de fechar
+      await onSave();
+      
+      console.log("✅ Dados recarregados!");
+      
+      // Mostrar sucesso e fechar
+      toast.success("✅ Perfil atualizado!", { duration: 2000 });
+      setSaving(false);
+      onClose();
 
     } catch (error) {
-      console.error("❌ Erro:", error);
+      console.error("❌ Erro ao salvar:", error);
       toast.error("❌ Erro ao salvar perfil");
       setSaving(false);
     }
