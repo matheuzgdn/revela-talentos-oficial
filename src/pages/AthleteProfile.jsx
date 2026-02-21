@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import VideoUploadModal from "@/components/mobile/VideoUploadModal";
+import VideoAnalysisModal from "@/components/athlete/VideoAnalysisModal";
 import ProfileSetup from "@/components/athlete/ProfileSetup";
 import DailyCheckinModal from "@/components/athlete/DailyCheckinModal";
 import DailyCheckinNotification from "@/components/athlete/DailyCheckinNotification";
@@ -33,6 +34,7 @@ export default function AthleteProfile() {
   const [trophies, setTrophies] = useState([]);
   const [videos, setVideos] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
   useEffect(() => {
     loadUserData();
@@ -507,6 +509,14 @@ export default function AthleteProfile() {
         user={user}
         onOpen={() => setShowWeeklyAssessment(true)}
       />
+      {selectedVideo && (
+        <VideoAnalysisModal
+          video={selectedVideo}
+          isOpen={!!selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          user={user}
+        />
+      )}
     </div>
   );
 }
@@ -740,7 +750,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
               <motion.div
                 key={video.id}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => window.location.href = createPageUrl("AthleteVideos")}
+                onClick={() => setSelectedVideo(video)}
                 className="relative aspect-video bg-white/5 border border-white/10 rounded-xl overflow-hidden group cursor-pointer"
               >
                 {/* Thumbnail */}
