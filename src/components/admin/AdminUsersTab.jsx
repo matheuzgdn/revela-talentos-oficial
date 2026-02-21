@@ -917,70 +917,170 @@ export default function AdminUsersTab() {
 
       {editingUser &&
       <Dialog open={isModalOpen} onOpenChange={(isOpen) => {if (!isOpen) setEditingPerformanceItem(null);setIsModalOpen(isOpen);}}>
-          <DialogContent className="sm:max-w-[800px] bg-gray-900 border-gray-800 text-white max-h-[90vh]">
-            <DialogHeader>
-              <DialogTitle className="text-xl">Gerenciar: {editingUser.full_name}</DialogTitle>
+          <DialogContent className="sm:max-w-[900px] bg-[#0A0A0A] border border-[#00E5FF]/30 text-white max-h-[95vh] overflow-hidden">
+            <DialogHeader className="border-b border-white/10 pb-4">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16 border-2 border-[#00E5FF]">
+                  <AvatarImage src={editingUser.profile_picture_url} />
+                  <AvatarFallback className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xl">
+                    {editingUser.full_name?.charAt(0) || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <DialogTitle className="text-2xl font-black text-white">{editingUser.full_name}</DialogTitle>
+                  <p className="text-gray-400 text-sm">{editingUser.email}</p>
+                </div>
+              </div>
             </DialogHeader>
             
-            <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-4">
-                <TabsTrigger value="profile">Perfil</TabsTrigger>
-                <TabsTrigger value="performance">Performance</TabsTrigger>
-                <TabsTrigger value="content">Progresso</TabsTrigger>
-                <TabsTrigger value="activity">Uploads</TabsTrigger>
-                <TabsTrigger value="messages">Mensagens</TabsTrigger>
-              </TabsList>
-
-              <ScrollArea className="max-h-[60vh] p-1">
-                <TabsContent value="profile" className="space-y-4">
+            <ScrollArea className="max-h-[calc(95vh-180px)]">
+              <div className="space-y-6 p-1 pr-4">
+                
+                {/* Dados Pessoais */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
+                    <User className="w-5 h-5" />
+                    Dados Pessoais
+                  </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                      <Label htmlFor="full_name">Nome Completo</Label>
-                      <Input id="full_name" value={editingUser.full_name || ""} onChange={(e) => handleFieldChange('full_name', e.target.value)} className="bg-gray-800 border-gray-700" />
+                    <div>
+                      <Label className="text-gray-400 text-xs">Data de Nascimento *</Label>
+                      <Input 
+                        type="date" 
+                        value={editingUser.birth_date || ""} 
+                        onChange={(e) => handleFieldChange('birth_date', e.target.value)} 
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="position">Posição</Label>
-                      <Select value={editingUser.position || ""} onValueChange={(v) => handleFieldChange('position', v)}>
-                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Selecione a posição" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="goleiro">Goleiro</SelectItem>
-                          <SelectItem value="zagueiro">Zagueiro</SelectItem>
-                          <SelectItem value="lateral">Lateral</SelectItem>
-                          <SelectItem value="volante">Volante</SelectItem>
-                          <SelectItem value="meia">Meia</SelectItem>
-                          <SelectItem value="atacante">Atacante</SelectItem>
+                      <Label className="text-gray-400 text-xs">Nacionalidade</Label>
+                      <Select value={editingUser.nationality || ""} onValueChange={(v) => handleFieldChange('nationality', v)}>
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#1A1A1A] border-white/10">
+                          <SelectItem value="🇧🇷">🇧🇷 Brasil</SelectItem>
+                          <SelectItem value="🇦🇷">🇦🇷 Argentina</SelectItem>
+                          <SelectItem value="🇵🇹">🇵🇹 Portugal</SelectItem>
+                          <SelectItem value="🇪🇸">🇪🇸 Espanha</SelectItem>
+                          <SelectItem value="🇮🇹">🇮🇹 Itália</SelectItem>
+                          <SelectItem value="🇫🇷">🇫🇷 França</SelectItem>
+                          <SelectItem value="🇩🇪">🇩🇪 Alemanha</SelectItem>
+                          <SelectItem value="🇬🇧">🇬🇧 Inglaterra</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="jersey_number">Número da Camisa</Label>
-                      <Input id="jersey_number" type="number" value={editingUser.jersey_number || ""} onChange={(e) => handleFieldChange('jersey_number', parseInt(e.target.value))} className="bg-gray-800 border-gray-700" />
+                      <Label className="text-gray-400 text-xs">Telefone</Label>
+                      <Input 
+                        value={editingUser.phone || ""} 
+                        onChange={(e) => handleFieldChange('phone', e.target.value)} 
+                        placeholder="(00) 00000-0000"
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="nationality">Nacionalidade</Label>
-                      <Input id="nationality" value={editingUser.nationality || ""} onChange={(e) => handleFieldChange('nationality', e.target.value)} placeholder="Ex: 🇧🇷" className="bg-gray-800 border-gray-700" />
+                      <Label className="text-gray-400 text-xs">Email</Label>
+                      <Input 
+                        disabled
+                        value={editingUser.email || ""} 
+                        className="bg-white/5 border-white/10 text-gray-500 cursor-not-allowed" 
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="birth_date">Data de Nascimento</Label>
-                      <Input id="birth_date" type="date" value={editingUser.birth_date || ""} onChange={(e) => handleFieldChange('birth_date', e.target.value)} className="bg-gray-800 border-gray-700" />
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="current_club_name">Clube Atual</Label>
-                      <Input id="current_club_name" value={editingUser.current_club_name || ""} onChange={(e) => handleFieldChange('current_club_name', e.target.value)} className="bg-gray-800 border-gray-700" />
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="current_club_crest_url">URL Escudo do Clube</Label>
-                      <Input id="current_club_crest_url" value={editingUser.current_club_crest_url || ""} onChange={(e) => handleFieldChange('current_club_crest_url', e.target.value)} placeholder="https://..." className="bg-gray-800 border-gray-700" />
-                    </div>
-                    <div className="col-span-2">
-                      <Label htmlFor="player_cutout_url">URL Imagem Recortada (PNG)</Label>
-                      <Input id="player_cutout_url" value={editingUser.player_cutout_url || ""} onChange={(e) => handleFieldChange('player_cutout_url', e.target.value)} placeholder="https://..." className="bg-gray-800 border-gray-700" />
+                      <Label className="text-gray-400 text-xs">Cidade</Label>
+                      <Input 
+                        value={editingUser.city || ""} 
+                        onChange={(e) => handleFieldChange('city', e.target.value)} 
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="career_level">Nível de Carreira</Label>
+                      <Label className="text-gray-400 text-xs">Estado (UF)</Label>
+                      <Input 
+                        value={editingUser.state || ""} 
+                        onChange={(e) => handleFieldChange('state', e.target.value.toUpperCase())} 
+                        maxLength={2}
+                        placeholder="SP"
+                        className="bg-white/5 border-white/10 text-white uppercase" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dados de Atleta */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
+                    <Trophy className="w-5 h-5" />
+                    Dados de Atleta
+                  </h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-gray-400 text-xs">Posição *</Label>
+                      <Select value={editingUser.position || ""} onValueChange={(v) => handleFieldChange('position', v)}>
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#1A1A1A] border-white/10">
+                          <SelectItem value="goleiro">🧤 Goleiro</SelectItem>
+                          <SelectItem value="zagueiro">🛡️ Zagueiro</SelectItem>
+                          <SelectItem value="lateral">🏃 Lateral</SelectItem>
+                          <SelectItem value="volante">⚙️ Volante</SelectItem>
+                          <SelectItem value="meia">🎯 Meia</SelectItem>
+                          <SelectItem value="atacante">⚡ Atacante</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs">Pé Dominante</Label>
+                      <Select value={editingUser.foot || "direito"} onValueChange={(v) => handleFieldChange('foot', v)}>
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#1A1A1A] border-white/10">
+                          <SelectItem value="direito">Direito</SelectItem>
+                          <SelectItem value="esquerdo">Esquerdo</SelectItem>
+                          <SelectItem value="ambidestro">Ambos</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs">Camisa</Label>
+                      <Input 
+                        type="number" 
+                        value={editingUser.jersey_number || ""} 
+                        onChange={(e) => handleFieldChange('jersey_number', parseInt(e.target.value))} 
+                        placeholder="10"
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs">Altura (cm)</Label>
+                      <Input 
+                        type="number" 
+                        value={editingUser.height || ""} 
+                        onChange={(e) => handleFieldChange('height', parseInt(e.target.value))} 
+                        placeholder="175"
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs">Peso (kg)</Label>
+                      <Input 
+                        type="number" 
+                        value={editingUser.weight || ""} 
+                        onChange=(e) => handleFieldChange('weight', parseInt(e.target.value))} 
+                        placeholder="70"
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs">Nível</Label>
                       <Select value={editingUser.career_level || "iniciante"} onValueChange={(v) => handleFieldChange('career_level', v)}>
-                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue /></SelectTrigger>
-                        <SelectContent>
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#1A1A1A] border-white/10">
                           <SelectItem value="iniciante">Iniciante</SelectItem>
                           <SelectItem value="promessa">Promessa</SelectItem>
                           <SelectItem value="destaque">Destaque</SelectItem>
@@ -988,86 +1088,232 @@ export default function AdminUsersTab() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label htmlFor="role">Função</Label>
-                      <Select
-                      value={
-                      editingUser.role === 'admin' ? 'admin' :
-                      editingUser.is_revela_admin ? 'revela_admin' : 'user'
-                      }
-                      onValueChange={handleRoleChange}>
+                  </div>
+                </div>
 
-                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Usuário</SelectItem>
+                {/* Clube Atual */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
+                    <Shield className="w-5 h-5" />
+                    Clube Atual
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <Label className="text-gray-400 text-xs">Nome do Clube</Label>
+                      <Input 
+                        value={editingUser.current_club_name || ""} 
+                        onChange={(e) => handleFieldChange('current_club_name', e.target.value)} 
+                        placeholder="Nome do clube"
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Label className="text-gray-400 text-xs">URL do Escudo</Label>
+                      <Input 
+                        value={editingUser.current_club_crest_url || ""} 
+                        onChange={(e) => handleFieldChange('current_club_crest_url', e.target.value)} 
+                        placeholder="https://..."
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* URLs & Mídias */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
+                    <Upload className="w-5 h-5" />
+                    URLs & Mídias
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-gray-400 text-xs">URL Foto de Perfil</Label>
+                      <Input 
+                        value={editingUser.profile_picture_url || ""} 
+                        onChange={(e) => handleFieldChange('profile_picture_url', e.target.value)} 
+                        placeholder="https://..."
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs">URL Imagem Recortada (PNG sem fundo)</Label>
+                      <Input 
+                        value={editingUser.player_cutout_url || ""} 
+                        onChange={(e) => handleFieldChange('player_cutout_url', e.target.value)} 
+                        placeholder="https://..."
+                        className="bg-white/5 border-white/10 text-white" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Destaques & Conquistas */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
+                    <Star className="w-5 h-5" />
+                    Destaques & Conquistas
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <Label className="text-gray-400 text-xs">Destaques da Carreira</Label>
+                      <Textarea 
+                        value={editingUser.career_highlights || ""} 
+                        onChange={(e) => handleFieldChange('career_highlights', e.target.value)} 
+                        placeholder="Principais destaques..."
+                        className="bg-white/5 border-white/10 text-white min-h-[80px]" 
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-400 text-xs">Conquistas & Títulos</Label>
+                      <Textarea 
+                        value={editingUser.achievements || ""} 
+                        onChange={(e) => handleFieldChange('achievements', e.target.value)} 
+                        placeholder="Títulos e conquistas..."
+                        className="bg-white/5 border-white/10 text-white min-h-[80px]" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Atributos FIFA */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5" />
+                    Atributos FIFA
+                  </h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    {[
+                      { key: 'pace', label: 'Velocidade', icon: '⚡' },
+                      { key: 'shooting', label: 'Finalização', icon: '🎯' },
+                      { key: 'passing', label: 'Passe', icon: '🎯' },
+                      { key: 'dribbling', label: 'Drible', icon: '⚽' },
+                      { key: 'defending', label: 'Defesa', icon: '🛡️' },
+                      { key: 'physicality', label: 'Físico', icon: '💪' }
+                    ].map((attr) => (
+                      <div key={attr.key}>
+                        <Label className="text-gray-400 text-xs">{attr.icon} {attr.label}</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="99"
+                          value={editingUser.fifa_attributes?.[attr.key] || 50}
+                          onChange={(e) => handleFieldChange('fifa_attributes', { ...editingUser.fifa_attributes, [attr.key]: parseInt(e.target.value) })}
+                          className="bg-white/5 border-white/10 text-white"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Controle de Acesso */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-[#00E5FF] flex items-center gap-2">
+                    <Shield className="w-5 h-5" />
+                    Controle de Acesso & Permissões
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-4 bg-white/5 border border-cyan-500/30 rounded-xl">
+                      <Label className="flex items-center gap-2">
+                        {editingUser.is_approved ? <Unlock className="w-4 h-4 text-green-400" /> : <Lock className="w-4 h-4 text-red-400" />}
+                        <span>Acesso Aprovado à Plataforma</span>
+                      </Label>
+                      <Switch checked={!!editingUser.is_approved} onCheckedChange={(c) => handleFieldChange('is_approved', c)} />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                      <Label className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-yellow-400" />
+                        <span>Acesso ao Revela Talentos</span>
+                      </Label>
+                      <Switch checked={!!editingUser.has_revela_talentos_access} onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)} />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-white/5 border border-green-500/30 rounded-xl">
+                      <Label className="flex items-center gap-2 text-green-300">
+                        <TrendingUp className="w-4 h-4 text-green-400" />
+                        <span>Acesso ao Plano de Carreira</span>
+                      </Label>
+                      <Switch checked={!!editingUser.has_plano_carreira_access} onCheckedChange={(c) => handleFieldChange('has_plano_carreira_access', c)} />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                      <Label className="flex items-center gap-2">
+                        <Crown className="w-4 h-4 text-cyan-400" />
+                        <span>Promover a Atleta em Destaque</span>
+                      </Label>
+                      <Switch checked={!!editingUser.is_featured} onCheckedChange={(c) => handleFieldChange('is_featured', c)} />
+                    </div>
+                    <div className="flex items-center justify-between p-4 bg-white/5 border border-red-500/30 rounded-xl">
+                      <Label className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-red-400" />
+                        <span>Função / Permissão</span>
+                      </Label>
+                      <Select
+                        value={editingUser.role === 'admin' ? 'admin' : editingUser.is_revela_admin ? 'revela_admin' : 'user'}
+                        onValueChange={handleRoleChange}
+                      >
+                        <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#1A1A1A] border-white/10">
+                          <SelectItem value="user">Usuário Padrão</SelectItem>
                           <SelectItem value="revela_admin">Admin Revela</SelectItem>
-                          <SelectItem value="admin">Administrador Geral</SelectItem>
+                          <SelectItem value="admin">Admin Geral</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
-                  
-                  {/* FIFA Attributes Section */}
-                  <Card className="bg-gray-800/50 border-gray-700 mt-6">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2 text-blue-400">
-                        <Trophy className="w-5 h-5" />
-                        Atributos FIFA
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {['pace', 'shooting', 'passing', 'dribbling', 'defending', 'physicality'].map((attr) => (
-                        <div key={attr}>
-                          <Label className="text-xs text-gray-400 capitalize">{attr === 'pace' ? 'Velocidade' : attr === 'shooting' ? 'Finalização' : attr === 'passing' ? 'Passe' : attr === 'dribbling' ? 'Drible' : attr === 'defending' ? 'Defesa' : 'Físico'}</Label>
-                          <Input
-                            type="number"
-                            min="0"
-                            max="99"
-                            value={editingUser.fifa_attributes?.[attr] || 50}
-                            onChange={(e) => handleFieldChange('fifa_attributes', { ...editingUser.fifa_attributes, [attr]: parseInt(e.target.value) })}
-                            className="bg-gray-800 border-gray-700 mt-1"
-                          />
-                        </div>
-                      ))}
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-gray-800/50 border-gray-700 mt-6">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2 text-purple-400">
-                        <Shield className="w-5 h-5" />
-                        Controle de Acesso & Planos
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-cyan-500/30">
-                        <Label className="flex items-center gap-2">
-                          {editingUser.is_approved ?
-                        <Unlock className="w-4 h-4 text-green-400" /> :
+                </div>
+              </div>
 
-                        <Lock className="w-4 h-4 text-red-400" />
-                        }
-                          Acesso Aprovado à Plataforma
-                        </Label>
-                        <Switch checked={!!editingUser.is_approved} onCheckedChange={(c) => handleFieldChange('is_approved', c)} />
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
-                        <Label className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400" />Acesso ao Revela Talentos</Label>
-                        <Switch checked={!!editingUser.has_revela_talentos_access} onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)} />
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-green-500/30">
-                        <Label className="flex items-center gap-2 text-green-300"><TrendingUp className="w-4 h-4 text-green-400" />Acesso ao Plano de Carreira</Label>
-                        <Switch checked={!!editingUser.has_plano_carreira_access} onCheckedChange={(c) => handleFieldChange('has_plano_carreira_access', c)} />
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
-                        <Label className="flex items-center gap-2"><Crown className="w-4 h-4 text-cyan-400" />Promover a Atleta em Destaque</Label>
-                        <Switch checked={!!editingUser.is_featured} onCheckedChange={(c) => handleFieldChange('is_featured', c)} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+            </ScrollArea>
 
-                <TabsContent value="performance" className="space-y-4">
+            <DialogFooter className="border-t border-white/10 pt-4">
+              <DialogClose asChild>
+                <Button variant="ghost" className="text-gray-400 hover:text-white">Cancelar</Button>
+              </DialogClose>
+              <Button 
+                onClick={handleModalSave}
+                className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold"
+              >
+                <Check className="w-4 h-4 mr-2" />
+                Salvar Alterações
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      }
+
+      <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
+          <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
+          {editingPerformanceItem &&
+          <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
+              {editingPerformanceItem.associated_video_url &&
+            <div className="space-y-3">
+                  <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
+                  <div className="p-4 bg-gray-800 rounded-lg space-y-2">
+                    <h4 className="font-semibold text-white">Diário do Atleta</h4>
+                    <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
+                    <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
+                  </div>
+                </div>
+            }
+              <div className="grid grid-cols-2 gap-4">
+                <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">Minutos Jogados</Label><Input type="number" value={performanceForm.minutes_played} onChange={(e) => setPerformanceForm((p) => ({ ...p, minutes_played: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">Gols</Label><Input type="number" value={performanceForm.goals} onChange={(e) => setPerformanceForm((p) => ({ ...p, goals: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">Assistências</Label><Input type="number" value={performanceForm.assists} onChange={(e) => setPerformanceForm((p) => ({ ...p, assists: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">Nota (1-10)</Label><Input type="number" step="0.1" value={performanceForm.rating} onChange={(e) => setPerformanceForm((p) => ({ ...p, rating: parseFloat(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+              </div>
+              <div><Label className="text-gray-400">Observações do Analista</Label><Textarea value={performanceForm.analyst_notes} onChange={(e) => setPerformanceForm((p) => ({ ...p, analyst_notes: e.target.value }))} className="bg-gray-800 border-gray-700 h-24" /></div>
+              <DialogFooter><Button variant="outline" onClick={() => setEditingPerformanceItem(null)}>Cancelar</Button><Button onClick={handleSavePerformanceUpdate}>Salvar Performance</Button></DialogFooter>
+            </div>
+          }
+        </DialogContent>
+      </Dialog>
+    </div>);
+
+}
+
                   {(() => {
                   const userData = getUserData(editingUser.id);
                   return (
