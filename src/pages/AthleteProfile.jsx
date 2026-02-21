@@ -64,9 +64,11 @@ export default function AthleteProfile() {
       if (isFirstTime) {
         setShowOnboarding(true);
       } else {
-        // Verificar se deve mostrar tutorial (só após onboarding completo)
+        // Verificar se deve mostrar tutorial (só após onboarding completo e apenas uma vez)
         const tutorialCompleted = localStorage.getItem('tutorial_completed');
-        if (!tutorialCompleted) {
+        const hasSeenOnboarding = !isFirstTime;
+        
+        if (!tutorialCompleted && hasSeenOnboarding) {
           setTimeout(() => setShowTutorial(true), 1000);
         }
       }
@@ -494,9 +496,15 @@ export default function AthleteProfile() {
       />
       <EditProfileModal
         isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
+        onClose={() => {
+          setShowEditModal(false);
+          // Não reativar tutorial após edição
+        }}
         user={user}
-        onUpdate={loadUserData}
+        onUpdate={async () => {
+          await loadUserData();
+          // Não mostrar tutorial após edição de perfil
+        }}
       />
       <DailyCheckinModal
         isOpen={showCheckinModal}

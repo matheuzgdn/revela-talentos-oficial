@@ -77,14 +77,35 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
   const handleSave = async () => {
     try {
       console.log("Saving profile data:", formData);
+      
+      // Validação básica
+      if (!formData.full_name) {
+        toast.error("Nome completo é obrigatório");
+        return;
+      }
+      
+      if (!formData.birth_date) {
+        toast.error("Data de nascimento é obrigatória");
+        return;
+      }
+      
+      if (!formData.position) {
+        toast.error("Posição é obrigatória");
+        return;
+      }
+      
       await base44.auth.updateMe(formData);
-      toast.success("Perfil atualizado com sucesso!");
-      await onUpdate();
-      onClose();
-      setCurrentStep(1);
+      toast.success("✅ Perfil atualizado com sucesso!");
+      
+      // Aguardar um pouco antes de atualizar e fechar
+      setTimeout(async () => {
+        await onUpdate();
+        onClose();
+        setCurrentStep(1);
+      }, 500);
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("Erro ao atualizar perfil");
+      toast.error("❌ Erro ao atualizar perfil: " + (error.message || "Tente novamente"));
     }
   };
 
@@ -364,8 +385,8 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
                     </Label>
                     <Input
                     value={formData.full_name}
-                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })} className="bg-gradient-to-r text-slate-950 mt-2 px-3 py-1 text-base font-bold rounded-xl flex w-full shadow-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm from-[#00E5FF]/10 to-[#0066FF]/10 border-2 border-[#00E5FF]/30 h-12 hover:border-[#00E5FF] transition-colors focus:border-[#00E5FF] focus:ring-2 focus:ring-[#00E5FF]/50"
-
+                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                    className="mt-2 bg-white/5 border-white/10 text-white rounded-xl h-11 focus:border-[#00E5FF] focus:ring-2 focus:ring-[#00E5FF]/50"
                     placeholder="Digite seu nome completo" />
 
                   </div>
