@@ -72,12 +72,6 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
     
     try {
       // Validações
-      if (!form.full_name?.trim()) {
-        toast.error("⚠️ Nome é obrigatório");
-        setSaving(false);
-        return;
-      }
-
       if (!form.birth_date) {
         toast.error("⚠️ Data de nascimento é obrigatória");
         setSaving(false);
@@ -90,9 +84,8 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
         return;
       }
 
-      // Preparar dados
+      // Preparar dados (removendo full_name pois é read-only)
       const updateData = {
-        full_name: form.full_name.trim(),
         birth_date: form.birth_date,
         position: form.position,
         nationality: form.nationality || "🇧🇷",
@@ -118,15 +111,15 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
 
       console.log("✅ Perfil salvo no banco!");
       
-      // Recarregar dados do usuário ANTES de fechar
-      await onSave();
-      
-      console.log("✅ Dados recarregados!");
-      
-      // Mostrar sucesso e fechar
       toast.success("✅ Perfil atualizado!", { duration: 2000 });
-      setSaving(false);
-      onClose();
+      
+      // Aguardar um momento e recarregar
+      setTimeout(async () => {
+        await onSave();
+        console.log("✅ Dados recarregados!");
+        setSaving(false);
+        onClose();
+      }, 500);
 
     } catch (error) {
       console.error("❌ Erro ao salvar:", error);
@@ -181,14 +174,15 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
           {/* Nome */}
           <div>
             <label className="text-white text-[10px] uppercase mb-1.5 block font-bold flex items-center gap-1">
-              <User className="w-3 h-3" /> Nome Completo *
+              <User className="w-3 h-3" /> Nome Completo
             </label>
             <Input
               value={form.full_name}
-              onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+              disabled
               placeholder="Seu nome completo"
-              className="bg-white/5 border-white/10 text-white rounded-xl h-11"
+              className="bg-white/5 border-white/10 text-gray-400 rounded-xl h-11 cursor-not-allowed opacity-60"
             />
+            <p className="text-[9px] text-gray-500 mt-1">Nome definido pela sua conta Google</p>
           </div>
 
           {/* Data e País */}
@@ -210,15 +204,17 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
               </label>
               <Select value={form.nationality} onValueChange={(v) => setForm({ ...form, nationality: v })}>
                 <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-11">
-                  <SelectValue />
+                  <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#0A0A0A] border-white/10">
-                  <SelectItem value="🇧🇷">🇧🇷 Brasil</SelectItem>
-                  <SelectItem value="🇦🇷">🇦🇷 Argentina</SelectItem>
-                  <SelectItem value="🇵🇹">🇵🇹 Portugal</SelectItem>
-                  <SelectItem value="🇪🇸">🇪🇸 Espanha</SelectItem>
-                  <SelectItem value="🇮🇹">🇮🇹 Itália</SelectItem>
-                  <SelectItem value="🇫🇷">🇫🇷 França</SelectItem>
+                <SelectContent className="bg-[#0A0A0A] border-white/10 text-white">
+                  <SelectItem value="🇧🇷" className="text-white">🇧🇷 Brasil</SelectItem>
+                  <SelectItem value="🇦🇷" className="text-white">🇦🇷 Argentina</SelectItem>
+                  <SelectItem value="🇵🇹" className="text-white">🇵🇹 Portugal</SelectItem>
+                  <SelectItem value="🇪🇸" className="text-white">🇪🇸 Espanha</SelectItem>
+                  <SelectItem value="🇮🇹" className="text-white">🇮🇹 Itália</SelectItem>
+                  <SelectItem value="🇫🇷" className="text-white">🇫🇷 França</SelectItem>
+                  <SelectItem value="🇩🇪" className="text-white">🇩🇪 Alemanha</SelectItem>
+                  <SelectItem value="🇬🇧" className="text-white">🇬🇧 Inglaterra</SelectItem>
                 </SelectContent>
               </Select>
             </div>

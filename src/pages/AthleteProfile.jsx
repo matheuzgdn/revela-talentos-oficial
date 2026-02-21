@@ -50,8 +50,9 @@ export default function AthleteProfile() {
 
   const loadUserData = async () => {
     try {
+      setLoading(true);
       const currentUser = await base44.auth.me();
-      console.log("📥 Usuário:", currentUser);
+      console.log("📥 Usuário recarregado:", currentUser);
       setUser(currentUser);
 
       // Verificar se precisa configurar perfil
