@@ -102,7 +102,7 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
       // Adicionar campos opcionais apenas se preenchidos
       if (form.profile_picture_url) updateData.profile_picture_url = form.profile_picture_url;
       if (form.phone) updateData.phone = form.phone;
-      if (form.email) updateData.email = form.email;
+
       if (form.city) updateData.city = form.city;
       if (form.state) updateData.state = form.state;
       if (form.height) updateData.height = Number(form.height);
