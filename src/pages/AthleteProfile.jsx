@@ -30,6 +30,7 @@ export default function AthleteProfile() {
   const [weeklyAssessments, setWeeklyAssessments] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [trophies, setTrophies] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
@@ -63,17 +64,19 @@ export default function AthleteProfile() {
       }
 
       // Carregar dados relacionados
-      const [checkinsData, assessmentsData, tasksData, trophiesData] = await Promise.all([
+      const [checkinsData, assessmentsData, tasksData, trophiesData, videosData] = await Promise.all([
         base44.entities.DailyCheckin.filter({ user_id: currentUser.id }, '-checkin_date', 7),
         base44.entities.WeeklyAssessment.filter({ user_id: currentUser.id }, '-week_start_date', 4),
         base44.entities.AthleteTask.filter({ user_id: currentUser.id, status: 'pendente' }),
-        base44.entities.AthleteTrophy.filter({ user_id: currentUser.id })
+        base44.entities.AthleteTrophy.filter({ user_id: currentUser.id }),
+        base44.entities.AthleteUpload.filter({ user_id: currentUser.id }, '-created_date', 20)
       ]);
 
       setDailyCheckins(checkinsData);
       setWeeklyAssessments(assessmentsData);
       setTasks(tasksData);
       setTrophies(trophiesData);
+      setVideos(videosData);
       setLoading(false);
     } catch (error) {
       console.error("❌ Erro ao carregar:", error);
@@ -457,7 +460,7 @@ export default function AthleteProfile() {
       <section className="px-3">
         <div className="max-w-sm mx-auto">
           <AnimatePresence mode="wait">
-            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} lastFeedback={lastFeedback} onCheckinClick={() => setShowCheckinModal(true)} onNavigate={(tab) => setActiveTab(tab)} />}
+            {activeTab === "overview" && <OverviewTab user={user} checkinStreak={checkinStreak} lastFeedback={lastFeedback} onCheckinClick={() => setShowCheckinModal(true)} onNavigate={(tab) => setActiveTab(tab)} videos={videos} />}
             {activeTab === "performance" && <PerformanceTab user={user} weeklyAssessments={weeklyAssessments} dailyCheckins={dailyCheckins} />}
             {activeTab === "assessoria" && <AssessoriaTab userId={user.id} dailyCheckins={dailyCheckins} weeklyAssessments={weeklyAssessments} onUpdate={loadUserData} onCheckinClick={() => setShowCheckinModal(true)} />}
             {activeTab === "tasks" && <TasksTab tasks={tasks} userId={user.id} onUpdate={loadUserData} />}
@@ -522,7 +525,7 @@ function StatCard({ label, value, delay }) {
 }
 
 // OVERVIEW TAB
-function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavigate }) {
+function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavigate, videos }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -713,11 +716,76 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
             </div>
             <p className="text-white font-bold text-[10px]">Ver mais</p>
           </motion.button>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+          </div>
+          </div>
+
+          {/* Meus Vídeos */}
+          {videos && videos.length > 0 && (
+          <div className="space-y-3 mt-6">
+          <div className="flex items-center justify-between">
+            <h4 className="text-white font-bold text-sm">Meus Vídeos</h4>
+            <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-xs">
+              {videos.length}
+            </Badge>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {videos.slice(0, 6).map((video) => (
+              <motion.div
+                key={video.id}
+                whileTap={{ scale: 0.95 }}
+                className="relative aspect-video bg-white/5 border border-white/10 rounded-xl overflow-hidden group cursor-pointer"
+              >
+                {/* Thumbnail */}
+                {video.processed_file_url || video.file_url ? (
+                  <video
+                    src={video.processed_file_url || video.file_url}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20">
+                    <Video className="w-6 h-6 text-[#00E5FF]" />
+                  </div>
+                )}
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <p className="text-white text-[10px] font-bold line-clamp-2">
+                      {video.description || video.file_name || "Vídeo"}
+                    </p>
+                    {video.category && (
+                      <Badge className="bg-[#00E5FF]/80 text-black text-[8px] mt-1">
+                        {video.category}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {/* Play icon */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-10 h-10 bg-[#00E5FF]/90 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Video className="w-5 h-5 text-black" />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {videos.length > 6 && (
+            <Button
+              onClick={() => window.location.href = createPageUrl("AthleteVideos")}
+              variant="outline"
+              className="w-full mt-2 bg-white/5 border-white/10 text-white hover:bg-white/10"
+            >
+              Ver todos os vídeos ({videos.length})
+            </Button>
+          )}
+          </div>
+          )}
+          </motion.div>
+          );
+          }
 
 
 
