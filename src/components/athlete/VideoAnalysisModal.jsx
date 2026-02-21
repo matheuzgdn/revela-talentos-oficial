@@ -5,7 +5,8 @@ import {
   X, Play, Pause, Volume2, VolumeX, Maximize, Send, 
   TrendingUp, Target, Zap, Shield, Brain, Award,
   MessageCircle, Sparkles, ChevronRight, BarChart3,
-  Trophy, AlertCircle, CheckCircle2
+  Trophy, AlertCircle, CheckCircle2, CircleDot, Footprints,
+  Wind, Crosshair, Move, Dumbbell, MapPin, Activity, Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,29 +126,29 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-[#0A0A0A]"
+      className="fixed inset-0 z-[100] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A]"
     >
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="relative z-10 p-4 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent">
+        <div className="relative z-10 p-3 md:p-4 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent border-b border-[#00E5FF]/10">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={onClose}
-            className="w-11 h-11 bg-[#111111] rounded-2xl flex items-center justify-center border border-[#222]"
+            className="w-10 h-10 md:w-11 md:h-11 bg-white/5 backdrop-blur-sm rounded-xl md:rounded-2xl flex items-center justify-center border border-[#00E5FF]/30 shadow-lg shadow-[#00E5FF]/10"
           >
-            <X className="w-5 h-5 text-white" />
+            <X className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </motion.button>
           
           <div className="flex items-center gap-2">
             {video.status === 'approved' && (
-              <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                <CheckCircle2 className="w-3 h-3 mr-1" />
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-[10px] md:text-xs">
+                <CheckCircle2 className="w-2.5 h-2.5 md:w-3 md:h-3 mr-1" />
                 Aprovado
               </Badge>
             )}
             {hasAnalysis && (
-              <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border-[#00E5FF]/30">
-                <Sparkles className="w-3 h-3 mr-1" />
+              <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border-[#00E5FF]/30 text-[10px] md:text-xs">
+                <Sparkles className="w-2.5 h-2.5 md:w-3 md:h-3 mr-1" />
                 Análise IA
               </Badge>
             )}
@@ -220,18 +221,18 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
         {/* Content Area */}
         <div className="flex-1 overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-            <TabsList className="w-full bg-[#111111] border-b border-[#222] rounded-none">
-              <TabsTrigger value="analysis" className="flex-1">
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Análise
+            <TabsList className="w-full bg-gradient-to-r from-[#111111] to-[#0D1117] border-b border-[#00E5FF]/20 rounded-none p-1">
+              <TabsTrigger value="analysis" className="flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
+                <BarChart3 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Análise</span>
               </TabsTrigger>
-              <TabsTrigger value="chat" className="flex-1">
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Chat com IA
+              <TabsTrigger value="chat" className="flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
+                <MessageCircle className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                <span className="hidden md:inline">Chat</span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="analysis" className="flex-1 overflow-auto p-4 space-y-4 mt-0">
+            <TabsContent value="analysis" className="flex-1 overflow-auto p-3 md:p-4 space-y-3 md:space-y-4 mt-0">
               {/* Video Info */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
                 <h3 className="text-white font-bold text-lg mb-2">{video.title}</h3>
@@ -269,71 +270,84 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
 
                   {/* Performance Metrics */}
                   {analysis.performance_analysis && (
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                      <h4 className="text-white font-bold mb-4 flex items-center gap-2">
-                        <Target className="w-5 h-5 text-[#00E5FF]" />
+                    <div className="bg-gradient-to-br from-white/5 to-white/10 border border-[#00E5FF]/20 rounded-2xl p-3 md:p-4">
+                      <h4 className="text-white font-bold mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                        <Target className="w-4 h-4 md:w-5 md:h-5 text-[#00E5FF]" />
                         Análise de Performance
                       </h4>
-                      <div className="space-y-3">
-                        {Object.entries(analysis.performance_analysis).map(([key, value]) => (
-                          <div key={key}>
-                            <div className="flex justify-between mb-1">
-                              <span className="text-gray-300 text-sm capitalize">
-                                {key.replace(/_/g, ' ')}
-                              </span>
-                              <span className={`font-bold ${getScoreColor(value)}`}>{value}/100</span>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {Object.entries(analysis.performance_analysis).map(([key, value]) => {
+                          const icon = key === 'technical_skills' ? Target : 
+                                      key === 'positioning' ? MapPin : 
+                                      key === 'decision_making' ? Activity : 
+                                      key === 'physical_condition' ? Dumbbell : Wind;
+                          return (
+                            <div key={key} className="bg-white/5 rounded-xl p-3 border border-white/10">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                  {React.createElement(icon, { className: "w-3.5 h-3.5 md:w-4 md:h-4 text-[#00E5FF]" })}
+                                  <span className="text-gray-300 text-xs md:text-sm capitalize font-medium">
+                                    {key.replace(/_/g, ' ')}
+                                  </span>
+                                </div>
+                                <span className={`font-black text-sm md:text-base ${getScoreColor(value)}`}>{value}/100</span>
+                              </div>
+                              <Progress value={value} className="h-2" />
                             </div>
-                            <Progress value={value} className="h-2" />
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
 
                   {/* Detected Events */}
                   {analysis.detected_events && analysis.detected_events.length > 0 && (
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                      <h4 className="text-white font-bold mb-4 flex items-center gap-2">
-                        <Zap className="w-5 h-5 text-yellow-400" />
+                    <div className="bg-gradient-to-br from-white/5 to-white/10 border border-[#00E5FF]/20 rounded-2xl p-3 md:p-4">
+                      <h4 className="text-white font-bold mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
+                        <Activity className="w-4 h-4 md:w-5 md:h-5 text-[#00E5FF]" />
                         Eventos Detectados
                       </h4>
                       <div className="space-y-2">
-                        {analysis.detected_events.map((event, idx) => (
-                          <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                            className="bg-white/5 rounded-xl p-3 flex items-start gap-3"
-                          >
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              event.type === 'gol' ? 'bg-green-500/20' :
-                              event.type === 'assistencia' ? 'bg-blue-500/20' :
-                              'bg-purple-500/20'
-                            }`}>
-                              {event.type === 'gol' ? '⚽' :
-                               event.type === 'assistencia' ? '🎯' :
-                               event.type === 'drible' ? '✨' :
-                               event.type === 'defesa' ? '🛡️' : '⚡'}
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-white font-bold text-sm capitalize">{event.type}</span>
-                                <Badge className={`text-[10px] ${
-                                  event.quality === 'excelente' ? 'bg-green-500/20 text-green-400' :
-                                  event.quality === 'boa' ? 'bg-blue-500/20 text-blue-400' :
-                                  'bg-gray-500/20 text-gray-400'
-                                }`}>
-                                  {event.quality}
-                                </Badge>
+                        {analysis.detected_events.map((event, idx) => {
+                          const eventIcon = event.type === 'gol' ? CircleDot : 
+                                          event.type === 'assistencia' ? Footprints : 
+                                          event.type === 'defesa' ? Shield : 
+                                          event.type === 'passe' ? Move : 
+                                          event.type === 'drible' ? Wind : 
+                                          Crosshair;
+                          return (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: idx * 0.1 }}
+                              className="bg-white/5 rounded-xl p-3 flex items-start gap-2 md:gap-3 border border-white/10"
+                            >
+                              <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#00E5FF]/30">
+                                {React.createElement(eventIcon, { className: "w-4 h-4 md:w-5 md:h-5 text-black" })}
                               </div>
-                              <p className="text-gray-400 text-xs">{event.description}</p>
-                              {event.timestamp && (
-                                <p className="text-[#00E5FF] text-xs mt-1">⏱️ {event.timestamp}</p>
-                              )}
-                            </div>
-                          </motion.div>
-                        ))}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                  <span className="text-white font-bold text-xs md:text-sm capitalize">{event.type}</span>
+                                  <Badge className={`text-[9px] md:text-[10px] ${
+                                    event.quality === 'excelente' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                                    event.quality === 'boa' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+                                    'bg-gray-500/20 text-gray-400 border-gray-500/30'
+                                  }`}>
+                                    {event.quality}
+                                  </Badge>
+                                  {event.timestamp && (
+                                    <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-[9px] md:text-[10px] border-[#00E5FF]/30 ml-auto">
+                                      <Clock className="w-2.5 h-2.5 mr-1" />
+                                      {event.timestamp}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-gray-400 text-[10px] md:text-xs leading-relaxed">{event.description}</p>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
