@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Camera, User, Calendar, Globe, MapPin, Phone, Ruler, Target, TrendingUp, Video, Save, Check } from "lucide-react";
+import { motion } from "framer-motion";
+import { X, Camera, User, Calendar, Globe, MapPin, Phone, Ruler, Target, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,28 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-const countries = [
-  { code: "🇧🇷", name: "Brasil" },
-  { code: "🇦🇷", name: "Argentina" },
-  { code: "🇵🇹", name: "Portugal" },
-  { code: "🇪🇸", name: "Espanha" },
-  { code: "🇮🇹", name: "Itália" },
-  { code: "🇫🇷", name: "França" },
-  { code: "🇩🇪", name: "Alemanha" },
-  { code: "🇬🇧", name: "Inglaterra" },
-  { code: "🇳🇱", name: "Holanda" },
-  { code: "🇧🇪", name: "Bélgica" },
-  { code: "🇺🇾", name: "Uruguai" },
-  { code: "🇨🇴", name: "Colômbia" }
-];
-
 export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [data, setData] = useState({
     full_name: "",
     profile_picture_url: "",
-    cover_photo_url: "",
     birth_date: "",
     nationality: "",
     phone: "",
@@ -43,19 +27,16 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
     position: "",
     jersey_number: "",
     current_club_name: "",
-    current_club_crest_url: "",
     career_highlights: "",
-    achievements: "",
-    highlight_video_url: ""
+    achievements: ""
   });
 
   useEffect(() => {
     if (user && isOpen) {
-      console.log("Loading user data into form:", user);
-      setFormData({
+      console.log("🔄 Carregando dados do usuário:", user);
+      setData({
         full_name: user.full_name || "",
         profile_picture_url: user.profile_picture_url || "",
-        cover_photo_url: user.cover_photo_url || "",
         birth_date: user.birth_date || "",
         nationality: user.nationality || "",
         phone: user.phone || "",
@@ -68,26 +49,23 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
         position: user.position || "",
         jersey_number: user.jersey_number || "",
         current_club_name: user.current_club_name || "",
-        current_club_crest_url: user.current_club_crest_url || "",
         career_highlights: user.career_highlights || "",
-        achievements: user.achievements || "",
-        highlight_video_url: user.highlight_video_url || ""
+        achievements: user.achievements || ""
       });
     }
   }, [user, isOpen]);
 
-  const handleImageUpload = async (e, field) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setFormData(prev => ({ ...prev, [field]: file_url }));
-      toast.success("✅ Imagem enviada!");
+      setData(prev => ({ ...prev, profile_picture_url: file_url }));
+      toast.success("✅ Foto enviada!");
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("❌ Erro ao enviar imagem");
+      toast.error("❌ Erro ao enviar foto");
     }
     setUploading(false);
   };
@@ -95,62 +73,65 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
   const handleSave = async () => {
     try {
       setSaving(true);
-      console.log("Salvando dados do perfil:", formData);
 
       // Validações
-      if (!formData.full_name?.trim()) {
+      if (!data.full_name?.trim()) {
         toast.error("⚠️ Nome completo é obrigatório");
         setSaving(false);
         return;
       }
 
-      if (!formData.birth_date) {
+      if (!data.birth_date) {
         toast.error("⚠️ Data de nascimento é obrigatória");
         setSaving(false);
         return;
       }
 
-      if (!formData.position) {
+      if (!data.position) {
         toast.error("⚠️ Posição é obrigatória");
         setSaving(false);
         return;
       }
 
-      // Preparar dados limpos (remover strings vazias)
-      const cleanData = {};
-      Object.keys(formData).forEach(key => {
-        const value = formData[key];
-        if (value !== "" && value !== null && value !== undefined) {
-          // Converter números
-          if (key === "height" || key === "weight" || key === "jersey_number") {
-            cleanData[key] = value ? Number(value) : null;
-          } else {
-            cleanData[key] = value;
-          }
-        }
-      });
+      // Preparar dados para salvar
+      const saveData = {
+        full_name: data.full_name.trim(),
+        profile_picture_url: data.profile_picture_url || null,
+        birth_date: data.birth_date || null,
+        nationality: data.nationality || null,
+        phone: data.phone || null,
+        email: data.email || null,
+        city: data.city || null,
+        state: data.state || null,
+        height: data.height ? Number(data.height) : null,
+        weight: data.weight ? Number(data.weight) : null,
+        foot: data.foot || "direito",
+        position: data.position,
+        jersey_number: data.jersey_number ? Number(data.jersey_number) : null,
+        current_club_name: data.current_club_name || null,
+        career_highlights: data.career_highlights || null,
+        achievements: data.achievements || null
+      };
 
-      console.log("Dados limpos para salvar:", cleanData);
+      console.log("💾 Salvando dados:", saveData);
 
-      // Salvar no banco
-      await base44.auth.updateMe(cleanData);
+      // Salvar
+      await base44.auth.updateMe(saveData);
       
-      console.log("✅ Perfil atualizado com sucesso!");
+      console.log("✅ Dados salvos com sucesso!");
       toast.success("✅ Perfil atualizado com sucesso!", {
-        duration: 3000,
-        position: "top-center"
+        duration: 2000
       });
 
-      // Aguardar um pouco antes de fechar
+      // Aguardar e recarregar
       setTimeout(async () => {
         await onUpdate();
         onClose();
-      }, 800);
+      }, 500);
 
     } catch (error) {
-      console.error("Erro ao salvar perfil:", error);
-      toast.error("❌ Erro ao salvar: " + (error.message || "Tente novamente"));
-    } finally {
+      console.error("❌ Erro ao salvar:", error);
+      toast.error("❌ Erro ao salvar perfil");
       setSaving(false);
     }
   };
@@ -163,266 +144,249 @@ export default function EditProfileModal({ isOpen, onClose, user, onUpdate }) {
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
-        transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="w-full max-w-2xl bg-[#0A0A0A] border-t-2 md:border-2 border-[#00E5FF]/30 md:rounded-3xl overflow-hidden max-h-[95vh] flex flex-col"
+        transition={{ type: "spring", damping: 30 }}
+        className="w-full max-w-lg bg-[#0A0A0A] border-t-2 md:border-2 border-[#00E5FF]/30 md:rounded-3xl overflow-hidden max-h-[95vh] flex flex-col"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#0A1A2A] to-[#05111A] border-b border-[#00E5FF]/20 p-4 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#0A1A2A] to-[#05111A] border-b border-[#00E5FF]/20 p-4 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#00E5FF] rounded-xl flex items-center justify-center">
               <User className="w-5 h-5 text-black" />
             </div>
             <div>
-              <h3 className="text-white font-black text-lg">Editar Perfil</h3>
-              <p className="text-[#00E5FF] text-xs">Configure suas informações</p>
+              <h3 className="text-white font-black text-base">Editar Perfil</h3>
+              <p className="text-[#00E5FF] text-[10px]">Configure suas informações</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center transition-colors"
-          >
+          <button onClick={onClose} className="w-8 h-8 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center">
             <X className="w-4 h-4 text-white" />
           </button>
         </div>
 
-        {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* Foto de Perfil */}
-          <div>
-            <Label className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
-              <Camera className="w-3 h-3" /> Foto de Perfil
-            </Label>
-            <div className="relative w-24 h-24 mx-auto">
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {/* Foto */}
+          <div className="flex flex-col items-center mb-4">
+            <div className="relative w-20 h-20">
               <div className="w-full h-full bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-                {formData.profile_picture_url ? (
-                  <img src={formData.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
+                {data.profile_picture_url ? (
+                  <img src={data.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Camera className="w-8 h-8 text-gray-500" />
+                    <Camera className="w-6 h-6 text-gray-500" />
                   </div>
                 )}
               </div>
-              <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#00E5FF] rounded-lg flex items-center justify-center cursor-pointer hover:bg-[#00BFFF] transition-colors">
-                <Camera className="w-4 h-4 text-black" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, 'profile_picture_url')}
-                  className="hidden"
-                  disabled={uploading}
-                />
+              <label className="absolute -bottom-1 -right-1 w-7 h-7 bg-[#00E5FF] rounded-lg flex items-center justify-center cursor-pointer">
+                <Camera className="w-3.5 h-3.5 text-black" />
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
               </label>
             </div>
           </div>
 
-          {/* Nome Completo */}
+          {/* Nome */}
           <div>
-            <Label className="text-white text-xs uppercase mb-2 flex items-center gap-2">
+            <Label className="text-white text-[10px] uppercase mb-1.5 flex items-center gap-1">
               <User className="w-3 h-3" /> Nome Completo *
             </Label>
             <Input
-              value={formData.full_name}
-              onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              placeholder="Seu nome completo"
-              className="bg-white/5 border-white/10 text-white rounded-xl h-12 text-base"
+              value={data.full_name}
+              onChange={(e) => setData({ ...data, full_name: e.target.value })}
+              placeholder="Digite seu nome"
+              className="bg-white/5 border-white/10 text-white rounded-xl h-11"
             />
           </div>
 
-          {/* Data de Nascimento e Nacionalidade */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Data e País */}
+          <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5 flex items-center gap-1">
                 <Calendar className="w-3 h-3" /> Nascimento *
               </Label>
               <Input
                 type="date"
-                value={formData.birth_date}
-                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                value={data.birth_date}
+                onChange={(e) => setData({ ...data, birth_date: e.target.value })}
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11"
               />
             </div>
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5 flex items-center gap-1">
                 <Globe className="w-3 h-3" /> País
               </Label>
-              <Select value={formData.nationality} onValueChange={(v) => setFormData({ ...formData, nationality: v })}>
-                <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-12">
+              <Select value={data.nationality} onValueChange={(v) => setData({ ...data, nationality: v })}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-11">
                   <SelectValue placeholder="🌍" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0A0A0A] border-white/10">
-                  {countries.map((country) => (
-                    <SelectItem key={country.code} value={country.code} className="text-white">
-                      <span className="text-xl mr-2">{country.code}</span> {country.name}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="🇧🇷">🇧🇷 Brasil</SelectItem>
+                  <SelectItem value="🇦🇷">🇦🇷 Argentina</SelectItem>
+                  <SelectItem value="🇵🇹">🇵🇹 Portugal</SelectItem>
+                  <SelectItem value="🇪🇸">🇪🇸 Espanha</SelectItem>
+                  <SelectItem value="🇮🇹">🇮🇹 Itália</SelectItem>
+                  <SelectItem value="🇫🇷">🇫🇷 França</SelectItem>
+                  <SelectItem value="🇩🇪">🇩🇪 Alemanha</SelectItem>
+                  <SelectItem value="🇬🇧">🇬🇧 Inglaterra</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           {/* Telefone e Email */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
-                <Phone className="w-3 h-3" /> Telefone
-              </Label>
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Telefone</Label>
               <Input
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                value={data.phone}
+                onChange={(e) => setData({ ...data, phone: e.target.value })}
                 placeholder="(00) 00000-0000"
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11"
               />
             </div>
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2">E-mail</Label>
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Email</Label>
               <Input
                 type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="seu@email.com"
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                value={data.email}
+                onChange={(e) => setData({ ...data, email: e.target.value })}
+                placeholder="email@exemplo.com"
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11"
               />
             </div>
           </div>
 
           {/* Cidade e Estado */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
-                <MapPin className="w-3 h-3" /> Cidade
-              </Label>
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Cidade</Label>
               <Input
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                value={data.city}
+                onChange={(e) => setData({ ...data, city: e.target.value })}
                 placeholder="Sua cidade"
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11"
               />
             </div>
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2">Estado</Label>
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Estado</Label>
               <Input
-                value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                value={data.state}
+                onChange={(e) => setData({ ...data, state: e.target.value })}
                 placeholder="UF"
                 maxLength={2}
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11 uppercase"
               />
             </div>
           </div>
 
-          {/* Altura, Peso e Pé */}
-          <div className="grid grid-cols-3 gap-3">
+          {/* Altura, Peso, Pé */}
+          <div className="grid grid-cols-3 gap-2">
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
-                <Ruler className="w-3 h-3" /> Altura
-              </Label>
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Altura</Label>
               <Input
                 type="number"
-                value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                value={data.height}
+                onChange={(e) => setData({ ...data, height: e.target.value })}
                 placeholder="175"
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11"
               />
             </div>
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2">Peso</Label>
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Peso</Label>
               <Input
                 type="number"
-                value={formData.weight}
-                onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                value={data.weight}
+                onChange={(e) => setData({ ...data, weight: e.target.value })}
                 placeholder="70"
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11"
               />
             </div>
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2">Pé</Label>
-              <Select value={formData.foot} onValueChange={(v) => setFormData({ ...formData, foot: v })}>
-                <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-12">
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Pé</Label>
+              <Select value={data.foot} onValueChange={(v) => setData({ ...data, foot: v })}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0A0A0A] border-white/10">
-                  <SelectItem value="direito" className="text-white">Direito</SelectItem>
-                  <SelectItem value="esquerdo" className="text-white">Esquerdo</SelectItem>
-                  <SelectItem value="ambidestro" className="text-white">Ambos</SelectItem>
+                  <SelectItem value="direito">Direito</SelectItem>
+                  <SelectItem value="esquerdo">Esquerdo</SelectItem>
+                  <SelectItem value="ambidestro">Ambos</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           {/* Posição e Número */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label className="text-white text-xs uppercase mb-2 flex items-center gap-2">
+              <Label className="text-white text-[10px] uppercase mb-1.5 flex items-center gap-1">
                 <Target className="w-3 h-3" /> Posição *
               </Label>
-              <Select value={formData.position} onValueChange={(v) => setFormData({ ...formData, position: v })}>
-                <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-12">
+              <Select value={data.position} onValueChange={(v) => setData({ ...data, position: v })}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white rounded-xl h-11">
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#0A0A0A] border-white/10">
-                  <SelectItem value="goleiro" className="text-white">🧤 Goleiro</SelectItem>
-                  <SelectItem value="zagueiro" className="text-white">🛡️ Zagueiro</SelectItem>
-                  <SelectItem value="lateral" className="text-white">🏃 Lateral</SelectItem>
-                  <SelectItem value="volante" className="text-white">⚙️ Volante</SelectItem>
-                  <SelectItem value="meia" className="text-white">🎯 Meia</SelectItem>
-                  <SelectItem value="atacante" className="text-white">⚡ Atacante</SelectItem>
+                  <SelectItem value="goleiro">🧤 Goleiro</SelectItem>
+                  <SelectItem value="zagueiro">🛡️ Zagueiro</SelectItem>
+                  <SelectItem value="lateral">🏃 Lateral</SelectItem>
+                  <SelectItem value="volante">⚙️ Volante</SelectItem>
+                  <SelectItem value="meia">🎯 Meia</SelectItem>
+                  <SelectItem value="atacante">⚡ Atacante</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label className="text-gray-400 text-xs uppercase mb-2">Camisa</Label>
+              <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Camisa</Label>
               <Input
                 type="number"
-                value={formData.jersey_number}
-                onChange={(e) => setFormData({ ...formData, jersey_number: e.target.value })}
+                value={data.jersey_number}
+                onChange={(e) => setData({ ...data, jersey_number: e.target.value })}
                 placeholder="10"
-                className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+                className="bg-white/5 border-white/10 text-white rounded-xl h-11"
               />
             </div>
           </div>
 
-          {/* Clube Atual */}
+          {/* Clube */}
           <div>
-            <Label className="text-gray-400 text-xs uppercase mb-2 flex items-center gap-2">
-              <TrendingUp className="w-3 h-3" /> Clube Atual
-            </Label>
+            <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Clube Atual</Label>
             <Input
-              value={formData.current_club_name}
-              onChange={(e) => setFormData({ ...formData, current_club_name: e.target.value })}
+              value={data.current_club_name}
+              onChange={(e) => setData({ ...data, current_club_name: e.target.value })}
               placeholder="Nome do clube"
-              className="bg-white/5 border-white/10 text-white rounded-xl h-12"
+              className="bg-white/5 border-white/10 text-white rounded-xl h-11"
             />
           </div>
 
           {/* Destaques */}
           <div>
-            <Label className="text-gray-400 text-xs uppercase mb-2">Destaques da Carreira</Label>
+            <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Destaques</Label>
             <Textarea
-              value={formData.career_highlights}
-              onChange={(e) => setFormData({ ...formData, career_highlights: e.target.value })}
-              placeholder="Ex: Artilheiro do campeonato sub-17..."
-              className="bg-white/5 border-white/10 text-white rounded-xl min-h-[80px]"
+              value={data.career_highlights}
+              onChange={(e) => setData({ ...data, career_highlights: e.target.value })}
+              placeholder="Principais destaques da sua carreira..."
+              className="bg-white/5 border-white/10 text-white rounded-xl min-h-[60px] text-sm"
             />
           </div>
 
           {/* Conquistas */}
           <div>
-            <Label className="text-gray-400 text-xs uppercase mb-2">Principais Conquistas</Label>
+            <Label className="text-gray-400 text-[10px] uppercase mb-1.5">Conquistas</Label>
             <Textarea
-              value={formData.achievements}
-              onChange={(e) => setFormData({ ...formData, achievements: e.target.value })}
-              placeholder="Ex: Campeão municipal 2023..."
-              className="bg-white/5 border-white/10 text-white rounded-xl min-h-[80px]"
+              value={data.achievements}
+              onChange={(e) => setData({ ...data, achievements: e.target.value })}
+              placeholder="Principais títulos e conquistas..."
+              className="bg-white/5 border-white/10 text-white rounded-xl min-h-[60px] text-sm"
             />
           </div>
         </div>
 
-        {/* Footer - Botão de Salvar */}
-        <div className="border-t border-[#00E5FF]/20 p-4 bg-[#0A0A0A]">
+        {/* Footer */}
+        <div className="border-t border-[#00E5FF]/20 p-4 bg-[#0A0A0A] flex-shrink-0">
           <Button
             onClick={handleSave}
             disabled={saving || uploading}
-            className="w-full h-12 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0088FF] text-black font-black rounded-xl shadow-xl disabled:opacity-50"
+            className="w-full h-12 bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-black rounded-xl disabled:opacity-50"
           >
             {saving ? (
               <>
