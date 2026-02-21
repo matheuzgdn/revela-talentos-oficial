@@ -487,15 +487,6 @@ export default function AthleteProfile() {
       <div id="bottom-nav">
         <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
       </div>
-      <div id="upload-button" className="fixed bottom-20 right-4 md:hidden">
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setShowUploadModal(true)}
-          className="w-14 h-14 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-2xl shadow-[#00E5FF]/50"
-        >
-          <Video className="w-6 h-6 text-black" />
-        </motion.button>
-      </div>
       <VideoUploadModal 
         isOpen={showUploadModal} 
         onClose={() => setShowUploadModal(false)} 
