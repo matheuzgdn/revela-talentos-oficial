@@ -361,7 +361,39 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
             {/* VIDEOS TAB */}
             <TabsContent value="videos" className="mt-0 space-y-3 md:space-y-4">
               {selectedVideo ? (
-                <div className="space-y-4">
+                <div className="space-y-3 md:space-y-4">
+                  {/* Video Info Header */}
+                  <div className="bg-gradient-to-r from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/30 rounded-2xl p-4">
+                    <h3 className="text-white font-bold text-base md:text-lg mb-2">{selectedVideo.title}</h3>
+                    {selectedVideo.description && (
+                      <p className="text-gray-400 text-xs md:text-sm mb-3">{selectedVideo.description}</p>
+                    )}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/30">
+                        {selectedVideo.position?.toUpperCase() || 'POSIÇÃO'}
+                      </Badge>
+                      <Badge className="bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                        {selectedVideo.category}
+                      </Badge>
+                      {selectedVideo.status === 'approved' ? (
+                        <Badge className="bg-green-500/20 text-green-400 border border-green-500/30">
+                          <Check className="w-3 h-3 mr-1" />
+                          Aprovado
+                        </Badge>
+                      ) : selectedVideo.status === 'pending' ? (
+                        <Badge className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+                          <Clock className="w-3 h-3 mr-1" />
+                          Em Análise
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-red-500/20 text-red-400 border border-red-500/30">
+                          <X className="w-3 h-3 mr-1" />
+                          Rejeitado
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
                   {/* Video Player Cinematográfico */}
                   <div className="relative aspect-video bg-black rounded-2xl overflow-hidden border-2 border-[#00E5FF]/30">
                     <video
@@ -379,27 +411,27 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                         <motion.button
                           whileTap={{ scale: 0.9 }}
                           onClick={togglePlay}
-                          className="w-14 h-14 bg-[#00E5FF] rounded-full flex items-center justify-center shadow-2xl"
+                          className="w-12 h-12 md:w-14 md:h-14 bg-[#00E5FF] rounded-full flex items-center justify-center shadow-2xl"
                         >
                           {isPlaying ? 
-                            <Pause className="w-7 h-7 text-black" fill="black" /> : 
-                            <Play className="w-7 h-7 text-black ml-1" fill="black" />
+                            <Pause className="w-6 h-6 md:w-7 md:h-7 text-black" fill="black" /> : 
+                            <Play className="w-6 h-6 md:w-7 md:h-7 text-black ml-1" fill="black" />
                           }
                         </motion.button>
                         <motion.button
                           whileTap={{ scale: 0.9 }}
                           onClick={toggleMute}
-                          className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20"
+                          className="w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20"
                         >
-                          {isMuted ? <VolumeX className="w-6 h-6 text-white" /> : <Volume2 className="w-6 h-6 text-white" />}
+                          {isMuted ? <VolumeX className="w-5 h-5 md:w-6 md:h-6 text-white" /> : <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-white" />}
                         </motion.button>
                         <div className="flex-1" />
                         <motion.button
                           whileTap={{ scale: 0.9 }}
                           onClick={() => videoRef.current?.requestFullscreen()}
-                          className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20"
+                          className="w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20"
                         >
-                          <Maximize className="w-6 h-6 text-white" />
+                          <Maximize className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </motion.button>
                       </div>
                     </div>
@@ -413,13 +445,32 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                         <motion.button
                           whileTap={{ scale: 0.95 }}
                           onClick={togglePlay}
-                          className="w-24 h-24 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-2xl shadow-[#00E5FF]/50"
+                          className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-2xl shadow-[#00E5FF]/50"
                         >
-                          <Play className="w-12 h-12 text-black ml-2" fill="black" />
+                          <Play className="w-10 h-10 md:w-12 md:h-12 text-black ml-1 md:ml-2" fill="black" />
                         </motion.button>
                       </motion.div>
                     )}
                   </div>
+
+                  {/* Overall Score Card */}
+                  {selectedVideo.ai_analysis && selectedVideo.ai_analysis.overall_score && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-gradient-to-br from-[#FFD700]/20 to-[#FFA500]/20 border-2 border-[#FFD700]/30 rounded-2xl p-6 text-center"
+                    >
+                      <Trophy className="w-12 h-12 md:w-16 md:h-16 text-[#FFD700] mx-auto mb-4" />
+                      <h4 className="text-white font-bold text-lg md:text-xl mb-2">Nota Geral da Performance</h4>
+                      <div className="flex items-center justify-center gap-3">
+                        <span className="text-6xl md:text-7xl font-black text-[#FFD700]">
+                          {selectedVideo.ai_analysis.overall_score}
+                        </span>
+                        <span className="text-3xl md:text-4xl text-gray-400">/100</span>
+                      </div>
+                      <Progress value={selectedVideo.ai_analysis.overall_score} className="h-4 mt-4" />
+                    </motion.div>
+                  )}
 
                   {/* Video Analysis */}
                   {selectedVideo.ai_analysis && (
@@ -493,6 +544,28 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
                           <p className="text-gray-300 text-xs md:text-sm leading-relaxed">{selectedVideo.ai_analysis.summary}</p>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {/* Admin Feedback Section */}
+                  {selectedVideo.admin_feedback && (
+                    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-6">
+                      <h4 className="text-white font-bold mb-3 flex items-center gap-2 text-sm md:text-base">
+                        <Shield className="w-5 h-5 text-purple-400" />
+                        Feedback do Analista
+                      </h4>
+                      <p className="text-gray-300 text-xs md:text-sm leading-relaxed">{selectedVideo.admin_feedback}</p>
+                    </div>
+                  )}
+
+                  {/* Sem Análise */}
+                  {!selectedVideo.ai_analysis && (
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
+                      <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-gray-600 mx-auto mb-4" />
+                      <h4 className="text-white font-bold text-base md:text-lg mb-2">Análise em Andamento</h4>
+                      <p className="text-gray-400 text-xs md:text-sm">
+                        A análise de IA ainda não foi processada para este vídeo. Aguarde ou processe manualmente.
+                      </p>
                     </div>
                   )}
 
