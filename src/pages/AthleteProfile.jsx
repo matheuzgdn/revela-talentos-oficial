@@ -16,6 +16,7 @@ import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import VideoUploadModal from "@/components/mobile/VideoUploadModal";
 import ProfileSetup from "@/components/athlete/ProfileSetup";
 import DailyCheckinModal from "@/components/athlete/DailyCheckinModal";
+import DailyCheckinNotification from "@/components/athlete/DailyCheckinNotification";
 import WeeklyAssessmentChat from "@/components/athlete/WeeklyAssessmentChat";
 import WeeklyAssessmentNotification from "@/components/athlete/WeeklyAssessmentNotification";
 
@@ -496,6 +497,11 @@ export default function AthleteProfile() {
         userId={user?.id}
         userName={user?.full_name?.split(' ')[0] || 'Atleta'}
         onComplete={loadUserData}
+      />
+      <DailyCheckinNotification
+        user={user}
+        dailyCheckins={dailyCheckins}
+        onOpen={() => setShowCheckinModal(true)}
       />
       <WeeklyAssessmentNotification
         user={user}
