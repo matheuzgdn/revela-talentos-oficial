@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Heart, Eye, ChevronLeft, X, Star, Zap } from "lucide-react";
+import { Play, Heart, Eye, ChevronLeft, X, Star, Zap, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
+import VideoAnalysisModal from "../components/athlete/VideoAnalysisModal";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 
@@ -19,10 +20,20 @@ export default function AthleteVideos() {
     base44.auth.me().then(setUser).catch(() => setUser(null));
   }, []);
 
-  const { data: videos = [], isLoading } = useQuery({
-    queryKey: ['athleteVideos'],
-    queryFn: () => base44.entities.AthleteVideo.filter({ status: "approved" }, "-created_date", 50),
+  const { data: allVideos = [], isLoading } = useQuery({
+    queryKey: ['athleteVideos', user?.id],
+    queryFn: async () => {
+      if (!user?.id) {
+        return base44.entities.AthleteVideo.filter({ status: "approved" }, "-created_date", 50);
+      }
+      // Para o usuário logado, mostrar todos os seus vídeos
+      const myVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, "-created_date", 50);
+      return myVideos;
+    },
+    enabled: true
   });
+
+  const videos = allVideos || [];
 
   const categories = [
     { id: "all", label: "Todos", icon: "⚽" },
@@ -38,66 +49,15 @@ export default function AthleteVideos() {
 
   const featuredVideos = videos.filter(v => v.is_featured).slice(0, 6);
 
-  // Video Player Modal
+  // Video Analysis Modal
   if (selectedVideo) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-[#0A0A0A]"
-      >
-        <div className="relative h-full flex flex-col">
-          <motion.button
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            onClick={() => setSelectedVideo(null)}
-            className="absolute top-4 left-4 z-10 w-11 h-11 bg-[#111111] backdrop-blur-sm rounded-2xl flex items-center justify-center border border-[#222]"
-          >
-            <ChevronLeft className="w-5 h-5 text-white" />
-          </motion.button>
-
-          <div className="flex-1 flex items-center justify-center bg-black">
-            <video
-              src={selectedVideo.video_url}
-              className="w-full h-full object-contain"
-              controls
-              autoPlay
-            />
-          </div>
-
-          <motion.div 
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent pb-8"
-          >
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-2xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/20">
-                <span className="text-black font-black text-xl">{selectedVideo.athlete_name?.charAt(0)}</span>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-white font-bold text-lg">{selectedVideo.title}</h3>
-                <p className="text-[#B3B3B3] text-sm">{selectedVideo.athlete_name}</p>
-              </div>
-            </div>
-
-            {selectedVideo.position && (
-              <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/30 mb-4 font-bold text-xs">
-                {selectedVideo.position.toUpperCase()}
-              </Badge>
-            )}
-
-            <div className="flex items-center gap-6 text-[#B3B3B3] text-sm">
-              <span className="flex items-center gap-2">
-                <Eye className="w-4 h-4 text-[#00E5FF]" /> {selectedVideo.views_count || 0}
-              </span>
-              <span className="flex items-center gap-2">
-                <Heart className="w-4 h-4 text-[#00E5FF]" /> {selectedVideo.likes_count || 0}
-              </span>
-            </div>
-          </motion.div>
-        </div>
-      </motion.div>
+      <VideoAnalysisModal
+        video={selectedVideo}
+        isOpen={!!selectedVideo}
+        onClose={() => setSelectedVideo(null)}
+        user={user}
+      />
     );
   }
 
@@ -183,8 +143,8 @@ export default function AthleteVideos() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
                 
-                {/* Badge */}
-                <div className="absolute top-3 left-3">
+                {/* Badges */}
+                <div className="absolute top-3 left-3 flex flex-col gap-2">
                   <div className={`px-2.5 py-1 rounded-xl text-[10px] font-black ${
                     video.is_featured 
                       ? "bg-[#00E5FF] text-black shadow-lg shadow-[#00E5FF]/30" 
@@ -192,6 +152,12 @@ export default function AthleteVideos() {
                   }`}>
                     {video.is_featured ? "NOVIDADE" : "ATLETA"}
                   </div>
+                  {video.ai_analysis && (
+                    <div className="px-2.5 py-1 rounded-xl text-[10px] font-black bg-purple-500/90 text-white border border-purple-400/50 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" />
+                      IA
+                    </div>
+                  )}
                 </div>
 
                 {/* Play Icon */}
@@ -259,6 +225,14 @@ export default function AthleteVideos() {
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/30 to-transparent" />
+                
+                {/* AI Analysis Badge */}
+                {video.ai_analysis && (
+                  <div className="absolute top-2 right-2 px-2 py-1 rounded-lg text-[9px] font-black bg-purple-500/90 text-white border border-purple-400/50 flex items-center gap-1">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    IA
+                  </div>
+                )}
 
                 {/* Play Icon - Appears on hover/active */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
