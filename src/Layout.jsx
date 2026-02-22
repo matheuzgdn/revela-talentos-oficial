@@ -4,6 +4,8 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { User } from "@/entities/User";
 import StoriesModal from "@/components/stories/StoriesModal";
+import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
+import LanguageToggle from "@/components/i18n/LanguageToggle";
 import {
   Star,
   TrendingUp,
@@ -30,19 +32,17 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-const navigationItems = [
-{ title: "Revela Talentos", url: createPageUrl("RevelaTalentos"), icon: Star },
-{ title: "Plano de Carreira", url: createPageUrl("PlanoCarreira"), icon: TrendingUp },
-{ title: "Plano Internacional", url: createPageUrl("PlanoInternacional"), icon: Globe },
-{ title: "Meus Serviços", url: createPageUrl("MeusServicos"), icon: Settings, requiresAuth: true }];
-
-
-const getNavigationItems = (user) => {
-  const items = [...navigationItems];
+const getNavigationItems = (user, t) => {
+  const items = [
+    { title: t('nav.revela'), url: createPageUrl("RevelaTalentos"), icon: Star },
+    { title: t('nav.career'), url: createPageUrl("PlanoCarreira"), icon: TrendingUp },
+    { title: t('nav.international'), url: createPageUrl("PlanoInternacional"), icon: Globe },
+    { title: t('nav.services'), url: createPageUrl("MeusServicos"), icon: Settings, requiresAuth: true }
+  ];
 
   if (user?.role === 'admin' || user?.is_revela_admin === true) {
     items.push({
-      title: "Admin",
+      title: t('nav.admin'),
       url: createPageUrl("Admin"),
       icon: Shield,
       requiresAuth: true,
@@ -53,7 +53,8 @@ const getNavigationItems = (user) => {
   return items;
 };
 
-export default function Layout({ children, currentPageName }) {
+function LayoutInner({ children, currentPageName }) {
+  const { t, language } = useLanguage();
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [userPackageName, setUserPackageName] = useState(null);
@@ -68,13 +69,13 @@ export default function Layout({ children, currentPageName }) {
     try {
       const currentUser = await User.me();
       setUser(currentUser);
-      setUserPackageName(currentUser.has_plano_carreira_access ? "Plano de Carreira" : "Revela Talentos");
+      setUserPackageName(currentUser.has_plano_carreira_access ? t('package.career') : t('package.revela'));
       setIsLoading(false);
     } catch (error) {
       setUser(null);
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const loadStories = useCallback(async () => {
     try {
@@ -148,7 +149,7 @@ export default function Layout({ children, currentPageName }) {
     base44.auth.redirectToLogin();
   };
 
-  const navigationItemsToRender = getNavigationItems(user);
+  const navigationItemsToRender = getNavigationItems(user, t);
 
   if (isLoading) {
     return (
@@ -238,7 +239,7 @@ export default function Layout({ children, currentPageName }) {
                           <Avatar className="h-10 w-10 flex-shrink-0"><AvatarImage src={user.profile_picture_url} /><AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">{user.full_name?.charAt(0) || 'A'}</AvatarFallback></Avatar>
                           <div className="flex-1 min-w-0"><p className="font-medium text-white text-sm truncate">{user.full_name}</p>{userPackageName && <Badge className={`text-xs ${userPackageName === 'Plano de Carreira' ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'}`}>{userPackageName}</Badge>}</div>
                         </div>
-                        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-900"><LogOut className="w-4 h-4 mr-2" />Sair</Button>
+                        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-900"><LogOut className="w-4 h-4 mr-2" />{t('nav.logout')}</Button>
                       </> :
 
                   <div className="flex flex-col items-center space-y-2">
@@ -249,8 +250,13 @@ export default function Layout({ children, currentPageName }) {
                   </div> :
 
                 <Button onClick={handleLoginClick} className={`${sidebarExpanded ? 'w-full' : 'p-2'} bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg`}>
-                    <UserIcon className={`w-4 h-4 ${sidebarExpanded ? 'mr-2' : ''}`} />{sidebarExpanded && 'Entrar'}
+                    <UserIcon className={`w-4 h-4 ${sidebarExpanded ? 'mr-2' : ''}`} />{sidebarExpanded && t('nav.login')}
                   </Button>
+                {sidebarExpanded && (
+                  <div className="mt-3">
+                    <LanguageToggle variant="outline" className="w-full border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800" />
+                  </div>
+                )}
                 }
               </div>
             </SidebarContent>
@@ -363,7 +369,7 @@ export default function Layout({ children, currentPageName }) {
                   className="w-full text-base py-6 rounded-2xl border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"
                 >
                   <LogOut className="w-5 h-5 mr-2" />
-                  Sair da Conta
+                  {t('nav.logout.account')}
                 </Button>
               ) : (
                 <Button 
@@ -374,8 +380,10 @@ export default function Layout({ children, currentPageName }) {
                   className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-base py-6 rounded-2xl shadow-xl shadow-cyan-500/30"
                 >
                   <UserIcon className="w-5 h-5 mr-2" />
-                  Entrar com Google
+                  {t('nav.login.google')}
                 </Button>
+              )}
+              <LanguageToggle variant="outline" className="w-full border-cyan-500/50 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20" />
               )}
             </div>
           </div>
@@ -390,4 +398,12 @@ export default function Layout({ children, currentPageName }) {
       </div>
     </SidebarProvider>);
 
+}
+
+export default function Layout({ children, currentPageName }) {
+  return (
+    <LanguageProvider>
+      <LayoutInner children={children} currentPageName={currentPageName} />
+    </LanguageProvider>
+  );
 }
