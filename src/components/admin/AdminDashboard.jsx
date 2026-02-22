@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
-import { Users, TrendingUp, Globe, Target, ArrowUp, ArrowDown } from 'lucide-react';
+import { Users, TrendingUp, Globe, Target, ArrowUp, ArrowDown, Activity } from 'lucide-react';
+import moment from 'moment';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -10,13 +12,17 @@ export default function AdminDashboard() {
     revelaTalentos: 0,
     growth: 0,
   });
+  const [recentActivities, setRecentActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       setIsLoading(true);
       try {
-        const users = await User.list();
+        const [users, activities] = await Promise.all([
+          User.list(),
+          base44.entities.ActivityLog.list('-created_date', 20)
+        ]);
         
         const totalUsers = users?.length || 0;
         const planoCarreira = (users || []).filter(u => u.has_plano_carreira_access).length;
@@ -26,6 +32,7 @@ export default function AdminDashboard() {
         const growth = 12.5;
         
         setStats({ totalUsers, planoCarreira, revelaTalentos, growth });
+        setRecentActivities(activities || []);
       } catch (error) {
         console.error("Erro ao carregar estatísticas:", error);
       }
@@ -159,29 +166,54 @@ export default function AdminDashboard() {
         transition={{ delay: 0.4 }}
         className="rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 p-8"
       >
-        <h2 className="text-2xl font-black mb-6 text-white">Atividade Recente</h2>
-        <div className="space-y-4">
-          {[
-            { user: 'João Silva', action: 'criou uma conta', time: '2min atrás', color: 'cyan' },
-            { user: 'Maria Santos', action: 'atualizou o perfil', time: '15min atrás', color: 'green' },
-            { user: 'Pedro Oliveira', action: 'se inscreveu em seletiva', time: '1h atrás', color: 'yellow' },
-          ].map((activity, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 + index * 0.1 }}
-              className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-            >
-              <div className={`w-2 h-2 rounded-full bg-${activity.color}-500`}></div>
-              <div className="flex-1">
-                <p className="text-white font-medium">{activity.user}</p>
-                <p className="text-sm text-gray-500">{activity.action}</p>
-              </div>
-              <span className="text-xs text-gray-600">{activity.time}</span>
-            </motion.div>
-          ))}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Activity className="w-6 h-6 text-cyan-400" />
+            <h2 className="text-2xl font-black text-white">Atividade Recente</h2>
+          </div>
+          <span className="text-sm text-gray-500">{recentActivities.length} atividades</span>
         </div>
+        
+        {recentActivities.length > 0 ? (
+          <div className="space-y-4">
+            {recentActivities.slice(0, 10).map((activity, index) => {
+              const colorMap = {
+                account: 'cyan',
+                profile: 'green',
+                seletiva: 'yellow',
+                upload: 'purple',
+                content: 'blue',
+                performance: 'orange',
+                other: 'gray'
+              };
+              const color = colorMap[activity.action_type] || 'gray';
+              
+              return (
+                <motion.div
+                  key={activity.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + index * 0.05 }}
+                  className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <div className={`w-2 h-2 rounded-full bg-${color}-500 flex-shrink-0`}></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-medium truncate">{activity.user_name}</p>
+                    <p className="text-sm text-gray-500 truncate">{activity.action}</p>
+                  </div>
+                  <span className="text-xs text-gray-600 whitespace-nowrap">
+                    {moment(activity.created_date).fromNow()}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <Activity className="w-12 h-12 text-gray-700 mx-auto mb-4" />
+            <p className="text-gray-500">Nenhuma atividade registrada ainda</p>
+          </div>
+        )}
       </motion.div>
     </div>
   );
