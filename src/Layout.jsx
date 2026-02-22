@@ -249,14 +249,16 @@ function LayoutInner({ children, currentPageName }) {
                   }
                   </div> :
 
-                <Button onClick={handleLoginClick} className={`${sidebarExpanded ? 'w-full' : 'p-2'} bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg`}>
+                <>
+                  <Button onClick={handleLoginClick} className={`${sidebarExpanded ? 'w-full' : 'p-2'} bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg`}>
                     <UserIcon className={`w-4 h-4 ${sidebarExpanded ? 'mr-2' : ''}`} />{sidebarExpanded && t('nav.login')}
                   </Button>
-                {sidebarExpanded && (
-                  <div className="mt-3">
-                    <LanguageToggle variant="outline" className="w-full border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800" />
-                  </div>
-                )}
+                  {sidebarExpanded && (
+                    <div className="mt-3">
+                      <LanguageToggle variant="outline" className="w-full border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800" />
+                    </div>
+                  )}
+                </>
                 }
               </div>
             </SidebarContent>
@@ -384,7 +386,6 @@ function LayoutInner({ children, currentPageName }) {
                 </Button>
               )}
               <LanguageToggle variant="outline" className="w-full border-cyan-500/50 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20" />
-              )}
             </div>
           </div>
         }
