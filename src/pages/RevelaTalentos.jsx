@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight } from "lucide-react";
+import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import VideoPlayer from "../components/content/VideoPlayer";
@@ -11,6 +11,7 @@ import RevelaTalentosLanding from "../components/revelatalentos/RevelaTalentosLa
 import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
 import FifaAthleteCard from "../components/revelatalentos/FifaAthleteCard";
+import NotificationsPanel from "../components/notifications/NotificationsPanel";
 import { createPageUrl } from "@/utils";
 
 export default function RevelaTalentosPage() {
@@ -87,6 +88,31 @@ export default function RevelaTalentosPage() {
   useEffect(() => {
     checkAccess();
   }, [checkAccess]);
+
+  useEffect(() => {
+    // Create welcome notification for new users
+    if (user && !user.has_seen_welcome) {
+      createWelcomeNotification();
+    }
+  }, [user]);
+
+  const createWelcomeNotification = async () => {
+    try {
+      await base44.entities.Notification.create({
+        user_id: user.id,
+        title: '🎉 Bem-vindo à EC10 Talentos!',
+        message: 'Estamos muito felizes em ter você conosco! Explore todo o conteúdo exclusivo, participe das seletivas e acompanhe seu desenvolvimento como atleta.',
+        type: 'general',
+        priority: 'high',
+        is_read: false
+      });
+      
+      // Mark user as having seen welcome
+      await base44.auth.updateMe({ has_seen_welcome: true });
+    } catch (error) {
+      console.error('Error creating welcome notification:', error);
+    }
+  };
 
   const handleContentSelect = useCallback((content) => {
     if (!user) {
@@ -213,13 +239,16 @@ export default function RevelaTalentosPage() {
             <p className="text-[#666] text-[10px] font-bold uppercase tracking-widest mb-0.5">Olá</p>
             <h1 className="text-xl font-black text-white tracking-tight">{user?.full_name || "Atleta"}</h1>
           </div>
-          <motion.button 
-            whileTap={{ scale: 0.9 }}
-            className="w-12 h-12 bg-[#111111] rounded-2xl flex items-center justify-center border border-[#222] relative hover:border-[#00E5FF]/50 transition-colors shadow-lg"
-          >
-            <Bell className="w-5 h-5 text-white" />
-            <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#00E5FF] rounded-full shadow-lg shadow-[#00E5FF]/50 animate-pulse" />
-          </motion.button>
+          <div className="flex gap-2">
+            {user && <NotificationsPanel user={user} />}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowUploadModal(true)}
+              className="w-10 h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30"
+            >
+              <Plus className="w-5 h-5 text-white" />
+            </motion.button>
+          </div>
         </div>
       </motion.header>
 
