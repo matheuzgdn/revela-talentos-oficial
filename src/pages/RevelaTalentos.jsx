@@ -369,6 +369,7 @@ export default function RevelaTalentosPage() {
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   progress={userProgress.find(p => p.content_id === content.id)?.progress_percent}
+                  t={t}
                 />
               ))}
             </div>
@@ -395,6 +396,7 @@ export default function RevelaTalentosPage() {
                   onClick={() => handleContentSelect(content)}
                   showRank={true}
                   rank={index + 1}
+                  t={t}
                 />
               ))}
             </div>
@@ -421,6 +423,7 @@ export default function RevelaTalentosPage() {
                   plano={plano} 
                   index={index}
                   onClick={() => handleContentSelect(plano)}
+                  t={t}
                 />
               ))}
             </div>
@@ -472,6 +475,7 @@ export default function RevelaTalentosPage() {
                   content={content} 
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  t={t}
                 />
               ))}
             </div>
@@ -496,6 +500,7 @@ export default function RevelaTalentosPage() {
                   content={content} 
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  t={t}
                 />
               ))}
             </div>
@@ -520,6 +525,7 @@ export default function RevelaTalentosPage() {
                   content={content} 
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  t={t}
                 />
               ))}
             </div>
@@ -544,6 +550,7 @@ export default function RevelaTalentosPage() {
                   content={content} 
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  t={t}
                 />
               ))}
             </div>
@@ -568,6 +575,7 @@ export default function RevelaTalentosPage() {
                   content={content} 
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  t={t}
                 />
               ))}
             </div>
@@ -594,6 +602,7 @@ export default function RevelaTalentosPage() {
                 content={content} 
                 index={index}
                 onClick={() => handleContentSelect(content)}
+                t={t}
               />
             ))}
           </div>
@@ -614,7 +623,7 @@ export default function RevelaTalentosPage() {
 }
 
 // Content Card Component - Modern with Title Inside
-function ContentCard({ content, index, onClick, progress, showRank, rank }) {
+function ContentCard({ content, index, onClick, progress, showRank, rank, t }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -680,7 +689,7 @@ function ContentCard({ content, index, onClick, progress, showRank, rank }) {
 }
 
 // Plan Card Component - Distinct Design
-function PlanCard({ plano, index, onClick }) {
+function PlanCard({ plano, index, onClick, t }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
