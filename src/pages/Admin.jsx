@@ -26,6 +26,7 @@ import AdminSeletivasTab from '@/components/admin/AdminSeletivasTab';
 import RevelaDashboard from '@/components/admin/RevelaDashboard';
 import AdminStoriesTab from '@/components/admin/AdminStoriesTab'; // Imported new component
 import AdminServicesTab from '@/components/admin/AdminServicesTab'; // Imported new component
+import AdminStoriesManagement from '@/components/admin/AdminStoriesManagement';
 
 const AdminUploadsTab = () => <div className="p-6 text-gray-300">Conteúdo da aba Uploads em desenvolvimento.</div>;
 const AdminMessagesTab = () => <div className="p-6 text-gray-300">Conteúdo da aba Mensagens em desenvolvimento.</div>;
@@ -81,6 +82,14 @@ const adminTabsConfig = [
     component: AdminStoriesTab,
     description: 'Stories de atletas para Revela Talentos',
     requiredRole: 'revela_admin' // Admin revela tem acesso
+  },
+  { 
+    id: 'stories_abertura', // Stories de abertura do app
+    name: 'Stories de Abertura', 
+    icon: Star, 
+    component: AdminStoriesManagement,
+    description: 'Vídeos verticais exibidos ao abrir o app',
+    requiredRole: 'admin' // Apenas admin completo
   },
   { 
     id: 'services', // New tab for services
