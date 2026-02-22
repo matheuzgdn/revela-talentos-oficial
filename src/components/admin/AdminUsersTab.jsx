@@ -26,10 +26,10 @@ import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock } from
+  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle } from
 "lucide-react";
 
-const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines }) => {
+const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendNotification, onProfileVisit }) => {
   const pendingAnalysis = userData.performance.filter((p) => p.status === 'pending_analysis').length;
   const pendingMarketing = userData.marketing?.filter((p) => p.status === 'pending').length || 0;
   const hasNotifications = pendingAnalysis > 0 || pendingMarketing > 0;
@@ -80,9 +80,17 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines }) => {
             <p className="text-xs text-gray-400 truncate">{user.email}</p>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white flex-shrink-0" onClick={() => onEdit(user)}>
-          <Edit className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-1 flex-shrink-0">
+          <Button variant="ghost" size="icon" className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20" onClick={() => onSendNotification(user)} title="Enviar notificação">
+            <Bell className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/20" onClick={() => onProfileVisit(user)} title="Notificar visita ao perfil">
+            <Eye className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" onClick={() => onEdit(user)}>
+            <Edit className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
       
       {user.position && <p className="text-xs text-gray-500">{user.position} • {user.club || 'Sem clube'}</p>}
@@ -306,6 +314,14 @@ export default function AdminUsersTab() {
   const [showAllAthletes, setShowAllAthletes] = useState(true);
   const [isPlatformRestricted, setIsPlatformRestricted] = useState(false);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationTarget, setNotificationTarget] = useState(null);
+  const [notificationForm, setNotificationForm] = useState({
+    title: '',
+    message: '',
+    type: 'message',
+    priority: 'medium'
+  });
 
   const personas = [
   { id: "analyst_01", name: "Analista de Desempenho" },
@@ -360,6 +376,56 @@ export default function AdminUsersTab() {
       console.error('Error loading platform settings:', error);
     } finally {
       setIsLoadingSettings(false);
+    }
+  };
+
+  const handleSendNotification = (user) => {
+    setNotificationTarget(user);
+    setNotificationForm({
+      title: '',
+      message: '',
+      type: 'message',
+      priority: 'medium'
+    });
+    setShowNotificationModal(true);
+  };
+
+  const handleProfileVisit = async (user) => {
+    try {
+      await Notification.create({
+        user_id: user.id,
+        title: 'Visita ao Perfil',
+        message: 'Eric Cena visitou seu perfil',
+        type: 'profile_visit',
+        priority: 'medium'
+      });
+      toast.success(`Notificação de visita enviada para ${user.full_name}`);
+    } catch (error) {
+      console.error('Error sending visit notification:', error);
+      toast.error('Erro ao enviar notificação');
+    }
+  };
+
+  const handleSubmitNotification = async () => {
+    if (!notificationForm.title || !notificationForm.message) {
+      toast.error('Preencha título e mensagem');
+      return;
+    }
+
+    try {
+      await Notification.create({
+        user_id: notificationTarget.id,
+        title: notificationForm.title,
+        message: notificationForm.message,
+        type: notificationForm.type,
+        priority: notificationForm.priority
+      });
+      toast.success(`Notificação enviada para ${notificationTarget.full_name}`);
+      setShowNotificationModal(false);
+      setNotificationTarget(null);
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      toast.error('Erro ao enviar notificação');
     }
   };
 
@@ -772,19 +838,21 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
                 )}
-                    </AnimatePresence>
-                  </div>
-            }
-                
-                {(!data.users || data.users.length === 0) && showAllAthletes &&
-            <p className="text-gray-500 text-center py-8">
-                    Nenhum atleta cadastrado no sistema.
-                  </p>
-            }
+                      </AnimatePresence>
+                    </div>
+                }
+
+                  {(!data.users || data.users.length === 0) && showAllAthletes &&
+                <p className="text-gray-500 text-center py-8">
+                      Nenhum atleta cadastrado no sistema.
+                    </p>
+                }
               </div>
 
               <div className="border-t border-gray-800 my-8"></div>
@@ -925,6 +993,62 @@ export default function AdminUsersTab() {
         }}
         onSave={loadAllData}
       />
+
+      <Dialog open={showNotificationModal} onOpenChange={setShowNotificationModal}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bell className="w-5 h-5 text-blue-400" />
+              Enviar Notificação para {notificationTarget?.full_name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label className="text-gray-400">Tipo</Label>
+              <Select value={notificationForm.type} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, type: v }))}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="message">Mensagem</SelectItem>
+                  <SelectItem value="profile_visit">Visita ao Perfil</SelectItem>
+                  <SelectItem value="achievement">Conquista</SelectItem>
+                  <SelectItem value="general">Geral</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gray-400">Prioridade</Label>
+              <Select value={notificationForm.priority} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, priority: v }))}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Baixa</SelectItem>
+                  <SelectItem value="medium">Média</SelectItem>
+                  <SelectItem value="high">Alta</SelectItem>
+                  <SelectItem value="urgent">Urgente</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gray-400">Título</Label>
+              <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div>
+              <Label className="text-gray-400">Mensagem</Label>
+              <Textarea value={notificationForm.message} onChange={(e) => setNotificationForm((prev) => ({ ...prev, message: e.target.value }))} placeholder="Digite sua mensagem aqui..." className="bg-gray-800 border-gray-700 h-24" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNotificationModal(false)}>Cancelar</Button>
+            <Button onClick={handleSubmitNotification} className="bg-blue-600 hover:bg-blue-700">
+              <Send className="w-4 h-4 mr-2" />
+              Enviar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
         <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
