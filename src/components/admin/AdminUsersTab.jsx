@@ -879,6 +879,8 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
@@ -902,6 +904,8 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
