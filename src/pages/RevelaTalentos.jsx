@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus } from "lucide-react";
+import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus, TrendingUp, Flame, Target, Dumbbell, Brain, Activity, Apple } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import VideoPlayer from "../components/content/VideoPlayer";
@@ -384,7 +384,10 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">{t('home.top10')}</h3>
+              <div className="flex items-center gap-2">
+                <Flame className="w-5 h-5 text-orange-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.top10')}</h3>
+              </div>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
                 {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
@@ -465,7 +468,10 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">{t('home.mentorship')}</h3>
+              <div className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.mentorship')}</h3>
+              </div>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
                 {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
@@ -490,7 +496,10 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">{t('home.physical')}</h3>
+              <div className="flex items-center gap-2">
+                <Dumbbell className="w-5 h-5 text-green-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.physical')}</h3>
+              </div>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
                 {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
@@ -515,7 +524,10 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">{t('home.tactical')}</h3>
+              <div className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-cyan-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.tactical')}</h3>
+              </div>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
                 {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
@@ -540,7 +552,10 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">{t('home.psychology')}</h3>
+              <div className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-purple-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.psychology')}</h3>
+              </div>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
                 {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
@@ -565,7 +580,10 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">{t('home.nutrition')}</h3>
+              <div className="flex items-center gap-2">
+                <Apple className="w-5 h-5 text-red-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.nutrition')}</h3>
+              </div>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
                 {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>

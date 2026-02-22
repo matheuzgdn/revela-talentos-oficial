@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Search, User, Video, Filter, ChevronRight, Star, Eye, Trophy, Zap, Share2 } from "lucide-react";
+import { Search, User, Video, Filter, ChevronRight, Star, Eye, Trophy, Zap, Share2, Target, Shield, Users, Crosshair, Activity } from "lucide-react";
+import { useLanguage } from "@/components/i18n/LanguageContext";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,6 +13,7 @@ import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 
 export default function SearchAthletes() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("all");
@@ -28,13 +30,13 @@ export default function SearchAthletes() {
   });
 
   const positions = [
-    { value: "all", label: "Todas", icon: "⚽" },
-    { value: "goleiro", label: "Goleiro", icon: "🧤" },
-    { value: "zagueiro", label: "Zagueiro", icon: "🛡️" },
-    { value: "lateral", label: "Lateral", icon: "🏃" },
-    { value: "volante", label: "Volante", icon: "⚙️" },
-    { value: "meia", label: "Meia", icon: "🎯" },
-    { value: "atacante", label: "Atacante", icon: "⚡" },
+    { value: "all", label: t('search.allPositions'), icon: Target },
+    { value: "goleiro", label: t('search.goalkeeper'), icon: Shield },
+    { value: "zagueiro", label: t('search.defender'), icon: Shield },
+    { value: "lateral", label: t('search.fullback'), icon: Activity },
+    { value: "volante", label: t('search.midfielder'), icon: Users },
+    { value: "meia", label: t('search.attacking'), icon: Crosshair },
+    { value: "atacante", label: t('search.forward'), icon: Zap },
   ];
 
   // Group videos by athlete
@@ -79,10 +81,10 @@ export default function SearchAthletes() {
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <span className="text-xl">🔥</span>
+            <Trophy className="w-6 h-6 text-[#00E5FF]" />
             <div>
-              <h1 className="text-xl font-black text-white tracking-tight">TOP TEAMS</h1>
-              <p className="text-[#666] text-xs">{filteredAthletes.length} atletas encontrados</p>
+              <h1 className="text-xl font-black text-white tracking-tight">{t('search.topTeams')}</h1>
+              <p className="text-[#666] text-xs">{filteredAthletes.length} {t('search.athletesFound')}</p>
             </div>
           </div>
           <motion.button 
@@ -99,7 +101,7 @@ export default function SearchAthletes() {
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar atleta..."
+            placeholder={t('search.searchAthlete')}
             className="w-full pl-12 pr-14 py-6 bg-[#111111] border-[#222] text-white placeholder:text-[#666] rounded-2xl focus:border-[#00E5FF]/50 focus:ring-[#00E5FF]/20"
           />
           <motion.button
@@ -130,7 +132,7 @@ export default function SearchAthletes() {
                   : "bg-[#111111] text-[#B3B3B3] border border-[#222]"
               }`}
             >
-              <span>{pos.icon}</span>
+              <pos.icon className="w-4 h-4" />
               {pos.label}
             </motion.button>
           ))}
@@ -154,8 +156,8 @@ export default function SearchAthletes() {
             className="bg-[#111111] rounded-[20px] p-10 text-center border border-[#222]"
           >
             <User className="w-16 h-16 text-[#333] mx-auto mb-4" />
-            <p className="text-[#666] mb-2">Nenhum atleta encontrado</p>
-            <p className="text-[#444] text-sm">Tente ajustar os filtros</p>
+            <p className="text-[#666] mb-2">{t('search.noResults')}</p>
+            <p className="text-[#444] text-sm">{t('search.adjustFilters')}</p>
           </motion.div>
         ) : (
           <div className="space-y-3">

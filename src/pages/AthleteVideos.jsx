@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Heart, Eye, ChevronLeft, X, Star, Zap, Sparkles } from "lucide-react";
+import { Play, Heart, Eye, ChevronLeft, X, Star, Zap, Sparkles, Flame, Target, Dumbbell, Trophy } from "lucide-react";
+import { useLanguage } from "@/components/i18n/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
@@ -11,6 +12,7 @@ import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 
 export default function AthleteVideos() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -36,11 +38,11 @@ export default function AthleteVideos() {
   const videos = allVideos || [];
 
   const categories = [
-    { id: "all", label: "Todos", icon: "⚽" },
-    { id: "destaque", label: "Destaques", icon: "🔥" },
-    { id: "treino", label: "Treino", icon: "💪" },
-    { id: "jogo", label: "Jogos", icon: "🏆" },
-    { id: "habilidade", label: "Skills", icon: "✨" },
+    { id: "all", label: t('videos.all'), icon: Target },
+    { id: "destaque", label: t('videos.highlights'), icon: Flame },
+    { id: "treino", label: t('videos.training'), icon: Dumbbell },
+    { id: "jogo", label: t('videos.matches'), icon: Trophy },
+    { id: "habilidade", label: t('videos.skills'), icon: Star },
   ];
 
   const filteredVideos = activeCategory === "all" 
@@ -76,8 +78,8 @@ export default function AthleteVideos() {
       >
         <div className="flex items-center justify-between mb-5">
           <div>
-            <h1 className="text-2xl font-black text-white tracking-tight">VÍDEOS</h1>
-            <p className="text-[#666] text-xs mt-1">{videos.length} vídeos disponíveis</p>
+            <h1 className="text-2xl font-black text-white tracking-tight">{t('videos.title')}</h1>
+            <p className="text-[#666] text-xs mt-1">{videos.length} {t('videos.available')}</p>
           </div>
           <div className="flex items-center gap-2">
             <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border-0 font-black px-3 py-1">
@@ -102,7 +104,7 @@ export default function AthleteVideos() {
                   : "bg-[#111111] text-[#B3B3B3] border border-[#222]"
               }`}
             >
-              <span>{cat.icon}</span>
+              <cat.icon className="w-4 h-4" />
               {cat.label}
             </motion.button>
           ))}
@@ -118,8 +120,8 @@ export default function AthleteVideos() {
           className="px-4 py-6"
         >
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-xl">🔥</span>
-            <h2 className="text-lg font-black text-white tracking-tight">DESTAQUES</h2>
+            <Flame className="w-5 h-5 text-orange-500" />
+            <h2 className="text-lg font-black text-white tracking-tight">{t('videos.featured')}</h2>
             <Badge className="bg-gradient-to-r from-[#00E5FF] to-[#0066FF] text-black text-[10px] font-black px-2 py-0.5">
               RT
             </Badge>
@@ -189,9 +191,9 @@ export default function AthleteVideos() {
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-black text-white uppercase tracking-widest">
-            {activeCategory === "all" ? "Todos os Vídeos" : categories.find(c => c.id === activeCategory)?.label}
+            {activeCategory === "all" ? t('videos.allVideos') : categories.find(c => c.id === activeCategory)?.label}
           </h2>
-          <span className="text-[#666] text-xs">{filteredVideos.length} vídeos</span>
+          <span className="text-[#666] text-xs">{filteredVideos.length} {t('videos.count')}</span>
         </div>
 
         {isLoading ? (
@@ -205,7 +207,7 @@ export default function AthleteVideos() {
         ) : filteredVideos.length === 0 ? (
           <div className="bg-[#111111] rounded-[20px] p-10 text-center border border-[#222]">
             <Star className="w-12 h-12 text-[#333] mx-auto mb-4" />
-            <p className="text-[#666]">Nenhum vídeo encontrado</p>
+            <p className="text-[#666]">{t('videos.noVideos')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
