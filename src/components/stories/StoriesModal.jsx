@@ -120,7 +120,6 @@ export default function StoriesModal({ stories, isOpen, onClose }) {
             className="w-full h-full object-contain"
             autoPlay
             playsInline
-            muted
             loop
             onClick={() => setIsPaused(!isPaused)}
           />
