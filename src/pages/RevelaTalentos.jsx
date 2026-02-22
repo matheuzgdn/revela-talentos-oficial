@@ -13,6 +13,7 @@ import VideoUploadModal from "../components/mobile/VideoUploadModal";
 import FifaAthleteCard from "../components/revelatalentos/FifaAthleteCard";
 import NotificationsPanel from "../components/notifications/NotificationsPanel";
 import { useLanguage } from "@/components/i18n/LanguageContext";
+import LanguageToggle from "@/components/i18n/LanguageToggle";
 import { createPageUrl } from "@/utils";
 
 export default function RevelaTalentosPage() {
@@ -242,6 +243,7 @@ export default function RevelaTalentosPage() {
             <h1 className="text-xl font-black text-white tracking-tight">{user?.full_name || t('header.athlete')}</h1>
           </div>
           <div className="flex gap-2">
+            <LanguageToggle variant="ghost" className="w-10 h-10 p-0 text-[#00E5FF] hover:bg-[#00E5FF]/10" />
             {user && <NotificationsPanel user={user} />}
             <motion.button
               whileTap={{ scale: 0.95 }}
