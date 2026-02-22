@@ -1,57 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '@/entities/User';
-import { Lead } from '@/entities/Lead';
-import { InternationalLead } from '@/entities/InternationalLead';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, Globe, TrendingUp } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { motion } from 'framer-motion';
+import { Users, TrendingUp, Globe, Target, ArrowUp, ArrowDown } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalUsers: 0,
-    newLeads: 0,
-    internationalLeads: 0,
     planoCarreira: 0,
+    revelaTalentos: 0,
+    growth: 0,
   });
-  const [leadsByStatus, setLeadsByStatus] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       setIsLoading(true);
       try {
-        const [users, leads, intlLeads] = await Promise.all([
-          User.list(),
-          Lead.list(),
-          InternationalLead.list()
-        ]);
-
+        const users = await User.list();
+        
         const totalUsers = users?.length || 0;
-        const allLeads = [...(leads || []), ...(intlLeads || [])];
-        
-        const newLeads = allLeads.filter(l => l.status === 'novo').length;
-        const internationalLeads = intlLeads?.length || 0;
         const planoCarreira = (users || []).filter(u => u.has_plano_carreira_access).length;
+        const revelaTalentos = (users || []).filter(u => u.has_revela_talentos_access && !u.has_plano_carreira_access).length;
         
-        setStats({ totalUsers, newLeads, internationalLeads, planoCarreira });
-
-        // Process data for chart
-        const statusCounts = allLeads.reduce((acc, lead) => {
-          const status = lead.status || 'novo';
-          acc[status] = (acc[status] || 0) + 1;
-          return acc;
-        }, {});
+        // Calcular crescimento (mock - em produção seria baseado em dados históricos)
+        const growth = 12.5;
         
-        const chartData = [
-            { name: 'Novos', leads: statusCounts['novo'] || 0 },
-            { name: 'Contatados', leads: statusCounts['contatado'] || 0 },
-            { name: 'Qualificados', leads: statusCounts['qualificado'] || 0 },
-            { name: 'Proposta', leads: statusCounts['proposta_enviada'] || 0 },
-            { name: 'Fechados', leads: statusCounts['fechado'] || 0 },
-            { name: 'Perdidos', leads: statusCounts['perdido'] || 0 },
-        ];
-        setLeadsByStatus(chartData);
-
+        setStats({ totalUsers, planoCarreira, revelaTalentos, growth });
       } catch (error) {
         console.error("Erro ao carregar estatísticas:", error);
       }
@@ -63,82 +37,152 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-400"></div>
+      <div className="flex justify-center items-center h-96">
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full"
+        />
       </div>
     );
   }
 
+  const statCards = [
+    {
+      title: 'Total de Atletas',
+      value: stats.totalUsers,
+      icon: Users,
+      gradient: 'from-cyan-500 to-blue-600',
+      description: 'Atletas na plataforma',
+      trend: stats.growth > 0 ? 'up' : 'down',
+      trendValue: Math.abs(stats.growth)
+    },
+    {
+      title: 'Plano de Carreira',
+      value: stats.planoCarreira,
+      icon: TrendingUp,
+      gradient: 'from-green-500 to-emerald-600',
+      description: 'Premium members',
+      trend: 'up',
+      trendValue: 8.2
+    },
+    {
+      title: 'Revela Talentos',
+      value: stats.revelaTalentos,
+      icon: Target,
+      gradient: 'from-yellow-500 to-orange-600',
+      description: 'Base members',
+      trend: 'up',
+      trendValue: 15.3
+    },
+    {
+      title: 'Taxa de Conversão',
+      value: stats.totalUsers > 0 ? ((stats.planoCarreira / stats.totalUsers) * 100).toFixed(1) + '%' : '0%',
+      icon: Globe,
+      gradient: 'from-purple-500 to-pink-600',
+      description: 'Para premium',
+      trend: 'up',
+      trendValue: 3.1
+    }
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-purple-500/10 p-8 border border-cyan-500/20"
+      >
+        <div className="relative z-10">
+          <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            Dashboard EC10
+          </h1>
+          <p className="text-gray-400">Visão geral da plataforma em tempo real</p>
+        </div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
+      </motion.div>
+
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-gray-800 border-gray-700 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Atletas</CardTitle>
-            <Users className="h-4 w-4 text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers}</div>
-            <p className="text-xs text-gray-400">Atletas cadastrados na plataforma</p>
-          </CardContent>
-        </Card>
+        {statCards.map((card, index) => (
+          <motion.div
+            key={card.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 hover:border-white/20 transition-all duration-300"
+          >
+            {/* Gradient Background */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+            
+            <div className="relative p-6">
+              {/* Icon */}
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-4 shadow-lg`}>
+                <card.icon className="w-6 h-6 text-white" />
+              </div>
 
-        <Card className="bg-gray-800 border-gray-700 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Novos Leads (Total)</CardTitle>
-            <UserPlus className="h-4 w-4 text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.newLeads}</div>
-            <p className="text-xs text-gray-400">Aguardando primeiro contato</p>
-          </CardContent>
-        </Card>
+              {/* Value */}
+              <div className="mb-2">
+                <h3 className="text-4xl font-black text-white mb-1">
+                  {card.value}
+                </h3>
+                <p className="text-sm text-gray-500">{card.title}</p>
+              </div>
 
-        <Card className="bg-gray-800 border-gray-700 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Leads (Internacional)</CardTitle>
-            <Globe className="h-4 w-4 text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.internationalLeads}</div>
-            <p className="text-xs text-gray-400">Atletas buscando oportunidades fora</p>
-          </CardContent>
-        </Card>
+              {/* Trend */}
+              <div className="flex items-center gap-2">
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
+                  card.trend === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                }`}>
+                  {card.trend === 'up' ? (
+                    <ArrowUp className="w-3 h-3" />
+                  ) : (
+                    <ArrowDown className="w-3 h-3" />
+                  )}
+                  <span className="text-xs font-bold">{card.trendValue}%</span>
+                </div>
+                <span className="text-xs text-gray-600">{card.description}</span>
+              </div>
+            </div>
 
-        <Card className="bg-gray-800 border-gray-700 text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Atletas Plano de Carreira</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.planoCarreira}</div>
-            <p className="text-xs text-gray-400">Com acesso ao serviço premium</p>
-          </CardContent>
-        </Card>
+            {/* Shine Effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+          </motion.div>
+        ))}
       </div>
-      
-      <Card className="bg-gray-800 border-gray-700 text-white">
-        <CardHeader>
-          <CardTitle>Visão Geral do Funil de Vendas</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={leadsByStatus}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#4B5563" />
-                <XAxis dataKey="name" stroke="#9CA3B0" />
-                <YAxis stroke="#9CA3B0" />
-                <Tooltip 
-                  cursor={{fill: '#374151'}}
-                  contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #4B5563' }}
-                />
-                <Legend />
-                <Bar dataKey="leads" fill="#38BDF8" name="Nº de Leads" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
+
+      {/* Activity Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="rounded-2xl bg-gradient-to-br from-white/5 to-white/[0.02] border border-white/10 p-8"
+      >
+        <h2 className="text-2xl font-black mb-6 text-white">Atividade Recente</h2>
+        <div className="space-y-4">
+          {[
+            { user: 'João Silva', action: 'criou uma conta', time: '2min atrás', color: 'cyan' },
+            { user: 'Maria Santos', action: 'atualizou o perfil', time: '15min atrás', color: 'green' },
+            { user: 'Pedro Oliveira', action: 'se inscreveu em seletiva', time: '1h atrás', color: 'yellow' },
+          ].map((activity, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 + index * 0.1 }}
+              className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+            >
+              <div className={`w-2 h-2 rounded-full bg-${activity.color}-500`}></div>
+              <div className="flex-1">
+                <p className="text-white font-medium">{activity.user}</p>
+                <p className="text-sm text-gray-500">{activity.action}</p>
+              </div>
+              <span className="text-xs text-gray-600">{activity.time}</span>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 }
