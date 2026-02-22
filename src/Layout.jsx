@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { User } from "@/entities/User";
+import StoriesModal from "@/components/stories/StoriesModal";
 import {
   Star,
   TrendingUp,
@@ -60,6 +61,8 @@ export default function Layout({ children, currentPageName }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
+  const [stories, setStories] = useState([]);
+  const [showStories, setShowStories] = useState(false);
 
   const loadUser = useCallback(async () => {
     try {
@@ -72,6 +75,34 @@ export default function Layout({ children, currentPageName }) {
       setIsLoading(false);
     }
   }, []);
+
+  const loadStories = useCallback(async () => {
+    try {
+      const activeStories = await base44.entities.Story.filter({ is_active: true }, "order", 20);
+      if (activeStories?.length > 0) {
+        // Filtrar por público-alvo
+        const filteredStories = activeStories.filter(story => {
+          if (story.target_audience === "all") return true;
+          if (story.target_audience === "athletes" && user) return true;
+          if (story.target_audience === "guests" && !user) return true;
+          return false;
+        });
+
+        if (filteredStories.length > 0) {
+          setStories(filteredStories);
+          
+          // Verificar se já viu os stories hoje
+          const lastStorySeen = localStorage.getItem("lastStorySeen");
+          const today = new Date().toDateString();
+          if (lastStorySeen !== today) {
+            setShowStories(true);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao carregar stories:", error);
+    }
+  }, [user]);
 
   useEffect(() => {
     loadUser();
@@ -87,6 +118,17 @@ export default function Layout({ children, currentPageName }) {
 
     return () => window.removeEventListener('resize', handleResize);
   }, [loadUser]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      loadStories();
+    }
+  }, [isLoading, loadStories]);
+
+  const handleCloseStories = () => {
+    setShowStories(false);
+    localStorage.setItem("lastStorySeen", new Date().toDateString());
+  };
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -118,6 +160,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <SidebarProvider>
+      <StoriesModal stories={stories} isOpen={showStories} onClose={handleCloseStories} />
       <div className="min-h-screen flex w-full bg-black">
         {/* Desktop Sidebar */}
         <div
