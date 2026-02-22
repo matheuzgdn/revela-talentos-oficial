@@ -12,9 +12,11 @@ import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
 import FifaAthleteCard from "../components/revelatalentos/FifaAthleteCard";
 import NotificationsPanel from "../components/notifications/NotificationsPanel";
+import { useLanguage } from "@/components/i18n/LanguageContext";
 import { createPageUrl } from "@/utils";
 
 export default function RevelaTalentosPage() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
   const [isPlatformRestricted, setIsPlatformRestricted] = useState(false);
@@ -129,11 +131,11 @@ export default function RevelaTalentosPage() {
   }, [user]);
 
   const categories = useMemo(() => [
-    { id: "all", name: "All" },
-    { id: "mentoria", name: "Mentorias" },
-    { id: "treino_tatico", name: "Tático" },
-    { id: "preparacao_fisica", name: "Físico" },
-  ], []);
+    { id: "all", name: t('category.all') },
+    { id: "mentoria", name: t('category.mentorship') },
+    { id: "treino_tatico", name: t('category.tactical') },
+    { id: "preparacao_fisica", name: t('category.physical') },
+  ], [t]);
 
   const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
   
@@ -141,7 +143,7 @@ export default function RevelaTalentosPage() {
   const heroContents = useMemo(() => {
     const ec10Hero = {
       id: 'ec10-hero',
-      title: 'EC10 TALENTOS',
+      title: t('home.hero.title'),
       thumbnail_url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200',
       video_url: 'https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4',
       category: 'hero',
@@ -154,7 +156,7 @@ export default function RevelaTalentosPage() {
       .slice(0, 9);
     
     return [ec10Hero, ...mentoriasRecentes];
-  }, [contents]);
+  }, [contents, t]);
 
   const planosContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
   
@@ -236,8 +238,8 @@ export default function RevelaTalentosPage() {
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
-            <p className="text-[#666] text-[10px] font-bold uppercase tracking-widest mb-0.5">Olá</p>
-            <h1 className="text-xl font-black text-white tracking-tight">{user?.full_name || "Atleta"}</h1>
+            <p className="text-[#666] text-[10px] font-bold uppercase tracking-widest mb-0.5">{t('header.hello')}</p>
+            <h1 className="text-xl font-black text-white tracking-tight">{user?.full_name || t('header.athlete')}</h1>
           </div>
           <div className="flex gap-2">
             {user && <NotificationsPanel user={user} />}
@@ -298,7 +300,7 @@ export default function RevelaTalentosPage() {
                   {activeSlide?.id !== 'ec10-hero' && (
                     <div className="flex items-center gap-2">
                       <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/40 backdrop-blur-sm">
-                        MENTORIA
+                        {t('category.mentorship').toUpperCase()}
                       </Badge>
                       <Play className="w-4 h-4 text-[#00E5FF]" />
                     </div>
@@ -354,9 +356,9 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">Continue Assistindo</h3>
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.continue')}</h3>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-                Ver Todos <ChevronRight className="w-3 h-3" />
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -379,9 +381,9 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">🔥 Top 10 Mais Assistidos</h3>
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.top10')}</h3>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-                Ver Todos <ChevronRight className="w-3 h-3" />
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -406,8 +408,8 @@ export default function RevelaTalentosPage() {
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-xl font-black text-white tracking-tight">Nossos Planos</h3>
-                <p className="text-[#666] text-xs mt-1">Escolha o melhor para sua carreira</p>
+                <h3 className="text-xl font-black text-white tracking-tight">{t('home.plans')}</h3>
+                <p className="text-[#666] text-xs mt-1">{t('home.plans.subtitle')}</p>
               </div>
               <ChevronRight className="w-5 h-5 text-[#00E5FF]" />
             </div>
@@ -434,9 +436,9 @@ export default function RevelaTalentosPage() {
               <div>
                 <h3 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
                   <Star className="w-6 h-6 text-[#FFD700]" fill="#FFD700" />
-                  Atletas em Destaque
+                  {t('home.featured')}
                 </h3>
-                <p className="text-[#666] text-xs mt-1">Jogadores EC10 em teste e negociação</p>
+                <p className="text-[#666] text-xs mt-1">{t('home.featured.subtitle')}</p>
               </div>
             </div>
             
@@ -458,9 +460,9 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">🎯 Mentoria</h3>
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.mentorship')}</h3>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-                Ver Todos <ChevronRight className="w-3 h-3" />
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -482,9 +484,9 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">💪 Preparação Física</h3>
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.physical')}</h3>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-                Ver Todos <ChevronRight className="w-3 h-3" />
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -506,9 +508,9 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">⚽ Treino Tático</h3>
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.tactical')}</h3>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-                Ver Todos <ChevronRight className="w-3 h-3" />
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -530,9 +532,9 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">🧠 Psicologia Esportiva</h3>
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.psychology')}</h3>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-                Ver Todos <ChevronRight className="w-3 h-3" />
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -554,9 +556,9 @@ export default function RevelaTalentosPage() {
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-black text-white tracking-tight">🥗 Nutrição</h3>
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.nutrition')}</h3>
               <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-                Ver Todos <ChevronRight className="w-3 h-3" />
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
               </button>
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
@@ -578,10 +580,10 @@ export default function RevelaTalentosPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-lg font-black text-white tracking-tight">
-              {activeCategory === "all" ? "Conteúdos" : categories.find(c => c.id === activeCategory)?.name}
+              {activeCategory === "all" ? t('home.content') : categories.find(c => c.id === activeCategory)?.name}
             </h3>
             <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
-              Ver Todos <ChevronRight className="w-3 h-3" />
+              {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
             </button>
           </div>
           
@@ -655,7 +657,7 @@ function ContentCard({ content, index, onClick, progress, showRank, rank }) {
         {/* Duration Badge */}
         {content.duration && (
           <div className="absolute top-3 right-3 px-2 py-1 bg-black/80 backdrop-blur-sm rounded-lg border border-[#333]">
-            <span className="text-[10px] text-white font-bold">{content.duration}min</span>
+            <span className="text-[10px] text-white font-bold">{content.duration}{t ? t('common.min') : 'min'}</span>
           </div>
         )}
 
@@ -704,7 +706,7 @@ function PlanCard({ plano, index, onClick }) {
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
           <Badge className="mb-3 bg-[#00E5FF] text-black font-black text-[10px] uppercase tracking-wider">
-            Plano
+            {t ? t('home.plans').toUpperCase() : 'PLANO'}
           </Badge>
           <h4 className="text-white font-black text-xl leading-tight mb-2 drop-shadow-lg">
             {plano.title}
