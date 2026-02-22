@@ -17,6 +17,7 @@ import AdminSeletivasTab from '@/components/admin/AdminSeletivasTab';
 import AdminStoriesTab from '@/components/admin/AdminStoriesTab';
 import AdminServicesTab from '@/components/admin/AdminServicesTab';
 import AdminStoriesManagement from '@/components/admin/AdminStoriesManagement';
+import AdminFeaturedAthletesTab from '@/components/admin/AdminFeaturedAthletesTab';
 
 const adminTabsConfig = [
   { 
@@ -56,13 +57,22 @@ const adminTabsConfig = [
     gradient: 'from-yellow-500 to-orange-600'
   },
   { 
+    id: 'featured_athletes', 
+    name: 'Figurinhas', 
+    icon: Star, 
+    component: AdminFeaturedAthletesTab,
+    description: 'Atletas em destaque (figurinhas)',
+    requiredRole: 'revela_admin',
+    gradient: 'from-amber-500 to-yellow-600'
+  },
+  { 
     id: 'stories_abertura', 
     name: 'Stories', 
     icon: Star, 
     component: AdminStoriesManagement,
     description: 'Stories de abertura do app',
     requiredRole: 'admin',
-    gradient: 'from-pink-500 to-rose-600'
+    gradie: 'from-pink-500 to-rose-600'
   },
   { 
     id: 'services', 
