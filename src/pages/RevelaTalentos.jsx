@@ -10,6 +10,7 @@ import PendingApproval from "../components/auth/PendingApproval";
 import RevelaTalentosLanding from "../components/revelatalentos/RevelaTalentosLanding";
 import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
+import FifaAthleteCard from "../components/revelatalentos/FifaAthleteCard";
 import { createPageUrl } from "@/utils";
 
 export default function RevelaTalentosPage() {
@@ -25,6 +26,7 @@ export default function RevelaTalentosPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [athleteStories, setAthleteStories] = useState([]);
 
   const loadContentData = useCallback(async (currentUser) => {
     try {
@@ -32,6 +34,13 @@ export default function RevelaTalentosPage() {
         is_published: true 
       }, "-created_date", 50).catch(() => []);
       setContents(fetchedContents);
+      
+      // Carregar atletas em destaque
+      const stories = await base44.entities.AthleteStory.filter({ 
+        is_active: true, 
+        category: 'atleta' 
+      }, "display_order", 20).catch(() => []);
+      setAthleteStories(stories);
       
       if (currentUser) {
         base44.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).then(progress => {
@@ -381,6 +390,33 @@ export default function RevelaTalentosPage() {
                   plano={plano} 
                   index={index}
                   onClick={() => handleContentSelect(plano)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Atletas em Destaque - FIFA Style Cards */}
+      {athleteStories.length > 0 && (
+        <section className="px-4 md:px-6 py-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                  <Star className="w-6 h-6 text-[#FFD700]" fill="#FFD700" />
+                  Atletas em Destaque
+                </h3>
+                <p className="text-[#666] text-xs mt-1">Jogadores EC10 em teste e negociação</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 pb-4">
+              {athleteStories.map((story, index) => (
+                <FifaAthleteCard 
+                  key={story.id} 
+                  story={story} 
+                  index={index}
                 />
               ))}
             </div>
