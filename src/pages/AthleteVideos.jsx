@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from '@/api/base44Client';
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Heart, Eye, ChevronLeft, X, Star, Zap, Sparkles, Flame, Target, Dumbbell, Trophy } from "lucide-react";

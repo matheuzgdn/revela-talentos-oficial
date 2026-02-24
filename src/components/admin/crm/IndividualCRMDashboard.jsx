@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { CRMPipeline } from '@/entities/CRMPipeline';
-import { CRMLead } from '@/entities/CRMLead';
-import { SalesMaterial } from '@/entities/SalesMaterial';
-import { Event } from '@/entities/Event';
-import { CustomTask } from '@/entities/CustomTask';
+import { base44 } from '@/api/base44Client';
 import { Loader2, ArrowLeft, LayoutGrid, Briefcase, Calendar, BarChart } from 'lucide-react';
 import { toast } from 'sonner';
 import PipelineView from './PipelineView';

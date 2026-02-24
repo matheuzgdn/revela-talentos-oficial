@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, Play, Pause, Volume2, VolumeX, Maximize, Check, 

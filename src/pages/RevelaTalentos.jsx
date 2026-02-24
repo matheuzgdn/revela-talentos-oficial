@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus, TrendingUp, Flame, Target, Dumbbell, Brain, Activity, Apple } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

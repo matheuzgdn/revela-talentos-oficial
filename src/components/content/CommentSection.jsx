@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Comment } from "@/entities/Comment";
-import { User } from "@/entities/User";
+import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

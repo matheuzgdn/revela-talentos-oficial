@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Upload, Video, Check, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";

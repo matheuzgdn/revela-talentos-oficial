@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '@/entities/User';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, Globe, Target, ArrowUp, ArrowDown, Activity } from 'lucide-react';

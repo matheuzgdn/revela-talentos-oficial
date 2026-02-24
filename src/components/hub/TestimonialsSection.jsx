@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Play, X } from 'lucide-react';
-import { Testimonial } from '@/entities/Testimonial';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 
 const VideoModal = ({ videoUrl, onClose }) => {

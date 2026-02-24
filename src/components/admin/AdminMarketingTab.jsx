@@ -1,12 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { MarketingCampaign } from '@/entities/MarketingCampaign';
-import { SocialMediaPost } from '@/entities/SocialMediaPost';
-import { ContentIdea } from '@/entities/ContentIdea';
-import { MarketingMaterial } from '@/entities/MarketingMaterial';
-import { MarketingTask } from '@/entities/MarketingTask';
-import { User } from '@/entities/User';
-import { UploadFile } from '@/integrations/Core';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -644,7 +638,7 @@ const MaterialFormModal = ({ isOpen, onClose, onSave }) => {
         if (!file) return;
         setIsUploading(true);
         try {
-            const uploadedFile = await UploadFile({ file });
+            const uploadedFile = await base44.storage.upload({ file });
             setFormData(prev => ({ ...prev, file_url: uploadedFile.file_url, file_type: uploadedFile.file_type || 'image' }));
             toast.success("Arquivo carregado com sucesso!");
         } catch (error) {

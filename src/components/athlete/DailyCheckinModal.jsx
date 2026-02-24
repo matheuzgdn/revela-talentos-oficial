@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from '@/api/base44Client';
 import { motion } from "framer-motion";
 import { X, Heart, Droplet, Moon, Zap, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";

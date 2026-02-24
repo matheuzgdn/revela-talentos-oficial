@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Lead } from "@/entities/Lead";
-import { InternationalLead } from "@/entities/InternationalLead";
-import { SalesMaterial } from "@/entities/SalesMaterial";
-import { LeadInteraction } from "@/entities/LeadInteraction";
-import { UploadFile } from "@/integrations/Core";
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -124,7 +120,7 @@ export default function AdminInternationalTab({ leads: initialLeads, internation
     }
     
     try {
-        const { file_url } = await UploadFile({ file: materialFile });
+        const { file_url } = await base44.storage.upload({ file: materialFile });
         await SalesMaterial.create({
             ...materialForm,
             file_url,

@@ -1,13 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { User } from "@/entities/User";
-import { Pipeline } from "@/entities/Pipeline";
-import { UserPipeline } from "@/entities/UserPipeline";
-import { Notification } from "@/entities/Notification";
-import { AthleteUpload } from "@/entities/AthleteUpload";
-import { ChatMessage } from "@/entities/ChatMessage";
-import { PerformanceData } from "@/entities/PerformanceData";
-import { UserProgress } from "@/entities/UserProgress";
-import { PlatformSettings } from "@/entities/PlatformSettings";
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,35 +18,70 @@ import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle } from
-"lucide-react";
+  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle
+} from
+  "lucide-react";
 
-const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendNotification, onProfileVisit }) => {
+const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendNotification, onProfileVisit, onInlineSave }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUser, setEditedUser] = useState({
+    is_approved: user.is_approved,
+    is_featured: user.is_featured,
+  });
+
+  const userPipelineInfo = userPipelines.find((up) => up.user_id === user.id);
+  const currentPipeline = userPipelineInfo ? pipelines.find((p) => p.id === userPipelineInfo.pipeline_id) : null;
+  const [editedPipelineStage, setEditedPipelineStage] = useState(userPipelineInfo?.current_stage || "");
+
   const pendingAnalysis = userData.performance.filter((p) => p.status === 'pending_analysis').length;
   const pendingMarketing = userData.marketing?.filter((p) => p.status === 'pending').length || 0;
   const hasNotifications = pendingAnalysis > 0 || pendingMarketing > 0;
 
-  const userPipelineInfo = userPipelines.find((up) => up.user_id === user.id);
-  const currentPipeline = userPipelineInfo ? pipelines.find((p) => p.id === userPipelineInfo.pipeline_id) : null;
+  const hasChanges =
+    editedUser.is_approved !== user.is_approved ||
+    editedUser.is_featured !== user.is_featured ||
+    (userPipelineInfo && editedPipelineStage !== userPipelineInfo.current_stage);
+
+  const calculateOvr = () => {
+    if (!user.fifa_attributes) return null;
+    const vals = Object.values(user.fifa_attributes);
+    if (vals.length === 0) return null;
+    return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+  };
+  const ovr = calculateOvr();
+
+  const handleSave = async () => {
+    setIsEditing(true); // Treat as loading
+    try {
+      if (onInlineSave) {
+        await onInlineSave(user.id, editedUser, userPipelineInfo?.id, editedPipelineStage);
+      }
+      toast.success("Alterações salvas com sucesso!");
+    } catch (e) {
+      toast.error("Erro ao salvar card");
+    } finally {
+      setIsEditing(false);
+    }
+  };
 
   const getAccessBadges = () => {
     const badges = [];
-    if (!user.is_approved) {
-      badges.push(<Badge key="pending" className="bg-red-600/20 text-red-400 border-red-600/50">Aguardando Aprovação</Badge>);
+    if (!editedUser.is_approved) {
+      badges.push(<Badge key="pending" className="bg-red-600/20 text-red-400 border-red-600/50 shadow-[0_0_10px_rgba(220,38,38,0.2)]">Pendente</Badge>);
     }
     if (user.has_revela_talentos_access && !user.has_plano_carreira_access) {
-      badges.push(<Badge key="revela" className="bg-blue-600/20 text-blue-400 border-blue-600/50">Revela Talentos</Badge>);
+      badges.push(<Badge key="revela" className="bg-blue-600/20 text-[#00E5FF] border-[#00E5FF]/50 shadow-[0_0_10px_rgba(0,229,255,0.2)]">Revela Talentos</Badge>);
     }
     if (user.has_plano_carreira_access) {
-      badges.push(<Badge key="carreira" className="bg-green-600/20 text-green-400 border-green-600/50">Plano de Carreira</Badge>);
+      badges.push(<Badge key="carreira" className="bg-green-600/20 text-green-400 border-green-600/50 shadow-[0_0_10px_rgba(34,197,94,0.2)]">Plano de Carreira</Badge>);
     }
     if (user.role === 'admin') {
-      badges.push(<Badge key="admin" className="bg-red-600/20 text-red-400 border-red-600/50">Admin Geral</Badge>);
+      badges.push(<Badge key="admin" className="bg-red-600/20 text-red-500 border-red-500/50">Admin Geral</Badge>);
     } else if (user.is_revela_admin) {
       badges.push(<Badge key="revela_admin" className="bg-purple-600/20 text-purple-400 border-purple-600/50">Admin Revela</Badge>);
     }
-    if (user.is_featured) {
-      badges.push(<Badge key="featured" className="bg-yellow-600/20 text-yellow-400 border-yellow-600/50">Destaque</Badge>);
+    if (editedUser.is_featured) {
+      badges.push(<Badge key="featured" className="bg-yellow-600/20 text-yellow-400 border-yellow-600/50 shadow-[0_0_10px_rgba(250,204,21,0.2)]">Destaque</Badge>);
     }
     return badges;
   };
@@ -65,68 +92,131 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendN
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="bg-black/50 border border-gray-800 rounded-lg p-4 space-y-3 hover:border-gray-600 transition-colors">
+      className="relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-xl hover:shadow-[#00E5FF]/10 transition-all flex flex-col gap-4 group overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <Avatar className="h-10 w-10 border-2 border-gray-700">
-            <AvatarImage src={user.profile_picture_url} />
-            <AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
-              {user.full_name?.charAt(0) || "U"}
-            </AvatarFallback>
-          </Avatar>
+      {/* Header Info */}
+      <div className="flex items-start justify-between gap-3 relative z-10">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          <div className="relative">
+            <Avatar className="h-14 w-14 border-2 border-[#00E5FF]/50 shadow-lg cursor-pointer transition-transform hover:scale-105" onClick={() => onEdit(user)}>
+              <AvatarImage src={user.profile_picture_url} className="object-cover" />
+              <AvatarFallback className="bg-gradient-to-br from-[#00E5FF] to-blue-600 text-black font-bold text-lg">
+                {user.full_name?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
+            {ovr && (
+              <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-[#FFD700] to-[#FFA500] text-black text-[10px] font-black w-6 h-6 rounded flex items-center justify-center border border-black shadow">
+                {ovr}
+              </div>
+            )}
+          </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-white truncate">{user.full_name}</p>
-            <p className="text-xs text-gray-400 truncate">{user.email}</p>
+            <p className="font-bold text-white text-lg truncate cursor-pointer hover:text-[#00E5FF] transition-colors" onClick={() => onEdit(user)}>
+              {user.full_name}
+            </p>
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <span className="truncate">{user.email}</span>
+            </div>
+            {user.position && (
+              <p className="text-xs text-[#00E5FF] font-semibold mt-1 flex items-center gap-1">
+                {user.position} <span className="text-gray-500">•</span> <span className="text-gray-400 font-normal">{user.club || 'Livre'}</span>
+              </p>
+            )}
           </div>
         </div>
-        <div className="flex gap-1 flex-shrink-0">
-          <Button variant="ghost" size="icon" className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20" onClick={() => onSendNotification(user)} title="Enviar notificação">
+
+        {/* Action Buttons */}
+        <div className="flex gap-1 flex-shrink-0 bg-black/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/20" onClick={() => onSendNotification(user)} title="Enviar notificação">
             <Bell className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/20" onClick={() => onProfileVisit(user)} title="Notificar visita ao perfil">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-purple-400 hover:text-purple-300 hover:bg-purple-500/20" onClick={() => onProfileVisit(user)} title="Notificar visita">
             <Eye className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" onClick={() => onEdit(user)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-[#00E5FF] hover:text-[#00BFFF] hover:bg-[#00E5FF]/20" onClick={() => onEdit(user)} title="Editar Ficha Completa">
             <Edit className="w-4 h-4" />
           </Button>
         </div>
       </div>
-      
-      {user.position && <p className="text-xs text-gray-500">{user.position} • {user.club || 'Sem clube'}</p>}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 relative z-10">
         {getAccessBadges()}
       </div>
 
-      {currentPipeline &&
-      <div className="flex items-center gap-2 text-sm text-gray-300">
-          <GitBranch className="w-4 h-4 text-purple-400" />
-          <span className="truncate">{currentPipeline.name}</span>
-          {userPipelineInfo.current_stage &&
-        <Badge variant="outline" className="text-xs whitespace-nowrap">
-              {userPipelineInfo.current_stage}
-            </Badge>
-        }
+      {hasNotifications && (
+        <div className="flex items-center gap-2 relative z-10">
+          {pendingAnalysis > 0 && <Badge variant="destructive" className="flex items-center gap-1 bg-red-500/20 text-red-400 border border-red-500/30 text-[10px]"><BarChart3 className="w-3 h-3" /> {pendingAnalysis} pendentes</Badge>}
         </div>
-      }
+      )}
 
-      {hasNotifications &&
-      <div className="flex items-center gap-2">
-          {pendingAnalysis > 0 &&
-        <Badge variant="destructive" className="flex items-center gap-1">
-              <BarChart3 className="w-3 h-3" /> {pendingAnalysis}
-            </Badge>
-        }
-          {pendingMarketing > 0 &&
-        <Badge variant="destructive" className="flex items-center gap-1">
-              <Megaphone className="w-3 h-3" /> {pendingMarketing}
-            </Badge>
-        }
+      {/* Inline Divider */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent relative z-10 my-1" />
+
+      {/* Inline Edits */}
+      <div className="space-y-3 relative z-10">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-400 flex items-center gap-2"><Lock className="w-3 h-3" /> Acesso Aprovado</span>
+          <Switch
+            checked={!!editedUser.is_approved}
+            onCheckedChange={(v) => setEditedUser(prev => ({ ...prev, is_approved: v }))}
+            className="data-[state=checked]:bg-green-500 scale-75 origin-right"
+          />
         </div>
-      }
-    </motion.div>);
 
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-400 flex items-center gap-2"><Crown className="w-3 h-3 text-cyan-400" /> Atleta Destaque</span>
+          <Switch
+            checked={!!editedUser.is_featured}
+            onCheckedChange={(v) => setEditedUser(prev => ({ ...prev, is_featured: v }))}
+            className="data-[state=checked]:bg-cyan-500 scale-75 origin-right"
+          />
+        </div>
+
+        {currentPipeline && (
+          <div className="space-y-1.5 pt-1">
+            <span className="text-gray-400 text-xs flex items-center gap-2"><GitBranch className="w-3 h-3 text-purple-400" /> Pipeline: {currentPipeline.name}</span>
+            <Select value={editedPipelineStage} onValueChange={setEditedPipelineStage}>
+              <SelectTrigger className="h-8 text-xs bg-black/40 border-white/10 text-white hover:border-[#00E5FF]/50 transition-colors">
+                <SelectValue placeholder="Selecione o estágio" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#1A1A1A] border-white/10">
+                {currentPipeline.stages?.map(stage => (
+                  <SelectItem key={stage.name} value={stage.name} className="text-xs">
+                    {stage.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      </div>
+
+      {/* Save Action */}
+      <AnimatePresence>
+        {hasChanges && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="relative z-10 pt-2"
+          >
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={isEditing}
+              className="w-full bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-bold shadow-lg shadow-[#00E5FF]/20"
+            >
+              {isEditing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
+              Salvar Alterações
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    </motion.div>
+  );
 };
 
 const PipelineManager = ({ pipelines, onRefresh }) => {
@@ -140,7 +230,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
   const handleCreatePipeline = async () => {
     try {
-      await Pipeline.create(newPipeline);
+      await base44.entities.Pipeline.create(newPipeline);
       toast.success('Pipeline criado com sucesso!');
       setShowCreatePipeline(false);
       setNewPipeline({
@@ -177,7 +267,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
     setNewPipeline((prev) => ({
       ...prev,
       stages: prev.stages.map((stage, i) =>
-      i === index ? { ...stage, [field]: value } : stage
+        i === index ? { ...stage, [field]: value } : stage
       )
     }));
   };
@@ -194,7 +284,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(pipelines || []).map((pipeline) =>
-        <Card key={pipeline.id} className="bg-gray-800 border-gray-700">
+          <Card key={pipeline.id} className="bg-gray-800 border-gray-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full bg-${pipeline.color}-500`} />
@@ -248,7 +338,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
                 className="bg-gray-800 border-gray-700" />
 
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-3">
                 <Label>Estágios do Pipeline</Label>
@@ -259,26 +349,26 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
               </div>
               <div className="space-y-3">
                 {newPipeline.stages.map((stage, index) =>
-                <div key={index} className="flex gap-2 items-start">
+                  <div key={index} className="flex gap-2 items-start">
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <Input
-                      placeholder="Nome do estágio"
-                      value={stage.name}
-                      onChange={(e) => updateStage(index, 'name', e.target.value)}
-                      className="bg-gray-800 border-gray-700" />
+                        placeholder="Nome do estágio"
+                        value={stage.name}
+                        onChange={(e) => updateStage(index, 'name', e.target.value)}
+                        className="bg-gray-800 border-gray-700" />
 
                       <Input
-                      placeholder="Descrição"
-                      value={stage.description}
-                      onChange={(e) => updateStage(index, 'description', e.target.value)}
-                      className="bg-gray-800 border-gray-700" />
+                        placeholder="Descrição"
+                        value={stage.description}
+                        onChange={(e) => updateStage(index, 'description', e.target.value)}
+                        className="bg-gray-800 border-gray-700" />
 
                     </div>
                     {index > 0 &&
-                  <Button type="button" onClick={() => removeStage(index)} size="icon" variant="ghost" className="text-red-400 hover:text-red-300">
+                      <Button type="button" onClick={() => removeStage(index)} size="icon" variant="ghost" className="text-red-400 hover:text-red-300">
                         <X className="w-4 h-4" />
                       </Button>
-                  }
+                    }
                   </div>
                 )}
               </div>
@@ -324,17 +414,17 @@ export default function AdminUsersTab() {
   });
 
   const personas = [
-  { id: "analyst_01", name: "Analista de Desempenho" },
-  { id: "physio_01", name: "Preparador Físico" },
-  { id: "mentor_01", name: "Mentor de Carreira" },
-  { id: "marketing_01", name: "Equipe de Marketing" }];
+    { id: "analyst_01", name: "Analista de Desempenho" },
+    { id: "physio_01", name: "Preparador Físico" },
+    { id: "mentor_01", name: "Mentor de Carreira" },
+    { id: "marketing_01", name: "Equipe de Marketing" }];
 
 
   const loadAllData = useCallback(async () => {
     setIsLoading(true);
     try {
       // Load only users initially
-      const users = await User.list('-created_date', 100);
+      const users = await base44.entities.User.list('-created_date', 100);
       setData({
         users: users || [],
         uploads: [],
@@ -347,13 +437,13 @@ export default function AdminUsersTab() {
       setIsLoading(false);
 
       // Load other data only when needed (in background)
-      Pipeline.filter({ is_active: true }).then((pipelines) => {
+      base44.entities.Pipeline.filter({ is_active: true }).then((pipelines) => {
         setData((prev) => ({ ...prev, pipelines }));
-      }).catch(() => {});
+      }).catch(() => { });
 
-      UserPipeline.list().then((userPipelines) => {
+      base44.entities.UserPipeline.list().then((userPipelines) => {
         setData((prev) => ({ ...prev, userPipelines }));
-      }).catch(() => {});
+      }).catch(() => { });
     } catch (error) {
       console.error('Error loading user data:', error);
       toast.error('Erro ao carregar dados dos usuários.');
@@ -369,7 +459,7 @@ export default function AdminUsersTab() {
   const loadPlatformSettings = async () => {
     setIsLoadingSettings(true);
     try {
-      const settings = await PlatformSettings.list();
+      const settings = await base44.entities.PlatformSettings.list();
       const restrictionSetting = settings.find((s) => s.setting_key === 'is_platform_restricted');
       setIsPlatformRestricted(restrictionSetting?.setting_value === 'true');
     } catch (error) {
@@ -392,7 +482,7 @@ export default function AdminUsersTab() {
 
   const handleProfileVisit = async (user) => {
     try {
-      await Notification.create({
+      await base44.entities.Notification.create({
         user_id: user.id,
         title: 'Visita ao Perfil',
         message: 'Eric Cena visitou seu perfil',
@@ -413,7 +503,7 @@ export default function AdminUsersTab() {
     }
 
     try {
-      await Notification.create({
+      await base44.entities.Notification.create({
         user_id: notificationTarget.id,
         title: notificationForm.title,
         message: notificationForm.message,
@@ -431,17 +521,17 @@ export default function AdminUsersTab() {
 
   const togglePlatformRestriction = async () => {
     try {
-      const settings = await PlatformSettings.list();
+      const settings = await base44.entities.PlatformSettings.list();
       const restrictionSetting = settings.find((s) => s.setting_key === 'is_platform_restricted');
 
       const newValue = !isPlatformRestricted;
 
       if (restrictionSetting) {
-        await PlatformSettings.update(restrictionSetting.id, {
+        await base44.entities.PlatformSettings.update(restrictionSetting.id, {
           setting_value: newValue.toString()
         });
       } else {
-        await PlatformSettings.create({
+        await base44.entities.PlatformSettings.create({
           setting_key: 'is_platform_restricted',
           setting_value: newValue.toString()
         });
@@ -457,23 +547,23 @@ export default function AdminUsersTab() {
 
   const filteredUsers = useMemo(() => {
     return data.users.
-    filter((user) => {
-      const term = searchTerm.toLowerCase();
-      const matchesSearch =
-      user.full_name?.toLowerCase().includes(term) ||
-      user.email?.toLowerCase().includes(term);
+      filter((user) => {
+        const term = searchTerm.toLowerCase();
+        const matchesSearch =
+          user.full_name?.toLowerCase().includes(term) ||
+          user.email?.toLowerCase().includes(term);
 
 
-      const matchesFilter =
-      filter === "all" ||
-      filter === "revela_only" && user.has_revela_talentos_access && !user.has_plano_carreira_access ||
-      filter === "plano_carreira" && user.has_plano_carreira_access ||
-      filter === "admin" && user.role === 'admin' ||
-      filter === "revela_admin" && user.is_revela_admin && user.role !== 'admin' ||
-      filter === "featured" && user.is_featured;
+        const matchesFilter =
+          filter === "all" ||
+          filter === "revela_only" && user.has_revela_talentos_access && !user.has_plano_carreira_access ||
+          filter === "plano_carreira" && user.has_plano_carreira_access ||
+          filter === "admin" && user.role === 'admin' ||
+          filter === "revela_admin" && user.is_revela_admin && user.role !== 'admin' ||
+          filter === "featured" && user.is_featured;
 
-      return matchesSearch && matchesFilter;
-    });
+        return matchesSearch && matchesFilter;
+      });
   }, [data.users, searchTerm, filter]);
 
   const { revelaTalentosUsers, planoCarreiraUsers, adminUsers, revelaAdminUsers } = useMemo(() => {
@@ -607,7 +697,7 @@ export default function AdminUsersTab() {
   const handleSavePerformanceUpdate = async () => {
     if (!editingPerformanceItem) return;
     try {
-      await PerformanceData.update(editingPerformanceItem.id, {
+      await base44.entities.PerformanceData.update(editingPerformanceItem.id, {
         ...performanceForm,
         status: 'completed'
       });
@@ -617,6 +707,37 @@ export default function AdminUsersTab() {
     } catch (error) {
       console.error("Erro ao atualizar performance:", error);
       toast.error("Erro ao atualizar performance.");
+    }
+  };
+
+  const handleInlineSave = async (userId, editedUserFields, pipelineInfoId, newPipelineStage) => {
+    try {
+      // 1. Update User basic properties
+      await base44.entities.User.update(userId, editedUserFields);
+
+      // 2. Update pipeline if ID and new stage exist
+      if (pipelineInfoId && newPipelineStage) {
+        await base44.entities.UserPipeline.update(pipelineInfoId, {
+          current_stage: newPipelineStage
+        });
+      }
+
+      // Record generic notification if it was approved
+      if (editedUserFields.is_approved) {
+        await Notification.create({
+          user_id: userId,
+          title: "Acesso Liberado!",
+          message: "Seu acesso à plataforma foi completamente liberado.",
+          type: "general",
+          priority: "high"
+        });
+      }
+
+      // Refresh general list to get new DB updates without jumping out
+      await loadAllData();
+    } catch (e) {
+      console.error("Error doing inline save", e);
+      throw e;
     }
   };
 
@@ -633,12 +754,12 @@ export default function AdminUsersTab() {
   const loadUserDetails = async (userId) => {
     try {
       const [uploads, messages, performance, progress] = await Promise.all([
-      AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
-      ChatMessage.filter({
-        $or: [{ sender_id: userId }, { receiver_id: userId }]
-      }, "-created_date", 50),
-      PerformanceData.filter({ user_id: userId }, "-game_date", 20),
-      UserProgress.filter({ user_id: userId }, null, 50)]
+        AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
+        ChatMessage.filter({
+          $or: [{ sender_id: userId }, { receiver_id: userId }]
+        }, "-created_date", 50),
+        PerformanceData.filter({ user_id: userId }, "-game_date", 20),
+        UserProgress.filter({ user_id: userId }, null, 50)]
       );
 
       setData((prev) => ({
@@ -656,8 +777,8 @@ export default function AdminUsersTab() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
-              <Loader2 className="w-8 h-8 animate-spin text-sky-400" />
-          </div>);
+        <Loader2 className="w-8 h-8 animate-spin text-sky-400" />
+      </div>);
 
   }
 
@@ -669,11 +790,11 @@ export default function AdminUsersTab() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {isPlatformRestricted ?
-              <div className="p-3 bg-red-500/20 rounded-lg">
+                <div className="p-3 bg-red-500/20 rounded-lg">
                   <Lock className="w-8 h-8 text-red-400" />
                 </div> :
 
-              <div className="p-3 bg-green-500/20 rounded-lg">
+                <div className="p-3 bg-green-500/20 rounded-lg">
                   <Unlock className="w-8 h-8 text-green-400" />
                 </div>
               }
@@ -683,8 +804,8 @@ export default function AdminUsersTab() {
                 </h3>
                 <p className="text-sm text-gray-400">
                   {isPlatformRestricted ?
-                  'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
-                  'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
+                    'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
+                    'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
                 </p>
               </div>
             </div>
@@ -692,16 +813,16 @@ export default function AdminUsersTab() {
               onClick={togglePlatformRestriction}
               disabled={isLoadingSettings}
               className={isPlatformRestricted ?
-              'bg-green-600 hover:bg-green-700' :
-              'bg-red-600 hover:bg-red-700'}>
+                'bg-green-600 hover:bg-green-700' :
+                'bg-red-600 hover:bg-red-700'}>
 
               {isPlatformRestricted ?
-              <>
+                <>
                   <Unlock className="w-4 h-4 mr-2" />
                   Liberar Plataforma
                 </> :
 
-              <>
+                <>
                   <Lock className="w-4 h-4 mr-2" />
                   Restringir Plataforma
                 </>
@@ -744,12 +865,12 @@ export default function AdminUsersTab() {
                 className="border-gray-700">
 
                 {view === "crm" ?
-                <>
+                  <>
                     <GitBranch className="w-4 h-4 mr-2" />
                     Pipelines
                   </> :
 
-                <>
+                  <>
                     <Users className="w-4 h-4 mr-2" />
                     CRM
                   </>
@@ -761,12 +882,12 @@ export default function AdminUsersTab() {
       </Card>
 
       {view === "pipelines" ?
-      <PipelineManager
-        pipelines={data.pipelines}
-        onRefresh={loadAllData} /> :
+        <PipelineManager
+          pipelines={data.pipelines}
+          onRefresh={loadAllData} /> :
 
 
-      <>
+        <>
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="bg-blue-900/20 border-blue-800">
@@ -801,7 +922,7 @@ export default function AdminUsersTab() {
 
           {/* All Athletes Grid */}
           {filter === "all" &&
-        <div className="space-y-6">
+            <div className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -810,48 +931,49 @@ export default function AdminUsersTab() {
                     <Badge className="bg-cyan-600/20 text-cyan-400">Lista Completa</Badge>
                   </div>
                   <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAllAthletes(!showAllAthletes)}
-                className="text-gray-400 hover:text-white">
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAllAthletes(!showAllAthletes)}
+                    className="text-gray-400 hover:text-white">
 
                     {showAllAthletes ?
-                <>
+                      <>
                         <EyeOff className="w-4 h-4 mr-2" />
                         Ocultar
                       </> :
 
-                <>
+                      <>
                         <Eye className="w-4 h-4 mr-2" />
                         Mostrar
                       </>
-                }
+                    }
                   </Button>
                 </div>
-                
+
                 {showAllAthletes &&
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {data.users.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          onSendNotification={handleSendNotification}
+                          onProfileVisit={handleProfileVisit}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines}
+                          onInlineSave={handleInlineSave} />
 
-                )}
-                      </AnimatePresence>
-                    </div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 }
 
-                  {(!data.users || data.users.length === 0) && showAllAthletes &&
-                <p className="text-gray-500 text-center py-8">
-                      Nenhum atleta cadastrado no sistema.
-                    </p>
+                {(!data.users || data.users.length === 0) && showAllAthletes &&
+                  <p className="text-gray-500 text-center py-8">
+                    Nenhum atleta cadastrado no sistema.
+                  </p>
                 }
               </div>
 
@@ -866,7 +988,7 @@ export default function AdminUsersTab() {
               </div>
 
               {adminUsers.length > 0 &&
-          <div className="space-y-4">
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Shield className="w-6 h-6 text-red-400" />
                     <h3 className="text-lg font-bold text-white">Administradores Gerais ({adminUsers.length})</h3>
@@ -874,24 +996,25 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {adminUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          onSendNotification={handleSendNotification}
+                          onProfileVisit={handleProfileVisit}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines}
+                          onInlineSave={handleInlineSave} />
 
-                )}
+                      )}
                     </AnimatePresence>
                   </div>
                 </div>
-          }
+              }
 
               {revelaAdminUsers.length > 0 &&
-          <div className="space-y-4">
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Shield className="w-6 h-6 text-purple-400" />
                     <h3 className="text-lg font-bold text-white">Administradores Revela ({revelaAdminUsers.length})</h3>
@@ -899,21 +1022,22 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {revelaAdminUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          onSendNotification={handleSendNotification}
+                          onProfileVisit={handleProfileVisit}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines}
+                          onInlineSave={handleInlineSave} />
 
-                )}
+                      )}
                     </AnimatePresence>
                   </div>
                 </div>
-          }
+              }
 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -923,17 +1047,18 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {planoCarreiraUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                      <AthleteCard
+                        key={user.id}
+                        user={user}
+                        userData={getUserData(user.id)}
+                        onEdit={handleEditClick}
+                        onSendNotification={handleSendNotification}
+                        onProfileVisit={handleProfileVisit}
+                        pipelines={data.pipelines}
+                        userPipelines={data.userPipelines}
+                        onInlineSave={handleInlineSave} />
 
-                )}
+                    )}
                   </AnimatePresence>
                 </div>
                 {planoCarreiraUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta no Plano de Carreira.</p>}
@@ -947,50 +1072,51 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {revelaTalentosUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                      <AthleteCard
+                        key={user.id}
+                        user={user}
+                        userData={getUserData(user.id)}
+                        onEdit={handleEditClick}
+                        onSendNotification={handleSendNotification}
+                        onProfileVisit={handleProfileVisit}
+                        pipelines={data.pipelines}
+                        userPipelines={data.userPipelines}
+                        onInlineSave={handleInlineSave} />
 
-                )}
+                    )}
                   </AnimatePresence>
                 </div>
                 {revelaTalentosUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta apenas neste plano.</p>}
               </div>
             </div>
-        }
+          }
 
           {filter !== "all" &&
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <AnimatePresence>
                 {filteredUsers.map((user) =>
-            <AthleteCard
-              key={user.id}
-              user={user}
-              userData={getUserData(user.id)}
-              onEdit={handleEditClick}
-              onSendNotification={handleSendNotification}
-              onProfileVisit={handleProfileVisit}
-              pipelines={data.pipelines}
-              userPipelines={data.userPipelines} />
+                  <AthleteCard
+                    key={user.id}
+                    user={user}
+                    userData={getUserData(user.id)}
+                    onEdit={handleEditClick}
+                    onSendNotification={handleSendNotification}
+                    onProfileVisit={handleProfileVisit}
+                    pipelines={data.pipelines}
+                    userPipelines={data.userPipelines} />
 
-            )}
+                )}
               </AnimatePresence>
             </div>
-        }
+          }
 
           {filteredUsers.length === 0 && filter !== "all" &&
-        <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500">
               <Users className="w-16 h-16 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
               <p>Ajuste os filtros de busca para encontrar atletas.</p>
             </div>
-        }
+          }
         </>
       }
 
@@ -1064,9 +1190,9 @@ export default function AdminUsersTab() {
         <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
           <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
           {editingPerformanceItem &&
-          <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
+            <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
               {editingPerformanceItem.associated_video_url &&
-            <div className="space-y-3">
+                <div className="space-y-3">
                   <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
                   <div className="p-4 bg-gray-800 rounded-lg space-y-2">
                     <h4 className="font-semibold text-white">Diário do Atleta</h4>
@@ -1074,7 +1200,7 @@ export default function AdminUsersTab() {
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
                   </div>
                 </div>
-            }
+              }
               <div className="grid grid-cols-2 gap-4">
                 <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>

@@ -8,8 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { SalesMaterial } from '@/entities/SalesMaterial';
-import { UploadFile } from '@/integrations/Core';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import {
   FileText, MessageSquare, Send, Download, Plus,
@@ -45,7 +44,7 @@ const DocumentLibrary = ({ materials, onRefresh, salesRep }) => {
     }
     setIsUploading(true);
     try {
-      const { file_url } = await UploadFile({ file: newMaterial.file });
+      const { file_url } = await base44.storage.upload({ file: newMaterial.file });
       await SalesMaterial.create({
         title: newMaterial.title,
         description: newMaterial.description,

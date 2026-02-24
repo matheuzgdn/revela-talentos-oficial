@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
-import { UserNotification } from "@/entities/UserNotification";
+import { base44 } from '@/api/base44Client';
 import { 
   Star, 
   TrendingUp, 

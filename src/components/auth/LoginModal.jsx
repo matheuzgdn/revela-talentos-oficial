@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User } from "@/entities/User";
+import { base44 } from '@/api/base44Client';
 import {
   Dialog,
   DialogContent,

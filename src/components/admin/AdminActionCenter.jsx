@@ -8,10 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart3, Megaphone, Upload, AlertCircle, CheckCircle, Plus, Clock, Loader2, History, ChevronDown } from 'lucide-react';
-import { CustomTask } from '@/entities/CustomTask';
-import { PerformanceData } from '@/entities/PerformanceData';
-import { Marketing } from '@/entities/Marketing';
-import { AthleteUpload } from '@/entities/AthleteUpload';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
 // --- MODAIS DE EDIÇÃO ---

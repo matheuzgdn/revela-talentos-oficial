@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Event } from '@/entities/Event';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format, addMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

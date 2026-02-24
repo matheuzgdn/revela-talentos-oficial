@@ -8,9 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { UploadFile } from '@/integrations/Core';
-import { CRMLead } from '@/entities/CRMLead';
-import { CustomTask } from '@/entities/CustomTask';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { 
   User, DollarSign, Edit2, Plus, Loader2, Paperclip, Send, Trash2, 
@@ -330,7 +328,7 @@ const DocumentsTab = ({ lead, onUpdate }) => {
     if (!file) return;
     setIsUploading(true);
     try {
-      const { file_url } = await UploadFile({ file });
+      const { file_url } = await base44.storage.upload({ file });
       const newDocument = {
         name: file.name,
         url: file_url,
