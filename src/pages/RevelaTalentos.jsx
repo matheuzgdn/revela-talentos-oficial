@@ -1,160 +1,56 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Clock, User as UserIcon, Star, TrendingUp, Activity, Trophy, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus, TrendingUp, Flame, Target, Dumbbell, Brain, Activity, Apple } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import VideoPlayer from "../components/content/VideoPlayer";
 import LiveStreamPlayer from "../components/content/LiveStreamPlayer";
-import LiveMentorias from "../components/content/LiveMentorias";
-import ContentProgressTracker from "../components/content/ContentProgressTracker";
-import UpgradeCtaSection from "../components/hub/UpgradeCtaSection";
-import SeletivaCtaSection from "../components/seletiva/SeletivaCtaSection";
-import PlanosGrid from "../components/content/PlanosGrid";
-import AtletasGrid from "../components/content/AtletasGrid";
-import LivesCard from "../components/content/LivesCard";
-import AthleteStories from "../components/content/AthleteStories";
-import InstallBanner from "../components/pwa/InstallBanner";
 import PendingApproval from "../components/auth/PendingApproval";
 import RevelaTalentosLanding from "../components/revelatalentos/RevelaTalentosLanding";
+import MobileBottomNav from "../components/mobile/MobileBottomNav";
+import VideoUploadModal from "../components/mobile/VideoUploadModal";
+import FifaAthleteCard from "../components/revelatalentos/FifaAthleteCard";
+import NotificationsPanel from "../components/notifications/NotificationsPanel";
+import { useLanguage } from "@/components/i18n/LanguageContext";
+import LanguageToggle from "@/components/i18n/LanguageToggle";
 import { createPageUrl } from "@/utils";
 
-const translations = {
-  pt: {
-    languageName: "PT",
-    featured: "Em Destaque",
-    heroTitle: "Revela Talentos",
-    heroDescription: "Desenvolva suas habilidades com nosso conteúdo exclusivo e mentorias de alto nível.",
-    watchNow: "Assistir Agora",
-    minutes: "min",
-    liveNow: "Mentoria ao Vivo Agora",
-    liveDescription: "Participe da sessão exclusiva com nossos especialistas que está acontecendo em tempo real.",
-    liveStatus: "AO VIVO",
-    viewers: "Espectadores",
-    continueWatching: "Continue de Onde Parou",
-    recentlyCompleted: "Concluídos Recentemente",
-    categories: {
-      all: "Todos",
-      mentoria: "Mentorias",
-      treino_tatico: "Treino Tático",
-      preparacao_fisica: "Preparação Física",
-      psicologia: "Psicologia",
-      nutricao: "Nutrição",
-      planos: "Plano",
-      atletas: "Atletas",
-      conteudos: "Conteúdos",
-    },
-    home: "Início",
-    watch: "Assistir",
-    explore: "Explorar",
-    seletiva: "Seletiva",
-  },
-  es: {
-    languageName: "ES",
-    featured: "Destacado",
-    heroTitle: "Revela Talentos",
-    heroDescription: "Desarrolla tus habilidades con nuestro contenido exclusivo y mentorías de alto nivel.",
-    watchNow: "Ver Ahora",
-    minutes: "min",
-    liveNow: "Mentoría en Vivo Ahora",
-    liveDescription: "Participa en la sesión exclusiva con nuestros especialistas que está ocurriendo en tiempo real.",
-    liveStatus: "EN VIVO",
-    viewers: "Espectadores",
-    continueWatching: "Continúa Viendo",
-    recentlyCompleted: "Completados Recientemente",
-    categories: {
-      all: "Todos",
-      mentoria: "Mentorías",
-      treino_tatico: "Entrenamiento Táctico",
-      preparacao_fisica: "Preparación Física",
-      psicologia: "Psicología",
-      nutricao: "Nutrición",
-      planos: "Planes",
-      atletas: "Atletas",
-      conteudos: "Contenidos",
-    },
-    home: "Inicio",
-    watch: "Ver",
-    explore: "Explorar",
-    seletiva: "Selectiva",
-  }
-};
-
-const LanguageSwitcher = ({ language, setLanguage }) => (
-  <div className="fixed top-4 right-4 z-30 flex items-center gap-1 bg-black/30 backdrop-blur-xl p-1 rounded-full border border-gray-700/50">
-    <button
-      onClick={() => setLanguage('pt')}
-      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-        language === 'pt' ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-black' : 'text-gray-400 hover:text-white'
-      }`}
-    >
-      PT
-    </button>
-    <button
-      onClick={() => setLanguage('es')}
-      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-        language === 'es' ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-black' : 'text-gray-400 hover:text-white'
-      }`}
-    >
-      ES
-    </button>
-  </div>
-);
-
 export default function RevelaTalentosPage() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
-  const [language, setLanguage] = useState('pt');
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
   const [isPlatformRestricted, setIsPlatformRestricted] = useState(false);
   const [showLandingPage, setShowLandingPage] = useState(false);
   
   const [contents, setContents] = useState([]);
-  const [athleteStories, setAthleteStories] = useState([]);
   const [userProgress, setUserProgress] = useState([]);
   const [selectedContent, setSelectedContent] = useState(null);
   const [selectedLiveContent, setSelectedLiveContent] = useState(null);
   const [activeCategory, setActiveCategory] = useState("all");
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  
-  const [liveCardImage, setLiveCardImage] = useState(null);
-  const [liveCardSchedule, setLiveCardSchedule] = useState("Todas as segundas às 20h");
-  const [showLiveSection, setShowLiveSection] = useState(true);
-
-  const mentoriaScrollRef = React.useRef(null);
-  const treinoScrollRef = React.useRef(null);
-  const preparacaoScrollRef = React.useRef(null);
-  const top10ScrollRef = React.useRef(null);
-  const filteredScrollRef = React.useRef(null);
-
-  const t = translations[language];
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [athleteStories, setAthleteStories] = useState([]);
 
   const loadContentData = useCallback(async (currentUser) => {
     try {
-      // Load only published content with limit
       const fetchedContents = await base44.entities.Content.filter({ 
         is_published: true 
       }, "-created_date", 50).catch(() => []);
-      
       setContents(fetchedContents);
       
-      // Load stories in background (limit to 10)
-      base44.entities.AthleteStory.filter({ is_active: true }, "display_order", 10).then(stories => {
-        setAthleteStories(stories);
-      }).catch(() => {});
+      // Carregar atletas em destaque
+      const stories = await base44.entities.AthleteStory.filter({ 
+        is_active: true, 
+        category: 'atleta' 
+      }, "display_order", 20).catch(() => []);
+      setAthleteStories(stories);
       
-      // Load user progress only if user exists (limit to recent 20)
       if (currentUser) {
         base44.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).then(progress => {
           setUserProgress(progress);
         }).catch(() => {});
       }
-      
-      // Check if live section should be shown
-      base44.entities.PlatformSettings.filter({ setting_key: 'show_live_card' }).then(settings => {
-        if (settings.length > 0) {
-          setShowLiveSection(settings[0].setting_value === 'true');
-        }
-      }).catch(() => {});
     } catch (error) {
       console.error("Error loading data:", error);
     }
@@ -162,14 +58,11 @@ export default function RevelaTalentosPage() {
 
   const checkAccess = useCallback(async () => {
     try {
-      // Check user first
       const currentUser = await base44.auth.me().catch(() => null);
       
       if (!currentUser) {
-        // Not logged in - show landing page immediately
         setShowLandingPage(true);
         setIsCheckingAccess(false);
-        // Load content in background for landing page
         loadContentData(null);
         return;
       }
@@ -177,14 +70,12 @@ export default function RevelaTalentosPage() {
       setUser(currentUser);
       setShowLandingPage(false);
       
-      // Check platform settings in background
       base44.entities.PlatformSettings.list().then(platformSettings => {
         const restrictionSetting = platformSettings.find(s => s.setting_key === 'is_platform_restricted');
         const isRestricted = restrictionSetting?.setting_value === 'true';
         setIsPlatformRestricted(isRestricted);
       }).catch(() => {});
       
-      // Load content for logged in user
       loadContentData(currentUser);
       setIsCheckingAccess(false);
       
@@ -201,14 +92,36 @@ export default function RevelaTalentosPage() {
     checkAccess();
   }, [checkAccess]);
 
+  useEffect(() => {
+    // Create welcome notification for new users
+    if (user && !user.has_seen_welcome) {
+      createWelcomeNotification();
+    }
+  }, [user]);
 
+  const createWelcomeNotification = async () => {
+    try {
+      await base44.entities.Notification.create({
+        user_id: user.id,
+        title: '🎉 Bem-vindo à EC10 Talentos!',
+        message: 'Estamos muito felizes em ter você conosco! Explore todo o conteúdo exclusivo, participe das seletivas e acompanhe seu desenvolvimento como atleta.',
+        type: 'general',
+        priority: 'high',
+        is_read: false
+      });
+      
+      // Mark user as having seen welcome
+      await base44.auth.updateMe({ has_seen_welcome: true });
+    } catch (error) {
+      console.error('Error creating welcome notification:', error);
+    }
+  };
 
   const handleContentSelect = useCallback((content) => {
     if (!user) {
       setShowLandingPage(true);
       return;
     }
-
     if (content.category === 'live' && content.status === 'live') {
       setSelectedLiveContent(content);
       setSelectedContent(null);
@@ -219,779 +132,626 @@ export default function RevelaTalentosPage() {
   }, [user]);
 
   const categories = useMemo(() => [
-    { id: "all", name: t.categories.all, icon: Star },
-    { id: "mentoria", name: t.categories.mentoria, icon: UserIcon },
-    { id: "treino_tatico", name: t.categories.treino_tatico, icon: TrendingUp },
-    { id: "preparacao_fisica", name: t.categories.preparacao_fisica, icon: Activity }
+    { id: "all", name: t('category.all') },
+    { id: "mentoria", name: t('category.mentorship') },
+    { id: "treino_tatico", name: t('category.tactical') },
+    { id: "preparacao_fisica", name: t('category.physical') },
   ], [t]);
-  
-  const mentoriaContents = useMemo(() => 
-    contents.filter(c => c.category === 'mentoria' && c.is_published),
-    [contents]
-  );
-  
-  const heroSlides = useMemo(() => [
-    {
-      type: 'primary_video',
-      url: 'https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4',
-      title: t.heroTitle,
-      description: t.heroDescription,
-    },
-    ...mentoriaContents.map(content => ({
-      type: 'content',
-      content,
-    }))
-  ], [mentoriaContents, t]);
-  
-  useEffect(() => {
-      if (heroSlides.length > 1) {
-          const timer = setInterval(() => {
-              setCurrentSlideIndex(prevIndex => (prevIndex + 1) % heroSlides.length);
-          }, 8000);
-          return () => clearInterval(timer);
-      }
-  }, [heroSlides.length]);
 
-  const liveContents = useMemo(() => contents.filter(c => c.category === 'live' && c.status === 'live'), [contents]);
-  const allLiveContents = useMemo(() => contents.filter(c => c.category === 'live'), [contents]);
-  const planoContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
-  const atletaContents = useMemo(() => contents.filter(c => c.category === 'atletas'), [contents]);
+  const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
   
-  const regularContents = useMemo(() => contents.filter(c => {
-    if (c.category === 'live' && c.status === 'ended') {
-      return true;
-    }
-    return !['live', 'planos', 'atletas'].includes(c.category);
-  }), [contents]);
+  // Hero: EC10 destaque + mentorias gravadas recentes
+  const heroContents = useMemo(() => {
+    const ec10Hero = {
+      id: 'ec10-hero',
+      title: t('home.hero.title'),
+      thumbnail_url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200',
+      video_url: 'https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4',
+      category: 'hero',
+      is_featured: true
+    };
+    
+    const mentoriasRecentes = contents
+      .filter(c => c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended'))
+      .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
+      .slice(0, 9);
+    
+    return [ec10Hero, ...mentoriasRecentes];
+  }, [contents, t]);
 
+  const planosContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
+  
+  // Conteúdos por categoria
+  const mentoriaContents = useMemo(() => regularContents.filter(c => c.category === 'mentoria'), [regularContents]);
+  const preparacaoFisicaContents = useMemo(() => regularContents.filter(c => c.category === 'preparacao_fisica'), [regularContents]);
+  const treinoTaticoContents = useMemo(() => regularContents.filter(c => c.category === 'treino_tatico'), [regularContents]);
+  const psicologiaContents = useMemo(() => regularContents.filter(c => c.category === 'psicologia'), [regularContents]);
+  const nutricaoContents = useMemo(() => regularContents.filter(c => c.category === 'nutricao'), [regularContents]);
+  
   const filteredContents = useMemo(() => {
     if (activeCategory === "all") return regularContents;
-    if (activeCategory === "mentoria") {
-      return regularContents.filter(content => 
-        content.category === 'mentoria' || 
-        (content.category === 'live' && content.status === 'ended')
-      );
-    }
     return regularContents.filter(content => content.category === activeCategory);
   }, [activeCategory, regularContents]);
 
+  const continueWatchingContents = useMemo(() => {
+    if (!userProgress.length) return [];
+    return userProgress
+      .filter(p => p.progress_percent < 100)
+      .map(p => contents.find(c => c.id === p.content_id))
+      .filter(Boolean)
+      .slice(0, 6);
+  }, [userProgress, contents]);
+
   const top10Contents = useMemo(() => regularContents.filter(c => c.is_top_10).slice(0, 10), [regularContents]);
-  
-  const activeSlide = heroSlides.length > 0 ? heroSlides[currentSlideIndex] : null;
-  const hasFeaturedContent = useMemo(() => contents.some(c => c.is_featured), [contents]);
 
-  const contentsByCategory = useMemo(() => ({
-    mentoria: regularContents.filter(c => c.category === 'mentoria'),
-    treino_tatico: regularContents.filter(c => c.category === 'treino_tatico'),
-    preparacao_fisica: regularContents.filter(c => c.category === 'preparacao_fisica'),
-  }), [regularContents]);
-
-  const scrollCarousel = (ref, direction) => {
-    if (ref.current) {
-      const scrollAmount = direction === 'left' ? -400 : 400;
-      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  useEffect(() => {
+    if (heroContents.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentSlideIndex(prevIndex => (prevIndex + 1) % heroContents.length);
+      }, 6000);
+      return () => clearInterval(timer);
     }
-  };
+  }, [heroContents.length]);
 
-  // Show landing page immediately while checking or if error
+  // Loading State
   if (isCheckingAccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-cyan-500 mx-auto mb-4"></div>
-          <p className="text-white text-lg">Carregando...</p>
-        </div>
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-12 h-12 border-2 border-[#00E5FF] border-t-transparent rounded-full"
+        />
       </div>
     );
   }
 
-  // Show pending approval screen if restricted and not approved
   if (user && isPlatformRestricted && !user.is_approved) {
     return <PendingApproval user={user} />;
   }
 
-  // Show landing page for non-logged users
   if (showLandingPage) {
     return <RevelaTalentosLanding onLoginClick={() => base44.auth.redirectToLogin()} />;
   }
 
   if (selectedLiveContent) {
-    return (
-      <LiveStreamPlayer
-        content={selectedLiveContent}
-        onClose={() => setSelectedLiveContent(null)}
-      />
-    );
+    return <LiveStreamPlayer content={selectedLiveContent} onClose={() => setSelectedLiveContent(null)} />;
   }
 
   if (selectedContent) {
-    return (
-      <VideoPlayer
-        content={selectedContent}
-        onClose={() => setSelectedContent(null)}
-        onProgress={checkAccess}
-      />
-    );
+    return <VideoPlayer content={selectedContent} onClose={() => setSelectedContent(null)} onProgress={checkAccess} />;
   }
 
+  const activeSlide = heroContents[currentSlideIndex] || null;
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white">
+    <div className="min-h-screen bg-[#0A0A0A] text-white pb-24 md:pb-0 overflow-x-hidden">
       <style>{`
-        .no-scrollbar {
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-        }
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        /* Fallback styles for older browsers */
-        * {
-          -webkit-tap-highlight-color: transparent;
-        }
-        html {
-          -webkit-text-size-adjust: 100%;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
       `}</style>
 
-      <InstallBanner />
-      <LanguageSwitcher language={language} setLanguage={setLanguage} />
+      {/* Header */}
+      <motion.header 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="sticky top-0 z-40 bg-[#0A0A0A]/95 backdrop-blur-2xl px-4 py-5 md:px-6 border-b border-[#1a1a1a]"
+      >
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div>
+            <p className="text-[#666] text-[10px] font-bold uppercase tracking-widest mb-0.5">{t('header.hello')}</p>
+            <h1 className="text-xl font-black text-white tracking-tight">{user?.full_name || t('header.athlete')}</h1>
+          </div>
+          <div className="flex gap-2">
+            <LanguageToggle variant="ghost" className="w-10 h-10 p-0 text-[#00E5FF] hover:bg-[#00E5FF]/10" />
+            {user && <NotificationsPanel user={user} />}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowUploadModal(true)}
+              className="w-10 h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30"
+            >
+              <Plus className="w-5 h-5 text-white" />
+            </motion.button>
+          </div>
+        </div>
+      </motion.header>
 
-      {/* Hero Section */}
-      {activeSlide && (
-        <section className="relative h-[70vh] md:h-[90vh] flex items-end overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-blue-500/10 pointer-events-none" />
-          
-          <AnimatePresence>
+      {/* HERO - EC10 + Mentorias Recentes */}
+      <section className="px-4 md:px-6 pt-2 pb-6">
+        <div className="max-w-7xl mx-auto">
+          <AnimatePresence mode="wait">
             <motion.div
               key={currentSlideIndex}
-              initial={{ opacity: 0, scale: 1.1 }}
-              animate={{ opacity: 1, scale: 1, transition: { duration: 1.5 } }}
-              exit={{ opacity: 0, transition: { duration: 1 } }}
-              className="absolute inset-0"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.6 }}
+              onClick={() => activeSlide?.id !== 'ec10-hero' && handleContentSelect(activeSlide)}
+              className="relative aspect-[4/3] md:aspect-[16/9] rounded-[24px] overflow-hidden cursor-pointer group shadow-2xl"
             >
-              {activeSlide.type === 'primary_video' ? (
-                <>
-                  <video
-                    src={activeSlide.url}
-                    autoPlay muted loop playsInline
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-transparent to-blue-500/20" />
-                </>
+              {activeSlide?.id === 'ec10-hero' ? (
+                <video
+                  src={activeSlide.video_url}
+                  autoPlay muted loop playsInline
+                  className="w-full h-full object-cover"
+                />
               ) : (
-                <>
-                  <img
-                    src={activeSlide.content.thumbnail_url || "https://images.unsplash.com/photo-1599501656247-2856b3722514?q=80&w=2070"}
-                    alt={activeSlide.content.title}
-                    className="w-full h-full object-cover rounded-xl shadow-2xl"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent rounded-xl" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-transparent to-blue-500/20 rounded-xl" />
-                </>
+                <img 
+                  src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
+                  alt={activeSlide?.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
               )}
-            </motion.div>
-          </AnimatePresence>
-          
-          <div className="relative z-10 p-4 md:p-12 max-w-6xl mx-auto w-full pb-12 md:pb-20">
-            {activeSlide.type === 'content' ? (
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black text-xs mb-3 shadow-lg shadow-yellow-500/50">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  {t.featured}
-                </Badge>
-                
-                <h1 className="text-3xl md:text-6xl font-black leading-tight line-clamp-2 text-white mb-3 drop-shadow-2xl">
-                  {activeSlide.content.title}
-                </h1>
-                
-                <p className="text-gray-200 text-sm md:text-xl max-w-3xl leading-relaxed line-clamp-2 md:line-clamp-3 mb-4 drop-shadow-lg">
-                  {activeSlide.content.description}
-                </p>
-
-                <div className="flex items-center gap-3 md:gap-6 text-xs md:text-base text-gray-300 mb-5">
-                  <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                    <Clock className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
-                    <span className="font-medium">{activeSlide.content.duration || 25} {t.minutes}</span>
-                  </div>
-                  {activeSlide.content.instructor && (
-                    <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                      <UserIcon className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
-                      <span className="truncate max-w-40 font-medium">{activeSlide.content.instructor}</span>
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/20 to-transparent" />
+              
+              {/* Neon glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/10 via-transparent to-[#0066FF]/10 opacity-60" />
+              
+              {/* Title with tech effect */}
+              <div className="absolute bottom-6 left-6 right-6">
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="space-y-2"
+                >
+                  <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl">
+                    {activeSlide?.title}
+                  </h2>
+                  {activeSlide?.id !== 'ec10-hero' && (
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/40 backdrop-blur-sm">
+                        {t('category.mentorship').toUpperCase()}
+                      </Badge>
+                      <Play className="w-4 h-4 text-[#00E5FF]" />
                     </div>
                   )}
-                </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
-                <Button 
-                  size="lg"
-                  onClick={() => handleContentSelect(activeSlide.content)}
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold px-8 md:px-12 py-5 md:py-7 rounded-xl text-base md:text-xl shadow-2xl shadow-cyan-500/50 hover:shadow-cyan-500/70 transition-all w-full md:w-auto border border-cyan-300"
-                >
-                  <Play className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-                  {t.watchNow}
-                </Button>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <h1 className="text-4xl md:text-7xl font-black leading-tight text-white mb-4 drop-shadow-2xl">
-                  {activeSlide.title}
-                </h1>
-                
-                <p className="text-gray-200 text-base md:text-2xl max-w-3xl leading-relaxed line-clamp-2 md:line-clamp-3 drop-shadow-lg">
-                  {activeSlide.description}
-                </p>
-              </motion.div>
-            )}
-          </div>
-          
-          <div className="absolute bottom-6 md:bottom-10 left-0 right-0 z-20 flex justify-center gap-2">
-            {heroSlides.map((_, index) => (
+          {/* Carousel Indicators */}
+          <div className="flex justify-center gap-2 mt-5">
+            {heroContents.slice(0, 10).map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlideIndex(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-full transition-all duration-300 ${
                   currentSlideIndex === index 
-                    ? 'w-12 bg-gradient-to-r from-cyan-400 to-blue-500 shadow-lg shadow-cyan-500/50' 
-                    : 'w-8 bg-white/30 hover:bg-white/50'
+                    ? 'w-8 bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50' 
+                    : 'w-1.5 bg-[#333] hover:bg-[#555]'
                 }`}
               />
             ))}
-          </div>
-        </section>
-      )}
-
-      {/* Conteúdo Principal */}
-      <section className="px-4 md:px-6 py-6 md:py-10 pb-24 md:pb-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto space-y-8 md:space-y-12 relative">
-          
-          {athleteStories.length > 0 && (
-            <AthleteStories stories={athleteStories} />
-          )}
-
-          {showLiveSection && allLiveContents.length > 0 && (
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-4 px-0 md:px-0">
-                📡 Transmissões ao Vivo
-              </h2>
-              <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar">
-                <LivesCard 
-                  liveCount={allLiveContents.length}
-                  isLiveActive={liveContents.length > 0}
-                  image={liveCardImage}
-                  schedule={liveCardSchedule}
-                />
-              </div>
-            </div>
-          )}
-          
-          {liveContents.length > 0 && (
-            <div>
-              <LiveMentorias 
-                 user={user} 
-                 onContentSelect={handleContentSelect} 
-                 contents={liveContents} 
-                 isLoading={false}
-                 translations={{ liveNow: t.liveNow, liveDescription: t.liveDescription, liveStatus: t.liveStatus, viewers: t.viewers, watchNow: t.watchNow, minutes: t.minutes }}
-             />
-            </div>
-          )}
-
-          {userProgress.length > 0 && (
-            <div data-section="progress">
-              <ContentProgressTracker 
-                contents={contents} 
-                userProgress={userProgress}
-                onContentSelect={handleContentSelect}
-                translations={{ continueWatching: t.continueWatching, recentlyCompleted: t.recentlyCompleted }}
-              />
-            </div>
-          )}
-
-          {planoContents.length > 0 && (
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-4 px-0 md:px-0">
-                {t.categories.planos}
-              </h2>
-              <PlanosGrid 
-                planos={planoContents}
-                isLoading={false}
-              />
-            </div>
-          )}
-
-          <UpgradeCtaSection />
-          <SeletivaCtaSection onParticipateClick={() => window.location.href = createPageUrl("SeletivaOnline")} />
-
-          {top10Contents.length > 0 && (
-            <div className="relative group">
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-4 px-0 md:px-0">
-                🔥 Top 10 Mais Assistidos
-              </h2>
-              
-              <button
-                onClick={() => scrollCarousel(top10ScrollRef, 'left')}
-                className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <ChevronLeft className="w-6 h-6 text-white" />
-              </button>
-              <button
-                onClick={() => scrollCarousel(top10ScrollRef, 'right')}
-                className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <ChevronRight className="w-6 h-6 text-white" />
-              </button>
-
-              <div ref={top10ScrollRef} className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-                {top10Contents.map((content, index) => (
-                  <div key={content.id} className="relative flex-shrink-0 w-36 md:w-44">
-                    <div className="absolute top-2 left-2 z-10 bg-yellow-500 text-black font-black text-sm w-6 h-6 rounded-full flex items-center justify-center shadow-lg">
-                      {index + 1}
-                    </div>
-                    <div 
-                      onClick={() => handleContentSelect(content)}
-                      className="relative aspect-[2/3] rounded-lg overflow-hidden cursor-pointer group/card hover:scale-105 transition-transform shadow-lg"
-                    >
-                      <img 
-                        src={content.thumbnail_url} 
-                        alt={content.title}
-                        className="w-full h-full object-cover"
-                      />
-                      
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-                      
-                      <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-                        <h3 className="text-white font-bold text-xs line-clamp-2 mb-1">{content.title}</h3>
-                        <div className="flex flex-col gap-0.5 text-[10px] text-gray-300">
-                          {content.duration && (
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              <span>{content.duration} min</span>
-                            </div>
-                          )}
-                          {content.instructor && (
-                            <div className="flex items-center gap-1">
-                              <UserIcon className="w-3 h-3" />
-                              <span className="truncate">{content.instructor}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity z-10">
-                        <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
-                          <Play className="w-5 h-5 text-black ml-0.5" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Categories Filter */}
-          <div data-section="categories" className="flex gap-2 mb-6 md:mb-8 mt-6 md:mt-10 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar">
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant={activeCategory === category.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveCategory(category.id)}
-                className={`rounded-xl px-5 md:px-8 py-3 md:py-4 text-sm md:text-sm font-bold transition-all duration-300 whitespace-nowrap border-2 ${
-                  activeCategory === category.id 
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-black border-cyan-300 shadow-lg shadow-cyan-500/50 scale-105' 
-                    : 'bg-gray-900/50 border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800 hover:border-cyan-500/50 backdrop-blur-sm'
-                }`}
-              >
-                <category.icon className="w-4 h-4 mr-2" />
-                {category.name}
-              </Button>
-            ))}
-          </div>
-
-          {/* Conteúdos por Categoria */}
-          <div className="space-y-6 md:space-y-10">
-            {activeCategory === "all" ? (
-              <>
-                {/* Mentorias */}
-                {contentsByCategory.mentoria.length > 0 && (
-                  <div className="relative group">
-                    <h2 className="text-xl md:text-2xl font-bold text-white mb-4 px-0 md:px-0">
-                      {t.categories.mentoria}
-                    </h2>
-
-                    <button
-                      onClick={() => scrollCarousel(mentoriaScrollRef, 'left')}
-                      className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <ChevronLeft className="w-6 h-6 text-white" />
-                    </button>
-                    <button
-                      onClick={() => scrollCarousel(mentoriaScrollRef, 'right')}
-                      className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <ChevronRight className="w-6 h-6 text-white" />
-                    </button>
-
-                    <div ref={mentoriaScrollRef} className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-                      {contentsByCategory.mentoria.map((content) => {
-                        const isLocked = content.access_level === 'elite' && !user?.has_plano_carreira_access;
-                        
-                        return (
-                          <div 
-                            key={content.id}
-                            onClick={() => !isLocked && handleContentSelect(content)}
-                            className={`relative flex-shrink-0 w-36 md:w-44 ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:scale-105'} transition-transform`}
-                          >
-                            <div className="relative aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
-                              <img 
-                                src={content.thumbnail_url} 
-                                alt={content.title}
-                                className="w-full h-full object-cover"
-                              />
-                              
-                              {isLocked && (
-                                <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold z-10">
-                                  ELITE
-                                </div>
-                              )}
-                              
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-                              
-                              <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-                                <h3 className="text-white font-bold text-xs line-clamp-2 mb-1">{content.title}</h3>
-                                <div className="flex flex-col gap-0.5 text-[10px] text-gray-300">
-                                  {content.duration && (
-                                    <div className="flex items-center gap-1">
-                                      <Clock className="w-3 h-3" />
-                                      <span>{content.duration} min</span>
-                                    </div>
-                                  )}
-                                  {content.instructor && (
-                                    <div className="flex items-center gap-1">
-                                      <UserIcon className="w-3 h-3" />
-                                      <span className="truncate">{content.instructor}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              {!isLocked && (
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                  <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
-                                    <Play className="w-5 h-5 text-black ml-0.5" />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Treino Tático */}
-                {contentsByCategory.treino_tatico.length > 0 && (
-                  <div className="relative group">
-                    <h2 className="text-xl md:text-2xl font-bold text-white mb-4 px-0 md:px-0">
-                      {t.categories.treino_tatico}
-                    </h2>
-
-                    <button
-                      onClick={() => scrollCarousel(treinoScrollRef, 'left')}
-                      className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <ChevronLeft className="w-6 h-6 text-white" />
-                    </button>
-                    <button
-                      onClick={() => scrollCarousel(treinoScrollRef, 'right')}
-                      className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <ChevronRight className="w-6 h-6 text-white" />
-                    </button>
-
-                    <div ref={treinoScrollRef} className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-                      {contentsByCategory.treino_tatico.map((content) => {
-                        const isLocked = content.access_level === 'elite' && !user?.has_plano_carreira_access;
-                        
-                        return (
-                          <div 
-                            key={content.id}
-                            onClick={() => !isLocked && handleContentSelect(content)}
-                            className={`relative flex-shrink-0 w-36 md:w-44 ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:scale-105'} transition-transform`}
-                          >
-                            <div className="relative aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
-                              <img 
-                                src={content.thumbnail_url} 
-                                alt={content.title}
-                                className="w-full h-full object-cover"
-                              />
-                              
-                              {isLocked && (
-                                <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold z-10">
-                                  ELITE
-                                </div>
-                              )}
-                              
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-                              
-                              <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-                                <h3 className="text-white font-bold text-xs line-clamp-2 mb-1">{content.title}</h3>
-                                <div className="flex flex-col gap-0.5 text-[10px] text-gray-300">
-                                  {content.duration && (
-                                    <div className="flex items-center gap-1">
-                                      <Clock className="w-3 h-3" />
-                                      <span>{content.duration} min</span>
-                                    </div>
-                                  )}
-                                  {content.instructor && (
-                                    <div className="flex items-center gap-1">
-                                      <UserIcon className="w-3 h-3" />
-                                      <span className="truncate">{content.instructor}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              {!isLocked && (
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                  <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
-                                    <Play className="w-5 h-5 text-black ml-0.5" />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Preparação Física */}
-                {contentsByCategory.preparacao_fisica.length > 0 && (
-                  <div className="relative group">
-                    <h2 className="text-xl md:text-2xl font-bold text-white mb-4 px-0 md:px-0">
-                      {t.categories.preparacao_fisica}
-                    </h2>
-
-                    <button
-                      onClick={() => scrollCarousel(preparacaoScrollRef, 'left')}
-                      className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <ChevronLeft className="w-6 h-6 text-white" />
-                    </button>
-                    <button
-                      onClick={() => scrollCarousel(preparacaoScrollRef, 'right')}
-                      className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <ChevronRight className="w-6 h-6 text-white" />
-                    </button>
-
-                    <div ref={preparacaoScrollRef} className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-                      {contentsByCategory.preparacao_fisica.map((content) => {
-                        const isLocked = content.access_level === 'elite' && !user?.has_plano_carreira_access;
-                        
-                        return (
-                          <div 
-                            key={content.id}
-                            onClick={() => !isLocked && handleContentSelect(content)}
-                            className={`relative flex-shrink-0 w-36 md:w-44 ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:scale-105'} transition-transform`}
-                          >
-                            <div className="relative aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
-                              <img 
-                                src={content.thumbnail_url} 
-                                alt={content.title}
-                                className="w-full h-full object-cover"
-                              />
-                              
-                              {isLocked && (
-                                <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold z-10">
-                                  ELITE
-                                </div>
-                              )}
-                              
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-                              
-                              <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-                                <h3 className="text-white font-bold text-xs line-clamp-2 mb-1">{content.title}</h3>
-                                <div className="flex flex-col gap-0.5 text-[10px] text-gray-300">
-                                  {content.duration && (
-                                    <div className="flex items-center gap-1">
-                                      <Clock className="w-3 h-3" />
-                                      <span>{content.duration} min</span>
-                                    </div>
-                                  )}
-                                  {content.instructor && (
-                                    <div className="flex items-center gap-1">
-                                      <UserIcon className="w-3 h-3" />
-                                      <span className="truncate">{content.instructor}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              {!isLocked && (
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                  <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
-                                    <Play className="w-5 h-5 text-black ml-0.5" />
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                <div className="relative group">
-                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4 px-0 md:px-0">
-                    {categories.find(c => c.id === activeCategory)?.name || 'Conteúdos'}
-                  </h2>
-
-                  <button
-                    onClick={() => scrollCarousel(filteredScrollRef, 'left')}
-                    className="hidden md:flex absolute -left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white" />
-                  </button>
-                  <button
-                    onClick={() => scrollCarousel(filteredScrollRef, 'right')}
-                    className="hidden md:flex absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-black/80 hover:bg-black/90 rounded-full items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <ChevronRight className="w-6 h-6 text-white" />
-                  </button>
-
-                  <div ref={filteredScrollRef} className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 md:mx-0 md:px-0">
-                    {filteredContents.map((content) => {
-                      const isLocked = content.access_level === 'elite' && !user?.has_plano_carreira_access;
-                      
-                      return (
-                        <div 
-                          key={content.id}
-                          onClick={() => !isLocked && handleContentSelect(content)}
-                          className={`relative flex-shrink-0 w-36 md:w-44 ${isLocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:scale-105'} transition-transform`}
-                        >
-                          <div className="relative aspect-[2/3] rounded-lg overflow-hidden shadow-lg">
-                            <img 
-                              src={content.thumbnail_url} 
-                              alt={content.title}
-                              className="w-full h-full object-cover"
-                            />
-                            
-                            {isLocked && (
-                              <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold z-10">
-                                ELITE
-                              </div>
-                            )}
-                            
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-                            
-                            <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-                              <h3 className="text-white font-bold text-xs line-clamp-2 mb-1">{content.title}</h3>
-                              <div className="flex flex-col gap-0.5 text-[10px] text-gray-300">
-                                {content.duration && (
-                                  <div className="flex items-center gap-1">
-                                    <Clock className="w-3 h-3" />
-                                    <span>{content.duration} min</span>
-                                  </div>
-                                )}
-                                {content.instructor && (
-                                  <div className="flex items-center gap-1">
-                                    <UserIcon className="w-3 h-3" />
-                                    <span className="truncate">{content.instructor}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            
-                            {!isLocked && (
-                              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                <div className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
-                                  <Play className="w-5 h-5 text-black ml-0.5" />
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </>
-            )}
           </div>
         </div>
       </section>
 
-      {atletaContents.length > 0 && (
-        <section className="px-4 md:px-6 py-6 md:py-12 bg-gray-950/50 mb-20 md:mb-0">
+      {/* Categories */}
+      <section className="px-4 md:px-6 py-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+            {categories.map((cat, index) => (
+              <motion.button
+                key={cat.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.04 }}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`relative whitespace-nowrap px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${
+                  activeCategory === cat.id 
+                    ? 'bg-[#00E5FF] text-black shadow-lg shadow-[#00E5FF]/40' 
+                    : 'bg-[#111111] text-[#666] border border-[#222] hover:border-[#00E5FF]/50 hover:text-white'
+                }`}
+              >
+                {cat.name}
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Continue Watching */}
+      {continueWatchingContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
-            <AtletasGrid 
-              atletas={atletaContents}
-              isLoading={false}
-            />
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-black text-white tracking-tight">{t('home.continue')}</h3>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {continueWatchingContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                  progress={userProgress.find(p => p.content_id === content.id)?.progress_percent}
+                  t={t}
+                />
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      {/* Mobile Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-xl border-t border-gray-800/50">
-        <div className="grid grid-cols-4 gap-1 px-2 py-2">
-          <button 
-            onClick={() => window.location.href = createPageUrl("RevelaTalentos")}
-            className="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <Star className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">Início</span>
-          </button>
+      {/* Top Trending */}
+      {top10Contents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Flame className="w-5 h-5 text-orange-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.top10')}</h3>
+              </div>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {top10Contents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                  showRank={true}
+                  rank={index + 1}
+                  t={t}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-          <button 
-            onClick={() => {
-              const section = document.querySelector('[data-section="progress"]');
-              section?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <Play className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">{t.watch}</span>
-          </button>
+      {/* Planos Section */}
+      {planosContents.length > 0 && (
+        <section className="px-4 md:px-6 py-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tight">{t('home.plans')}</h3>
+                <p className="text-[#666] text-xs mt-1">{t('home.plans.subtitle')}</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-[#00E5FF]" />
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {planosContents.map((plano, index) => (
+                <PlanCard 
+                  key={plano.id} 
+                  plano={plano} 
+                  index={index}
+                  onClick={() => handleContentSelect(plano)}
+                  t={t}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-          <button 
-            onClick={() => {
-              const section = document.querySelector('[data-section="categories"]');
-              section?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center justify-center py-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <Trophy className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">{t.explore}</span>
-          </button>
+      {/* Atletas em Destaque - FIFA Style Cards */}
+      {athleteStories.length > 0 && (
+        <section className="px-4 md:px-6 py-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+                  <Star className="w-6 h-6 text-[#FFD700]" fill="#FFD700" />
+                  {t('home.featured')}
+                </h3>
+                <p className="text-[#666] text-xs mt-1">{t('home.featured.subtitle')}</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 pb-4">
+              {athleteStories.map((story, index) => (
+                <FifaAthleteCard 
+                  key={story.id} 
+                  story={story} 
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-          <button 
-            onClick={() => window.location.href = createPageUrl("SeletivaOnline")}
-            className="flex flex-col items-center justify-center py-2 text-yellow-400 hover:text-yellow-300 transition-colors"
-          >
-            <Trophy className="w-5 h-5 mb-1" />
-            <span className="text-[10px] font-medium">{t.seletiva}</span>
-          </button>
+      {/* Mentoria Section */}
+      {mentoriaContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.mentorship')}</h3>
+              </div>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {mentoriaContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                  t={t}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Preparação Física Section */}
+      {preparacaoFisicaContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Dumbbell className="w-5 h-5 text-green-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.physical')}</h3>
+              </div>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {preparacaoFisicaContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                  t={t}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Treino Tático Section */}
+      {treinoTaticoContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Activity className="w-5 h-5 text-cyan-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.tactical')}</h3>
+              </div>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {treinoTaticoContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                  t={t}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Psicologia Section */}
+      {psicologiaContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Brain className="w-5 h-5 text-purple-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.psychology')}</h3>
+              </div>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {psicologiaContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                  t={t}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Nutrição Section */}
+      {nutricaoContents.length > 0 && (
+        <section className="px-4 md:px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <Apple className="w-5 h-5 text-red-500" />
+                <h3 className="text-lg font-black text-white tracking-tight">{t('home.nutrition')}</h3>
+              </div>
+              <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+                {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+              {nutricaoContents.map((content, index) => (
+                <ContentCard 
+                  key={content.id} 
+                  content={content} 
+                  index={index}
+                  onClick={() => handleContentSelect(content)}
+                  t={t}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* All Content - Carousel Style */}
+      <section className="px-4 md:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-lg font-black text-white tracking-tight">
+              {activeCategory === "all" ? t('home.content') : categories.find(c => c.id === activeCategory)?.name}
+            </h3>
+            <button className="text-[#666] text-sm hover:text-[#00E5FF] transition-colors flex items-center gap-1">
+              {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
+            </button>
+          </div>
+          
+          <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
+            {filteredContents.map((content, index) => (
+              <ContentCard 
+                key={content.id} 
+                content={content} 
+                index={index}
+                onClick={() => handleContentSelect(content)}
+                t={t}
+              />
+            ))}
+          </div>
         </div>
-      </nav>
+      </section>
+
+      {/* Bottom Navigation */}
+      <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
+
+      {/* Upload Modal */}
+      <VideoUploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        user={user}
+      />
     </div>
+  );
+}
+
+// Content Card Component - Modern with Title Inside
+function ContentCard({ content, index, onClick, progress, showRank, rank, t }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.02 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={onClick}
+      className="relative flex-shrink-0 cursor-pointer group w-[150px] md:w-[180px]"
+    >
+      <div className="relative aspect-[2/3] rounded-[16px] overflow-hidden bg-[#111111] border border-[#222] shadow-lg hover:shadow-[#00E5FF]/20 transition-all duration-300">
+        <img 
+          src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"}
+          alt={content.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        
+        {/* Dark gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent opacity-90" />
+        
+        {/* Neon accent on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/0 to-[#0066FF]/0 group-hover:from-[#00E5FF]/10 group-hover:to-[#0066FF]/10 transition-all duration-300" />
+        
+        {/* Rank Badge */}
+        {showRank && (
+          <div className="absolute top-3 left-3 w-8 h-8 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/50">
+            <span className="text-xs font-black text-black">{rank}</span>
+          </div>
+        )}
+
+        {/* Progress Bar */}
+        {progress && progress > 0 && (
+          <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#222]">
+            <div 
+              className="h-full bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+
+        {/* Duration Badge */}
+        {content.duration && (
+          <div className="absolute top-3 right-3 px-2 py-1 bg-black/80 backdrop-blur-sm rounded-lg border border-[#333]">
+            <span className="text-[10px] text-white font-bold">{content.duration}{t ? t('common.min') : 'min'}</span>
+          </div>
+        )}
+
+        {/* Title Inside Card - Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
+          <h4 className="text-white font-bold text-sm leading-tight line-clamp-2 drop-shadow-lg">
+            {content.title}
+          </h4>
+        </div>
+
+        {/* Play icon on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="w-14 h-14 bg-[#00E5FF]/90 rounded-full flex items-center justify-center backdrop-blur-sm shadow-2xl shadow-[#00E5FF]/50">
+            <Play className="w-6 h-6 text-black fill-black ml-1" />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// Plan Card Component - Distinct Design
+function PlanCard({ plano, index, onClick, t }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="relative flex-shrink-0 cursor-pointer group w-[280px] md:w-[320px]"
+    >
+      <div className="relative aspect-[16/10] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 via-[#0066FF]/20 to-[#0033FF]/20 border-2 border-[#00E5FF]/30 shadow-xl hover:shadow-[#00E5FF]/40 transition-all duration-300">
+        <img 
+          src={plano.thumbnail_url || "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600"}
+          alt={plano.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
+        
+        {/* Neon glow effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/20 via-transparent to-[#0066FF]/20 opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+        
+        {/* Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+          <Badge className="mb-3 bg-[#00E5FF] text-black font-black text-[10px] uppercase tracking-wider">
+            {t ? t('home.plans').toUpperCase() : 'PLANO'}
+          </Badge>
+          <h4 className="text-white font-black text-xl leading-tight mb-2 drop-shadow-lg">
+            {plano.title}
+          </h4>
+          {plano.description && (
+            <p className="text-[#999] text-xs line-clamp-2">
+              {plano.description}
+            </p>
+          )}
+        </div>
+
+        {/* Arrow icon */}
+        <div className="absolute top-4 right-4 w-10 h-10 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center border border-[#00E5FF]/30 group-hover:bg-[#00E5FF] group-hover:border-[#00E5FF] transition-all duration-300">
+          <ChevronRight className="w-5 h-5 text-[#00E5FF] group-hover:text-black transition-colors" />
+        </div>
+      </div>
+    </motion.div>
   );
 }

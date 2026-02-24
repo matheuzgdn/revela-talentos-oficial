@@ -47,36 +47,42 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import RevelaTalentos from './pages/RevelaTalentos';
-import PlanoCarreira from './pages/PlanoCarreira';
-import Hub from './pages/Hub';
-import PlanoInternacional from './pages/PlanoInternacional';
-import MeusServicos from './pages/MeusServicos';
-import AnalisePerformance from './pages/AnalisePerformance';
-import DatacenterDocumentation from './pages/DatacenterDocumentation';
-import AdminDashboard from './pages/AdminDashboard';
 import Admin from './pages/Admin';
-import RenderPage from './pages/RenderPage';
+import AdminDashboard from './pages/AdminDashboard';
+import AnalisePerformance from './pages/AnalisePerformance';
+import AthleteProfile from './pages/AthleteProfile';
+import AthleteVideos from './pages/AthleteVideos';
+import DatacenterDocumentation from './pages/DatacenterDocumentation';
 import Home from './pages/Home';
-import SeletivaOnline from './pages/SeletivaOnline';
+import Hub from './pages/Hub';
 import Lives from './pages/Lives';
+import MeusServicos from './pages/MeusServicos';
+import PlanoCarreira from './pages/PlanoCarreira';
+import PlanoInternacional from './pages/PlanoInternacional';
+import RenderPage from './pages/RenderPage';
+import RevelaTalentos from './pages/RevelaTalentos';
+import SearchAthletes from './pages/SearchAthletes';
+import SeletivaOnline from './pages/SeletivaOnline';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "RevelaTalentos": RevelaTalentos,
-    "PlanoCarreira": PlanoCarreira,
-    "Hub": Hub,
-    "PlanoInternacional": PlanoInternacional,
-    "MeusServicos": MeusServicos,
-    "AnalisePerformance": AnalisePerformance,
-    "DatacenterDocumentation": DatacenterDocumentation,
-    "AdminDashboard": AdminDashboard,
     "Admin": Admin,
-    "RenderPage": RenderPage,
+    "AdminDashboard": AdminDashboard,
+    "AnalisePerformance": AnalisePerformance,
+    "AthleteProfile": AthleteProfile,
+    "AthleteVideos": AthleteVideos,
+    "DatacenterDocumentation": DatacenterDocumentation,
     "Home": Home,
-    "SeletivaOnline": SeletivaOnline,
+    "Hub": Hub,
     "Lives": Lives,
+    "MeusServicos": MeusServicos,
+    "PlanoCarreira": PlanoCarreira,
+    "PlanoInternacional": PlanoInternacional,
+    "RenderPage": RenderPage,
+    "RevelaTalentos": RevelaTalentos,
+    "SearchAthletes": SearchAthletes,
+    "SeletivaOnline": SeletivaOnline,
 }
 
 export const pagesConfig = {

@@ -22,13 +22,14 @@ import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock } from
+  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle } from
 "lucide-react";
 
-const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines }) => {
+const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendNotification, onProfileVisit }) => {
   const pendingAnalysis = userData.performance.filter((p) => p.status === 'pending_analysis').length;
   const pendingMarketing = userData.marketing?.filter((p) => p.status === 'pending').length || 0;
   const hasNotifications = pendingAnalysis > 0 || pendingMarketing > 0;
@@ -79,9 +80,17 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines }) => {
             <p className="text-xs text-gray-400 truncate">{user.email}</p>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white flex-shrink-0" onClick={() => onEdit(user)}>
-          <Edit className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-1 flex-shrink-0">
+          <Button variant="ghost" size="icon" className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20" onClick={() => onSendNotification(user)} title="Enviar notificação">
+            <Bell className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/20" onClick={() => onProfileVisit(user)} title="Notificar visita ao perfil">
+            <Eye className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" onClick={() => onEdit(user)}>
+            <Edit className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
       
       {user.position && <p className="text-xs text-gray-500">{user.position} • {user.club || 'Sem clube'}</p>}
@@ -305,6 +314,14 @@ export default function AdminUsersTab() {
   const [showAllAthletes, setShowAllAthletes] = useState(true);
   const [isPlatformRestricted, setIsPlatformRestricted] = useState(false);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [notificationTarget, setNotificationTarget] = useState(null);
+  const [notificationForm, setNotificationForm] = useState({
+    title: '',
+    message: '',
+    type: 'message',
+    priority: 'medium'
+  });
 
   const personas = [
   { id: "analyst_01", name: "Analista de Desempenho" },
@@ -359,6 +376,56 @@ export default function AdminUsersTab() {
       console.error('Error loading platform settings:', error);
     } finally {
       setIsLoadingSettings(false);
+    }
+  };
+
+  const handleSendNotification = (user) => {
+    setNotificationTarget(user);
+    setNotificationForm({
+      title: '',
+      message: '',
+      type: 'message',
+      priority: 'medium'
+    });
+    setShowNotificationModal(true);
+  };
+
+  const handleProfileVisit = async (user) => {
+    try {
+      await Notification.create({
+        user_id: user.id,
+        title: 'Visita ao Perfil',
+        message: 'Eric Cena visitou seu perfil',
+        type: 'profile_visit',
+        priority: 'medium'
+      });
+      toast.success(`Notificação de visita enviada para ${user.full_name}`);
+    } catch (error) {
+      console.error('Error sending visit notification:', error);
+      toast.error('Erro ao enviar notificação');
+    }
+  };
+
+  const handleSubmitNotification = async () => {
+    if (!notificationForm.title || !notificationForm.message) {
+      toast.error('Preencha título e mensagem');
+      return;
+    }
+
+    try {
+      await Notification.create({
+        user_id: notificationTarget.id,
+        title: notificationForm.title,
+        message: notificationForm.message,
+        type: notificationForm.type,
+        priority: notificationForm.priority
+      });
+      toast.success(`Notificação enviada para ${notificationTarget.full_name}`);
+      setShowNotificationModal(false);
+      setNotificationTarget(null);
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      toast.error('Erro ao enviar notificação');
     }
   };
 
@@ -771,19 +838,21 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
                 )}
-                    </AnimatePresence>
-                  </div>
-            }
-                
-                {(!data.users || data.users.length === 0) && showAllAthletes &&
-            <p className="text-gray-500 text-center py-8">
-                    Nenhum atleta cadastrado no sistema.
-                  </p>
-            }
+                      </AnimatePresence>
+                    </div>
+                }
+
+                  {(!data.users || data.users.length === 0) && showAllAthletes &&
+                <p className="text-gray-500 text-center py-8">
+                      Nenhum atleta cadastrado no sistema.
+                    </p>
+                }
               </div>
 
               <div className="border-t border-gray-800 my-8"></div>
@@ -810,6 +879,8 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
@@ -833,6 +904,8 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
@@ -855,6 +928,8 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
@@ -877,6 +952,8 @@ export default function AdminUsersTab() {
                   user={user}
                   userData={getUserData(user.id)}
                   onEdit={handleEditClick}
+                  onSendNotification={handleSendNotification}
+                  onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
 
@@ -897,6 +974,8 @@ export default function AdminUsersTab() {
               user={user}
               userData={getUserData(user.id)}
               onEdit={handleEditClick}
+              onSendNotification={handleSendNotification}
+              onProfileVisit={handleProfileVisit}
               pipelines={data.pipelines}
               userPipelines={data.userPipelines} />
 
@@ -915,182 +994,71 @@ export default function AdminUsersTab() {
         </>
       }
 
-      {editingUser &&
-      <Dialog open={isModalOpen} onOpenChange={(isOpen) => {if (!isOpen) setEditingPerformanceItem(null);setIsModalOpen(isOpen);}}>
-          <DialogContent className="sm:max-w-[800px] bg-gray-900 border-gray-800 text-white max-h-[90vh]">
-            <DialogHeader>
-              <DialogTitle className="text-xl">Gerenciar: {editingUser.full_name}</DialogTitle>
-            </DialogHeader>
-            
-            <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-4">
-                <TabsTrigger value="profile">Perfil</TabsTrigger>
-                <TabsTrigger value="performance">Performance</TabsTrigger>
-                <TabsTrigger value="content">Progresso</TabsTrigger>
-                <TabsTrigger value="activity">Uploads</TabsTrigger>
-                <TabsTrigger value="messages">Mensagens</TabsTrigger>
-              </TabsList>
+      <AdminAthleteDetailsModal
+        user={editingUser}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingUser(null);
+        }}
+        onSave={loadAllData}
+      />
 
-              <ScrollArea className="max-h-[60vh] p-1">
-                <TabsContent value="profile" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="full_name">Nome Completo</Label>
-                      <Input id="full_name" value={editingUser.full_name || ""} onChange={(e) => handleFieldChange('full_name', e.target.value)} className="bg-gray-800 border-gray-700" />
-                    </div>
-                    <div>
-                      <Label htmlFor="position">Posição</Label>
-                      <Select value={editingUser.position || ""} onValueChange={(v) => handleFieldChange('position', v)}>
-                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Selecione a posição" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="goleiro">Goleiro</SelectItem>
-                          <SelectItem value="zagueiro">Zagueiro</SelectItem>
-                          <SelectItem value="lateral">Lateral</SelectItem>
-                          <SelectItem value="meio-campo">Meio-campo</SelectItem>
-                          <SelectItem value="atacante">Atacante</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="age">Idade</Label>
-                      <Input id="age" type="number" value={editingUser.age || ""} onChange={(e) => handleFieldChange('age', parseInt(e.target.value))} className="bg-gray-800 border-gray-700" />
-                    </div>
-                    <div>
-                      <Label htmlFor="club">Clube</Label>
-                      <Input id="club" value={editingUser.club || ""} onChange={(e) => handleFieldChange('club', e.target.value)} className="bg-gray-800 border-gray-700" />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Telefone</Label>
-                      <Input id="phone" value={editingUser.phone || ""} onChange={(e) => handleFieldChange('phone', e.target.value)} className="bg-gray-800 border-gray-700" />
-                    </div>
-                    <div>
-                      <Label htmlFor="role">Função</Label>
-                      <Select
-                      value={
-                      editingUser.role === 'admin' ? 'admin' :
-                      editingUser.is_revela_admin ? 'revela_admin' : 'user'
-                      }
-                      onValueChange={handleRoleChange}>
-
-                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">Usuário</SelectItem>
-                          <SelectItem value="revela_admin">Admin Revela</SelectItem>
-                          <SelectItem value="admin">Administrador Geral</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <Card className="bg-gray-800/50 border-gray-700 mt-6">
-                    <CardHeader>
-                      <CardTitle className="text-lg flex items-center gap-2 text-purple-400">
-                        <Shield className="w-5 h-5" />
-                        Controle de Acesso & Planos
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-cyan-500/30">
-                        <Label className="flex items-center gap-2">
-                          {editingUser.is_approved ?
-                        <Unlock className="w-4 h-4 text-green-400" /> :
-
-                        <Lock className="w-4 h-4 text-red-400" />
-                        }
-                          Acesso Aprovado à Plataforma
-                        </Label>
-                        <Switch checked={!!editingUser.is_approved} onCheckedChange={(c) => handleFieldChange('is_approved', c)} />
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
-                        <Label className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400" />Acesso ao Revela Talentos</Label>
-                        <Switch checked={!!editingUser.has_revela_talentos_access} onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)} />
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-green-500/30">
-                        <Label className="flex items-center gap-2 text-green-300"><TrendingUp className="w-4 h-4 text-green-400" />Acesso ao Plano de Carreira</Label>
-                        <Switch checked={!!editingUser.has_plano_carreira_access} onCheckedChange={(c) => handleFieldChange('has_plano_carreira_access', c)} />
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
-                        <Label className="flex items-center gap-2"><Crown className="w-4 h-4 text-cyan-400" />Promover a Atleta em Destaque</Label>
-                        <Switch checked={!!editingUser.is_featured} onCheckedChange={(c) => handleFieldChange('is_featured', c)} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="performance" className="space-y-4">
-                  {(() => {
-                  const userData = getUserData(editingUser.id);
-                  return (
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Performance do Atleta</h3>
-                        <div className="grid grid-cols-3 gap-4">
-                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.length}</p><p className="text-xs text-gray-300">Total de Jogos</p></CardContent></Card>
-                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Target className="w-8 h-8 text-green-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.reduce((sum, p) => sum + (p.goals || 0), 0)}</p><p className="text-xs text-gray-300">Total de Gols</p></CardContent></Card>
-                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><BarChart3 className="w-8 h-8 text-blue-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.length > 0 ? (userData.performance.reduce((sum, p) => sum + (p.rating || 0), 0) / userData.performance.length).toFixed(1) : '0.0'}</p><p className="text-xs text-gray-300">Nota Média</p></CardContent></Card>
-                        </div>
-                        <div className="space-y-2"><h4 className="font-medium">Últimas Performances</h4><div className="space-y-2 max-h-40 overflow-y-auto">{userData.performance.map((perf) => <div key={perf.id} className="p-2 bg-gray-800 rounded text-sm flex justify-between items-center"><div><p className="text-white">vs {perf.opponent}</p><p className="text-gray-400">{new Date(perf.game_date).toLocaleDateString()} - Nota: {perf.rating}/10</p></div><Button variant="ghost" size="icon" onClick={() => handleStartEditPerformance(perf)}><Edit className="w-4 h-4 text-gray-400 hover:text-white" /></Button></div>)}{userData.performance.length === 0 && <p className="text-gray-500 text-sm">Nenhuma performance registrada.</p>}</div></div>
-                      </div>);
-
-                })()}
-                </TabsContent>
-
-                <TabsContent value="content" className="space-y-4">
-                  {(() => {
-                  const userData = getUserData(editingUser.id);
-                  return (
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Progresso nos Conteúdos</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Eye className="w-8 h-8 text-purple-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.progress.length}</p><p className="text-xs text-gray-300">Conteúdos Acessados</p></CardContent></Card>
-                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Check className="w-8 h-8 text-green-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.progress.filter((p) => p.completed).length}</p><p className="text-xs text-gray-300">Concluídos</p></CardContent></Card>
-                        </div>
-                        <div className="space-y-2"><h4 className="font-medium">Progresso Recente</h4><div className="space-y-2 max-h-40 overflow-y-auto">{userData.progress.slice(0, 10).map((prog) => <div key={prog.id} className="p-2 bg-gray-800 rounded text-sm"><div className="flex justify-between items-center"><p className="text-white">Conteúdo ID: {prog.content_id.slice(-8)}</p><Badge className={prog.completed ? 'bg-green-600' : 'bg-yellow-600'}>{prog.completed ? 'Concluído' : `${prog.progress_percentage}%`}</Badge></div></div>)}{userData.progress.length === 0 && <p className="text-gray-500 text-sm">Nenhum progresso de conteúdo registrado.</p>}</div></div>
-                      </div>);
-
-                })()}
-                </TabsContent>
-
-                <TabsContent value="activity" className="space-y-4">
-                  {(() => {
-                  const userData = getUserData(editingUser.id);
-                  return (
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Uploads do Atleta</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Upload className="w-8 h-8 text-blue-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.uploads.length}</p><p className="text-xs text-gray-300">Total Uploads</p></CardContent></Card>
-                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Star className="w-8 h-8 text-yellow-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.uploads.filter((u) => u.is_featured).length}</p><p className="text-xs text-gray-300">Em Destaque</p></CardContent></Card>
-                        </div>
-                        <div className="space-y-2"><h4 className="font-medium">Últimos Uploads</h4><div className="space-y-2 max-h-60 overflow-y-auto">{userData.uploads.slice(0, 10).map((upload) => <div key={upload.id} className="p-2 bg-gray-800 rounded text-sm"><div className="flex justify-between items-center"><div><p className="text-white">{upload.file_name}</p><p className="text-gray-400">{upload.category} - {new Date(upload.created_date).toLocaleDateString()}</p></div><div className="flex items-center gap-2"><Badge className={upload.processing_status === 'completed' ? 'bg-green-600' : upload.processing_status === 'processing' ? 'bg-yellow-600' : upload.processing_status === 'pending' ? 'bg-blue-600' : 'bg-red-600'}>{upload.processing_status}</Badge><Button variant="ghost" size="icon" onClick={() => handleToggleFeatureUpload(upload)} className={upload.is_featured ? 'text-yellow-400 hover:text-yellow-500' : 'text-gray-500 hover:text-yellow-400'}><Star className="w-4 h-4" /></Button></div></div></div>)}{userData.uploads.length === 0 && <p className="text-gray-500 text-sm">Nenhum upload encontrado.</p>}</div></div>
-                      </div>);
-
-                })()}
-                </TabsContent>
-                
-                <TabsContent value="messages" className="space-y-4">
-                  {(() => {
-                  const userMessages = data.messages.
-                  filter((m) => m.sender_id === editingUser.id || m.receiver_id === editingUser.id).
-                  sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
-
-                  return (
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Histórico de Mensagens</h3>
-                        <div className="space-y-2 max-h-60 overflow-y-auto rounded-lg bg-black/20 p-2">{userMessages.map((msg) => <div key={msg.id} className={`flex ${msg.sender_id === editingUser.id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-md p-3 rounded-lg ${msg.sender_id === editingUser.id ? 'bg-blue-600' : 'bg-gray-700'}`}><p className="text-sm text-white">{msg.content}</p><p className={`text-xs mt-1 ${msg.sender_id === editingUser.id ? 'text-blue-200' : 'text-gray-400'}`}>{new Date(msg.created_date).toLocaleString('pt-BR')}</p></div></div>)}{userMessages.length === 0 && <p className="text-gray-500 text-center py-4 text-sm">Nenhuma mensagem encontrada.</p>}</div>
-                        <div className="pt-4 space-y-2"><Textarea placeholder={`Responder para ${editingUser.full_name}...`} value={newMessage} onChange={(e) => setNewMessage(e.target.value)} className="bg-gray-800 border-gray-700 text-white resize-none" rows={2} /><div className="flex justify-between items-center"><div className="flex items-center gap-2"><span className="text-xs text-gray-400">Como:</span><Select value={replyAs} onValueChange={setReplyAs}><SelectTrigger className="w-[180px] bg-gray-800 border-gray-700 text-white h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{personas.map((p) => <SelectItem key={p.id} value={p.id} className="text-xs">{p.name}</SelectItem>)}</SelectContent></Select></div><Button onClick={handleSendMessageInModal} disabled={isSending || !newMessage} size="sm">{isSending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Enviar</Button></div></div>
-                      </div>);
-
-                })()}
-                </TabsContent>
-              </ScrollArea>
-            </Tabs>
-
-            <DialogFooter className="mt-4">
-              <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
-              <Button type="button" onClick={handleModalSave}>Salvar Alterações</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      }
+      <Dialog open={showNotificationModal} onOpenChange={setShowNotificationModal}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bell className="w-5 h-5 text-blue-400" />
+              Enviar Notificação para {notificationTarget?.full_name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label className="text-gray-400">Tipo</Label>
+              <Select value={notificationForm.type} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, type: v }))}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="message">Mensagem</SelectItem>
+                  <SelectItem value="profile_visit">Visita ao Perfil</SelectItem>
+                  <SelectItem value="achievement">Conquista</SelectItem>
+                  <SelectItem value="general">Geral</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gray-400">Prioridade</Label>
+              <Select value={notificationForm.priority} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, priority: v }))}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Baixa</SelectItem>
+                  <SelectItem value="medium">Média</SelectItem>
+                  <SelectItem value="high">Alta</SelectItem>
+                  <SelectItem value="urgent">Urgente</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gray-400">Título</Label>
+              <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div>
+              <Label className="text-gray-400">Mensagem</Label>
+              <Textarea value={notificationForm.message} onChange={(e) => setNotificationForm((prev) => ({ ...prev, message: e.target.value }))} placeholder="Digite sua mensagem aqui..." className="bg-gray-800 border-gray-700 h-24" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNotificationModal(false)}>Cancelar</Button>
+            <Button onClick={handleSubmitNotification} className="bg-blue-600 hover:bg-blue-700">
+              <Send className="w-4 h-4 mr-2" />
+              Enviar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
         <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
