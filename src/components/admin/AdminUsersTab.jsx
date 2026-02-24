@@ -26,8 +26,14 @@ import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
+<<<<<<< HEAD
   GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle } from
 "lucide-react";
+=======
+  GitBranch, EyeOff, Lock, Unlock
+} from
+  "lucide-react";
+>>>>>>> 3960156 (Atualizações)
 
 const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendNotification, onProfileVisit }) => {
   const pendingAnalysis = userData.performance.filter((p) => p.status === 'pending_analysis').length;
@@ -92,7 +98,7 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendN
           </Button>
         </div>
       </div>
-      
+
       {user.position && <p className="text-xs text-gray-500">{user.position} • {user.club || 'Sem clube'}</p>}
 
       <div className="flex flex-wrap gap-2">
@@ -100,29 +106,29 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendN
       </div>
 
       {currentPipeline &&
-      <div className="flex items-center gap-2 text-sm text-gray-300">
+        <div className="flex items-center gap-2 text-sm text-gray-300">
           <GitBranch className="w-4 h-4 text-purple-400" />
           <span className="truncate">{currentPipeline.name}</span>
           {userPipelineInfo.current_stage &&
-        <Badge variant="outline" className="text-xs whitespace-nowrap">
+            <Badge variant="outline" className="text-xs whitespace-nowrap">
               {userPipelineInfo.current_stage}
             </Badge>
-        }
+          }
         </div>
       }
 
       {hasNotifications &&
-      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           {pendingAnalysis > 0 &&
-        <Badge variant="destructive" className="flex items-center gap-1">
+            <Badge variant="destructive" className="flex items-center gap-1">
               <BarChart3 className="w-3 h-3" /> {pendingAnalysis}
             </Badge>
-        }
+          }
           {pendingMarketing > 0 &&
-        <Badge variant="destructive" className="flex items-center gap-1">
+            <Badge variant="destructive" className="flex items-center gap-1">
               <Megaphone className="w-3 h-3" /> {pendingMarketing}
             </Badge>
-        }
+          }
         </div>
       }
     </motion.div>);
@@ -177,7 +183,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
     setNewPipeline((prev) => ({
       ...prev,
       stages: prev.stages.map((stage, i) =>
-      i === index ? { ...stage, [field]: value } : stage
+        i === index ? { ...stage, [field]: value } : stage
       )
     }));
   };
@@ -194,7 +200,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(pipelines || []).map((pipeline) =>
-        <Card key={pipeline.id} className="bg-gray-800 border-gray-700">
+          <Card key={pipeline.id} className="bg-gray-800 border-gray-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full bg-${pipeline.color}-500`} />
@@ -248,7 +254,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
                 className="bg-gray-800 border-gray-700" />
 
             </div>
-            
+
             <div>
               <div className="flex justify-between items-center mb-3">
                 <Label>Estágios do Pipeline</Label>
@@ -259,26 +265,26 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
               </div>
               <div className="space-y-3">
                 {newPipeline.stages.map((stage, index) =>
-                <div key={index} className="flex gap-2 items-start">
+                  <div key={index} className="flex gap-2 items-start">
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <Input
-                      placeholder="Nome do estágio"
-                      value={stage.name}
-                      onChange={(e) => updateStage(index, 'name', e.target.value)}
-                      className="bg-gray-800 border-gray-700" />
+                        placeholder="Nome do estágio"
+                        value={stage.name}
+                        onChange={(e) => updateStage(index, 'name', e.target.value)}
+                        className="bg-gray-800 border-gray-700" />
 
                       <Input
-                      placeholder="Descrição"
-                      value={stage.description}
-                      onChange={(e) => updateStage(index, 'description', e.target.value)}
-                      className="bg-gray-800 border-gray-700" />
+                        placeholder="Descrição"
+                        value={stage.description}
+                        onChange={(e) => updateStage(index, 'description', e.target.value)}
+                        className="bg-gray-800 border-gray-700" />
 
                     </div>
                     {index > 0 &&
-                  <Button type="button" onClick={() => removeStage(index)} size="icon" variant="ghost" className="text-red-400 hover:text-red-300">
+                      <Button type="button" onClick={() => removeStage(index)} size="icon" variant="ghost" className="text-red-400 hover:text-red-300">
                         <X className="w-4 h-4" />
                       </Button>
-                  }
+                    }
                   </div>
                 )}
               </div>
@@ -324,10 +330,10 @@ export default function AdminUsersTab() {
   });
 
   const personas = [
-  { id: "analyst_01", name: "Analista de Desempenho" },
-  { id: "physio_01", name: "Preparador Físico" },
-  { id: "mentor_01", name: "Mentor de Carreira" },
-  { id: "marketing_01", name: "Equipe de Marketing" }];
+    { id: "analyst_01", name: "Analista de Desempenho" },
+    { id: "physio_01", name: "Preparador Físico" },
+    { id: "mentor_01", name: "Mentor de Carreira" },
+    { id: "marketing_01", name: "Equipe de Marketing" }];
 
 
   const loadAllData = useCallback(async () => {
@@ -349,11 +355,11 @@ export default function AdminUsersTab() {
       // Load other data only when needed (in background)
       Pipeline.filter({ is_active: true }).then((pipelines) => {
         setData((prev) => ({ ...prev, pipelines }));
-      }).catch(() => {});
+      }).catch(() => { });
 
       UserPipeline.list().then((userPipelines) => {
         setData((prev) => ({ ...prev, userPipelines }));
-      }).catch(() => {});
+      }).catch(() => { });
     } catch (error) {
       console.error('Error loading user data:', error);
       toast.error('Erro ao carregar dados dos usuários.');
@@ -457,23 +463,23 @@ export default function AdminUsersTab() {
 
   const filteredUsers = useMemo(() => {
     return data.users.
-    filter((user) => {
-      const term = searchTerm.toLowerCase();
-      const matchesSearch =
-      user.full_name?.toLowerCase().includes(term) ||
-      user.email?.toLowerCase().includes(term);
+      filter((user) => {
+        const term = searchTerm.toLowerCase();
+        const matchesSearch =
+          user.full_name?.toLowerCase().includes(term) ||
+          user.email?.toLowerCase().includes(term);
 
 
-      const matchesFilter =
-      filter === "all" ||
-      filter === "revela_only" && user.has_revela_talentos_access && !user.has_plano_carreira_access ||
-      filter === "plano_carreira" && user.has_plano_carreira_access ||
-      filter === "admin" && user.role === 'admin' ||
-      filter === "revela_admin" && user.is_revela_admin && user.role !== 'admin' ||
-      filter === "featured" && user.is_featured;
+        const matchesFilter =
+          filter === "all" ||
+          filter === "revela_only" && user.has_revela_talentos_access && !user.has_plano_carreira_access ||
+          filter === "plano_carreira" && user.has_plano_carreira_access ||
+          filter === "admin" && user.role === 'admin' ||
+          filter === "revela_admin" && user.is_revela_admin && user.role !== 'admin' ||
+          filter === "featured" && user.is_featured;
 
-      return matchesSearch && matchesFilter;
-    });
+        return matchesSearch && matchesFilter;
+      });
   }, [data.users, searchTerm, filter]);
 
   const { revelaTalentosUsers, planoCarreiraUsers, adminUsers, revelaAdminUsers } = useMemo(() => {
@@ -633,12 +639,12 @@ export default function AdminUsersTab() {
   const loadUserDetails = async (userId) => {
     try {
       const [uploads, messages, performance, progress] = await Promise.all([
-      AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
-      ChatMessage.filter({
-        $or: [{ sender_id: userId }, { receiver_id: userId }]
-      }, "-created_date", 50),
-      PerformanceData.filter({ user_id: userId }, "-game_date", 20),
-      UserProgress.filter({ user_id: userId }, null, 50)]
+        AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
+        ChatMessage.filter({
+          $or: [{ sender_id: userId }, { receiver_id: userId }]
+        }, "-created_date", 50),
+        PerformanceData.filter({ user_id: userId }, "-game_date", 20),
+        UserProgress.filter({ user_id: userId }, null, 50)]
       );
 
       setData((prev) => ({
@@ -656,8 +662,8 @@ export default function AdminUsersTab() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
-              <Loader2 className="w-8 h-8 animate-spin text-sky-400" />
-          </div>);
+        <Loader2 className="w-8 h-8 animate-spin text-sky-400" />
+      </div>);
 
   }
 
@@ -669,11 +675,11 @@ export default function AdminUsersTab() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {isPlatformRestricted ?
-              <div className="p-3 bg-red-500/20 rounded-lg">
+                <div className="p-3 bg-red-500/20 rounded-lg">
                   <Lock className="w-8 h-8 text-red-400" />
                 </div> :
 
-              <div className="p-3 bg-green-500/20 rounded-lg">
+                <div className="p-3 bg-green-500/20 rounded-lg">
                   <Unlock className="w-8 h-8 text-green-400" />
                 </div>
               }
@@ -683,8 +689,8 @@ export default function AdminUsersTab() {
                 </h3>
                 <p className="text-sm text-gray-400">
                   {isPlatformRestricted ?
-                  'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
-                  'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
+                    'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
+                    'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
                 </p>
               </div>
             </div>
@@ -692,16 +698,16 @@ export default function AdminUsersTab() {
               onClick={togglePlatformRestriction}
               disabled={isLoadingSettings}
               className={isPlatformRestricted ?
-              'bg-green-600 hover:bg-green-700' :
-              'bg-red-600 hover:bg-red-700'}>
+                'bg-green-600 hover:bg-green-700' :
+                'bg-red-600 hover:bg-red-700'}>
 
               {isPlatformRestricted ?
-              <>
+                <>
                   <Unlock className="w-4 h-4 mr-2" />
                   Liberar Plataforma
                 </> :
 
-              <>
+                <>
                   <Lock className="w-4 h-4 mr-2" />
                   Restringir Plataforma
                 </>
@@ -744,12 +750,12 @@ export default function AdminUsersTab() {
                 className="border-gray-700">
 
                 {view === "crm" ?
-                <>
+                  <>
                     <GitBranch className="w-4 h-4 mr-2" />
                     Pipelines
                   </> :
 
-                <>
+                  <>
                     <Users className="w-4 h-4 mr-2" />
                     CRM
                   </>
@@ -761,12 +767,12 @@ export default function AdminUsersTab() {
       </Card>
 
       {view === "pipelines" ?
-      <PipelineManager
-        pipelines={data.pipelines}
-        onRefresh={loadAllData} /> :
+        <PipelineManager
+          pipelines={data.pipelines}
+          onRefresh={loadAllData} /> :
 
 
-      <>
+        <>
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="bg-blue-900/20 border-blue-800">
@@ -801,7 +807,7 @@ export default function AdminUsersTab() {
 
           {/* All Athletes Grid */}
           {filter === "all" &&
-        <div className="space-y-6">
+            <div className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -810,29 +816,30 @@ export default function AdminUsersTab() {
                     <Badge className="bg-cyan-600/20 text-cyan-400">Lista Completa</Badge>
                   </div>
                   <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAllAthletes(!showAllAthletes)}
-                className="text-gray-400 hover:text-white">
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAllAthletes(!showAllAthletes)}
+                    className="text-gray-400 hover:text-white">
 
                     {showAllAthletes ?
-                <>
+                      <>
                         <EyeOff className="w-4 h-4 mr-2" />
                         Ocultar
                       </> :
 
-                <>
+                      <>
                         <Eye className="w-4 h-4 mr-2" />
                         Mostrar
                       </>
-                }
+                    }
                   </Button>
                 </div>
-                
+
                 {showAllAthletes &&
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {data.users.map((user) =>
+<<<<<<< HEAD
                 <AthleteCard
                   key={user.id}
                   user={user}
@@ -852,6 +859,25 @@ export default function AdminUsersTab() {
                 <p className="text-gray-500 text-center py-8">
                       Nenhum atleta cadastrado no sistema.
                     </p>
+=======
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines} />
+
+                      )}
+                    </AnimatePresence>
+                  </div>
+                }
+
+                {(!data.users || data.users.length === 0) && showAllAthletes &&
+                  <p className="text-gray-500 text-center py-8">
+                    Nenhum atleta cadastrado no sistema.
+                  </p>
+>>>>>>> 3960156 (Atualizações)
                 }
               </div>
 
@@ -866,7 +892,7 @@ export default function AdminUsersTab() {
               </div>
 
               {adminUsers.length > 0 &&
-          <div className="space-y-4">
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Shield className="w-6 h-6 text-red-400" />
                     <h3 className="text-lg font-bold text-white">Administradores Gerais ({adminUsers.length})</h3>
@@ -874,6 +900,7 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {adminUsers.map((user) =>
+<<<<<<< HEAD
                 <AthleteCard
                   key={user.id}
                   user={user}
@@ -883,15 +910,24 @@ export default function AdminUsersTab() {
                   onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
+=======
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines} />
+>>>>>>> 3960156 (Atualizações)
 
-                )}
+                      )}
                     </AnimatePresence>
                   </div>
                 </div>
-          }
+              }
 
               {revelaAdminUsers.length > 0 &&
-          <div className="space-y-4">
+                <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Shield className="w-6 h-6 text-purple-400" />
                     <h3 className="text-lg font-bold text-white">Administradores Revela ({revelaAdminUsers.length})</h3>
@@ -899,6 +935,7 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {revelaAdminUsers.map((user) =>
+<<<<<<< HEAD
                 <AthleteCard
                   key={user.id}
                   user={user}
@@ -908,12 +945,21 @@ export default function AdminUsersTab() {
                   onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
+=======
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines} />
+>>>>>>> 3960156 (Atualizações)
 
-                )}
+                      )}
                     </AnimatePresence>
                   </div>
                 </div>
-          }
+              }
 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -923,6 +969,7 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {planoCarreiraUsers.map((user) =>
+<<<<<<< HEAD
                 <AthleteCard
                   key={user.id}
                   user={user}
@@ -932,8 +979,17 @@ export default function AdminUsersTab() {
                   onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
+=======
+                      <AthleteCard
+                        key={user.id}
+                        user={user}
+                        userData={getUserData(user.id)}
+                        onEdit={handleEditClick}
+                        pipelines={data.pipelines}
+                        userPipelines={data.userPipelines} />
+>>>>>>> 3960156 (Atualizações)
 
-                )}
+                    )}
                   </AnimatePresence>
                 </div>
                 {planoCarreiraUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta no Plano de Carreira.</p>}
@@ -947,6 +1003,7 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {revelaTalentosUsers.map((user) =>
+<<<<<<< HEAD
                 <AthleteCard
                   key={user.id}
                   user={user}
@@ -956,19 +1013,29 @@ export default function AdminUsersTab() {
                   onProfileVisit={handleProfileVisit}
                   pipelines={data.pipelines}
                   userPipelines={data.userPipelines} />
+=======
+                      <AthleteCard
+                        key={user.id}
+                        user={user}
+                        userData={getUserData(user.id)}
+                        onEdit={handleEditClick}
+                        pipelines={data.pipelines}
+                        userPipelines={data.userPipelines} />
+>>>>>>> 3960156 (Atualizações)
 
-                )}
+                    )}
                   </AnimatePresence>
                 </div>
                 {revelaTalentosUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta apenas neste plano.</p>}
               </div>
             </div>
-        }
+          }
 
           {filter !== "all" &&
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <AnimatePresence>
                 {filteredUsers.map((user) =>
+<<<<<<< HEAD
             <AthleteCard
               key={user.id}
               user={user}
@@ -978,22 +1045,32 @@ export default function AdminUsersTab() {
               onProfileVisit={handleProfileVisit}
               pipelines={data.pipelines}
               userPipelines={data.userPipelines} />
+=======
+                  <AthleteCard
+                    key={user.id}
+                    user={user}
+                    userData={getUserData(user.id)}
+                    onEdit={handleEditClick}
+                    pipelines={data.pipelines}
+                    userPipelines={data.userPipelines} />
+>>>>>>> 3960156 (Atualizações)
 
-            )}
+                )}
               </AnimatePresence>
             </div>
-        }
+          }
 
           {filteredUsers.length === 0 && filter !== "all" &&
-        <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500">
               <Users className="w-16 h-16 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
               <p>Ajuste os filtros de busca para encontrar atletas.</p>
             </div>
-        }
+          }
         </>
       }
 
+<<<<<<< HEAD
       <AdminAthleteDetailsModal
         user={editingUser}
         isOpen={isModalOpen}
@@ -1059,14 +1136,362 @@ export default function AdminUsersTab() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+=======
+      {editingUser &&
+        <Dialog open={isModalOpen} onOpenChange={(isOpen) => { if (!isOpen) setEditingPerformanceItem(null); setIsModalOpen(isOpen); }}>
+          <DialogContent className="sm:max-w-[900px] h-[85vh] p-0 bg-gray-950 border-gray-800 text-white flex flex-col overflow-hidden shadow-2xl shadow-cyan-900/10">
+            <DialogHeader className="p-6 pb-2 shrink-0">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                <Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-2 border-gray-800 shadow-xl">
+                  <AvatarImage src={editingUser.profile_picture_url} className="object-cover" />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-600 to-cyan-500 text-2xl font-bold">
+                    {editingUser.full_name?.charAt(0) || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-center sm:text-left flex-1 min-w-0">
+                  <DialogTitle className="text-2xl font-bold text-white mb-1 truncate">
+                    {editingUser.full_name}
+                  </DialogTitle>
+                  <p className="text-sm text-gray-400 truncate">{editingUser.email}</p>
+                  {editingUser.position && <Badge variant="outline" className="mt-2 bg-gray-900 text-gray-300 border-gray-700">{editingUser.position} {editingUser.club ? `• ${editingUser.club}` : ''}</Badge>}
+                </div>
+              </div>
+            </DialogHeader>
+
+            <Tabs defaultValue="profile" className="flex-1 flex flex-col min-h-0">
+              <div className="px-6 border-b border-gray-800 shrink-0">
+                <TabsList className="bg-transparent h-auto p-0 flex gap-4 overflow-x-auto hide-scrollbar">
+                  {[
+                    { id: "profile", label: "Perfil" },
+                    { id: "performance", label: "Performance" },
+                    { id: "content", label: "Progresso" },
+                    { id: "activity", label: "Uploads" },
+                    { id: "messages", label: "Mensagens" }
+                  ].map((tab) => (
+                    <TabsTrigger
+                      key={tab.id}
+                      value={tab.id}
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-cyan-500 data-[state=active]:text-cyan-400 data-[state=active]:bg-transparent data-[state=active]:shadow-none bg-transparent text-gray-400 hover:text-gray-200 px-2 py-3 transition-colors text-sm font-medium whitespace-nowrap"
+                    >
+                      {tab.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </div>
+
+              <ScrollArea className="flex-1 px-6 py-6 pb-24">
+                <TabsContent value="profile" className="space-y-6 mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="full_name" className="text-gray-300">Nome Completo</Label>
+                      <Input id="full_name" value={editingUser.full_name || ""} onChange={(e) => handleFieldChange('full_name', e.target.value)} className="bg-gray-900 border-gray-800 focus-visible:ring-cyan-500/50" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="position" className="text-gray-300">Posição</Label>
+                      <Select value={editingUser.position || ""} onValueChange={(v) => handleFieldChange('position', v)}>
+                        <SelectTrigger className="bg-gray-900 border-gray-800 focus:ring-cyan-500/50"><SelectValue placeholder="Selecione a posição" /></SelectTrigger>
+                        <SelectContent className="bg-gray-900 border-gray-800 text-white">
+                          <SelectItem value="goleiro">Goleiro</SelectItem>
+                          <SelectItem value="zagueiro">Zagueiro</SelectItem>
+                          <SelectItem value="lateral">Lateral</SelectItem>
+                          <SelectItem value="meio-campo">Meio-campo</SelectItem>
+                          <SelectItem value="atacante">Atacante</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="age" className="text-gray-300">Idade</Label>
+                      <Input id="age" type="number" value={editingUser.age || ""} onChange={(e) => handleFieldChange('age', parseInt(e.target.value))} className="bg-gray-900 border-gray-800 focus-visible:ring-cyan-500/50" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="club" className="text-gray-300">Clube</Label>
+                      <Input id="club" value={editingUser.club || ""} onChange={(e) => handleFieldChange('club', e.target.value)} className="bg-gray-900 border-gray-800 focus-visible:ring-cyan-500/50" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-gray-300">Telefone</Label>
+                      <Input id="phone" value={editingUser.phone || ""} onChange={(e) => handleFieldChange('phone', e.target.value)} className="bg-gray-900 border-gray-800 focus-visible:ring-cyan-500/50" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="role" className="text-gray-300">Função no Sistema</Label>
+                      <Select
+                        value={
+                          editingUser.role === 'admin' ? 'admin' :
+                            editingUser.is_revela_admin ? 'revela_admin' : 'user'
+                        }
+                        onValueChange={handleRoleChange}>
+                        <SelectTrigger className="bg-gray-900 border-gray-800 focus:ring-cyan-500/50"><SelectValue /></SelectTrigger>
+                        <SelectContent className="bg-gray-900 border-gray-800 text-white">
+                          <SelectItem value="user">Usuário</SelectItem>
+                          <SelectItem value="revela_admin">Admin Revela</SelectItem>
+                          <SelectItem value="admin">Administrador Geral</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <Card className="bg-black/40 border-gray-800/60 shadow-inner">
+                    <CardHeader className="pb-3 text-cyan-400">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Shield className="w-5 h-5" />
+                        Controle de Acesso & Planos
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg border border-gray-800/50 hover:bg-gray-900/80 transition-colors">
+                        <div className="space-y-1">
+                          <Label className="flex items-center gap-2 font-medium text-base">
+                            {editingUser.is_approved ? <Unlock className="w-4 h-4 text-green-400" /> : <Lock className="w-4 h-4 text-red-500" />}
+                            Acesso Aprovado à Plataforma
+                          </Label>
+                          <p className="text-xs text-gray-500 pl-6">Permite que o usuário faça login e use o app básico.</p>
+                        </div>
+                        <Switch className="data-[state=checked]:bg-green-500" checked={!!editingUser.is_approved} onCheckedChange={(c) => handleFieldChange('is_approved', c)} />
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg border border-gray-800/50 hover:bg-gray-900/80 transition-colors">
+                        <div className="space-y-1">
+                          <Label className="flex items-center gap-2 font-medium text-base text-blue-300"><Star className="w-4 h-4" />Acesso ao Revela Talentos</Label>
+                          <p className="text-xs text-gray-500 pl-6">Acesso ao plano base de envio de vídeos.</p>
+                        </div>
+                        <Switch className="data-[state=checked]:bg-blue-500" checked={!!editingUser.has_revela_talentos_access} onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)} />
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg border border-gray-800/50 hover:bg-gray-900/80 transition-colors">
+                        <div className="space-y-1">
+                          <Label className="flex items-center gap-2 font-medium text-base text-green-300"><TrendingUp className="w-4 h-4" />Acesso ao Plano de Carreira</Label>
+                          <p className="text-xs text-gray-500 pl-6">Acesso premium com acompanhamento e CRM.</p>
+                        </div>
+                        <Switch className="data-[state=checked]:bg-green-500" checked={!!editingUser.has_plano_carreira_access} onCheckedChange={(c) => handleFieldChange('has_plano_carreira_access', c)} />
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-900/50 to-yellow-900/10 rounded-lg border border-yellow-500/20 hover:border-yellow-500/40 transition-colors">
+                        <div className="space-y-1">
+                          <Label className="flex items-center gap-2 font-medium text-base text-yellow-400"><Crown className="w-4 h-4" />Promover a Atleta em Destaque</Label>
+                          <p className="text-xs text-gray-500 pl-6">Mensalmente listado nos destaques e vitrines.</p>
+                        </div>
+                        <Switch className="data-[state=checked]:bg-yellow-500" checked={!!editingUser.is_featured} onCheckedChange={(c) => handleFieldChange('is_featured', c)} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="performance" className="space-y-6 mt-0">
+                  {(() => {
+                    const userData = getUserData(editingUser.id);
+                    return (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-2 text-cyan-400">
+                          <BarChart3 className="w-5 h-5" />
+                          <h3 className="font-semibold text-lg text-white">Métricas Gerais</h3>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <Card className="bg-gray-900/50 border-gray-800"><CardContent className="p-6 flex flex-col items-center justify-center text-center"><Trophy className="w-8 h-8 text-yellow-400 mb-3" /><p className="text-3xl font-bold text-white">{userData.performance.length}</p><p className="text-sm font-medium text-gray-400 uppercase tracking-wider mt-1">Jogos</p></CardContent></Card>
+                          <Card className="bg-gray-900/50 border-gray-800"><CardContent className="p-6 flex flex-col items-center justify-center text-center"><Target className="w-8 h-8 text-green-400 mb-3" /><p className="text-3xl font-bold text-white">{userData.performance.reduce((sum, p) => sum + (p.goals || 0), 0)}</p><p className="text-sm font-medium text-gray-400 uppercase tracking-wider mt-1">Gols</p></CardContent></Card>
+                          <Card className="bg-gray-900/50 border-gray-800"><CardContent className="p-6 flex flex-col items-center justify-center text-center"><BarChart3 className="w-8 h-8 text-blue-400 mb-3" /><p className="text-3xl font-bold text-white">{userData.performance.length > 0 ? (userData.performance.reduce((sum, p) => sum + (p.rating || 0), 0) / userData.performance.length).toFixed(1) : '0.0'}</p><p className="text-sm font-medium text-gray-400 uppercase tracking-wider mt-1">Nota Média</p></CardContent></Card>
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="font-medium text-gray-300">Histórico Recente</h4>
+                          <div className="space-y-2">
+                            {userData.performance.map((perf) => (
+                              <div key={perf.id} className="p-4 bg-gray-900/50 border border-gray-800/50 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:bg-gray-800/80 transition-colors">
+                                <div>
+                                  <p className="text-white font-medium flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
+                                    vs {perf.opponent}
+                                  </p>
+                                  <p className="text-gray-400 text-sm mt-1">{new Date(perf.game_date).toLocaleDateString()} • Nota: <span className="text-white font-medium">{perf.rating}/10</span></p>
+                                </div>
+                                <Button variant="secondary" size="sm" onClick={() => handleStartEditPerformance(perf)} className="bg-gray-800 hover:bg-gray-700 text-gray-300">
+                                  <Edit className="w-4 h-4 mr-2" />
+                                  Avaliar
+                                </Button>
+                              </div>
+                            ))}
+                            {userData.performance.length === 0 && <div className="text-center py-8 bg-gray-900/30 rounded-lg border border-gray-800/30 border-dashed"><Trophy className="w-8 h-8 text-gray-600 mx-auto mb-2" /><p className="text-gray-500">Nenhuma performance registrada ainda.</p></div>}
+                          </div>
+                        </div>
+                      </div>);
+                  })()}
+                </TabsContent>
+
+                <TabsContent value="content" className="space-y-6 mt-0">
+                  {(() => {
+                    const userData = getUserData(editingUser.id);
+                    return (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-2 text-purple-400">
+                          <Eye className="w-5 h-5" />
+                          <h3 className="font-semibold text-lg text-white">Engajamento com Material</h3>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <Card className="bg-gray-900/50 border-gray-800"><CardContent className="p-6 flex flex-col items-center justify-center text-center"><Eye className="w-8 h-8 text-purple-400 mb-3" /><p className="text-3xl font-bold text-white">{userData.progress.length}</p><p className="text-sm font-medium text-gray-400 uppercase tracking-wider mt-1">Materiais Iniciados</p></CardContent></Card>
+                          <Card className="bg-gray-900/50 border-gray-800"><CardContent className="p-6 flex flex-col items-center justify-center text-center"><Check className="w-8 h-8 text-green-400 mb-3" /><p className="text-3xl font-bold text-white">{userData.progress.filter((p) => p.completed).length}</p><p className="text-sm font-medium text-gray-400 uppercase tracking-wider mt-1">Módulos Concluídos</p></CardContent></Card>
+                        </div>
+                        <div className="space-y-3">
+                          <h4 className="font-medium text-gray-300">Progresso Detalhado</h4>
+                          <div className="space-y-2">
+                            {userData.progress.slice(0, 10).map((prog) => (
+                              <div key={prog.id} className="p-4 bg-gray-900/50 border border-gray-800/50 rounded-lg">
+                                <div className="flex justify-between items-center mb-2">
+                                  <p className="text-white font-medium text-sm">Conteúdo Ref: {prog.content_id.slice(-8)}</p>
+                                  <Badge variant={prog.completed ? "default" : "secondary"} className={prog.completed ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30'}>
+                                    {prog.completed ? 'Concluído' : 'Em Andamento'}
+                                  </Badge>
+                                </div>
+                                {!prog.completed && (
+                                  <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
+                                    <div className="bg-cyan-500 h-2 rounded-full" style={{ width: `${prog.progress_percentage}%` }}></div>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            {userData.progress.length === 0 && <div className="text-center py-8 bg-gray-900/30 rounded-lg border border-gray-800/30 border-dashed"><EyeOff className="w-8 h-8 text-gray-600 mx-auto mb-2" /><p className="text-gray-500">Nenhum acesso a conteúdo registrado.</p></div>}
+                          </div>
+                        </div>
+                      </div>);
+                  })()}
+                </TabsContent>
+
+                <TabsContent value="activity" className="space-y-6 mt-0">
+                  {(() => {
+                    const userData = getUserData(editingUser.id);
+                    return (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-2 text-blue-400">
+                          <Upload className="w-5 h-5" />
+                          <h3 className="font-semibold text-lg text-white">Arquivos & Uploads</h3>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <Card className="bg-gray-900/50 border-gray-800"><CardContent className="p-6 flex flex-col items-center justify-center text-center"><Upload className="w-8 h-8 text-blue-400 mb-3" /><p className="text-3xl font-bold text-white">{userData.uploads.length}</p><p className="text-sm font-medium text-gray-400 uppercase tracking-wider mt-1">Total de Arquivos</p></CardContent></Card>
+                          <Card className="bg-gray-900/50 border-gray-800"><CardContent className="p-6 flex flex-col items-center justify-center text-center"><Star className="w-8 h-8 text-yellow-400 mb-3" /><p className="text-3xl font-bold text-white">{userData.uploads.filter((u) => u.is_featured).length}</p><p className="text-sm font-medium text-gray-400 uppercase tracking-wider mt-1">Vídeos em Destaque</p></CardContent></Card>
+                        </div>
+                        <div className="space-y-3">
+                          <h4 className="font-medium text-gray-300">Arquivos Recentes</h4>
+                          <div className="space-y-2">
+                            {userData.uploads.slice(0, 10).map((upload) => (
+                              <div key={upload.id} className="p-4 bg-gray-900/50 border border-gray-800/50 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-gray-800/80 transition-colors">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-white font-medium truncate" title={upload.file_name}>{upload.file_name}</p>
+                                  <p className="text-gray-400 text-sm mt-1">{upload.category || 'Geral'} • {new Date(upload.created_date).toLocaleDateString()}</p>
+                                </div>
+                                <div className="flex items-center gap-3 shrink-0">
+                                  <Badge className={
+                                    upload.processing_status === 'completed' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                      upload.processing_status === 'processing' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
+                                        upload.processing_status === 'pending' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                                          'bg-red-500/10 text-red-400 border border-red-500/20'
+                                  }>
+                                    {upload.processing_status === 'completed' ? 'Concluído' :
+                                      upload.processing_status === 'processing' ? 'Processando' :
+                                        upload.processing_status === 'pending' ? 'Pendente' :
+                                          'Erro'}
+                                  </Badge>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleToggleFeatureUpload(upload)}
+                                    className={`h-8 px-2 ${upload.is_featured ? 'bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 hover:text-yellow-300' : 'text-gray-500 hover:bg-gray-800 hover:text-yellow-400'}`}
+                                    title={upload.is_featured ? 'Remover Destaque' : 'Destacar Vídeo'}
+                                  >
+                                    <Star className={`w-4 h-4 mr-1 ${upload.is_featured ? 'fill-current' : ''}`} />
+                                    {upload.is_featured ? 'Destaque' : 'Destacar'}
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                            {userData.uploads.length === 0 && <div className="text-center py-8 bg-gray-900/30 rounded-lg border border-gray-800/30 border-dashed"><Upload className="w-8 h-8 text-gray-600 mx-auto mb-2" /><p className="text-gray-500">Nenhum upload registrado.</p></div>}
+                          </div>
+                        </div>
+                      </div>);
+                  })()}
+                </TabsContent>
+
+                <TabsContent value="messages" className="space-y-6 flex flex-col h-[500px] mt-0">
+                  {(() => {
+                    const userMessages = data.messages.
+                      filter((m) => m.sender_id === editingUser.id || m.receiver_id === editingUser.id).
+                      sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
+
+                    return (
+                      <div className="flex flex-col h-full bg-gray-900/30 border border-gray-800/50 rounded-xl overflow-hidden">
+                        <div className="bg-gray-900 border-b border-gray-800 p-4 shrink-0 flex items-center justify-between">
+                          <h3 className="font-semibold text-white flex items-center gap-2">
+                            <Send className="w-4 h-4 text-cyan-400" />
+                            Chat Direto
+                          </h3>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                          {userMessages.map((msg) => (
+                            <div key={msg.id} className={`flex ${msg.sender_id === editingUser.id ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`max-w-[80%] p-3 rounded-2xl ${msg.sender_id === editingUser.id ? 'bg-gray-800 text-white rounded-tr-sm' : 'bg-gradient-to-br from-blue-600 to-cyan-600 text-white rounded-tl-sm shadow-md'}`}>
+                                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                                <p className={`text-[10px] mt-2 text-right ${msg.sender_id === editingUser.id ? 'text-gray-400' : 'text-blue-100/70'}`}>
+                                  {new Date(msg.created_date).toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                          {userMessages.length === 0 && (
+                            <div className="h-full flex flex-col items-center justify-center text-gray-500">
+                              <Megaphone className="w-12 h-12 mb-3 text-gray-700" />
+                              <p>Inicie uma conversa com o atleta.</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-4 bg-gray-900 border-t border-gray-800 shrink-0">
+                          <div className="space-y-3">
+                            <Textarea
+                              placeholder={`Enviar mensagem para ${editingUser.full_name}...`}
+                              value={newMessage}
+                              onChange={(e) => setNewMessage(e.target.value)}
+                              className="bg-gray-950 border-gray-800 focus-visible:ring-cyan-500/50 text-white resize-none h-[80px]"
+                            />
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                              <div className="flex items-center gap-2 bg-gray-950 rounded-md p-1 pl-3 border border-gray-800">
+                                <span className="text-xs text-gray-400 font-medium">Responder como:</span>
+                                <Select value={replyAs} onValueChange={setReplyAs}>
+                                  <SelectTrigger className="w-[160px] bg-transparent border-0 text-white h-8 text-xs focus:ring-0 shadow-none"><SelectValue /></SelectTrigger>
+                                  <SelectContent className="bg-gray-900 border-gray-800">
+                                    {personas.map((p) => <SelectItem key={p.id} value={p.id} className="text-xs text-white">{p.name}</SelectItem>)}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <Button
+                                onClick={handleSendMessageInModal}
+                                disabled={isSending || !newMessage.trim()}
+                                className="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-500 text-white"
+                              >
+                                {isSending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
+                                Enviar Mensagem
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>);
+                  })()}
+                </TabsContent>
+              </ScrollArea>
+            </Tabs>
+
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gray-900/80 backdrop-blur-md border-t border-gray-800 flex justify-end gap-3 z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.5)]">
+              <DialogClose asChild><Button type="button" variant="ghost" className="text-gray-400 hover:text-white hover:bg-gray-800">Cancelar</Button></DialogClose>
+              <Button type="button" onClick={handleModalSave} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-cyan-500/20 px-8 font-medium">
+                Salvar Alterações
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      }
+>>>>>>> 3960156 (Atualizações)
 
       <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
         <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
           <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
           {editingPerformanceItem &&
-          <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
+            <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
               {editingPerformanceItem.associated_video_url &&
-            <div className="space-y-3">
+                <div className="space-y-3">
                   <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
                   <div className="p-4 bg-gray-800 rounded-lg space-y-2">
                     <h4 className="font-semibold text-white">Diário do Atleta</h4>
@@ -1074,7 +1499,7 @@ export default function AdminUsersTab() {
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
                   </div>
                 </div>
-            }
+              }
               <div className="grid grid-cols-2 gap-4">
                 <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
