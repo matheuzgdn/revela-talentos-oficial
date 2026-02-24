@@ -1,6 +1,9 @@
 
 import React, { useState, useEffect } from "react";
-import { base44 } from '@/api/base44Client';
+import { User } from "@/entities/User";
+import { UserSubscription } from "@/entities/UserSubscription";
+import { SubscriptionPackage } from "@/entities/SubscriptionPackage";
+import { UploadFile } from "@/integrations/Core";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -103,7 +106,7 @@ export default function MeusServicosPage() {
 
     setIsUploadingPhoto(true);
     try {
-      const { file_url } = await base44.storage.upload({ file });
+      const { file_url } = await UploadFile({ file });
       await User.updateMyUserData({ profile_picture_url: file_url });
       setUser(prev => ({ ...prev, profile_picture_url: file_url }));
       toast.success("Foto de perfil atualizada com sucesso!");

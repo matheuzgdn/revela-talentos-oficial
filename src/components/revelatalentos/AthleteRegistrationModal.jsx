@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { base44 } from '@/api/base44Client';
+import { Seletiva } from '@/entities/Seletiva';
 import { toast } from 'sonner';
 import { Loader2, CheckCircle, User as UserIcon, Activity, Video, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 export default function AthleteRegistrationModal({ isOpen, onClose, user, onComplete }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  
   const [formData, setFormData] = useState({
     // Dados pessoais
     full_name: user?.full_name || '',
@@ -22,18 +23,18 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
     nationality: 'Brasileira',
     city: '',
     state: '',
-
+    
     // Dados do responsável (se menor)
     responsible_full_name: '',
     responsible_phone: '',
     responsible_email: '',
     responsible_relation: '',
-
+    
     // Dados físicos
     height: '',
     weight: '',
     preferred_foot: '',
-
+    
     // Dados profissionais
     position: '',
     club: '',
@@ -41,10 +42,10 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
     career_objectives: '',
     strengths: '',
     areas_improvement: '',
-
+    
     // Vídeo (APENAS LINK)
     video_url: '',
-
+    
     // LGPD
     lgpd_consent: false
   });
@@ -82,7 +83,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
     setIsSubmitting(true);
     try {
       const age = calculateAge(formData.birth_date);
-
+      
       // Atualizar dados do usuário
       await base44.auth.updateMe({
         phone: formData.phone,
@@ -91,8 +92,8 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
         nationality: formData.nationality,
         city: formData.city,
         state: formData.state,
-        height: formData.height ? parseFloat(formData.height) : null,
-        weight: formData.weight ? parseFloat(formData.weight) : null,
+        height: parseFloat(formData.height),
+        weight: parseFloat(formData.weight),
         preferred_foot: formData.preferred_foot,
         position: formData.position,
         club: formData.club,
@@ -113,8 +114,8 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
         full_name: formData.full_name,
         birth_date: formData.birth_date,
         position: formData.position,
-        height: formData.height ? parseFloat(formData.height) : null,
-        weight: formData.weight ? parseFloat(formData.weight) : null,
+        height: parseFloat(formData.height),
+        weight: parseFloat(formData.weight),
         preferred_foot: formData.preferred_foot,
         video_url_game: formData.video_url,
         self_assessment: `${formData.playing_style}\n\nObjetivos: ${formData.career_objectives}`,
@@ -163,7 +164,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Nome Completo *</Label>
                 <Input
                   value={formData.full_name}
-                  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                  onChange={(e) => setFormData({...formData, full_name: e.target.value})}
                   className="bg-gray-800 border-gray-700"
                   required
                 />
@@ -174,7 +175,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Input
                   type="date"
                   value={formData.birth_date}
-                  onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+                  onChange={(e) => setFormData({...formData, birth_date: e.target.value})}
                   className="bg-gray-800 border-gray-700"
                   required
                 />
@@ -184,7 +185,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Telefone/WhatsApp *</Label>
                 <Input
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
                   placeholder="(11) 99999-9999"
                   className="bg-gray-800 border-gray-700"
                   required
@@ -195,7 +196,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Cidade *</Label>
                 <Input
                   value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                  onChange={(e) => setFormData({...formData, city: e.target.value})}
                   className="bg-gray-800 border-gray-700"
                   required
                 />
@@ -205,7 +206,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Estado *</Label>
                 <Input
                   value={formData.state}
-                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                  onChange={(e) => setFormData({...formData, state: e.target.value})}
                   placeholder="SP"
                   className="bg-gray-800 border-gray-700"
                   required
@@ -221,7 +222,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                     <Label>Nome do Responsável *</Label>
                     <Input
                       value={formData.responsible_full_name}
-                      onChange={(e) => setFormData({ ...formData, responsible_full_name: e.target.value })}
+                      onChange={(e) => setFormData({...formData, responsible_full_name: e.target.value})}
                       className="bg-gray-800 border-gray-700"
                       required
                     />
@@ -230,7 +231,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                     <Label>Telefone do Responsável *</Label>
                     <Input
                       value={formData.responsible_phone}
-                      onChange={(e) => setFormData({ ...formData, responsible_phone: e.target.value })}
+                      onChange={(e) => setFormData({...formData, responsible_phone: e.target.value})}
                       className="bg-gray-800 border-gray-700"
                       required
                     />
@@ -240,14 +241,14 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                     <Input
                       type="email"
                       value={formData.responsible_email}
-                      onChange={(e) => setFormData({ ...formData, responsible_email: e.target.value })}
+                      onChange={(e) => setFormData({...formData, responsible_email: e.target.value})}
                       className="bg-gray-800 border-gray-700"
                       required
                     />
                   </div>
                   <div className="col-span-2">
                     <Label>Relação *</Label>
-                    <Select value={formData.responsible_relation} onValueChange={(v) => setFormData({ ...formData, responsible_relation: v })}>
+                    <Select value={formData.responsible_relation} onValueChange={(v) => setFormData({...formData, responsible_relation: v})}>
                       <SelectTrigger className="bg-gray-800 border-gray-700">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
@@ -285,7 +286,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Input
                   type="number"
                   value={formData.height}
-                  onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                  onChange={(e) => setFormData({...formData, height: e.target.value})}
                   placeholder="175"
                   className="bg-gray-800 border-gray-700"
                   required
@@ -297,7 +298,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Input
                   type="number"
                   value={formData.weight}
-                  onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                  onChange={(e) => setFormData({...formData, weight: e.target.value})}
                   placeholder="70"
                   className="bg-gray-800 border-gray-700"
                   required
@@ -306,7 +307,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
 
               <div>
                 <Label>Pé Preferido *</Label>
-                <Select value={formData.preferred_foot} onValueChange={(v) => setFormData({ ...formData, preferred_foot: v })}>
+                <Select value={formData.preferred_foot} onValueChange={(v) => setFormData({...formData, preferred_foot: v})}>
                   <SelectTrigger className="bg-gray-800 border-gray-700">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
@@ -337,7 +338,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Posição *</Label>
-                <Select value={formData.position} onValueChange={(v) => setFormData({ ...formData, position: v })}>
+                <Select value={formData.position} onValueChange={(v) => setFormData({...formData, position: v})}>
                   <SelectTrigger className="bg-gray-800 border-gray-700">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
@@ -355,7 +356,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Clube Atual</Label>
                 <Input
                   value={formData.club}
-                  onChange={(e) => setFormData({ ...formData, club: e.target.value })}
+                  onChange={(e) => setFormData({...formData, club: e.target.value})}
                   placeholder="Ex: Santos FC"
                   className="bg-gray-800 border-gray-700"
                 />
@@ -365,7 +366,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Estilo de Jogo</Label>
                 <Textarea
                   value={formData.playing_style}
-                  onChange={(e) => setFormData({ ...formData, playing_style: e.target.value })}
+                  onChange={(e) => setFormData({...formData, playing_style: e.target.value})}
                   placeholder="Descreva seu estilo de jogo..."
                   className="bg-gray-800 border-gray-700"
                   rows={3}
@@ -376,7 +377,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Objetivos de Carreira *</Label>
                 <Textarea
                   value={formData.career_objectives}
-                  onChange={(e) => setFormData({ ...formData, career_objectives: e.target.value })}
+                  onChange={(e) => setFormData({...formData, career_objectives: e.target.value})}
                   placeholder="Quais são seus objetivos no futebol?"
                   className="bg-gray-800 border-gray-700"
                   rows={3}
@@ -388,7 +389,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Pontos Fortes (separados por vírgula)</Label>
                 <Input
                   value={formData.strengths}
-                  onChange={(e) => setFormData({ ...formData, strengths: e.target.value })}
+                  onChange={(e) => setFormData({...formData, strengths: e.target.value})}
                   placeholder="Ex: Velocidade, Finalização, Passe longo"
                   className="bg-gray-800 border-gray-700"
                 />
@@ -398,7 +399,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <Label>Áreas para Melhoria (separados por vírgula)</Label>
                 <Input
                   value={formData.areas_improvement}
-                  onChange={(e) => setFormData({ ...formData, areas_improvement: e.target.value })}
+                  onChange={(e) => setFormData({...formData, areas_improvement: e.target.value})}
                   placeholder="Ex: Marcação, Jogo aéreo"
                   className="bg-gray-800 border-gray-700"
                 />
@@ -437,7 +438,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
               <Input
                 type="url"
                 value={formData.video_url}
-                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                onChange={(e) => setFormData({...formData, video_url: e.target.value})}
                 placeholder="https://youtube.com/watch?v=... ou https://drive.google.com/..."
                 className="bg-gray-800 border-gray-700 text-white mt-2"
                 required
@@ -463,7 +464,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
                 <input
                   type="checkbox"
                   checked={formData.lgpd_consent}
-                  onChange={(e) => setFormData({ ...formData, lgpd_consent: e.target.checked })}
+                  onChange={(e) => setFormData({...formData, lgpd_consent: e.target.checked})}
                   className="mt-1"
                   required
                 />
@@ -492,15 +493,17 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
         <div className="flex items-center justify-between mb-6">
           {[1, 2, 3, 4].map((step) => (
             <div key={step} className="flex items-center flex-1">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${currentStep >= step
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white'
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
+                currentStep >= step 
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white' 
                   : 'bg-gray-700 text-gray-400'
-                }`}>
+              }`}>
                 {step}
               </div>
               {step < 4 && (
-                <div className={`flex-1 h-1 mx-2 ${currentStep > step ? 'bg-cyan-500' : 'bg-gray-700'
-                  }`} />
+                <div className={`flex-1 h-1 mx-2 ${
+                  currentStep > step ? 'bg-cyan-500' : 'bg-gray-700'
+                }`} />
               )}
             </div>
           ))}

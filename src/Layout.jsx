@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from '@/api/base44Client';
-import StoriesModal from "@/components/stories/StoriesModal";
-import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
-import LanguageToggle from "@/components/i18n/LanguageToggle";
+import { base44 } from "@/api/base44Client";
+import { User } from "@/entities/User";
 import {
   Star,
   TrendingUp,
@@ -31,17 +29,19 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-const getNavigationItems = (user, t) => {
-  const items = [
-    { title: t('nav.revela'), url: createPageUrl("RevelaTalentos"), icon: Star },
-    { title: t('nav.career'), url: createPageUrl("PlanoCarreira"), icon: TrendingUp },
-    { title: t('nav.international'), url: createPageUrl("PlanoInternacional"), icon: Globe },
-    { title: t('nav.services'), url: createPageUrl("MeusServicos"), icon: Settings, requiresAuth: true }
-  ];
+const navigationItems = [
+{ title: "Revela Talentos", url: createPageUrl("RevelaTalentos"), icon: Star },
+{ title: "Plano de Carreira", url: createPageUrl("PlanoCarreira"), icon: TrendingUp },
+{ title: "Plano Internacional", url: createPageUrl("PlanoInternacional"), icon: Globe },
+{ title: "Meus Serviços", url: createPageUrl("MeusServicos"), icon: Settings, requiresAuth: true }];
+
+
+const getNavigationItems = (user) => {
+  const items = [...navigationItems];
 
   if (user?.role === 'admin' || user?.is_revela_admin === true) {
     items.push({
-      title: t('nav.admin'),
+      title: "Admin",
       url: createPageUrl("Admin"),
       icon: Shield,
       requiresAuth: true,
@@ -52,8 +52,7 @@ const getNavigationItems = (user, t) => {
   return items;
 };
 
-function LayoutInner({ children, currentPageName }) {
-  const { t, language } = useLanguage();
+export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [userPackageName, setUserPackageName] = useState(null);
@@ -61,48 +60,18 @@ function LayoutInner({ children, currentPageName }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
-  const [stories, setStories] = useState([]);
-  const [showStories, setShowStories] = useState(false);
 
   const loadUser = useCallback(async () => {
     try {
       const currentUser = await User.me();
       setUser(currentUser);
-      setUserPackageName(currentUser.has_plano_carreira_access ? t('package.career') : t('package.revela'));
+      setUserPackageName(currentUser.has_plano_carreira_access ? "Plano de Carreira" : "Revela Talentos");
       setIsLoading(false);
     } catch (error) {
       setUser(null);
       setIsLoading(false);
     }
-  }, [t]);
-
-  const loadStories = useCallback(async () => {
-    try {
-      const activeStories = await base44.entities.Story.filter({ is_active: true }, "order", 20);
-      if (activeStories?.length > 0) {
-        // Filtrar por público-alvo
-        const filteredStories = activeStories.filter(story => {
-          if (story.target_audience === "all") return true;
-          if (story.target_audience === "athletes" && user) return true;
-          if (story.target_audience === "guests" && !user) return true;
-          return false;
-        });
-
-        if (filteredStories.length > 0) {
-          setStories(filteredStories);
-          
-          // Verificar se já viu os stories hoje
-          const lastStorySeen = localStorage.getItem("lastStorySeen");
-          const today = new Date().toDateString();
-          if (lastStorySeen !== today) {
-            setShowStories(true);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao carregar stories:", error);
-    }
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     loadUser();
@@ -118,17 +87,6 @@ function LayoutInner({ children, currentPageName }) {
 
     return () => window.removeEventListener('resize', handleResize);
   }, [loadUser]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      loadStories();
-    }
-  }, [isLoading, loadStories]);
-
-  const handleCloseStories = () => {
-    setShowStories(false);
-    localStorage.setItem("lastStorySeen", new Date().toDateString());
-  };
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -148,7 +106,7 @@ function LayoutInner({ children, currentPageName }) {
     base44.auth.redirectToLogin();
   };
 
-  const navigationItemsToRender = getNavigationItems(user, t);
+  const navigationItemsToRender = getNavigationItems(user);
 
   if (isLoading) {
     return (
@@ -160,7 +118,6 @@ function LayoutInner({ children, currentPageName }) {
 
   return (
     <SidebarProvider>
-      <StoriesModal stories={stories} isOpen={showStories} onClose={handleCloseStories} />
       <div className="min-h-screen flex w-full bg-black">
         {/* Desktop Sidebar */}
         <div
@@ -238,7 +195,7 @@ function LayoutInner({ children, currentPageName }) {
                           <Avatar className="h-10 w-10 flex-shrink-0"><AvatarImage src={user.profile_picture_url} /><AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">{user.full_name?.charAt(0) || 'A'}</AvatarFallback></Avatar>
                           <div className="flex-1 min-w-0"><p className="font-medium text-white text-sm truncate">{user.full_name}</p>{userPackageName && <Badge className={`text-xs ${userPackageName === 'Plano de Carreira' ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'}`}>{userPackageName}</Badge>}</div>
                         </div>
-                        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-900"><LogOut className="w-4 h-4 mr-2" />{t('nav.logout')}</Button>
+                        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-900"><LogOut className="w-4 h-4 mr-2" />Sair</Button>
                       </> :
 
                   <div className="flex flex-col items-center space-y-2">
@@ -248,143 +205,91 @@ function LayoutInner({ children, currentPageName }) {
                   }
                   </div> :
 
-                <>
-                  <Button onClick={handleLoginClick} className={`${sidebarExpanded ? 'w-full' : 'p-2'} bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg`}>
-                    <UserIcon className={`w-4 h-4 ${sidebarExpanded ? 'mr-2' : ''}`} />{sidebarExpanded && t('nav.login')}
+                <Button onClick={handleLoginClick} className={`${sidebarExpanded ? 'w-full' : 'p-2'} bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg`}>
+                    <UserIcon className={`w-4 h-4 ${sidebarExpanded ? 'mr-2' : ''}`} />{sidebarExpanded && 'Entrar'}
                   </Button>
-                  {sidebarExpanded && (
-                    <div className="mt-3">
-                      <LanguageToggle variant="outline" className="w-full border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800" />
-                    </div>
-                  )}
-                </>
                 }
               </div>
             </SidebarContent>
           </Sidebar>
         </div>
 
-        {/* Mobile Header */}
-        <header className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 bg-gradient-to-b from-black via-black/95 to-black/80 backdrop-blur-xl border-b border-cyan-500/20">
-          <div className="flex items-center justify-end h-full px-4">
-            {hasLiveContent && (
-              <div className="absolute left-4 flex items-center gap-2 bg-red-600/20 border border-red-500 rounded-full px-3 py-1">
+        {/* Mobile Glass Header */}
+        <header className="md:hidden fixed top-0 left-0 right-0 h-16 z-40 bg-black/20 backdrop-blur-xl border-b border-white/10">
+          <div className="flex items-center justify-between h-full px-4">
+            <Link to={createPageUrl('RevelaTalentos')} className="flex items-center gap-2">
+              <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="EC10 Logo" className="h-8 w-auto" />
+              {hasLiveContent && (
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-xs font-bold text-red-400 uppercase">Live</span>
-              </div>
-            )}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setShowMobileMenu(true)} 
-              className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/30 hover:border-cyan-500/50 transition-all shadow-lg shadow-cyan-500/20"
-            >
-              <Menu className="w-5 h-5 text-cyan-400" />
+              )}
+            </Link>
+            <Button variant="ghost" size="icon" onClick={() => setShowMobileMenu(true)} className="text-white/80 hover:text-white hover:bg-white/10 rounded-full">
+              <Menu className="w-6 h-6" />
             </Button>
           </div>
         </header>
 
         {/* Mobile Menu Overlay */}
         {showMobileMenu &&
-        <div className="md:hidden fixed inset-0 bg-gradient-to-b from-black via-[#0A1A2A] to-black z-50 flex flex-col">
-            {/* Header do Menu */}
-            <div className="relative p-6 border-b border-cyan-500/20">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="EC10 Logo" className="h-10 w-auto" />
-                  {hasLiveContent && (
-                    <Badge className="bg-red-600 text-white text-xs px-2 py-1 animate-pulse">
-                      LIVE
-                    </Badge>
-                  )}
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={() => setShowMobileMenu(false)} 
-                  className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10"
-                >
-                  <X className="w-5 h-5 text-white" />
-                </Button>
-              </div>
+        <div className="md:hidden fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex flex-col p-6">
+            <div className="flex items-center justify-between mb-12">
+              <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="EC10 Logo" className="h-8 w-auto" />
+              <Button variant="ghost" size="icon" onClick={() => setShowMobileMenu(false)} className="rounded-full">
+                <X className="w-6 h-6 text-white" />
+              </Button>
             </div>
 
-            {/* User Info */}
-            {user && (
-              <div className="p-4 border-b border-white/5">
-                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl border border-cyan-500/20">
-                  <Avatar className="h-12 w-12 border-2 border-cyan-500/50">
-                    <AvatarImage src={user.profile_picture_url} />
-                    <AvatarFallback className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold">
-                      {user.full_name?.charAt(0) || 'A'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-white truncate">{user.full_name}</p>
-                    {userPackageName && (
-                      <Badge className="text-xs bg-gradient-to-r from-cyan-500 to-blue-500 text-white mt-1">
-                        {userPackageName}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+            <nav className="flex-1 flex flex-col items-center justify-center space-y-6">
+              {navigationItemsToRender.map((item) =>
+            <Link
+              key={item.title}
+              to={item.url}
+              onClick={() => handleNavClick(item)}
+              className="text-2xl font-bold text-gray-300 hover:text-white transition-colors">
 
-            {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-              {navigationItemsToRender.map((item) => {
-                const isActive = location.pathname === item.url;
-                return (
-                  <Link
-                    key={item.title}
-                    to={item.url}
-                    onClick={() => handleNavClick(item)}
-                    className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${
-                      isActive 
-                        ? item.isAdmin
-                          ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/25'
-                          : 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25'
-                        : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                      isActive ? 'bg-white/20' : 'bg-white/5'
-                    }`}>
-                      <item.icon className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold">{item.title}</p>
-                    </div>
-                  </Link>
-                );
-              })}
+                  {item.title}
+                </Link>
+            )}
             </nav>
 
-            {/* Footer Actions */}
-            <div className="p-4 border-t border-white/5 space-y-3">
-              {user ? (
-                <Button 
-                  variant="outline" 
-                  onClick={handleLogout} 
-                  className="w-full text-base py-6 rounded-2xl border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"
-                >
-                  <LogOut className="w-5 h-5 mr-2" />
-                  {t('nav.logout.account')}
-                </Button>
-              ) : (
-                <Button 
-                  onClick={() => {
-                    setShowMobileMenu(false);
-                    handleLoginClick();
-                  }} 
-                  className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-base py-6 rounded-2xl shadow-xl shadow-cyan-500/30"
-                >
-                  <UserIcon className="w-5 h-5 mr-2" />
-                  {t('nav.login.google')}
-                </Button>
-              )}
-              <LanguageToggle variant="outline" className="w-full border-cyan-500/50 bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20" />
+            <div className="mt-auto space-y-4">
+              {user ?
+            <>
+                  <div className="flex items-center gap-4 p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={user.profile_picture_url} />
+                      <AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+                        {user.full_name?.charAt(0) || 'A'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="font-semibold text-white">{user.full_name}</p>
+                      {userPackageName && (
+                        <Badge className="text-xs bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                          {userPackageName}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleLogout} 
+                    className="w-full text-lg py-6 rounded-2xl border-white/20 hover:bg-white/10 backdrop-blur-sm"
+                  >
+                    <LogOut className="w-5 h-5 mr-2" />Sair
+                  </Button>
+                </> :
+
+            <Button 
+              onClick={() => {
+                setShowMobileMenu(false);
+                handleLoginClick();
+              }} 
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-lg py-6 rounded-2xl shadow-lg shadow-blue-500/25"
+            >
+              <UserIcon className="w-5 h-5 mr-2" /> Entrar com Google
+            </Button>
+            }
             </div>
           </div>
         }
@@ -398,12 +303,4 @@ function LayoutInner({ children, currentPageName }) {
       </div>
     </SidebarProvider>);
 
-}
-
-export default function Layout({ children, currentPageName }) {
-  return (
-    <LanguageProvider>
-      <LayoutInner children={children} currentPageName={currentPageName} />
-    </LanguageProvider>
-  );
 }

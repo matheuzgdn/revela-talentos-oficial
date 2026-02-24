@@ -1,5 +1,13 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { base44 } from '@/api/base44Client';
+import { User } from "@/entities/User";
+import { Pipeline } from "@/entities/Pipeline";
+import { UserPipeline } from "@/entities/UserPipeline";
+import { Notification } from "@/entities/Notification";
+import { AthleteUpload } from "@/entities/AthleteUpload";
+import { ChatMessage } from "@/entities/ChatMessage";
+import { PerformanceData } from "@/entities/PerformanceData";
+import { UserProgress } from "@/entities/UserProgress";
+import { PlatformSettings } from "@/entities/PlatformSettings";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,74 +22,38 @@ import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle
-} from
-  "lucide-react";
+  GitBranch, EyeOff, Lock, Unlock } from
+"lucide-react";
 
-const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendNotification, onProfileVisit, onInlineSave }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState({
-    is_approved: user.is_approved,
-    is_featured: user.is_featured,
-  });
-
-  const userPipelineInfo = userPipelines.find((up) => up.user_id === user.id);
-  const currentPipeline = userPipelineInfo ? pipelines.find((p) => p.id === userPipelineInfo.pipeline_id) : null;
-  const [editedPipelineStage, setEditedPipelineStage] = useState(userPipelineInfo?.current_stage || "");
-
+const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines }) => {
   const pendingAnalysis = userData.performance.filter((p) => p.status === 'pending_analysis').length;
   const pendingMarketing = userData.marketing?.filter((p) => p.status === 'pending').length || 0;
   const hasNotifications = pendingAnalysis > 0 || pendingMarketing > 0;
 
-  const hasChanges =
-    editedUser.is_approved !== user.is_approved ||
-    editedUser.is_featured !== user.is_featured ||
-    (userPipelineInfo && editedPipelineStage !== userPipelineInfo.current_stage);
-
-  const calculateOvr = () => {
-    if (!user.fifa_attributes) return null;
-    const vals = Object.values(user.fifa_attributes);
-    if (vals.length === 0) return null;
-    return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
-  };
-  const ovr = calculateOvr();
-
-  const handleSave = async () => {
-    setIsEditing(true); // Treat as loading
-    try {
-      if (onInlineSave) {
-        await onInlineSave(user.id, editedUser, userPipelineInfo?.id, editedPipelineStage);
-      }
-      toast.success("Alterações salvas com sucesso!");
-    } catch (e) {
-      toast.error("Erro ao salvar card");
-    } finally {
-      setIsEditing(false);
-    }
-  };
+  const userPipelineInfo = userPipelines.find((up) => up.user_id === user.id);
+  const currentPipeline = userPipelineInfo ? pipelines.find((p) => p.id === userPipelineInfo.pipeline_id) : null;
 
   const getAccessBadges = () => {
     const badges = [];
-    if (!editedUser.is_approved) {
-      badges.push(<Badge key="pending" className="bg-red-600/20 text-red-400 border-red-600/50 shadow-[0_0_10px_rgba(220,38,38,0.2)]">Pendente</Badge>);
+    if (!user.is_approved) {
+      badges.push(<Badge key="pending" className="bg-red-600/20 text-red-400 border-red-600/50">Aguardando Aprovação</Badge>);
     }
     if (user.has_revela_talentos_access && !user.has_plano_carreira_access) {
-      badges.push(<Badge key="revela" className="bg-blue-600/20 text-[#00E5FF] border-[#00E5FF]/50 shadow-[0_0_10px_rgba(0,229,255,0.2)]">Revela Talentos</Badge>);
+      badges.push(<Badge key="revela" className="bg-blue-600/20 text-blue-400 border-blue-600/50">Revela Talentos</Badge>);
     }
     if (user.has_plano_carreira_access) {
-      badges.push(<Badge key="carreira" className="bg-green-600/20 text-green-400 border-green-600/50 shadow-[0_0_10px_rgba(34,197,94,0.2)]">Plano de Carreira</Badge>);
+      badges.push(<Badge key="carreira" className="bg-green-600/20 text-green-400 border-green-600/50">Plano de Carreira</Badge>);
     }
     if (user.role === 'admin') {
-      badges.push(<Badge key="admin" className="bg-red-600/20 text-red-500 border-red-500/50">Admin Geral</Badge>);
+      badges.push(<Badge key="admin" className="bg-red-600/20 text-red-400 border-red-600/50">Admin Geral</Badge>);
     } else if (user.is_revela_admin) {
       badges.push(<Badge key="revela_admin" className="bg-purple-600/20 text-purple-400 border-purple-600/50">Admin Revela</Badge>);
     }
-    if (editedUser.is_featured) {
-      badges.push(<Badge key="featured" className="bg-yellow-600/20 text-yellow-400 border-yellow-600/50 shadow-[0_0_10px_rgba(250,204,21,0.2)]">Destaque</Badge>);
+    if (user.is_featured) {
+      badges.push(<Badge key="featured" className="bg-yellow-600/20 text-yellow-400 border-yellow-600/50">Destaque</Badge>);
     }
     return badges;
   };
@@ -92,131 +64,60 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendN
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="relative bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-xl hover:shadow-[#00E5FF]/10 transition-all flex flex-col gap-4 group overflow-hidden"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+      className="bg-black/50 border border-gray-800 rounded-lg p-4 space-y-3 hover:border-gray-600 transition-colors">
 
-      {/* Header Info */}
-      <div className="flex items-start justify-between gap-3 relative z-10">
-        <div className="flex items-center gap-4 flex-1 min-w-0">
-          <div className="relative">
-            <Avatar className="h-14 w-14 border-2 border-[#00E5FF]/50 shadow-lg cursor-pointer transition-transform hover:scale-105" onClick={() => onEdit(user)}>
-              <AvatarImage src={user.profile_picture_url} className="object-cover" />
-              <AvatarFallback className="bg-gradient-to-br from-[#00E5FF] to-blue-600 text-black font-bold text-lg">
-                {user.full_name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
-            {ovr && (
-              <div className="absolute -bottom-2 -right-2 bg-gradient-to-br from-[#FFD700] to-[#FFA500] text-black text-[10px] font-black w-6 h-6 rounded flex items-center justify-center border border-black shadow">
-                {ovr}
-              </div>
-            )}
-          </div>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <Avatar className="h-10 w-10 border-2 border-gray-700">
+            <AvatarImage src={user.profile_picture_url} />
+            <AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+              {user.full_name?.charAt(0) || "U"}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-white text-lg truncate cursor-pointer hover:text-[#00E5FF] transition-colors" onClick={() => onEdit(user)}>
-              {user.full_name}
-            </p>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <span className="truncate">{user.email}</span>
-            </div>
-            {user.position && (
-              <p className="text-xs text-[#00E5FF] font-semibold mt-1 flex items-center gap-1">
-                {user.position} <span className="text-gray-500">•</span> <span className="text-gray-400 font-normal">{user.club || 'Livre'}</span>
-              </p>
-            )}
+            <p className="font-semibold text-white truncate">{user.full_name}</p>
+            <p className="text-xs text-gray-400 truncate">{user.email}</p>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-1 flex-shrink-0 bg-black/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/20" onClick={() => onSendNotification(user)} title="Enviar notificação">
-            <Bell className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-purple-400 hover:text-purple-300 hover:bg-purple-500/20" onClick={() => onProfileVisit(user)} title="Notificar visita">
-            <Eye className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-[#00E5FF] hover:text-[#00BFFF] hover:bg-[#00E5FF]/20" onClick={() => onEdit(user)} title="Editar Ficha Completa">
-            <Edit className="w-4 h-4" />
-          </Button>
-        </div>
+        <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white flex-shrink-0" onClick={() => onEdit(user)}>
+          <Edit className="w-4 h-4" />
+        </Button>
       </div>
+      
+      {user.position && <p className="text-xs text-gray-500">{user.position} • {user.club || 'Sem clube'}</p>}
 
-      <div className="flex flex-wrap gap-2 relative z-10">
+      <div className="flex flex-wrap gap-2">
         {getAccessBadges()}
       </div>
 
-      {hasNotifications && (
-        <div className="flex items-center gap-2 relative z-10">
-          {pendingAnalysis > 0 && <Badge variant="destructive" className="flex items-center gap-1 bg-red-500/20 text-red-400 border border-red-500/30 text-[10px]"><BarChart3 className="w-3 h-3" /> {pendingAnalysis} pendentes</Badge>}
+      {currentPipeline &&
+      <div className="flex items-center gap-2 text-sm text-gray-300">
+          <GitBranch className="w-4 h-4 text-purple-400" />
+          <span className="truncate">{currentPipeline.name}</span>
+          {userPipelineInfo.current_stage &&
+        <Badge variant="outline" className="text-xs whitespace-nowrap">
+              {userPipelineInfo.current_stage}
+            </Badge>
+        }
         </div>
-      )}
+      }
 
-      {/* Inline Divider */}
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent relative z-10 my-1" />
-
-      {/* Inline Edits */}
-      <div className="space-y-3 relative z-10">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-400 flex items-center gap-2"><Lock className="w-3 h-3" /> Acesso Aprovado</span>
-          <Switch
-            checked={!!editedUser.is_approved}
-            onCheckedChange={(v) => setEditedUser(prev => ({ ...prev, is_approved: v }))}
-            className="data-[state=checked]:bg-green-500 scale-75 origin-right"
-          />
+      {hasNotifications &&
+      <div className="flex items-center gap-2">
+          {pendingAnalysis > 0 &&
+        <Badge variant="destructive" className="flex items-center gap-1">
+              <BarChart3 className="w-3 h-3" /> {pendingAnalysis}
+            </Badge>
+        }
+          {pendingMarketing > 0 &&
+        <Badge variant="destructive" className="flex items-center gap-1">
+              <Megaphone className="w-3 h-3" /> {pendingMarketing}
+            </Badge>
+        }
         </div>
+      }
+    </motion.div>);
 
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-400 flex items-center gap-2"><Crown className="w-3 h-3 text-cyan-400" /> Atleta Destaque</span>
-          <Switch
-            checked={!!editedUser.is_featured}
-            onCheckedChange={(v) => setEditedUser(prev => ({ ...prev, is_featured: v }))}
-            className="data-[state=checked]:bg-cyan-500 scale-75 origin-right"
-          />
-        </div>
-
-        {currentPipeline && (
-          <div className="space-y-1.5 pt-1">
-            <span className="text-gray-400 text-xs flex items-center gap-2"><GitBranch className="w-3 h-3 text-purple-400" /> Pipeline: {currentPipeline.name}</span>
-            <Select value={editedPipelineStage} onValueChange={setEditedPipelineStage}>
-              <SelectTrigger className="h-8 text-xs bg-black/40 border-white/10 text-white hover:border-[#00E5FF]/50 transition-colors">
-                <SelectValue placeholder="Selecione o estágio" />
-              </SelectTrigger>
-              <SelectContent className="bg-[#1A1A1A] border-white/10">
-                {currentPipeline.stages?.map(stage => (
-                  <SelectItem key={stage.name} value={stage.name} className="text-xs">
-                    {stage.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-      </div>
-
-      {/* Save Action */}
-      <AnimatePresence>
-        {hasChanges && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="relative z-10 pt-2"
-          >
-            <Button
-              size="sm"
-              onClick={handleSave}
-              disabled={isEditing}
-              className="w-full bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-bold shadow-lg shadow-[#00E5FF]/20"
-            >
-              {isEditing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
-              Salvar Alterações
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-    </motion.div>
-  );
 };
 
 const PipelineManager = ({ pipelines, onRefresh }) => {
@@ -230,7 +131,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
   const handleCreatePipeline = async () => {
     try {
-      await base44.entities.Pipeline.create(newPipeline);
+      await Pipeline.create(newPipeline);
       toast.success('Pipeline criado com sucesso!');
       setShowCreatePipeline(false);
       setNewPipeline({
@@ -267,7 +168,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
     setNewPipeline((prev) => ({
       ...prev,
       stages: prev.stages.map((stage, i) =>
-        i === index ? { ...stage, [field]: value } : stage
+      i === index ? { ...stage, [field]: value } : stage
       )
     }));
   };
@@ -284,7 +185,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(pipelines || []).map((pipeline) =>
-          <Card key={pipeline.id} className="bg-gray-800 border-gray-700">
+        <Card key={pipeline.id} className="bg-gray-800 border-gray-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full bg-${pipeline.color}-500`} />
@@ -338,7 +239,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
                 className="bg-gray-800 border-gray-700" />
 
             </div>
-
+            
             <div>
               <div className="flex justify-between items-center mb-3">
                 <Label>Estágios do Pipeline</Label>
@@ -349,26 +250,26 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
               </div>
               <div className="space-y-3">
                 {newPipeline.stages.map((stage, index) =>
-                  <div key={index} className="flex gap-2 items-start">
+                <div key={index} className="flex gap-2 items-start">
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <Input
-                        placeholder="Nome do estágio"
-                        value={stage.name}
-                        onChange={(e) => updateStage(index, 'name', e.target.value)}
-                        className="bg-gray-800 border-gray-700" />
+                      placeholder="Nome do estágio"
+                      value={stage.name}
+                      onChange={(e) => updateStage(index, 'name', e.target.value)}
+                      className="bg-gray-800 border-gray-700" />
 
                       <Input
-                        placeholder="Descrição"
-                        value={stage.description}
-                        onChange={(e) => updateStage(index, 'description', e.target.value)}
-                        className="bg-gray-800 border-gray-700" />
+                      placeholder="Descrição"
+                      value={stage.description}
+                      onChange={(e) => updateStage(index, 'description', e.target.value)}
+                      className="bg-gray-800 border-gray-700" />
 
                     </div>
                     {index > 0 &&
-                      <Button type="button" onClick={() => removeStage(index)} size="icon" variant="ghost" className="text-red-400 hover:text-red-300">
+                  <Button type="button" onClick={() => removeStage(index)} size="icon" variant="ghost" className="text-red-400 hover:text-red-300">
                         <X className="w-4 h-4" />
                       </Button>
-                    }
+                  }
                   </div>
                 )}
               </div>
@@ -404,27 +305,19 @@ export default function AdminUsersTab() {
   const [showAllAthletes, setShowAllAthletes] = useState(true);
   const [isPlatformRestricted, setIsPlatformRestricted] = useState(false);
   const [isLoadingSettings, setIsLoadingSettings] = useState(true);
-  const [showNotificationModal, setShowNotificationModal] = useState(false);
-  const [notificationTarget, setNotificationTarget] = useState(null);
-  const [notificationForm, setNotificationForm] = useState({
-    title: '',
-    message: '',
-    type: 'message',
-    priority: 'medium'
-  });
 
   const personas = [
-    { id: "analyst_01", name: "Analista de Desempenho" },
-    { id: "physio_01", name: "Preparador Físico" },
-    { id: "mentor_01", name: "Mentor de Carreira" },
-    { id: "marketing_01", name: "Equipe de Marketing" }];
+  { id: "analyst_01", name: "Analista de Desempenho" },
+  { id: "physio_01", name: "Preparador Físico" },
+  { id: "mentor_01", name: "Mentor de Carreira" },
+  { id: "marketing_01", name: "Equipe de Marketing" }];
 
 
   const loadAllData = useCallback(async () => {
     setIsLoading(true);
     try {
       // Load only users initially
-      const users = await base44.entities.User.list('-created_date', 100);
+      const users = await User.list('-created_date', 100);
       setData({
         users: users || [],
         uploads: [],
@@ -437,13 +330,13 @@ export default function AdminUsersTab() {
       setIsLoading(false);
 
       // Load other data only when needed (in background)
-      base44.entities.Pipeline.filter({ is_active: true }).then((pipelines) => {
+      Pipeline.filter({ is_active: true }).then((pipelines) => {
         setData((prev) => ({ ...prev, pipelines }));
-      }).catch(() => { });
+      }).catch(() => {});
 
-      base44.entities.UserPipeline.list().then((userPipelines) => {
+      UserPipeline.list().then((userPipelines) => {
         setData((prev) => ({ ...prev, userPipelines }));
-      }).catch(() => { });
+      }).catch(() => {});
     } catch (error) {
       console.error('Error loading user data:', error);
       toast.error('Erro ao carregar dados dos usuários.');
@@ -459,7 +352,7 @@ export default function AdminUsersTab() {
   const loadPlatformSettings = async () => {
     setIsLoadingSettings(true);
     try {
-      const settings = await base44.entities.PlatformSettings.list();
+      const settings = await PlatformSettings.list();
       const restrictionSetting = settings.find((s) => s.setting_key === 'is_platform_restricted');
       setIsPlatformRestricted(restrictionSetting?.setting_value === 'true');
     } catch (error) {
@@ -469,69 +362,19 @@ export default function AdminUsersTab() {
     }
   };
 
-  const handleSendNotification = (user) => {
-    setNotificationTarget(user);
-    setNotificationForm({
-      title: '',
-      message: '',
-      type: 'message',
-      priority: 'medium'
-    });
-    setShowNotificationModal(true);
-  };
-
-  const handleProfileVisit = async (user) => {
-    try {
-      await base44.entities.Notification.create({
-        user_id: user.id,
-        title: 'Visita ao Perfil',
-        message: 'Eric Cena visitou seu perfil',
-        type: 'profile_visit',
-        priority: 'medium'
-      });
-      toast.success(`Notificação de visita enviada para ${user.full_name}`);
-    } catch (error) {
-      console.error('Error sending visit notification:', error);
-      toast.error('Erro ao enviar notificação');
-    }
-  };
-
-  const handleSubmitNotification = async () => {
-    if (!notificationForm.title || !notificationForm.message) {
-      toast.error('Preencha título e mensagem');
-      return;
-    }
-
-    try {
-      await base44.entities.Notification.create({
-        user_id: notificationTarget.id,
-        title: notificationForm.title,
-        message: notificationForm.message,
-        type: notificationForm.type,
-        priority: notificationForm.priority
-      });
-      toast.success(`Notificação enviada para ${notificationTarget.full_name}`);
-      setShowNotificationModal(false);
-      setNotificationTarget(null);
-    } catch (error) {
-      console.error('Error sending notification:', error);
-      toast.error('Erro ao enviar notificação');
-    }
-  };
-
   const togglePlatformRestriction = async () => {
     try {
-      const settings = await base44.entities.PlatformSettings.list();
+      const settings = await PlatformSettings.list();
       const restrictionSetting = settings.find((s) => s.setting_key === 'is_platform_restricted');
 
       const newValue = !isPlatformRestricted;
 
       if (restrictionSetting) {
-        await base44.entities.PlatformSettings.update(restrictionSetting.id, {
+        await PlatformSettings.update(restrictionSetting.id, {
           setting_value: newValue.toString()
         });
       } else {
-        await base44.entities.PlatformSettings.create({
+        await PlatformSettings.create({
           setting_key: 'is_platform_restricted',
           setting_value: newValue.toString()
         });
@@ -547,23 +390,23 @@ export default function AdminUsersTab() {
 
   const filteredUsers = useMemo(() => {
     return data.users.
-      filter((user) => {
-        const term = searchTerm.toLowerCase();
-        const matchesSearch =
-          user.full_name?.toLowerCase().includes(term) ||
-          user.email?.toLowerCase().includes(term);
+    filter((user) => {
+      const term = searchTerm.toLowerCase();
+      const matchesSearch =
+      user.full_name?.toLowerCase().includes(term) ||
+      user.email?.toLowerCase().includes(term);
 
 
-        const matchesFilter =
-          filter === "all" ||
-          filter === "revela_only" && user.has_revela_talentos_access && !user.has_plano_carreira_access ||
-          filter === "plano_carreira" && user.has_plano_carreira_access ||
-          filter === "admin" && user.role === 'admin' ||
-          filter === "revela_admin" && user.is_revela_admin && user.role !== 'admin' ||
-          filter === "featured" && user.is_featured;
+      const matchesFilter =
+      filter === "all" ||
+      filter === "revela_only" && user.has_revela_talentos_access && !user.has_plano_carreira_access ||
+      filter === "plano_carreira" && user.has_plano_carreira_access ||
+      filter === "admin" && user.role === 'admin' ||
+      filter === "revela_admin" && user.is_revela_admin && user.role !== 'admin' ||
+      filter === "featured" && user.is_featured;
 
-        return matchesSearch && matchesFilter;
-      });
+      return matchesSearch && matchesFilter;
+    });
   }, [data.users, searchTerm, filter]);
 
   const { revelaTalentosUsers, planoCarreiraUsers, adminUsers, revelaAdminUsers } = useMemo(() => {
@@ -697,7 +540,7 @@ export default function AdminUsersTab() {
   const handleSavePerformanceUpdate = async () => {
     if (!editingPerformanceItem) return;
     try {
-      await base44.entities.PerformanceData.update(editingPerformanceItem.id, {
+      await PerformanceData.update(editingPerformanceItem.id, {
         ...performanceForm,
         status: 'completed'
       });
@@ -707,37 +550,6 @@ export default function AdminUsersTab() {
     } catch (error) {
       console.error("Erro ao atualizar performance:", error);
       toast.error("Erro ao atualizar performance.");
-    }
-  };
-
-  const handleInlineSave = async (userId, editedUserFields, pipelineInfoId, newPipelineStage) => {
-    try {
-      // 1. Update User basic properties
-      await base44.entities.User.update(userId, editedUserFields);
-
-      // 2. Update pipeline if ID and new stage exist
-      if (pipelineInfoId && newPipelineStage) {
-        await base44.entities.UserPipeline.update(pipelineInfoId, {
-          current_stage: newPipelineStage
-        });
-      }
-
-      // Record generic notification if it was approved
-      if (editedUserFields.is_approved) {
-        await Notification.create({
-          user_id: userId,
-          title: "Acesso Liberado!",
-          message: "Seu acesso à plataforma foi completamente liberado.",
-          type: "general",
-          priority: "high"
-        });
-      }
-
-      // Refresh general list to get new DB updates without jumping out
-      await loadAllData();
-    } catch (e) {
-      console.error("Error doing inline save", e);
-      throw e;
     }
   };
 
@@ -754,12 +566,12 @@ export default function AdminUsersTab() {
   const loadUserDetails = async (userId) => {
     try {
       const [uploads, messages, performance, progress] = await Promise.all([
-        AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
-        ChatMessage.filter({
-          $or: [{ sender_id: userId }, { receiver_id: userId }]
-        }, "-created_date", 50),
-        PerformanceData.filter({ user_id: userId }, "-game_date", 20),
-        UserProgress.filter({ user_id: userId }, null, 50)]
+      AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
+      ChatMessage.filter({
+        $or: [{ sender_id: userId }, { receiver_id: userId }]
+      }, "-created_date", 50),
+      PerformanceData.filter({ user_id: userId }, "-game_date", 20),
+      UserProgress.filter({ user_id: userId }, null, 50)]
       );
 
       setData((prev) => ({
@@ -777,8 +589,8 @@ export default function AdminUsersTab() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-sky-400" />
-      </div>);
+              <Loader2 className="w-8 h-8 animate-spin text-sky-400" />
+          </div>);
 
   }
 
@@ -790,11 +602,11 @@ export default function AdminUsersTab() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {isPlatformRestricted ?
-                <div className="p-3 bg-red-500/20 rounded-lg">
+              <div className="p-3 bg-red-500/20 rounded-lg">
                   <Lock className="w-8 h-8 text-red-400" />
                 </div> :
 
-                <div className="p-3 bg-green-500/20 rounded-lg">
+              <div className="p-3 bg-green-500/20 rounded-lg">
                   <Unlock className="w-8 h-8 text-green-400" />
                 </div>
               }
@@ -804,8 +616,8 @@ export default function AdminUsersTab() {
                 </h3>
                 <p className="text-sm text-gray-400">
                   {isPlatformRestricted ?
-                    'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
-                    'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
+                  'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
+                  'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
                 </p>
               </div>
             </div>
@@ -813,16 +625,16 @@ export default function AdminUsersTab() {
               onClick={togglePlatformRestriction}
               disabled={isLoadingSettings}
               className={isPlatformRestricted ?
-                'bg-green-600 hover:bg-green-700' :
-                'bg-red-600 hover:bg-red-700'}>
+              'bg-green-600 hover:bg-green-700' :
+              'bg-red-600 hover:bg-red-700'}>
 
               {isPlatformRestricted ?
-                <>
+              <>
                   <Unlock className="w-4 h-4 mr-2" />
                   Liberar Plataforma
                 </> :
 
-                <>
+              <>
                   <Lock className="w-4 h-4 mr-2" />
                   Restringir Plataforma
                 </>
@@ -865,12 +677,12 @@ export default function AdminUsersTab() {
                 className="border-gray-700">
 
                 {view === "crm" ?
-                  <>
+                <>
                     <GitBranch className="w-4 h-4 mr-2" />
                     Pipelines
                   </> :
 
-                  <>
+                <>
                     <Users className="w-4 h-4 mr-2" />
                     CRM
                   </>
@@ -882,12 +694,12 @@ export default function AdminUsersTab() {
       </Card>
 
       {view === "pipelines" ?
-        <PipelineManager
-          pipelines={data.pipelines}
-          onRefresh={loadAllData} /> :
+      <PipelineManager
+        pipelines={data.pipelines}
+        onRefresh={loadAllData} /> :
 
 
-        <>
+      <>
           {/* Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="bg-blue-900/20 border-blue-800">
@@ -922,7 +734,7 @@ export default function AdminUsersTab() {
 
           {/* All Athletes Grid */}
           {filter === "all" &&
-            <div className="space-y-6">
+        <div className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -931,50 +743,47 @@ export default function AdminUsersTab() {
                     <Badge className="bg-cyan-600/20 text-cyan-400">Lista Completa</Badge>
                   </div>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAllAthletes(!showAllAthletes)}
-                    className="text-gray-400 hover:text-white">
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAllAthletes(!showAllAthletes)}
+                className="text-gray-400 hover:text-white">
 
                     {showAllAthletes ?
-                      <>
+                <>
                         <EyeOff className="w-4 h-4 mr-2" />
                         Ocultar
                       </> :
 
-                      <>
+                <>
                         <Eye className="w-4 h-4 mr-2" />
                         Mostrar
                       </>
-                    }
+                }
                   </Button>
                 </div>
-
+                
                 {showAllAthletes &&
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {data.users.map((user) =>
-                        <AthleteCard
-                          key={user.id}
-                          user={user}
-                          userData={getUserData(user.id)}
-                          onEdit={handleEditClick}
-                          onSendNotification={handleSendNotification}
-                          onProfileVisit={handleProfileVisit}
-                          pipelines={data.pipelines}
-                          userPipelines={data.userPipelines}
-                          onInlineSave={handleInlineSave} />
+                <AthleteCard
+                  key={user.id}
+                  user={user}
+                  userData={getUserData(user.id)}
+                  onEdit={handleEditClick}
+                  pipelines={data.pipelines}
+                  userPipelines={data.userPipelines} />
 
-                      )}
+                )}
                     </AnimatePresence>
                   </div>
-                }
-
+            }
+                
                 {(!data.users || data.users.length === 0) && showAllAthletes &&
-                  <p className="text-gray-500 text-center py-8">
+            <p className="text-gray-500 text-center py-8">
                     Nenhum atleta cadastrado no sistema.
                   </p>
-                }
+            }
               </div>
 
               <div className="border-t border-gray-800 my-8"></div>
@@ -988,7 +797,7 @@ export default function AdminUsersTab() {
               </div>
 
               {adminUsers.length > 0 &&
-                <div className="space-y-4">
+          <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Shield className="w-6 h-6 text-red-400" />
                     <h3 className="text-lg font-bold text-white">Administradores Gerais ({adminUsers.length})</h3>
@@ -996,25 +805,22 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {adminUsers.map((user) =>
-                        <AthleteCard
-                          key={user.id}
-                          user={user}
-                          userData={getUserData(user.id)}
-                          onEdit={handleEditClick}
-                          onSendNotification={handleSendNotification}
-                          onProfileVisit={handleProfileVisit}
-                          pipelines={data.pipelines}
-                          userPipelines={data.userPipelines}
-                          onInlineSave={handleInlineSave} />
+                <AthleteCard
+                  key={user.id}
+                  user={user}
+                  userData={getUserData(user.id)}
+                  onEdit={handleEditClick}
+                  pipelines={data.pipelines}
+                  userPipelines={data.userPipelines} />
 
-                      )}
+                )}
                     </AnimatePresence>
                   </div>
                 </div>
-              }
+          }
 
               {revelaAdminUsers.length > 0 &&
-                <div className="space-y-4">
+          <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Shield className="w-6 h-6 text-purple-400" />
                     <h3 className="text-lg font-bold text-white">Administradores Revela ({revelaAdminUsers.length})</h3>
@@ -1022,22 +828,19 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {revelaAdminUsers.map((user) =>
-                        <AthleteCard
-                          key={user.id}
-                          user={user}
-                          userData={getUserData(user.id)}
-                          onEdit={handleEditClick}
-                          onSendNotification={handleSendNotification}
-                          onProfileVisit={handleProfileVisit}
-                          pipelines={data.pipelines}
-                          userPipelines={data.userPipelines}
-                          onInlineSave={handleInlineSave} />
+                <AthleteCard
+                  key={user.id}
+                  user={user}
+                  userData={getUserData(user.id)}
+                  onEdit={handleEditClick}
+                  pipelines={data.pipelines}
+                  userPipelines={data.userPipelines} />
 
-                      )}
+                )}
                     </AnimatePresence>
                   </div>
                 </div>
-              }
+          }
 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -1047,18 +850,15 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {planoCarreiraUsers.map((user) =>
-                      <AthleteCard
-                        key={user.id}
-                        user={user}
-                        userData={getUserData(user.id)}
-                        onEdit={handleEditClick}
-                        onSendNotification={handleSendNotification}
-                        onProfileVisit={handleProfileVisit}
-                        pipelines={data.pipelines}
-                        userPipelines={data.userPipelines}
-                        onInlineSave={handleInlineSave} />
+                <AthleteCard
+                  key={user.id}
+                  user={user}
+                  userData={getUserData(user.id)}
+                  onEdit={handleEditClick}
+                  pipelines={data.pipelines}
+                  userPipelines={data.userPipelines} />
 
-                    )}
+                )}
                   </AnimatePresence>
                 </div>
                 {planoCarreiraUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta no Plano de Carreira.</p>}
@@ -1072,127 +872,233 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {revelaTalentosUsers.map((user) =>
-                      <AthleteCard
-                        key={user.id}
-                        user={user}
-                        userData={getUserData(user.id)}
-                        onEdit={handleEditClick}
-                        onSendNotification={handleSendNotification}
-                        onProfileVisit={handleProfileVisit}
-                        pipelines={data.pipelines}
-                        userPipelines={data.userPipelines}
-                        onInlineSave={handleInlineSave} />
+                <AthleteCard
+                  key={user.id}
+                  user={user}
+                  userData={getUserData(user.id)}
+                  onEdit={handleEditClick}
+                  pipelines={data.pipelines}
+                  userPipelines={data.userPipelines} />
 
-                    )}
+                )}
                   </AnimatePresence>
                 </div>
                 {revelaTalentosUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta apenas neste plano.</p>}
               </div>
             </div>
-          }
+        }
 
           {filter !== "all" &&
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <AnimatePresence>
                 {filteredUsers.map((user) =>
-                  <AthleteCard
-                    key={user.id}
-                    user={user}
-                    userData={getUserData(user.id)}
-                    onEdit={handleEditClick}
-                    onSendNotification={handleSendNotification}
-                    onProfileVisit={handleProfileVisit}
-                    pipelines={data.pipelines}
-                    userPipelines={data.userPipelines} />
+            <AthleteCard
+              key={user.id}
+              user={user}
+              userData={getUserData(user.id)}
+              onEdit={handleEditClick}
+              pipelines={data.pipelines}
+              userPipelines={data.userPipelines} />
 
-                )}
+            )}
               </AnimatePresence>
             </div>
-          }
+        }
 
           {filteredUsers.length === 0 && filter !== "all" &&
-            <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-gray-500">
               <Users className="w-16 h-16 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
               <p>Ajuste os filtros de busca para encontrar atletas.</p>
             </div>
-          }
+        }
         </>
       }
 
-      <AdminAthleteDetailsModal
-        user={editingUser}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingUser(null);
-        }}
-        onSave={loadAllData}
-      />
+      {editingUser &&
+      <Dialog open={isModalOpen} onOpenChange={(isOpen) => {if (!isOpen) setEditingPerformanceItem(null);setIsModalOpen(isOpen);}}>
+          <DialogContent className="sm:max-w-[800px] bg-gray-900 border-gray-800 text-white max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle className="text-xl">Gerenciar: {editingUser.full_name}</DialogTitle>
+            </DialogHeader>
+            
+            <Tabs defaultValue="profile" className="w-full">
+              <TabsList className="grid w-full grid-cols-5 mb-4">
+                <TabsTrigger value="profile">Perfil</TabsTrigger>
+                <TabsTrigger value="performance">Performance</TabsTrigger>
+                <TabsTrigger value="content">Progresso</TabsTrigger>
+                <TabsTrigger value="activity">Uploads</TabsTrigger>
+                <TabsTrigger value="messages">Mensagens</TabsTrigger>
+              </TabsList>
 
-      <Dialog open={showNotificationModal} onOpenChange={setShowNotificationModal}>
-        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-blue-400" />
-              Enviar Notificação para {notificationTarget?.full_name}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <Label className="text-gray-400">Tipo</Label>
-              <Select value={notificationForm.type} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, type: v }))}>
-                <SelectTrigger className="bg-gray-800 border-gray-700">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="message">Mensagem</SelectItem>
-                  <SelectItem value="profile_visit">Visita ao Perfil</SelectItem>
-                  <SelectItem value="achievement">Conquista</SelectItem>
-                  <SelectItem value="general">Geral</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-gray-400">Prioridade</Label>
-              <Select value={notificationForm.priority} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, priority: v }))}>
-                <SelectTrigger className="bg-gray-800 border-gray-700">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Baixa</SelectItem>
-                  <SelectItem value="medium">Média</SelectItem>
-                  <SelectItem value="high">Alta</SelectItem>
-                  <SelectItem value="urgent">Urgente</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-gray-400">Título</Label>
-              <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
-            </div>
-            <div>
-              <Label className="text-gray-400">Mensagem</Label>
-              <Textarea value={notificationForm.message} onChange={(e) => setNotificationForm((prev) => ({ ...prev, message: e.target.value }))} placeholder="Digite sua mensagem aqui..." className="bg-gray-800 border-gray-700 h-24" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNotificationModal(false)}>Cancelar</Button>
-            <Button onClick={handleSubmitNotification} className="bg-blue-600 hover:bg-blue-700">
-              <Send className="w-4 h-4 mr-2" />
-              Enviar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              <ScrollArea className="max-h-[60vh] p-1">
+                <TabsContent value="profile" className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="full_name">Nome Completo</Label>
+                      <Input id="full_name" value={editingUser.full_name || ""} onChange={(e) => handleFieldChange('full_name', e.target.value)} className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div>
+                      <Label htmlFor="position">Posição</Label>
+                      <Select value={editingUser.position || ""} onValueChange={(v) => handleFieldChange('position', v)}>
+                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue placeholder="Selecione a posição" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="goleiro">Goleiro</SelectItem>
+                          <SelectItem value="zagueiro">Zagueiro</SelectItem>
+                          <SelectItem value="lateral">Lateral</SelectItem>
+                          <SelectItem value="meio-campo">Meio-campo</SelectItem>
+                          <SelectItem value="atacante">Atacante</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="age">Idade</Label>
+                      <Input id="age" type="number" value={editingUser.age || ""} onChange={(e) => handleFieldChange('age', parseInt(e.target.value))} className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div>
+                      <Label htmlFor="club">Clube</Label>
+                      <Input id="club" value={editingUser.club || ""} onChange={(e) => handleFieldChange('club', e.target.value)} className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Telefone</Label>
+                      <Input id="phone" value={editingUser.phone || ""} onChange={(e) => handleFieldChange('phone', e.target.value)} className="bg-gray-800 border-gray-700" />
+                    </div>
+                    <div>
+                      <Label htmlFor="role">Função</Label>
+                      <Select
+                      value={
+                      editingUser.role === 'admin' ? 'admin' :
+                      editingUser.is_revela_admin ? 'revela_admin' : 'user'
+                      }
+                      onValueChange={handleRoleChange}>
+
+                        <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">Usuário</SelectItem>
+                          <SelectItem value="revela_admin">Admin Revela</SelectItem>
+                          <SelectItem value="admin">Administrador Geral</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <Card className="bg-gray-800/50 border-gray-700 mt-6">
+                    <CardHeader>
+                      <CardTitle className="text-lg flex items-center gap-2 text-purple-400">
+                        <Shield className="w-5 h-5" />
+                        Controle de Acesso & Planos
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-cyan-500/30">
+                        <Label className="flex items-center gap-2">
+                          {editingUser.is_approved ?
+                        <Unlock className="w-4 h-4 text-green-400" /> :
+
+                        <Lock className="w-4 h-4 text-red-400" />
+                        }
+                          Acesso Aprovado à Plataforma
+                        </Label>
+                        <Switch checked={!!editingUser.is_approved} onCheckedChange={(c) => handleFieldChange('is_approved', c)} />
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+                        <Label className="flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400" />Acesso ao Revela Talentos</Label>
+                        <Switch checked={!!editingUser.has_revela_talentos_access} onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)} />
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg border border-green-500/30">
+                        <Label className="flex items-center gap-2 text-green-300"><TrendingUp className="w-4 h-4 text-green-400" />Acesso ao Plano de Carreira</Label>
+                        <Switch checked={!!editingUser.has_plano_carreira_access} onCheckedChange={(c) => handleFieldChange('has_plano_carreira_access', c)} />
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-slate-800 rounded-lg">
+                        <Label className="flex items-center gap-2"><Crown className="w-4 h-4 text-cyan-400" />Promover a Atleta em Destaque</Label>
+                        <Switch checked={!!editingUser.is_featured} onCheckedChange={(c) => handleFieldChange('is_featured', c)} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="performance" className="space-y-4">
+                  {(() => {
+                  const userData = getUserData(editingUser.id);
+                  return (
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-lg">Performance do Atleta</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Trophy className="w-8 h-8 text-yellow-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.length}</p><p className="text-xs text-gray-300">Total de Jogos</p></CardContent></Card>
+                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Target className="w-8 h-8 text-green-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.reduce((sum, p) => sum + (p.goals || 0), 0)}</p><p className="text-xs text-gray-300">Total de Gols</p></CardContent></Card>
+                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><BarChart3 className="w-8 h-8 text-blue-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.performance.length > 0 ? (userData.performance.reduce((sum, p) => sum + (p.rating || 0), 0) / userData.performance.length).toFixed(1) : '0.0'}</p><p className="text-xs text-gray-300">Nota Média</p></CardContent></Card>
+                        </div>
+                        <div className="space-y-2"><h4 className="font-medium">Últimas Performances</h4><div className="space-y-2 max-h-40 overflow-y-auto">{userData.performance.map((perf) => <div key={perf.id} className="p-2 bg-gray-800 rounded text-sm flex justify-between items-center"><div><p className="text-white">vs {perf.opponent}</p><p className="text-gray-400">{new Date(perf.game_date).toLocaleDateString()} - Nota: {perf.rating}/10</p></div><Button variant="ghost" size="icon" onClick={() => handleStartEditPerformance(perf)}><Edit className="w-4 h-4 text-gray-400 hover:text-white" /></Button></div>)}{userData.performance.length === 0 && <p className="text-gray-500 text-sm">Nenhuma performance registrada.</p>}</div></div>
+                      </div>);
+
+                })()}
+                </TabsContent>
+
+                <TabsContent value="content" className="space-y-4">
+                  {(() => {
+                  const userData = getUserData(editingUser.id);
+                  return (
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-lg">Progresso nos Conteúdos</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Eye className="w-8 h-8 text-purple-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.progress.length}</p><p className="text-xs text-gray-300">Conteúdos Acessados</p></CardContent></Card>
+                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Check className="w-8 h-8 text-green-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.progress.filter((p) => p.completed).length}</p><p className="text-xs text-gray-300">Concluídos</p></CardContent></Card>
+                        </div>
+                        <div className="space-y-2"><h4 className="font-medium">Progresso Recente</h4><div className="space-y-2 max-h-40 overflow-y-auto">{userData.progress.slice(0, 10).map((prog) => <div key={prog.id} className="p-2 bg-gray-800 rounded text-sm"><div className="flex justify-between items-center"><p className="text-white">Conteúdo ID: {prog.content_id.slice(-8)}</p><Badge className={prog.completed ? 'bg-green-600' : 'bg-yellow-600'}>{prog.completed ? 'Concluído' : `${prog.progress_percentage}%`}</Badge></div></div>)}{userData.progress.length === 0 && <p className="text-gray-500 text-sm">Nenhum progresso de conteúdo registrado.</p>}</div></div>
+                      </div>);
+
+                })()}
+                </TabsContent>
+
+                <TabsContent value="activity" className="space-y-4">
+                  {(() => {
+                  const userData = getUserData(editingUser.id);
+                  return (
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-lg">Uploads do Atleta</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Upload className="w-8 h-8 text-blue-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.uploads.length}</p><p className="text-xs text-gray-300">Total Uploads</p></CardContent></Card>
+                          <Card className="bg-gray-800 border-gray-700"><CardContent className="p-4 text-center"><Star className="w-8 h-8 text-yellow-400 mx-auto mb-2" /><p className="text-2xl font-bold text-white">{userData.uploads.filter((u) => u.is_featured).length}</p><p className="text-xs text-gray-300">Em Destaque</p></CardContent></Card>
+                        </div>
+                        <div className="space-y-2"><h4 className="font-medium">Últimos Uploads</h4><div className="space-y-2 max-h-60 overflow-y-auto">{userData.uploads.slice(0, 10).map((upload) => <div key={upload.id} className="p-2 bg-gray-800 rounded text-sm"><div className="flex justify-between items-center"><div><p className="text-white">{upload.file_name}</p><p className="text-gray-400">{upload.category} - {new Date(upload.created_date).toLocaleDateString()}</p></div><div className="flex items-center gap-2"><Badge className={upload.processing_status === 'completed' ? 'bg-green-600' : upload.processing_status === 'processing' ? 'bg-yellow-600' : upload.processing_status === 'pending' ? 'bg-blue-600' : 'bg-red-600'}>{upload.processing_status}</Badge><Button variant="ghost" size="icon" onClick={() => handleToggleFeatureUpload(upload)} className={upload.is_featured ? 'text-yellow-400 hover:text-yellow-500' : 'text-gray-500 hover:text-yellow-400'}><Star className="w-4 h-4" /></Button></div></div></div>)}{userData.uploads.length === 0 && <p className="text-gray-500 text-sm">Nenhum upload encontrado.</p>}</div></div>
+                      </div>);
+
+                })()}
+                </TabsContent>
+                
+                <TabsContent value="messages" className="space-y-4">
+                  {(() => {
+                  const userMessages = data.messages.
+                  filter((m) => m.sender_id === editingUser.id || m.receiver_id === editingUser.id).
+                  sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
+
+                  return (
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-lg">Histórico de Mensagens</h3>
+                        <div className="space-y-2 max-h-60 overflow-y-auto rounded-lg bg-black/20 p-2">{userMessages.map((msg) => <div key={msg.id} className={`flex ${msg.sender_id === editingUser.id ? 'justify-end' : 'justify-start'}`}><div className={`max-w-md p-3 rounded-lg ${msg.sender_id === editingUser.id ? 'bg-blue-600' : 'bg-gray-700'}`}><p className="text-sm text-white">{msg.content}</p><p className={`text-xs mt-1 ${msg.sender_id === editingUser.id ? 'text-blue-200' : 'text-gray-400'}`}>{new Date(msg.created_date).toLocaleString('pt-BR')}</p></div></div>)}{userMessages.length === 0 && <p className="text-gray-500 text-center py-4 text-sm">Nenhuma mensagem encontrada.</p>}</div>
+                        <div className="pt-4 space-y-2"><Textarea placeholder={`Responder para ${editingUser.full_name}...`} value={newMessage} onChange={(e) => setNewMessage(e.target.value)} className="bg-gray-800 border-gray-700 text-white resize-none" rows={2} /><div className="flex justify-between items-center"><div className="flex items-center gap-2"><span className="text-xs text-gray-400">Como:</span><Select value={replyAs} onValueChange={setReplyAs}><SelectTrigger className="w-[180px] bg-gray-800 border-gray-700 text-white h-8 text-xs"><SelectValue /></SelectTrigger><SelectContent>{personas.map((p) => <SelectItem key={p.id} value={p.id} className="text-xs">{p.name}</SelectItem>)}</SelectContent></Select></div><Button onClick={handleSendMessageInModal} disabled={isSending || !newMessage} size="sm">{isSending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}Enviar</Button></div></div>
+                      </div>);
+
+                })()}
+                </TabsContent>
+              </ScrollArea>
+            </Tabs>
+
+            <DialogFooter className="mt-4">
+              <DialogClose asChild><Button type="button" variant="secondary">Cancelar</Button></DialogClose>
+              <Button type="button" onClick={handleModalSave}>Salvar Alterações</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      }
 
       <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
         <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
           <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
           {editingPerformanceItem &&
-            <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
+          <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
               {editingPerformanceItem.associated_video_url &&
-                <div className="space-y-3">
+            <div className="space-y-3">
                   <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
                   <div className="p-4 bg-gray-800 rounded-lg space-y-2">
                     <h4 className="font-semibold text-white">Diário do Atleta</h4>
@@ -1200,7 +1106,7 @@ export default function AdminUsersTab() {
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
                   </div>
                 </div>
-              }
+            }
               <div className="grid grid-cols-2 gap-4">
                 <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>

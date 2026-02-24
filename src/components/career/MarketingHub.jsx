@@ -17,8 +17,12 @@ import {
   Eye,
   Calendar // Added
 } from "lucide-react";
-import { base44 } from '@/api/base44Client';
+import { Marketing } from "@/entities/Marketing";
+import { AthleteUpload } from "@/entities/AthleteUpload";
+import { UploadFile } from "@/integrations/Core";
 import { toast } from "sonner";
+import { GameSchedule } from "@/entities/GameSchedule";
+
 // Componente para Informar Próximo Jogo
 const NextGameForm = ({ user }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,7 +154,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
 
       if (selectedPhotos.length > 0) {
         for (const photo of selectedPhotos) {
-          const { file_url } = await base44.storage.upload({ file: photo });
+          const { file_url } = await UploadFile({ file: photo });
           uploadedPhotoUrls.push(file_url);
 
           await AthleteUpload.create({

@@ -353,159 +353,70 @@ export default function AdminStoriesTab() {
         </Button>
       </div>
 
-      {/* Stories Grid - FIFA Style Player Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Stories Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {isLoading ? (
           <p className="text-gray-400">Carregando...</p>
         ) : filteredStories.length === 0 ? (
           <p className="text-gray-400">Nenhum story encontrado</p>
         ) : (
-          filteredStories.map((story, index) => {
+          filteredStories.map((story) => {
             const Icon = categoryIcons[story.category];
-            
-            // Cores do gradiente baseadas na categoria
-            const gradients = {
-              atleta: 'from-[#FFD700] via-[#FFA500] to-[#FF6B00]', // Dourado/Laranja
-              vaga: 'from-[#00FF87] via-[#00D9FF] to-[#0099FF]', // Verde/Ciano
-              novidade: 'from-[#FF1493] via-[#FF69B4] to-[#FFB6C1]' // Rosa/Pink
-            };
-
             return (
-              <div
-                key={story.id}
-                className="relative group perspective-1000"
-                style={{ transformStyle: 'preserve-3d' }}
-              >
-                {/* FIFA Card Container */}
-                <div className={`relative bg-gradient-to-br ${gradients[story.category]} p-[3px] rounded-2xl shadow-2xl transform transition-all duration-300 hover:scale-105 hover:rotate-y-5`}>
-                  <div className="relative bg-gradient-to-b from-black/95 via-[#0A1520] to-black rounded-2xl overflow-hidden">
-                    
-                    {/* Card Header - Rating & Position Style */}
-                    <div className="absolute top-3 left-3 z-10">
-                      <div className="flex flex-col items-center">
-                        <div className={`text-5xl font-black bg-gradient-to-br ${gradients[story.category]} bg-clip-text text-transparent`}>
-                          {story.display_order || 99}
-                        </div>
-                        <div className={`text-xs font-bold uppercase tracking-wider bg-gradient-to-r ${gradients[story.category]} bg-clip-text text-transparent`}>
-                          {categoryLabels[story.category]}
-                        </div>
-                      </div>
+              <Card key={story.id} className="bg-gray-900 border-gray-800 overflow-hidden">
+                <div className="relative aspect-[9/16] bg-gray-800">
+                  <img
+                    src={story.thumbnail_url || story.media_url}
+                    alt={story.title}
+                    className="w-full h-full object-cover"
+                  />
+                  {!story.is_active && (
+                    <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">INATIVO</span>
                     </div>
-
-                    {/* Featured Badge */}
-                    {story.is_featured && (
-                      <div className="absolute top-3 right-3 z-10">
-                        <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full p-2 shadow-xl animate-pulse">
-                          <Star className="w-4 h-4 text-black" fill="black" />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Player Image/Media */}
-                    <div className="relative aspect-[3/4] overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90" />
-                      
-                      <img
-                        src={story.thumbnail_url || story.media_url}
-                        alt={story.title}
-                        className="w-full h-full object-cover filter contrast-125 brightness-110"
-                      />
-
-                      {/* Holographic Overlay Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
-                      {/* Inactive Overlay */}
-                      {!story.is_active && (
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center">
-                          <div className="text-red-500 font-black text-2xl tracking-wider transform -rotate-12">
-                            INATIVO
-                          </div>
-                        </div>
-                      )}
+                  )}
+                  {story.is_featured && (
+                    <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold">
+                      ⭐ DESTAQUE
                     </div>
-
-                    {/* Card Footer - Player Name & Details */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-transparent p-4 pt-8">
-                      <div className="relative">
-                        {/* Name */}
-                        <h3 className="text-white font-black text-xl mb-1 uppercase tracking-tight leading-tight line-clamp-1">
-                          {story.title}
-                        </h3>
-                        
-                        {/* Description */}
-                        {story.description && (
-                          <p className="text-gray-400 text-xs leading-snug line-clamp-2 mb-3">
-                            {story.description}
-                          </p>
-                        )}
-
-                        {/* Stats Bar */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className={`flex-1 h-1 bg-gradient-to-r ${gradients[story.category]} rounded-full`} />
-                          <span className="text-xs text-gray-500 font-mono">
-                            {story.media_type === 'video' ? '🎥' : '📷'}
-                          </span>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => handleEdit(story)}
-                            className={`flex-1 bg-gradient-to-r ${gradients[story.category]} hover:opacity-90 text-black font-bold border-none shadow-lg`}
-                          >
-                            <Edit className="w-3 h-3 mr-1" />
-                            Editar
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => handleDelete(story.id)}
-                            className="bg-red-600 hover:bg-red-700 border-none shadow-lg"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Shine Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" 
-                         style={{ 
-                           background: 'linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%)',
-                           backgroundSize: '200% 200%',
-                           animation: 'shine 3s ease-in-out infinite'
-                         }} 
-                    />
+                  )}
+                  <div className="absolute top-2 left-2 bg-black/80 px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
+                    <Icon className={`w-3 h-3 ${categoryColors[story.category]}`} />
+                    <span className="text-white">{categoryLabels[story.category]}</span>
                   </div>
                 </div>
-
-                {/* Shadow Effect */}
-                <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4/5 h-4 bg-gradient-to-r ${gradients[story.category]} blur-xl opacity-50 group-hover:opacity-75 transition-opacity`} />
-              </div>
+                <CardContent className="p-4">
+                  <h3 className="text-white font-bold mb-1">{story.title}</h3>
+                  <p className="text-gray-400 text-xs mb-2">
+                    {story.media_type === 'video' ? '🎥 Vídeo' : '📷 Foto'} • Ordem: {story.display_order}
+                  </p>
+                  {story.description && (
+                    <p className="text-gray-500 text-xs line-clamp-2 mb-3">{story.description}</p>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(story)}
+                      className="flex-1"
+                    >
+                      <Edit className="w-3 h-3 mr-1" />
+                      Editar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDelete(story.id)}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             );
           })
         )}
       </div>
-
-      <style jsx>{`
-        @keyframes shine {
-          0%, 100% {
-            background-position: 200% 0;
-          }
-          50% {
-            background-position: -200% 0;
-          }
-        }
-        
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-        
-        .rotate-y-5:hover {
-          transform: rotateY(5deg) scale(1.05);
-        }
-      `}</style>
     </div>
   );
 }

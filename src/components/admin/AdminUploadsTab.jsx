@@ -1,34 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from '@/api/base44Client';
-import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import AdminVideoReviewModal from "./AdminVideoReviewModal";
 import { 
   Upload,
   Video,
   Camera,
   Calendar,
-  ExternalLink,
-  Eye,
-  Sparkles
+  ExternalLink
 } from "lucide-react";
 
-export default function AdminUploadsTab() {
-  const [selectedVideo, setSelectedVideo] = useState(null);
-
-  const { data: videos = [], isLoading, refetch } = useQuery({
-    queryKey: ['adminVideos'],
-    queryFn: () => base44.entities.AthleteVideo.list('-created_date', 100),
-  });
-
-  const { data: users = [] } = useQuery({
-    queryKey: ['adminUsers'],
-    queryFn: () => base44.entities.User.list('-created_date', 200),
-  });
-
+export default function AdminUploadsTab({ uploads, users }) {
   const getUserById = (userId) => {
     return users.find(user => user.id === userId);
   };
@@ -55,145 +37,87 @@ export default function AdminUploadsTab() {
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const pendingVideos = videos.filter(v => v.status === 'pending');
-  const approvedVideos = videos.filter(v => v.status === 'approved');
-  const rejectedVideos = videos.filter(v => v.status === 'rejected');
-
   return (
-    <>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Vídeos dos Atletas</h3>
-          <div className="flex gap-2">
-            <Badge className="bg-yellow-600 text-white">{pendingVideos.length} Pendentes</Badge>
-            <Badge className="bg-green-600 text-white">{approvedVideos.length} Aprovados</Badge>
-          </div>
-        </div>
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-white">Uploads dos Atletas</h3>
 
-        {/* Pending Videos - Priority */}
-        {pendingVideos.length > 0 && (
-          <div>
-            <h4 className="text-yellow-400 font-bold mb-4 flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              Aguardando Análise
-            </h4>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {pendingVideos.map((video) => {
-                const user = getUserById(video.athlete_id);
-                if (!user) return null;
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {uploads.map((upload) => {
+          const user = getUserById(upload.user_id);
+          if (!user) return null;
 
-                return (
-                  <Card key={video.id} className="bg-gray-800/50 border-yellow-700/50 hover:border-yellow-600 transition-colors">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={user.profile_picture_url} />
-                            <AvatarFallback className="bg-blue-600 text-white">
-                              {user.full_name?.charAt(0) || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h4 className="font-semibold text-white">{user.full_name}</h4>
-                            <p className="text-gray-400 text-sm">{video.title}</p>
-                          </div>
-                        </div>
-                        <Badge className="bg-yellow-600 text-white text-xs">
-                          Pendente
-                        </Badge>
-                      </div>
+          return (
+            <Card key={upload.id} className="bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors">
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user.profile_picture_url} />
+                      <AvatarFallback className="bg-blue-600 text-white">
+                        {user.full_name?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h4 className="font-semibold text-white">{user.full_name}</h4>
+                      <p className="text-gray-400 text-sm">{upload.file_name}</p>
+                    </div>
+                  </div>
+                  {upload.file_url && (
+                    <a 
+                      href={upload.file_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
 
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-xs">
-                            {video.position}
-                          </Badge>
-                          <Badge className="bg-purple-600/20 text-purple-400 text-xs">
-                            {video.category}
-                          </Badge>
-                          {video.ai_analysis && (
-                            <Badge className="bg-purple-500 text-white text-xs">
-                              <Sparkles className="w-3 h-3 mr-1" />
-                              IA Analisado
-                            </Badge>
-                          )}
-                        </div>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge className="bg-purple-600 text-white text-xs">
+                      {upload.category}
+                    </Badge>
+                    <Badge className={`${getStatusColor(upload.processing_status)} text-white text-xs`}>
+                      {upload.processing_status === 'completed' ? 'Processado' :
+                       upload.processing_status === 'processing' ? 'Processando' :
+                       upload.processing_status === 'pending' ? 'Pendente' : 'Falhou'}
+                    </Badge>
+                  </div>
 
-                        {video.description && (
-                          <p className="text-gray-300 text-sm line-clamp-2">"{video.description}"</p>
-                        )}
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1 text-gray-400">
+                      {upload.file_type === 'video' ? <Video className="w-4 h-4" /> : <Camera className="w-4 h-4" />}
+                      <span>{upload.file_type}</span>
+                    </div>
+                    {upload.file_size && (
+                      <span className="text-gray-400">{formatFileSize(upload.file_size)}</span>
+                    )}
+                  </div>
 
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <Calendar className="w-3 h-3" />
-                          {new Date(video.created_date).toLocaleString('pt-BR')}
-                        </div>
+                  {upload.description && (
+                    <p className="text-gray-300 text-sm italic">"{upload.description}"</p>
+                  )}
 
-                        <Button
-                          onClick={() => setSelectedVideo(video)}
-                          className="w-full bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-bold"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          Analisar e Revisar
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Approved Videos */}
-        {approvedVideos.length > 0 && (
-          <div>
-            <h4 className="text-green-400 font-bold mb-4">Vídeos Aprovados</h4>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {approvedVideos.slice(0, 6).map((video) => {
-                const user = getUserById(video.athlete_id);
-                if (!user) return null;
-
-                return (
-                  <Card key={video.id} className="bg-gray-800/50 border-gray-700 hover:border-gray-600 transition-colors cursor-pointer" onClick={() => setSelectedVideo(video)}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.profile_picture_url} />
-                          <AvatarFallback className="bg-blue-600 text-white text-xs">
-                            {user.full_name?.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white text-sm font-semibold truncate">{user.full_name}</p>
-                          <p className="text-gray-400 text-xs truncate">{video.title}</p>
-                        </div>
-                      </div>
-                      <Badge className="bg-green-600 text-white text-xs">Aprovado</Badge>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {videos.length === 0 && !isLoading && (
-          <div className="text-center py-12 text-gray-500">
-            <Upload className="w-16 h-16 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">Nenhum vídeo encontrado</h3>
-            <p>Os vídeos dos atletas aparecerão aqui.</p>
-          </div>
-        )}
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(upload.created_date).toLocaleString('pt-BR')}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      {selectedVideo && (
-        <AdminVideoReviewModal
-          video={selectedVideo}
-          isOpen={!!selectedVideo}
-          onClose={() => setSelectedVideo(null)}
-          onUpdate={refetch}
-        />
+      {uploads.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          <Upload className="w-16 h-16 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-white mb-2">Nenhum upload encontrado</h3>
+          <p>Os uploads dos atletas aparecerão aqui.</p>
+        </div>
       )}
-    </>
+    </div>
   );
 }

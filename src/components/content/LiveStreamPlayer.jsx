@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
 import { X, Radio, Send, MessageCircle, Volume2, VolumeX, Maximize, Users } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { Comment } from '@/entities/Comment';
+import { User } from '@/entities/User';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 

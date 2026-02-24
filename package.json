@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "set VITE_BASE44_APP_ID=69965fa12ed67581f8d115e7 && set VITE_BASE44_APP_BASE_URL=https://revelatalentos.base44.app && vite",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",

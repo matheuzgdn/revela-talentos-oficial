@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Radio, Play, Users, ArrowRight, Clock, Calendar, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from '@/api/base44Client';
+import { base44 } from "@/api/base44Client";
+
 export default function LivesCard({ liveCount = 0, isLiveActive = false, image = null, schedule = null }) {
   const navigate = useNavigate();
   const [settings, setSettings] = useState({

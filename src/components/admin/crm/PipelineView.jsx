@@ -8,7 +8,7 @@ import { Plus, UserPlus, Loader2, DollarSign, MessageSquare, Instagram, MapPin }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
+import { CRMLead } from '@/entities/CRMLead';
 import CreatePipelineModal from './CreatePipelineModal';
 import LeadDetailsModal from './LeadDetailsModal';
 import CreateLeadModal from './CreateLeadModal';

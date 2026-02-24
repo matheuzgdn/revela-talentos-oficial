@@ -1,4 +1,5 @@
-import { base44 } from '@/api/base44Client';
+import { UserNotification } from "@/entities/UserNotification";
+
 // Helper function to send notifications to users
 export const sendNotificationToUsers = async (userIds, notificationData) => {
   try {

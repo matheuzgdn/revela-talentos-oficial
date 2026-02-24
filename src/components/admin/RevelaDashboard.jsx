@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { Seletiva } from '@/entities/Seletiva';
+import { Content } from '@/entities/Content';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Video, Trophy, Clock, CheckCircle, AlertCircle, Star } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';

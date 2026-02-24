@@ -2,6 +2,7 @@ import React from 'react';
 import { Clock, Mail, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+
 export default function PendingApproval({ user }) {
   const handleLogout = async () => {
     await base44.auth.logout();

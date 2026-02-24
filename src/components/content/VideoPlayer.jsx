@@ -15,7 +15,8 @@ import {
   Play,
   Pause
 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { Comment } from '@/entities/Comment';
+import { User } from '@/entities/User';
 import { toast } from 'sonner';
 
 export default function VideoPlayer({ 

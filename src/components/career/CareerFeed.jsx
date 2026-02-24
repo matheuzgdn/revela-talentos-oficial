@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Corrected syntax here
 import { Badge } from "@/components/ui/badge";
-import {
+import { 
   Heart,
   MessageCircle,
   Send,
@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from '@/api/base44Client';
+import { User as UserEntity } from "@/entities/User";
 import { toast } from "sonner";
 
 // Versículos pré-definidos como fallback
@@ -72,7 +72,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
 
   const loadDailyVerse = async () => {
     setIsLoadingVerse(true);
-
+    
     // Usar diretamente o fallback devido a limitações de quota da API
     try {
       // Seleciona um versículo aleatório baseado no dia atual para consistência
@@ -82,11 +82,11 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
       const diff = today.getTime() - startOfYear.getTime();
       const oneDay = 1000 * 60 * 60 * 24;
       const dayOfYear = Math.floor(diff / oneDay);
-
+      
       const verseIndex = dayOfYear % fallbackVerses.length;
-
+      
       const selectedVerse = fallbackVerses[verseIndex];
-
+      
       setDailyVerse(selectedVerse);
       setDailyVerseLikes(Math.floor(Math.random() * 20) + 15); // Random initial likes (15-34)
       setIsDailyVerseLiked(false);
@@ -97,15 +97,15 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
       setDailyVerseLikes(12);
       setIsDailyVerseLiked(false);
     }
-
+    
     setIsLoadingVerse(false);
   };
 
   const handleSuggestionClick = async (suggestion) => {
     try {
       let updateData = {};
-
-      switch (suggestion.type) {
+      
+      switch(suggestion.type) {
         case 'complete_profile':
           // Auto-populate missing profile fields
           if (!user.career_objectives) {
@@ -125,7 +125,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
           window.location.href = createPageUrl("AnalisePerformance");
           return;
       }
-
+      
       if (Object.keys(updateData).length > 0) {
         await UserEntity.updateMyUserData(updateData);
         toast.success("Perfil atualizado automaticamente!");
@@ -207,9 +207,9 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
         likes: post.likes || 0, // Start with real likes or 0
         image: post.image_url
       };
-      switch (post.post_type) {
+      switch(post.post_type) {
         case 'devotional':
-          // Devotionals from admin are now regular posts
+           // Devotionals from admin are now regular posts
           return {
             ...common,
             content: `"${post.content}" - ${post.reference}`,
@@ -250,7 +250,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
       <div className="flex space-x-4 overflow-x-auto pb-2">
         {stories.map((story) => (
           <div key={story.id} className="flex flex-col items-center space-y-2 min-w-fit">
-            <div
+            <div 
               className={`w-16 h-16 rounded-full bg-gradient-to-tr ${story.color} p-0.5 cursor-pointer transition-transform hover:scale-110`}
               onClick={story.action}
             >
@@ -267,7 +267,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
 
       {/* Quick Actions Cards */}
       <div className="grid grid-cols-2 gap-4">
-        <Card
+        <Card 
           className="bg-black border border-gray-800 cursor-pointer hover:scale-105 transition-transform"
         >
           <Link to={createPageUrl("AnalisePerformance")}>
@@ -279,7 +279,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
           </Link>
         </Card>
 
-        <Card
+        <Card 
           className="bg-black border border-gray-800 cursor-pointer hover:scale-105 transition-transform"
         >
           <Link to={createPageUrl("RevelaTalentos")}>
@@ -298,7 +298,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
           {/* Neon glow effect */}
           <div className="absolute inset-0 bg-purple-500/5 rounded-lg"></div>
           <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(168,85,247,0.15)] rounded-lg"></div>
-
+          
           <CardHeader className="relative z-10">
             <h3 className="text-lg font-bold text-purple-400 flex items-center gap-2">
               <Book className="w-5 h-5 text-purple-400" />
@@ -323,10 +323,11 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
                     variant="ghost"
                     size="sm"
                     onClick={handleDailyVerseLike}
-                    className={`p-0 h-auto transition-all duration-200 ${isDailyVerseLiked
-                        ? 'text-red-400 scale-110'
+                    className={`p-0 h-auto transition-all duration-200 ${
+                      isDailyVerseLiked 
+                        ? 'text-red-400 scale-110' 
                         : 'text-gray-400 hover:text-red-400/80 hover:scale-105'
-                      }`}
+                    }`}
                   >
                     <Heart className={`w-6 h-6 ${isDailyVerseLiked ? 'fill-current animate-pulse' : ''}`} />
                   </Button>
@@ -351,7 +352,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
           </CardHeader>
           <CardContent className="space-y-3">
             {suggestions.map(suggestion => (
-              <div
+              <div 
                 key={suggestion.id}
                 className="bg-gray-900/50 p-3 rounded-lg cursor-pointer hover:bg-gray-800/50 transition-colors"
                 onClick={() => handleSuggestionClick(suggestion)}
@@ -406,7 +407,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
               {/* Post Content */}
               <div className="px-4 pb-3">
                 <p className="text-white text-sm leading-relaxed">{post.content}</p>
-
+                
                 {/* Reflection for admin-posted devotionals */}
                 {post.isDevocional && post.reflection && (
                   <div className="mt-3 p-3 bg-purple-900/30 rounded-lg border-l-4 border-purple-400">
@@ -418,9 +419,9 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
               {/* Post Media */}
               {post.image && (
                 <div className="relative">
-                  <img
-                    src={post.image}
-                    alt="Post"
+                  <img 
+                    src={post.image} 
+                    alt="Post" 
                     className="w-full aspect-square object-cover"
                   />
                 </div>
@@ -434,8 +435,9 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleLike(post.id)}
-                      className={`p-0 h-auto ${likedPosts.has(post.id) ? 'text-red-500' : 'text-gray-400'
-                        }`}
+                      className={`p-0 h-auto ${
+                        likedPosts.has(post.id) ? 'text-red-500' : 'text-gray-400'
+                      }`}
                     >
                       <Heart className={`w-6 h-6 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
                     </Button>

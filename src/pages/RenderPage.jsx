@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { LeadPage } from '@/entities/LeadPage';
+import { Lead } from '@/entities/Lead';
+import { InternationalLead } from '@/entities/InternationalLead';
 import { toast } from 'sonner';
 
 export default function RenderPage() {

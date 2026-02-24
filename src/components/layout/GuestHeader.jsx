@@ -4,7 +4,8 @@ import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { User as UserIcon } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
-import { base44 } from '@/api/base44Client';
+import { User } from '@/entities/User';
+
 export default function GuestHeader() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

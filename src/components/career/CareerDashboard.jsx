@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
-import { base44 } from '@/api/base44Client';
-import { User } from "@/api/base44Client"; // Added User import
+import { Content } from "@/entities/Content";
+import { User } from "@/entities/User"; // Added User import
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

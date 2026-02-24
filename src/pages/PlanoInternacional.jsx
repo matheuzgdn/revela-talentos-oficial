@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckCircle2, Globe2, ShieldCheck, Play, ArrowRight, MapPin, Mail, Phone, User, Loader2 } from "lucide-react";
-import { base44 } from '@/api/base44Client';
+import { InternationalLead } from "@/entities/InternationalLead";
+import { InternationalPlan } from "@/entities/InternationalPlan";
 import { toast } from "sonner";
 
 export default function EC10TrialHub() {
