@@ -69,7 +69,7 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
 
   const handleSubmit = async () => {
     setSaving(true);
-    
+
     try {
       // Validações
       if (!form.birth_date) {
@@ -92,27 +92,26 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
         foot: form.foot || "direito"
       };
 
-      // Adicionar campos opcionais apenas se preenchidos
-      if (form.profile_picture_url) updateData.profile_picture_url = form.profile_picture_url;
-      if (form.phone) updateData.phone = form.phone;
-
-      if (form.city) updateData.city = form.city;
-      if (form.state) updateData.state = form.state;
-      if (form.height) updateData.height = Number(form.height);
-      if (form.weight) updateData.weight = Number(form.weight);
-      if (form.jersey_number) updateData.jersey_number = Number(form.jersey_number);
-      if (form.current_club_name) updateData.current_club_name = form.current_club_name;
-      if (form.career_highlights) updateData.career_highlights = form.career_highlights;
-      if (form.achievements) updateData.achievements = form.achievements;
+      // Adicionar campos opcionais
+      updateData.profile_picture_url = form.profile_picture_url || null;
+      updateData.phone = form.phone || null;
+      updateData.city = form.city || null;
+      updateData.state = form.state || null;
+      updateData.height = form.height ? Number(form.height) : null;
+      updateData.weight = form.weight ? Number(form.weight) : null;
+      updateData.jersey_number = form.jersey_number ? Number(form.jersey_number) : null;
+      updateData.current_club_name = form.current_club_name || null;
+      updateData.career_highlights = form.career_highlights || null;
+      updateData.achievements = form.achievements || null;
 
       console.log("💾 Salvando perfil:", updateData);
 
       await base44.auth.updateMe(updateData);
 
       console.log("✅ Perfil salvo no banco!");
-      
+
       toast.success("✅ Perfil atualizado!", { duration: 2000 });
-      
+
       // Aguardar um momento e recarregar
       setTimeout(async () => {
         await onSave();

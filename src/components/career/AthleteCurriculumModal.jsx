@@ -12,10 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Save, 
-  Plus, 
-  Trash2, 
+import {
+  Save,
+  Plus,
+  Trash2,
   User as UserIcon,
   Trophy,
   Target,
@@ -39,14 +39,14 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
         height: user.height || "",
         weight: user.weight || "",
         preferred_foot: user.preferred_foot || "",
-        
+
         // Professional Info
         club: user.club || "",
         position: user.position || "",
         contract_status: user.contract_status || "",
         availability_date: user.availability_date || "",
         market_value: user.market_value || "",
-        
+
         // Career Info
         club_history: user.club_history || [],
         achievements: user.achievements || [],
@@ -55,7 +55,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
         areas_improvement: user.areas_improvement || [],
         injury_history: user.injury_history || [],
         career_objectives: user.career_objectives || "",
-        
+
         // Additional Info
         education: user.education || "",
         languages: user.languages || [],
@@ -103,7 +103,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
   const updateClubHistory = (index, field, value) => {
     setFormData(prev => ({
       ...prev,
-      club_history: prev.club_history.map((item, i) => 
+      club_history: prev.club_history.map((item, i) =>
         i === index ? { ...item, [field]: value } : item
       )
     }));
@@ -171,7 +171,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <Input
                       type="date"
                       value={formData.birth_date}
-                      onChange={(e) => setFormData(prev => ({...prev, birth_date: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
@@ -179,7 +179,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <label className="block text-white mb-1">Nacionalidade</label>
                     <Input
                       value={formData.nationality}
-                      onChange={(e) => setFormData(prev => ({...prev, nationality: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, nationality: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                       placeholder="Ex: Brasileira"
                     />
@@ -188,7 +188,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <label className="block text-white mb-1">Cidade</label>
                     <Input
                       value={formData.city}
-                      onChange={(e) => setFormData(prev => ({...prev, city: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                       placeholder="Ex: São Paulo"
                     />
@@ -197,7 +197,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <label className="block text-white mb-1">Estado</label>
                     <Input
                       value={formData.state}
-                      onChange={(e) => setFormData(prev => ({...prev, state: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                       placeholder="Ex: SP"
                     />
@@ -207,7 +207,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <Input
                       type="number"
                       value={formData.height}
-                      onChange={(e) => setFormData(prev => ({...prev, height: parseInt(e.target.value)}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, height: e.target.value ? parseInt(e.target.value) : "" }))}
                       className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
@@ -216,17 +216,17 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <Input
                       type="number"
                       value={formData.weight}
-                      onChange={(e) => setFormData(prev => ({...prev, weight: parseInt(e.target.value)}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value ? parseInt(e.target.value) : "" }))}
                       className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-white mb-1">Pé Preferido</label>
                   <select
                     value={formData.preferred_foot}
-                    onChange={(e) => setFormData(prev => ({...prev, preferred_foot: e.target.value}))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, preferred_foot: e.target.value }))}
                     className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2"
                   >
                     <option value="">Selecione</option>
@@ -251,7 +251,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <label className="block text-white mb-1">Clube Atual</label>
                     <Input
                       value={formData.club}
-                      onChange={(e) => setFormData(prev => ({...prev, club: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, club: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
@@ -259,7 +259,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <label className="block text-white mb-1">Posição</label>
                     <select
                       value={formData.position}
-                      onChange={(e) => setFormData(prev => ({...prev, position: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
                       className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2"
                     >
                       <option value="">Selecione</option>
@@ -274,7 +274,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <label className="block text-white mb-1">Status Contratual</label>
                     <select
                       value={formData.contract_status}
-                      onChange={(e) => setFormData(prev => ({...prev, contract_status: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, contract_status: e.target.value }))}
                       className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2"
                     >
                       <option value="">Selecione</option>
@@ -289,18 +289,18 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <Input
                       type="date"
                       value={formData.availability_date}
-                      onChange={(e) => setFormData(prev => ({...prev, availability_date: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, availability_date: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-white mb-1">Nome do Agente</label>
                     <Input
                       value={formData.agent_name}
-                      onChange={(e) => setFormData(prev => ({...prev, agent_name: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, agent_name: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
@@ -308,7 +308,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     <label className="block text-white mb-1">Contato do Agente</label>
                     <Input
                       value={formData.agent_contact}
-                      onChange={(e) => setFormData(prev => ({...prev, agent_contact: e.target.value}))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, agent_contact: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
                     />
                   </div>
@@ -358,14 +358,14 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                         type="number"
                         placeholder="Ano Início"
                         value={club.start_year}
-                        onChange={(e) => updateClubHistory(index, 'start_year', parseInt(e.target.value))}
+                        onChange={(e) => updateClubHistory(index, 'start_year', e.target.value ? parseInt(e.target.value) : "")}
                         className="bg-gray-700 border-gray-600 text-white"
                       />
                       <Input
                         type="number"
                         placeholder="Ano Fim"
                         value={club.end_year}
-                        onChange={(e) => updateClubHistory(index, 'end_year', parseInt(e.target.value))}
+                        onChange={(e) => updateClubHistory(index, 'end_year', e.target.value ? parseInt(e.target.value) : "")}
                         className="bg-gray-700 border-gray-600 text-white"
                       />
                     </div>
@@ -425,7 +425,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                 <Textarea
                   placeholder="Descreva seu estilo de jogo..."
                   value={formData.playing_style}
-                  onChange={(e) => setFormData(prev => ({...prev, playing_style: e.target.value}))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, playing_style: e.target.value }))}
                   className="bg-gray-700 border-gray-600 text-white"
                   rows={3}
                 />
@@ -504,7 +504,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                 <Textarea
                   placeholder="Descreva seus objetivos de carreira..."
                   value={formData.career_objectives}
-                  onChange={(e) => setFormData(prev => ({...prev, career_objectives: e.target.value}))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, career_objectives: e.target.value }))}
                   className="bg-gray-700 border-gray-600 text-white"
                   rows={4}
                 />
@@ -522,7 +522,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                 <Textarea
                   placeholder="Formação educacional..."
                   value={formData.education}
-                  onChange={(e) => setFormData(prev => ({...prev, education: e.target.value}))}
+                  onChange={(e) => setFormData(prev => ({ ...prev, education: e.target.value }))}
                   className="bg-gray-700 border-gray-600 text-white"
                   rows={3}
                 />
@@ -570,8 +570,8 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     placeholder="Instagram"
                     value={formData.social_media?.instagram || ''}
                     onChange={(e) => setFormData(prev => ({
-                      ...prev, 
-                      social_media: {...prev.social_media, instagram: e.target.value}
+                      ...prev,
+                      social_media: { ...prev.social_media, instagram: e.target.value }
                     }))}
                     className="bg-gray-700 border-gray-600 text-white"
                   />
@@ -579,8 +579,8 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     placeholder="YouTube"
                     value={formData.social_media?.youtube || ''}
                     onChange={(e) => setFormData(prev => ({
-                      ...prev, 
-                      social_media: {...prev.social_media, youtube: e.target.value}
+                      ...prev,
+                      social_media: { ...prev.social_media, youtube: e.target.value }
                     }))}
                     className="bg-gray-700 border-gray-600 text-white"
                   />
@@ -588,8 +588,8 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     placeholder="TikTok"
                     value={formData.social_media?.tiktok || ''}
                     onChange={(e) => setFormData(prev => ({
-                      ...prev, 
-                      social_media: {...prev.social_media, tiktok: e.target.value}
+                      ...prev,
+                      social_media: { ...prev.social_media, tiktok: e.target.value }
                     }))}
                     className="bg-gray-700 border-gray-600 text-white"
                   />
@@ -597,8 +597,8 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     placeholder="LinkedIn"
                     value={formData.social_media?.linkedin || ''}
                     onChange={(e) => setFormData(prev => ({
-                      ...prev, 
-                      social_media: {...prev.social_media, linkedin: e.target.value}
+                      ...prev,
+                      social_media: { ...prev.social_media, linkedin: e.target.value }
                     }))}
                     className="bg-gray-700 border-gray-600 text-white"
                   />
@@ -612,8 +612,8 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleSave} 
+          <Button
+            onClick={handleSave}
             disabled={isLoading}
             className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
           >
