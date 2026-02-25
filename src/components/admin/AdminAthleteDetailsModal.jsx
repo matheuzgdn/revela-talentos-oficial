@@ -790,8 +790,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                       </div>
                       <div className="absolute top-2 right-2">
                         <Badge className={`text-[8px] md:text-[9px] ${video.status === 'approved' ? 'bg-green-500/90 text-white border border-green-400/50' :
-                            video.status === 'pending' ? 'bg-yellow-500/90 text-black border border-yellow-400/50' :
-                              'bg-red-500/90 text-white border border-red-400/50'
+                          video.status === 'pending' ? 'bg-yellow-500/90 text-black border border-yellow-400/50' :
+                            'bg-red-500/90 text-white border border-red-400/50'
                           }`}>
                           {video.status === 'approved' ? <Check className="w-2.5 h-2.5" /> : video.status === 'pending' ? <Clock className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
                         </Badge>
@@ -1180,58 +1180,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   </div>
                 </div>
               </div>
-
-              {/* Todos os Campos - Edição Completa */}
-              <div className="bg-white/5 border border-[#00E5FF]/20 rounded-2xl p-6">
-                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-[#00E5FF]" />
-                  Todos os Campos do Cadastro
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {Object.entries(editingUser)
-                    .filter(([key]) => !new Set([
-                      'id', 'created_date', 'updated_date', 'role', 'password',
-                      'token', 'provider', 'email_verified', 'auth_provider', 'email'
-                    ]).has(key))
-                    .map(([key, value]) => {
-                      const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                      const valType = value === null || value === undefined ? 'null'
-                        : typeof value === 'boolean' ? 'boolean'
-                          : typeof value === 'number' ? 'number'
-                            : typeof value === 'string' ? 'string'
-                              : 'json';
-                      return (
-                        <div key={key} className={`space-y-1 ${valType === 'json' ? 'md:col-span-2' : ''}`}>
-                          <Label className="text-xs text-gray-400 font-medium">{label}</Label>
-                          {valType === 'boolean' ? (
-                            <div className="flex items-center gap-2 h-8">
-                              <Switch
-                                checked={!!editingUser[key]}
-                                onCheckedChange={(c) => handleFieldChange(key, c)}
-                                className="data-[state=checked]:bg-[#00E5FF]"
-                              />
-                              <span className="text-xs text-gray-500">{editingUser[key] ? 'Sim' : 'Não'}</span>
-                            </div>
-                          ) : valType === 'json' ? (
-                            <Textarea
-                              defaultValue={JSON.stringify(value, null, 2)}
-                              onChange={(e) => { try { handleFieldChange(key, JSON.parse(e.target.value)); } catch { } }}
-                              className="bg-white/5 border-white/20 text-white text-xs font-mono min-h-[80px] focus:border-[#00E5FF]"
-                            />
-                          ) : (
-                            <Input
-                              type={valType === 'number' ? 'number' : 'text'}
-                              value={editingUser[key] ?? ''}
-                              onChange={(e) => handleFieldChange(key, valType === 'number' ? Number(e.target.value) : e.target.value)}
-                              className="bg-white/5 border-white/20 text-white h-8 text-sm focus:border-[#00E5FF]"
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
             </TabsContent>
+
 
           </Tabs>
         </ScrollArea>
