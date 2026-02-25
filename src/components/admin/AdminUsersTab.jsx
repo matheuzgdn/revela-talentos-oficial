@@ -29,7 +29,54 @@ import {
   GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle } from
 "lucide-react";
 
-const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendNotification, onProfileVisit }) => {
+const NON_EDITABLE_KEYS = new Set([
+  'id', 'created_date', 'updated_date', 'role', 'password', 'token',
+  'provider', 'email_verified', 'auth_provider', 'email'
+]);
+
+const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines, onSendNotification, onProfileVisit }) => {
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [draft, setDraft] = useState({});
+  const [jsonErrors, setJsonErrors] = useState({});
+
+  const openModal = () => {
+    setDraft({ ...user });
+    setJsonErrors({});
+    setShowEditModal(true);
+  };
+
+  const handleFieldChange = (key, value) => {
+    setDraft(d => ({ ...d, [key]: value }));
+    setJsonErrors(e => ({ ...e, [key]: null }));
+  };
+
+  const handleJsonChange = (key, raw) => {
+    try {
+      const parsed = JSON.parse(raw);
+      setDraft(d => ({ ...d, [key]: parsed }));
+      setJsonErrors(e => ({ ...e, [key]: null }));
+    } catch {
+      setJsonErrors(e => ({ ...e, [key]: 'JSON invalido' }));
+    }
+  };
+
+  const hasJsonError = Object.values(jsonErrors).some(Boolean);
+
+  const handleSaveModal = async () => {
+    if (hasJsonError) return;
+    try {
+      const updateData = Object.fromEntries(
+        Object.entries(draft).filter(([k]) => !NON_EDITABLE_KEYS.has(k))
+      );
+      await User.update(user.id, updateData);
+      toast.success('Atleta atualizado com sucesso!');
+      setShowEditModal(false);
+      onSave?.();
+    } catch {
+      toast.error('Erro ao salvar.');
+    }
+  };
+
   const pendingAnalysis = userData.performance.filter((p) => p.status === 'pending_analysis').length;
   const pendingMarketing = userData.marketing?.filter((p) => p.status === 'pending').length || 0;
   const hasNotifications = pendingAnalysis > 0 || pendingMarketing > 0;
@@ -40,7 +87,7 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendN
   const getAccessBadges = () => {
     const badges = [];
     if (!user.is_approved) {
-      badges.push(<Badge key="pending" className="bg-red-600/20 text-red-400 border-red-600/50">Aguardando AprovaÃ§Ã£o</Badge>);
+      badges.push(<Badge key="pending" className="bg-red-600/20 text-red-400 border-red-600/50">Aguardando Aprovacao</Badge>);
     }
     if (user.has_revela_talentos_access && !user.has_plano_carreira_access) {
       badges.push(<Badge key="revela" className="bg-blue-600/20 text-blue-400 border-blue-600/50">Revela Talentos</Badge>);
@@ -60,72 +107,154 @@ const AthleteCard = ({ user, userData, onEdit, pipelines, userPipelines, onSendN
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="bg-black/50 border border-gray-800 rounded-lg p-4 space-y-3 hover:border-gray-600 transition-colors">
+    <>
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="bg-black/50 border border-gray-800 rounded-lg p-4 space-y-3 hover:border-gray-600 transition-colors">
 
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <Avatar className="h-10 w-10 border-2 border-gray-700">
-            <AvatarImage src={user.profile_picture_url} />
-            <AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
-              {user.full_name?.charAt(0) || "U"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-white truncate">{user.full_name}</p>
-            <p className="text-xs text-gray-400 truncate">{user.email}</p>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <Avatar className="h-10 w-10 border-2 border-gray-700">
+              <AvatarImage src={user.profile_picture_url} />
+              <AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+                {user.full_name?.charAt(0) || "U"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white truncate">{user.full_name}</p>
+              <p className="text-xs text-gray-400 truncate">{user.email}</p>
+            </div>
+          </div>
+          <div className="flex gap-1 flex-shrink-0">
+            <Button variant="ghost" size="icon" className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20" onClick={() => onSendNotification(user)} title="Enviar notificacao">
+              <Bell className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/20" onClick={() => onProfileVisit(user)} title="Notificar visita ao perfil">
+              <Eye className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" onClick={() => onEdit(user)}>
+              <Edit className="w-4 h-4" />
+            </Button>
           </div>
         </div>
-        <div className="flex gap-1 flex-shrink-0">
-          <Button variant="ghost" size="icon" className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/20" onClick={() => onSendNotification(user)} title="Enviar notificaÃ§Ã£o">
-            <Bell className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-purple-400 hover:text-purple-300 hover:bg-purple-500/20" onClick={() => onProfileVisit(user)} title="Notificar visita ao perfil">
-            <Eye className="w-4 h-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" onClick={() => onEdit(user)}>
-            <Edit className="w-4 h-4" />
-          </Button>
+
+        {user.position && <p className="text-xs text-gray-500">{user.position} - {user.club || 'Sem clube'}</p>}
+
+        <div className="flex flex-wrap gap-2">
+          {getAccessBadges()}
         </div>
-      </div>
 
-      {user.position && <p className="text-xs text-gray-500">{user.position} â€¢ {user.club || 'Sem clube'}</p>}
+        {currentPipeline &&
+          <div className="flex items-center gap-2 text-sm text-gray-300">
+            <GitBranch className="w-4 h-4 text-purple-400" />
+            <span className="truncate">{currentPipeline.name}</span>
+            {userPipelineInfo.current_stage &&
+              <Badge variant="outline" className="text-xs whitespace-nowrap">
+                {userPipelineInfo.current_stage}
+              </Badge>
+            }
+          </div>
+        }
 
-      <div className="flex flex-wrap gap-2">
-        {getAccessBadges()}
-      </div>
+        {hasNotifications &&
+          <div className="flex items-center gap-2">
+            {pendingAnalysis > 0 &&
+              <Badge variant="destructive" className="flex items-center gap-1">
+                <BarChart3 className="w-3 h-3" /> {pendingAnalysis}
+              </Badge>
+            }
+            {pendingMarketing > 0 &&
+              <Badge variant="destructive" className="flex items-center gap-1">
+                <Megaphone className="w-3 h-3" /> {pendingMarketing}
+              </Badge>
+            }
+          </div>
+        }
 
-      {currentPipeline &&
-        <div className="flex items-center gap-2 text-sm text-gray-300">
-          <GitBranch className="w-4 h-4 text-purple-400" />
-          <span className="truncate">{currentPipeline.name}</span>
-          {userPipelineInfo.current_stage &&
-            <Badge variant="outline" className="text-xs whitespace-nowrap">
-              {userPipelineInfo.current_stage}
-            </Badge>
-          }
-        </div>
-      }
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full border-cyan-700/50 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500"
+          onClick={openModal}
+        >
+          <Edit className="w-3 h-3 mr-2" /> Editar Atleta
+        </Button>
+      </motion.div>
 
-      {hasNotifications &&
-        <div className="flex items-center gap-2">
-          {pendingAnalysis > 0 &&
-            <Badge variant="destructive" className="flex items-center gap-1">
-              <BarChart3 className="w-3 h-3" /> {pendingAnalysis}
-            </Badge>
-          }
-          {pendingMarketing > 0 &&
-            <Badge variant="destructive" className="flex items-center gap-1">
-              <Megaphone className="w-3 h-3" /> {pendingMarketing}
-            </Badge>
-          }
-        </div>
-      }
-    </motion.div>);
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-2xl max-h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <Edit className="w-4 h-4 text-cyan-400" />
+              Editar: {user.full_name}
+            </DialogTitle>
+          </DialogHeader>
+
+          <ScrollArea className="flex-1 pr-2">
+            <div className="space-y-3 py-2">
+              {Object.entries(draft)
+                .filter(([key]) => !NON_EDITABLE_KEYS.has(key))
+                .map(([key, value]) => {
+                  const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                  const valType = value === null || value === undefined ? 'null'
+                    : typeof value === 'boolean' ? 'boolean'
+                    : typeof value === 'number' ? 'number'
+                    : typeof value === 'string' ? 'string'
+                    : 'json';
+                  return (
+                    <div key={key} className="space-y-1">
+                      <Label className="text-xs text-gray-400 font-medium">{label}</Label>
+                      {valType === 'boolean' ? (
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={!!draft[key]}
+                            onCheckedChange={(c) => handleFieldChange(key, c)}
+                            className="data-[state=checked]:bg-cyan-500"
+                          />
+                          <span className="text-xs text-gray-500">{draft[key] ? 'Sim' : 'Nao'}</span>
+                        </div>
+                      ) : valType === 'json' ? (
+                        <div>
+                          <Textarea
+                            defaultValue={JSON.stringify(value, null, 2)}
+                            onChange={(e) => handleJsonChange(key, e.target.value)}
+                            className="bg-gray-900 border-gray-700 text-white text-xs font-mono min-h-[80px]"
+                          />
+                          {jsonErrors[key] && <p className="text-red-400 text-xs mt-1">{jsonErrors[key]}</p>}
+                        </div>
+                      ) : (
+                        <Input
+                          type={valType === 'number' ? 'number' : 'text'}
+                          value={draft[key] ?? ''}
+                          onChange={(e) => handleFieldChange(key, valType === 'number' ? Number(e.target.value) : e.target.value)}
+                          className="bg-gray-900 border-gray-700 text-white h-8 text-sm"
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          </ScrollArea>
+
+          <DialogFooter className="pt-3 border-t border-gray-800">
+            <Button variant="ghost" className="text-gray-400 hover:text-white" onClick={() => setShowEditModal(false)}>
+              Cancelar
+            </Button>
+            <Button
+              disabled={hasJsonError}
+              className="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold"
+              onClick={handleSaveModal}
+            >
+              <Check className="w-4 h-4 mr-2" /> Salvar Alteracoes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 
 };
 
