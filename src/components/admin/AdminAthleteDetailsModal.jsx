@@ -275,7 +275,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-full md:w-[1400px] max-h-[95vh] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border-2 border-[#00E5FF]/30 text-white p-0 overflow-hidden">
+      <DialogContent className="max-w-[95vw] w-full md:w-[1400px] max-h-[95vh] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border-2 border-[#00E5FF]/30 text-white p-0 overflow-hidden flex flex-col">
         {/* HEADER ESTILO FIFA */}
         <div className="relative overflow-hidden">
           {/* BackgroundPattern */}
@@ -388,7 +388,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
         </div>
 
         {/* CONTENT AREA */}
-        <ScrollArea className="h-[calc(95vh-200px)] md:h-[calc(95vh-250px)] px-3 md:px-6">
+        <ScrollArea className="flex-1 px-3 md:px-6">
           <Tabs value={activeTab} className="w-full">
             {/* OVERVIEW TAB */}
             <TabsContent value="overview" className="mt-0 space-y-3 md:space-y-4">
