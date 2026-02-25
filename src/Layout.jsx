@@ -180,7 +180,7 @@ function LayoutInner({ children, currentPageName }) {
       )}
       <div className="min-h-screen flex w-full bg-black">
         {/* Desktop Sidebar */}
-        <div
+        {user && <div
           className={`hidden md:block fixed left-0 top-0 h-full z-50 transition-all duration-300 ease-in-out ${sidebarExpanded ? 'w-64' : 'w-20'}`}
           onMouseEnter={() => setSidebarExpanded(true)}
           onMouseLeave={() => setSidebarExpanded(false)}>
@@ -225,10 +225,10 @@ function LayoutInner({ children, currentPageName }) {
                             to={item.url}
                             onClick={() => handleNavClick(item)}
                             className={`group relative flex items-center w-full transition-all duration-300 rounded-xl ${sidebarExpanded ? 'gap-4 p-4' : 'justify-center p-3'} ${isActive ?
-                                item.isAdmin ?
-                                  'bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/25' :
-                                  'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25' :
-                                'hover:bg-gray-900 text-gray-300 hover:text-white'}`
+                              item.isAdmin ?
+                                'bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/25' :
+                                'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25' :
+                              'hover:bg-gray-900 text-gray-300 hover:text-white'}`
                             }>
 
                             <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -278,10 +278,10 @@ function LayoutInner({ children, currentPageName }) {
               </div>
             </SidebarContent>
           </Sidebar>
-        </div>
+        </div>}
 
         {/* Mobile Header */}
-        <header className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 bg-gradient-to-b from-black via-black/95 to-black/80 backdrop-blur-xl border-b border-cyan-500/20">
+        {user && <header className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 bg-gradient-to-b from-black via-black/95 to-black/80 backdrop-blur-xl border-b border-cyan-500/20">
           <div className="flex items-center justify-end h-full px-4">
             {hasLiveContent && (
               <div className="absolute left-4 flex items-center gap-2 bg-red-600/20 border border-red-500 rounded-full px-3 py-1">
@@ -298,7 +298,7 @@ function LayoutInner({ children, currentPageName }) {
               <Menu className="w-5 h-5 text-cyan-400" />
             </Button>
           </div>
-        </header>
+        </header>}
 
         {/* Mobile Menu Overlay */}
         {showMobileMenu &&
@@ -357,10 +357,10 @@ function LayoutInner({ children, currentPageName }) {
                     to={item.url}
                     onClick={() => handleNavClick(item)}
                     className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${isActive
-                        ? item.isAdmin
-                          ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/25'
-                          : 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25'
-                        : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
+                      ? item.isAdmin
+                        ? 'bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-lg shadow-red-500/25'
+                        : 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/25'
+                      : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
                       }`}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isActive ? 'bg-white/20' : 'bg-white/5'
@@ -404,8 +404,8 @@ function LayoutInner({ children, currentPageName }) {
         }
 
         {/* Main content */}
-        <main className={`flex-1 overflow-auto bg-black transition-all duration-300 ${sidebarExpanded ? 'md:ml-64' : 'md:ml-20'}`}>
-          <div className="pt-16 md:pt-0">
+        <main className={`flex-1 overflow-auto bg-black transition-all duration-300 ${user ? (sidebarExpanded ? 'md:ml-64' : 'md:ml-20') : ''}`}>
+          <div className={user ? 'pt-16 md:pt-0' : ''}>
             {children}
           </div>
         </main>
