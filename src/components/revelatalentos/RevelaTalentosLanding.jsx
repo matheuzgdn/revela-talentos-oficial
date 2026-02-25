@@ -98,7 +98,8 @@ export default function RevelaTalentosLanding({ onLoginClick }) {
               <source src="https://video.wixstatic.com/video/933cdd_6205df9cdfb1479cb5ff3dde437ec5ac/1080p/mp4/file.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/70 to-[#020617]/20 md:bg-gradient-to-r md:from-[#020617] md:via-[#020617]/90 md:to-transparent"></div>
-            <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-[#02040a] via-[#02040a]/80 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-[#02040a] via-[#02040a]/95 to-transparent pointer-events-none z-10"></div>
+            <div className="absolute bottom-0 left-0 w-full h-24 bg-[#02040a] pointer-events-none z-10"></div>
             <div className="absolute inset-0 bg-tactical-grid z-0 opacity-50"></div>
           </div>
           <header className="absolute top-0 left-0 w-full z-30 py-4 px-5 sm:px-8 lg:px-12 flex justify-between items-center bg-gradient-to-b from-[#020617]/90 to-transparent">
