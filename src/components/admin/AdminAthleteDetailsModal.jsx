@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  X, Play, Pause, Volume2, VolumeX, Maximize, Check, 
+import {
+  X, Play, Pause, Volume2, VolumeX, Maximize, Check,
   TrendingUp, Target, Shield, Trophy, Crown, Star,
   BarChart3, Activity, Zap, Lock, Unlock, Users,
   Upload, Eye, Heart, Sparkles, MessageCircle,
@@ -81,7 +81,7 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
     try {
       const { id, ...updateData } = editingUser;
       await base44.entities.User.update(id, updateData);
-      
+
       await base44.entities.Notification.create({
         user_id: id,
         title: "Perfil Atualizado",
@@ -120,7 +120,7 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
   const handleProcessAIAnalysis = async () => {
     if (!selectedVideo) return;
     setIsProcessingAnalysis(true);
-    
+
     try {
       const prompt = `Você é um analista de desempenho esportivo especializado em futebol. Analise este vídeo de ${selectedVideo.athlete_name}, ${selectedVideo.position}.
 
@@ -181,24 +181,24 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
       });
 
       toast.success("Análise de IA processada com sucesso!");
-      
+
       // Recarregar dados
       await loadAthleteData(user.id);
       const updatedVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
       setVideos(updatedVideos || []);
       setSelectedVideo(updatedVideos.find(v => v.id === selectedVideo.id));
-      
+
     } catch (error) {
       console.error("Erro ao processar análise:", error);
       toast.error("Erro ao processar análise de IA");
     }
-    
+
     setIsProcessingAnalysis(false);
   };
 
   const handleSaveVideoFeedback = async () => {
     if (!selectedVideo) return;
-    
+
     try {
       await base44.entities.AthleteVideo.update(selectedVideo.id, {
         admin_feedback: adminVideoFeedback,
@@ -206,14 +206,14 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
       });
 
       toast.success("Feedback salvo com sucesso!");
-      
+
       // Atualizar o vídeo selecionado
       setSelectedVideo({ ...selectedVideo, admin_feedback: adminVideoFeedback });
-      
+
       // Recarregar lista de vídeos
       const updatedVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
       setVideos(updatedVideos || []);
-      
+
     } catch (error) {
       console.error("Erro ao salvar feedback:", error);
       toast.error("Erro ao salvar feedback");
@@ -224,7 +224,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
     try {
       await base44.entities.AthleteVideo.update(videoId, { status });
       toast.success(`Vídeo ${status === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso!`);
-      
+
       // Recarregar dados
       const updatedVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
       setVideos(updatedVideos || []);
@@ -269,7 +269,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
 
   const age = calculateAge(editingUser.birth_date);
   const overallRating = Math.round(
-    Object.values(editingUser.fifa_attributes || {}).reduce((a, b) => a + b, 0) / 
+    Object.values(editingUser.fifa_attributes || {}).reduce((a, b) => a + b, 0) /
     (Object.keys(editingUser.fifa_attributes || {}).length || 1)
   );
 
@@ -353,30 +353,30 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
             {/* Tabs FIFA Style */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="w-full bg-white/5 border border-white/10 p-1 grid grid-cols-4 gap-1">
-                <TabsTrigger 
-                  value="overview" 
+                <TabsTrigger
+                  value="overview"
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
                   <BarChart3 className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
                   <span className="hidden md:inline">Overview</span>
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="videos" 
+                <TabsTrigger
+                  value="videos"
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
                   <Video className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
                   <span className="hidden md:inline">Vídeos ({videos.length})</span>
                   <span className="md:hidden">({videos.length})</span>
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="attributes" 
+                <TabsTrigger
+                  value="attributes"
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
                   <Trophy className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
                   <span className="hidden md:inline">Atributos</span>
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="settings" 
+                <TabsTrigger
+                  value="settings"
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm"
                 >
                   <Shield className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
@@ -435,18 +435,18 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                       <AreaChart data={performanceChartData}>
                         <defs>
                           <linearGradient id="colorGols" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                           </linearGradient>
                           <linearGradient id="colorAssists" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
                         <XAxis dataKey="week" stroke="#9CA3AF" tick={{ fill: '#9CA3AF', fontSize: 11 }} />
                         <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF', fontSize: 11 }} />
-                        <RechartsTooltip 
+                        <RechartsTooltip
                           contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }}
                           labelStyle={{ color: '#fff', fontWeight: 'bold' }}
                         />
@@ -532,7 +532,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                       onPlay={() => setIsPlaying(true)}
                       onPause={() => setIsPlaying(false)}
                     />
-                    
+
                     {/* Controles Modernos */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity">
                       <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3">
@@ -541,8 +541,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                           onClick={togglePlay}
                           className="w-12 h-12 md:w-14 md:h-14 bg-[#00E5FF] rounded-full flex items-center justify-center shadow-2xl"
                         >
-                          {isPlaying ? 
-                            <Pause className="w-6 h-6 md:w-7 md:h-7 text-black" fill="black" /> : 
+                          {isPlaying ?
+                            <Pause className="w-6 h-6 md:w-7 md:h-7 text-black" fill="black" /> :
                             <Play className="w-6 h-6 md:w-7 md:h-7 text-black ml-1" fill="black" />
                           }
                         </motion.button>
@@ -615,10 +615,10 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
                         {selectedVideo.ai_analysis.performance_analysis && Object.entries(selectedVideo.ai_analysis.performance_analysis).map(([key, value]) => {
-                          const icon = key === 'technical_skills' ? Target : 
-                                      key === 'positioning' ? MapPin : 
-                                      key === 'decision_making' ? Activity : 
-                                      key === 'physical_condition' ? Dumbbell : Wind;
+                          const icon = key === 'technical_skills' ? Target :
+                            key === 'positioning' ? MapPin :
+                              key === 'decision_making' ? Activity :
+                                key === 'physical_condition' ? Dumbbell : Wind;
                           return (
                             <div key={key} className="bg-white/5 rounded-xl p-3 border border-[#00E5FF]/20">
                               <div className="flex justify-between items-center mb-2">
@@ -642,12 +642,12 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                           </h4>
                           <div className="space-y-2">
                             {selectedVideo.ai_analysis.detected_events.map((event, idx) => {
-                              const eventIcon = event.type === 'gol' ? CircleDot : 
-                                              event.type === 'assistencia' ? Footprints : 
-                                              event.type === 'defesa' ? Shield : 
-                                              event.type === 'passe' ? Move : 
-                                              event.type === 'drible' ? Wind : 
-                                              Crosshair;
+                              const eventIcon = event.type === 'gol' ? CircleDot :
+                                event.type === 'assistencia' ? Footprints :
+                                  event.type === 'defesa' ? Shield :
+                                    event.type === 'passe' ? Move :
+                                      event.type === 'drible' ? Wind :
+                                        Crosshair;
                               return (
                                 <div key={idx} className="bg-white/5 rounded-lg p-3 flex items-center gap-3 border border-white/10">
                                   <div className="w-10 h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center flex-shrink-0">
@@ -789,11 +789,10 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                         </div>
                       </div>
                       <div className="absolute top-2 right-2">
-                        <Badge className={`text-[8px] md:text-[9px] ${
-                          video.status === 'approved' ? 'bg-green-500/90 text-white border border-green-400/50' :
-                          video.status === 'pending' ? 'bg-yellow-500/90 text-black border border-yellow-400/50' :
-                          'bg-red-500/90 text-white border border-red-400/50'
-                        }`}>
+                        <Badge className={`text-[8px] md:text-[9px] ${video.status === 'approved' ? 'bg-green-500/90 text-white border border-green-400/50' :
+                            video.status === 'pending' ? 'bg-yellow-500/90 text-black border border-yellow-400/50' :
+                              'bg-red-500/90 text-white border border-red-400/50'
+                          }`}>
                           {video.status === 'approved' ? <Check className="w-2.5 h-2.5" /> : video.status === 'pending' ? <Clock className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
                         </Badge>
                       </div>
@@ -820,11 +819,11 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Data de Nascimento</Label>
-                    <Input 
-                      type="date" 
-                      value={editingUser.birth_date || ""} 
-                      onChange={(e) => handleFieldChange('birth_date', e.target.value)} 
-                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                    <Input
+                      type="date"
+                      value={editingUser.birth_date || ""}
+                      onChange={(e) => handleFieldChange('birth_date', e.target.value)}
+                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                     />
                   </div>
                   <div>
@@ -843,27 +842,27 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   </div>
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Telefone</Label>
-                    <Input 
-                      value={editingUser.phone || ""} 
-                      onChange={(e) => handleFieldChange('phone', e.target.value)} 
-                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                    <Input
+                      value={editingUser.phone || ""}
+                      onChange={(e) => handleFieldChange('phone', e.target.value)}
+                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                     />
                   </div>
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Cidade / Estado</Label>
                     <div className="flex gap-2">
-                      <Input 
-                        value={editingUser.city || ""} 
-                        onChange={(e) => handleFieldChange('city', e.target.value)} 
+                      <Input
+                        value={editingUser.city || ""}
+                        onChange={(e) => handleFieldChange('city', e.target.value)}
                         placeholder="Cidade"
-                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                       />
-                      <Input 
-                        value={editingUser.state || ""} 
-                        onChange={(e) => handleFieldChange('state', e.target.value.toUpperCase())} 
+                      <Input
+                        value={editingUser.state || ""}
+                        onChange={(e) => handleFieldChange('state', e.target.value.toUpperCase())}
                         maxLength={2}
                         placeholder="SP"
-                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF] w-20 uppercase" 
+                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF] w-20 uppercase"
                       />
                     </div>
                   </div>
@@ -938,29 +937,29 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   </div>
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Camisa</Label>
-                    <Input 
-                      type="number" 
-                      value={editingUser.jersey_number || ""} 
-                      onChange={(e) => handleFieldChange('jersey_number', parseInt(e.target.value))} 
-                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                    <Input
+                      type="number"
+                      value={editingUser.jersey_number || ""}
+                      onChange={(e) => handleFieldChange('jersey_number', parseInt(e.target.value))}
+                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                     />
                   </div>
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Altura (cm)</Label>
-                    <Input 
-                      type="number" 
-                      value={editingUser.height || ""} 
-                      onChange={(e) => handleFieldChange('height', parseInt(e.target.value))} 
-                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                    <Input
+                      type="number"
+                      value={editingUser.height || ""}
+                      onChange={(e) => handleFieldChange('height', parseInt(e.target.value))}
+                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                     />
                   </div>
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Peso (kg)</Label>
-                    <Input 
-                      type="number" 
-                      value={editingUser.weight || ""} 
-                      onChange={(e) => handleFieldChange('weight', parseInt(e.target.value))} 
-                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                    <Input
+                      type="number"
+                      value={editingUser.weight || ""}
+                      onChange={(e) => handleFieldChange('weight', parseInt(e.target.value))}
+                      className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                     />
                   </div>
                   <div>
@@ -1010,14 +1009,14 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                         min="0"
                         max="99"
                         value={editingUser.fifa_attributes?.[attr.key] || 50}
-                        onChange={(e) => handleFieldChange('fifa_attributes', { 
-                          ...editingUser.fifa_attributes, 
-                          [attr.key]: parseInt(e.target.value) 
+                        onChange={(e) => handleFieldChange('fifa_attributes', {
+                          ...editingUser.fifa_attributes,
+                          [attr.key]: parseInt(e.target.value)
                         })}
                         className="w-full"
                       />
-                      <Progress 
-                        value={editingUser.fifa_attributes?.[attr.key] || 50} 
+                      <Progress
+                        value={editingUser.fifa_attributes?.[attr.key] || 50}
                         className="h-2 md:h-3"
                       />
                     </div>
@@ -1034,18 +1033,18 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                 <div className="space-y-4">
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Destaques da Carreira</Label>
-                    <Textarea 
-                      value={editingUser.career_highlights || ""} 
-                      onChange={(e) => handleFieldChange('career_highlights', e.target.value)} 
-                      className="bg-white/5 border-white/20 text-white min-h-[100px] focus:border-[#00E5FF]" 
+                    <Textarea
+                      value={editingUser.career_highlights || ""}
+                      onChange={(e) => handleFieldChange('career_highlights', e.target.value)}
+                      className="bg-white/5 border-white/20 text-white min-h-[100px] focus:border-[#00E5FF]"
                     />
                   </div>
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Conquistas & Títulos</Label>
-                    <Textarea 
-                      value={editingUser.achievements || ""} 
-                      onChange={(e) => handleFieldChange('achievements', e.target.value)} 
-                      className="bg-white/5 border-white/20 text-white min-h-[100px] focus:border-[#00E5FF]" 
+                    <Textarea
+                      value={editingUser.achievements || ""}
+                      onChange={(e) => handleFieldChange('achievements', e.target.value)}
+                      className="bg-white/5 border-white/20 text-white min-h-[100px] focus:border-[#00E5FF]"
                     />
                   </div>
                 </div>
@@ -1056,17 +1055,17 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
             <TabsContent value="settings" className="mt-0 space-y-4">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
                 <h3 className="text-white font-bold text-lg mb-4">Controle de Acesso</h3>
-                
+
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-xl">
                   <Label className="flex items-center gap-3 text-white font-medium">
-                    {editingUser.is_approved ? 
-                      <Unlock className="w-5 h-5 text-green-400" /> : 
+                    {editingUser.is_approved ?
+                      <Unlock className="w-5 h-5 text-green-400" /> :
                       <Lock className="w-5 h-5 text-red-400" />
                     }
                     <span>Acesso Aprovado à Plataforma</span>
                   </Label>
-                  <Switch 
-                    checked={!!editingUser.is_approved} 
+                  <Switch
+                    checked={!!editingUser.is_approved}
                     onCheckedChange={(c) => handleFieldChange('is_approved', c)}
                     className="data-[state=checked]:bg-green-500"
                   />
@@ -1077,8 +1076,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     <Star className="w-5 h-5 text-yellow-400" />
                     <span>Acesso ao Revela Talentos</span>
                   </Label>
-                  <Switch 
-                    checked={!!editingUser.has_revela_talentos_access} 
+                  <Switch
+                    checked={!!editingUser.has_revela_talentos_access}
                     onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)}
                     className="data-[state=checked]:bg-yellow-500"
                   />
@@ -1089,8 +1088,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     <TrendingUp className="w-5 h-5 text-green-400" />
                     <span>Acesso ao Plano de Carreira</span>
                   </Label>
-                  <Switch 
-                    checked={!!editingUser.has_plano_carreira_access} 
+                  <Switch
+                    checked={!!editingUser.has_plano_carreira_access}
                     onCheckedChange={(c) => handleFieldChange('has_plano_carreira_access', c)}
                     className="data-[state=checked]:bg-green-500"
                   />
@@ -1101,8 +1100,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     <Crown className="w-5 h-5 text-cyan-400" />
                     <span>Promover a Atleta em Destaque</span>
                   </Label>
-                  <Switch 
-                    checked={!!editingUser.is_featured} 
+                  <Switch
+                    checked={!!editingUser.is_featured}
                     onCheckedChange={(c) => handleFieldChange('is_featured', c)}
                     className="data-[state=checked]:bg-cyan-500"
                   />
@@ -1139,18 +1138,18 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   <div className="space-y-3">
                     <div>
                       <Label className="text-gray-400 text-xs mb-2 block">Nome do Clube</Label>
-                      <Input 
-                        value={editingUser.current_club_name || ""} 
-                        onChange={(e) => handleFieldChange('current_club_name', e.target.value)} 
-                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                      <Input
+                        value={editingUser.current_club_name || ""}
+                        onChange={(e) => handleFieldChange('current_club_name', e.target.value)}
+                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                       />
                     </div>
                     <div>
                       <Label className="text-gray-400 text-xs mb-2 block">URL do Escudo</Label>
-                      <Input 
-                        value={editingUser.current_club_crest_url || ""} 
-                        onChange={(e) => handleFieldChange('current_club_crest_url', e.target.value)} 
-                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                      <Input
+                        value={editingUser.current_club_crest_url || ""}
+                        onChange={(e) => handleFieldChange('current_club_crest_url', e.target.value)}
+                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                       />
                     </div>
                   </div>
@@ -1164,24 +1163,76 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   <div className="space-y-3">
                     <div>
                       <Label className="text-gray-400 text-xs mb-2 block">Foto de Perfil</Label>
-                      <Input 
-                        value={editingUser.profile_picture_url || ""} 
-                        onChange={(e) => handleFieldChange('profile_picture_url', e.target.value)} 
-                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                      <Input
+                        value={editingUser.profile_picture_url || ""}
+                        onChange={(e) => handleFieldChange('profile_picture_url', e.target.value)}
+                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                       />
                     </div>
                     <div>
                       <Label className="text-gray-400 text-xs mb-2 block">Imagem Recortada</Label>
-                      <Input 
-                        value={editingUser.player_cutout_url || ""} 
-                        onChange={(e) => handleFieldChange('player_cutout_url', e.target.value)} 
-                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]" 
+                      <Input
+                        value={editingUser.player_cutout_url || ""}
+                        onChange={(e) => handleFieldChange('player_cutout_url', e.target.value)}
+                        className="bg-white/5 border-white/20 text-white focus:border-[#00E5FF]"
                       />
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Todos os Campos - Edição Completa */}
+              <div className="bg-white/5 border border-[#00E5FF]/20 rounded-2xl p-6">
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-[#00E5FF]" />
+                  Todos os Campos do Cadastro
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {Object.entries(editingUser)
+                    .filter(([key]) => !new Set([
+                      'id', 'created_date', 'updated_date', 'role', 'password',
+                      'token', 'provider', 'email_verified', 'auth_provider', 'email'
+                    ]).has(key))
+                    .map(([key, value]) => {
+                      const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                      const valType = value === null || value === undefined ? 'null'
+                        : typeof value === 'boolean' ? 'boolean'
+                          : typeof value === 'number' ? 'number'
+                            : typeof value === 'string' ? 'string'
+                              : 'json';
+                      return (
+                        <div key={key} className={`space-y-1 ${valType === 'json' ? 'md:col-span-2' : ''}`}>
+                          <Label className="text-xs text-gray-400 font-medium">{label}</Label>
+                          {valType === 'boolean' ? (
+                            <div className="flex items-center gap-2 h-8">
+                              <Switch
+                                checked={!!editingUser[key]}
+                                onCheckedChange={(c) => handleFieldChange(key, c)}
+                                className="data-[state=checked]:bg-[#00E5FF]"
+                              />
+                              <span className="text-xs text-gray-500">{editingUser[key] ? 'Sim' : 'Não'}</span>
+                            </div>
+                          ) : valType === 'json' ? (
+                            <Textarea
+                              defaultValue={JSON.stringify(value, null, 2)}
+                              onChange={(e) => { try { handleFieldChange(key, JSON.parse(e.target.value)); } catch { } }}
+                              className="bg-white/5 border-white/20 text-white text-xs font-mono min-h-[80px] focus:border-[#00E5FF]"
+                            />
+                          ) : (
+                            <Input
+                              type={valType === 'number' ? 'number' : 'text'}
+                              value={editingUser[key] ?? ''}
+                              onChange={(e) => handleFieldChange(key, valType === 'number' ? Number(e.target.value) : e.target.value)}
+                              className="bg-white/5 border-white/20 text-white h-8 text-sm focus:border-[#00E5FF]"
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
             </TabsContent>
+
           </Tabs>
         </ScrollArea>
 
@@ -1193,14 +1244,14 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
               <span className="text-gray-400 text-xs md:text-sm">Última atualização: {new Date(editingUser.updated_date || Date.now()).toLocaleDateString('pt-BR')}</span>
             </div>
             <div className="flex gap-2 md:gap-3 w-full md:w-auto">
-              <Button 
+              <Button
                 onClick={onClose}
-                variant="outline" 
+                variant="outline"
                 className="border-white/20 text-white hover:bg-white/10 flex-1 md:flex-none md:px-8"
               >
                 Cancelar
               </Button>
-              <Button 
+              <Button
                 onClick={handleSave}
                 className="bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-black flex-1 md:flex-none md:px-8 shadow-xl shadow-[#00E5FF]/30"
               >
