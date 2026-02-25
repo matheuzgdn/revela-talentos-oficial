@@ -101,7 +101,7 @@ export default function RevelaTalentosLanding({ onLoginClick }) {
             <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-[#02040a] via-[#02040a]/80 to-transparent"></div>
             <div className="absolute inset-0 bg-tactical-grid z-0 opacity-50"></div>
           </div>
-          <header className="absolute top-0 left-0 w-full z-30 py-4 px-5 sm:px-8 lg:px-12 flex justify-between items-center border-b border-sky-500/10 bg-gradient-to-b from-[#020617]/90 to-transparent">
+          <header className="absolute top-0 left-0 w-full z-30 py-4 px-5 sm:px-8 lg:px-12 flex justify-between items-center bg-gradient-to-b from-[#020617]/90 to-transparent">
             <div className="hidden md:flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-[#38bdf8] animate-pulse shadow-[0_0_8px_#38bdf8]"></div>
               <span className="text-[10px] font-bold text-sky-400/70 tracking-[0.2em] uppercase">Sistema Ativo</span>
