@@ -816,7 +816,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   <Users className="w-5 h-5 text-[#00E5FF]" />
                   Dados Pessoais
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Data de Nascimento</Label>
                     <Input
@@ -875,7 +875,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   <Trophy className="w-5 h-5 text-[#FFD700]" />
                   Dados de Atleta
                 </h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   <div>
                     <Label className="text-gray-400 text-xs mb-2 block">Posição</Label>
                     <Select value={editingUser.position || ""} onValueChange={(v) => handleFieldChange('position', v)}>
@@ -1129,7 +1129,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
               </div>
 
               {/* Clube & URLs */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                   <h3 className="text-white font-bold mb-4 flex items-center gap-2">
                     <Shield className="w-5 h-5 text-[#00E5FF]" />
