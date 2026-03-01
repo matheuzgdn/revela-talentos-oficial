@@ -3,9 +3,10 @@ import {
     HMSRoomProvider,
     useHMSActions,
     useHMSStore,
+    useHMSNotifications,
+    HMSNotificationTypes,
     selectIsConnectedToRoom,
     selectLocalVideoTrackID,
-    selectLocalAudioTrackID,
     selectHLSState,
     selectPeers,
     selectIsLocalVideoEnabled,
@@ -19,16 +20,28 @@ import { generateHmsToken, HMS_MEETING_URL } from '@/lib/hmsUtils';
 import { notifyLiveSession } from '@/components/admin/NotificationSystem';
 import {
     Radio, Video, VideoOff, Mic, MicOff, MonitorPlay,
-    Loader2, Users, PlayCircle, StopCircle
+    Loader2, Users, PlayCircle, StopCircle, AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// ─── Error catcher from 100ms SDK event system ───────────────────────────────
+function HMSErrorHandler() {
+    const notification = useHMSNotifications(HMSNotificationTypes.ERROR);
+    useEffect(() => {
+        if (notification) {
+            const msg = notification.data?.message || 'Erro desconhecido no servidor de live';
+            console.error('[100ms Error]', notification.data);
+            toast.error(`❌ Erro na live: ${msg}`);
+        }
+    }, [notification]);
+    return null;
+}
 
 // ─── Inner component (needs HMSRoomProvider context) ─────────────────────────
 function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     const hmsActions = useHMSActions();
     const isConnected = useHMSStore(selectIsConnectedToRoom);
     const localVideoTrackId = useHMSStore(selectLocalVideoTrackID);
-    const localAudioTrackId = useHMSStore(selectLocalAudioTrackID);
     const hlsState = useHMSStore(selectHLSState);
     const peers = useHMSStore(selectPeers);
     const isVideoEnabled = useHMSStore(selectIsLocalVideoEnabled);
@@ -39,6 +52,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     const [isStartingHLS, setIsStartingHLS] = useState(false);
     const [isStoppingLive, setIsStoppingLive] = useState(false);
     const [hlsUrl, setHlsUrl] = useState(null);
+    const [debugInfo, setDebugInfo] = useState('');
 
     // Attach local video to video element
     useEffect(() => {
@@ -52,30 +66,43 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         };
     }, [localVideoTrackId, hmsActions]);
 
-    // Watch HLS state changes
+    // Watch HLS state changes — when HLS starts, variants have the stream URL
     useEffect(() => {
         if (hlsState?.running && hlsState?.variants?.length > 0) {
             const url = hlsState.variants[0].url;
+            console.log('[100ms] HLS stream URL:', url);
             setHlsUrl(url);
             onLiveStarted(url);
         }
     }, [hlsState]);
 
     const joinRoom = async () => {
+        console.log('[Live] joinRoom called. User:', user?.id);
         setIsJoining(true);
+        setDebugInfo('Gerando token...');
+
         try {
-            const token = await generateHmsToken('emissora', user.id);
+            const token = await generateHmsToken('emissora', user.id || 'admin');
+            console.log('[Live] Token gerado com sucesso:', token.substring(0, 40) + '...');
+            setDebugInfo('Conectando ao servidor 100ms...');
+
             await hmsActions.join({
                 userName: user.full_name || user.email || 'Admin',
                 authToken: token,
+                // Start muted — user can unmute manually to avoid permission issues
                 settings: {
-                    isAudioMuted: false,
+                    isAudioMuted: true,
                     isVideoMuted: false,
                 },
             });
+
+            console.log('[Live] join() chamado com sucesso');
+            setDebugInfo('');
         } catch (err) {
-            console.error('Failed to join room:', err);
-            toast.error('Falha ao conectar ao servidor de live');
+            console.error('[Live] Erro ao conectar:', err);
+            const msg = err?.message || err?.description || String(err);
+            toast.error(`❌ Falha ao conectar: ${msg}`);
+            setDebugInfo(`Erro: ${msg}`);
         } finally {
             setIsJoining(false);
         }
@@ -83,6 +110,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
 
     const startHLS = async () => {
         setIsStartingHLS(true);
+        console.log('[Live] Iniciando HLS. Meeting URL:', HMS_MEETING_URL);
         try {
             await hmsActions.startHLSStreaming({
                 variants: [{ meetingURL: HMS_MEETING_URL, metadata: 'revela-live' }],
@@ -90,8 +118,8 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             });
             toast.success('🔴 HLS iniciado! Aguardando URL do stream...');
         } catch (err) {
-            console.error('Failed to start HLS:', err);
-            toast.error('Falha ao iniciar transmissão HLS');
+            console.error('[Live] Erro ao iniciar HLS:', err);
+            toast.error(`❌ Falha no HLS: ${err?.message || err}`);
         } finally {
             setIsStartingHLS(false);
         }
@@ -100,13 +128,11 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     const stopLive = async () => {
         setIsStoppingLive(true);
         try {
-            if (hlsState?.running) {
-                await hmsActions.stopHLSStreaming();
-            }
+            if (hlsState?.running) await hmsActions.stopHLSStreaming();
             await hmsActions.leave();
             onLiveStopped();
         } catch (err) {
-            console.error('Failed to stop live:', err);
+            console.error('[Live] Erro ao encerrar:', err);
             toast.error('Erro ao encerrar live');
         } finally {
             setIsStoppingLive(false);
@@ -124,27 +150,45 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 animate={{ opacity: 1, scale: 1 }}
                 className="flex flex-col items-center justify-center gap-8 p-12"
             >
+                <HMSErrorHandler />
+
                 <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-3xl opacity-30 animate-pulse" />
                     <div className="w-24 h-24 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-red-500/30 relative">
                         <Radio className="w-12 h-12 text-red-400" />
                     </div>
                 </div>
+
                 <div className="text-center">
                     <h3 className="text-2xl font-black text-white mb-2">Pronto para transmitir?</h3>
-                    <p className="text-gray-400">Sua câmera e microfone serão ativados ao conectar</p>
+                    <p className="text-gray-400">
+                        {isJoining ? debugInfo || 'Conectando...' : 'Sua câmera será ativada ao conectar'}
+                    </p>
                 </div>
+
+                {/* Debug info */}
+                {debugInfo && !isJoining && (
+                    <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-500/30 rounded-xl w-full max-w-sm">
+                        <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                        <p className="text-red-400 text-xs break-all">{debugInfo}</p>
+                    </div>
+                )}
+
                 <Button
                     onClick={joinRoom}
                     disabled={isJoining}
-                    className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-black text-lg px-10 py-6 rounded-2xl shadow-2xl shadow-red-500/40 transition-all hover:scale-105"
+                    className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-black text-lg px-10 py-6 rounded-2xl shadow-2xl shadow-red-500/40 transition-all hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                     {isJoining ? (
-                        <><Loader2 className="w-6 h-6 mr-3 animate-spin" />Conectando...</>
+                        <><Loader2 className="w-6 h-6 mr-3 animate-spin" />{debugInfo || 'Conectando...'}</>
                     ) : (
                         <><Radio className="w-6 h-6 mr-3" />🔴 ENTRAR NA SALA DE LIVE</>
                     )}
                 </Button>
+
+                <p className="text-gray-600 text-xs text-center max-w-xs">
+                    Abra o console do browser (F12) para ver logs detalhados caso haja erros
+                </p>
             </motion.div>
         );
     }
@@ -152,10 +196,12 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     // ── CONNECTED ──
     return (
         <div className="space-y-6">
+            <HMSErrorHandler />
+
             {/* Status Bar */}
             <div className="flex items-center justify-between p-4 bg-gray-900/80 rounded-2xl border border-gray-700/50">
                 <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`} />
+                    <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse" />
                     <span className="text-white font-bold">
                         {hlsState?.running ? '🔴 AO VIVO' : 'Conectado — aguardando início'}
                     </span>
@@ -167,7 +213,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 </div>
                 <div className="flex items-center gap-2 text-gray-400 text-sm">
                     <Users className="w-4 h-4" />
-                    <span>{peers.length} conectado(s)</span>
+                    <span>{peers.length} peer(s)</span>
                 </div>
             </div>
 
@@ -178,7 +224,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                     autoPlay
                     muted
                     playsInline
-                    className="w-full h-full object-cover mirror"
+                    className="w-full h-full object-cover"
                     style={{ transform: 'scaleX(-1)' }}
                 />
                 {!isVideoEnabled && (
@@ -186,7 +232,6 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                         <VideoOff className="w-16 h-16 text-gray-600" />
                     </div>
                 )}
-                {/* Live badge overlay */}
                 {hlsState?.running && (
                     <div className="absolute top-4 left-4">
                         <Badge className="bg-red-600 text-white flex items-center gap-2 px-3 py-1.5 animate-pulse shadow-lg">
@@ -197,7 +242,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 )}
             </div>
 
-            {/* Controls */}
+            {/* Camera / Mic controls */}
             <div className="grid grid-cols-2 gap-3">
                 <Button
                     onClick={toggleVideo}
@@ -217,7 +262,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 </Button>
             </div>
 
-            {/* HLS Controls */}
+            {/* HLS Start / Stop */}
             {!hlsState?.running ? (
                 <Button
                     onClick={startHLS}
@@ -256,7 +301,6 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
 
 // ─── Main exported component (with HMSRoomProvider) ──────────────────────────
 export default function LiveBroadcaster({ user }) {
-    const [isLive, setIsLive] = useState(false);
     const [isSendingNotification, setIsSendingNotification] = useState(false);
 
     const saveLiveStatus = async (active, hlsUrl = '') => {
@@ -264,43 +308,29 @@ export default function LiveBroadcaster({ user }) {
             { key: 'is_live_active', value: String(active) },
             { key: 'live_hls_url', value: hlsUrl },
         ];
-
         for (const { key, value } of settings) {
-            const existing = await base44.entities.PlatformSettings.filter({ setting_key: key });
-            if (existing.length > 0) {
-                await base44.entities.PlatformSettings.update(existing[0].id, {
-                    setting_value: value,
-                    setting_type: 'string',
-                });
-            } else {
-                await base44.entities.PlatformSettings.create({
-                    setting_key: key,
-                    setting_value: value,
-                    setting_type: 'string',
-                    is_active: true,
-                });
+            try {
+                const existing = await base44.entities.PlatformSettings.filter({ setting_key: key });
+                if (existing.length > 0) {
+                    await base44.entities.PlatformSettings.update(existing[0].id, { setting_value: value, setting_type: 'string' });
+                } else {
+                    await base44.entities.PlatformSettings.create({ setting_key: key, setting_value: value, setting_type: 'string', is_active: true });
+                }
+            } catch (e) {
+                console.error('[Live] Erro salvando setting', key, e);
             }
         }
     };
 
     const handleLiveStarted = async (hlsUrl) => {
         try {
-            setIsLive(true);
             setIsSendingNotification(true);
-
-            // Save live status + HLS URL
             await saveLiveStatus(true, hlsUrl);
-
-            // Notify all users
             const allUsers = await base44.entities.User.list();
-            await notifyLiveSession(allUsers, {
-                id: 'live-session-' + Date.now(),
-                title: '🔴 Live EC10 Talentos',
-            });
-
+            await notifyLiveSession(allUsers, { id: 'live-' + Date.now(), title: '🔴 Live EC10 Talentos' });
             toast.success(`✅ Live iniciada! ${allUsers.length} atletas notificados.`);
         } catch (err) {
-            console.error('Error saving live status:', err);
+            console.error('[Live] handleLiveStarted error:', err);
             toast.error('Erro ao notificar usuários');
         } finally {
             setIsSendingNotification(false);
@@ -309,11 +339,10 @@ export default function LiveBroadcaster({ user }) {
 
     const handleLiveStopped = async () => {
         try {
-            setIsLive(false);
             await saveLiveStatus(false, '');
             toast.success('⏹ Live encerrada com sucesso!');
         } catch (err) {
-            console.error('Error stopping live:', err);
+            console.error('[Live] handleLiveStopped error:', err);
         }
     };
 
@@ -341,7 +370,6 @@ export default function LiveBroadcaster({ user }) {
                             <span className="text-blue-400 text-sm">Notificando todos os atletas...</span>
                         </div>
                     )}
-
                     <BroadcasterControls
                         user={user}
                         onLiveStarted={handleLiveStarted}
