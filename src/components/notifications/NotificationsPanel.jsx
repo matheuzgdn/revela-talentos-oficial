@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { Bell, X, Check, Eye, MessageCircle, Trophy, Star } from 'lucide-react';
+import { Bell, X, Check, Eye, MessageCircle, Trophy, Star, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
 moment.locale('pt-br');
 
 export default function NotificationsPanel({ user }) {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -18,7 +21,7 @@ export default function NotificationsPanel({ user }) {
   useEffect(() => {
     if (user) {
       loadNotifications();
-      
+
       // Check for new notifications every 30 seconds
       const interval = setInterval(loadNotifications, 30000);
       return () => clearInterval(interval);
@@ -53,7 +56,7 @@ export default function NotificationsPanel({ user }) {
       setLoading(true);
       const unreadNotifications = notifications.filter(n => !n.is_read);
       await Promise.all(
-        unreadNotifications.map(n => 
+        unreadNotifications.map(n =>
           base44.entities.Notification.update(n.id, { is_read: true })
         )
       );
@@ -73,6 +76,8 @@ export default function NotificationsPanel({ user }) {
         return Eye;
       case 'achievement':
         return Trophy;
+      case 'live_session':
+        return Radio;
       case 'general':
         return Bell;
       default:
@@ -88,8 +93,18 @@ export default function NotificationsPanel({ user }) {
         return 'from-purple-500 to-pink-500';
       case 'achievement':
         return 'from-yellow-500 to-orange-500';
+      case 'live_session':
+        return 'from-red-500 to-pink-600';
       default:
         return 'from-gray-500 to-gray-600';
+    }
+  };
+
+  const handleNotificationClick = (notification) => {
+    if (!notification.is_read) markAsRead(notification.id);
+    if (notification.type === 'live_session' || notification.notification_type === 'live_session') {
+      setIsOpen(false);
+      navigate(createPageUrl('Lives'));
     }
   };
 
@@ -99,11 +114,10 @@ export default function NotificationsPanel({ user }) {
       <motion.button
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
-        className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-          unreadCount > 0
-            ? 'bg-gradient-to-br from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/30'
-            : 'bg-white/5 border border-white/10 hover:bg-white/10'
-        }`}
+        className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all ${unreadCount > 0
+          ? 'bg-gradient-to-br from-blue-600 to-cyan-500 shadow-lg shadow-blue-500/30'
+          : 'bg-white/5 border border-white/10 hover:bg-white/10'
+          }`}
       >
         <Bell className={`w-5 h-5 ${unreadCount > 0 ? 'text-white' : 'text-gray-400'}`} />
         {unreadCount > 0 && (
@@ -194,12 +208,11 @@ export default function NotificationsPanel({ user }) {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
-                          onClick={() => !notification.is_read && markAsRead(notification.id)}
-                          className={`relative rounded-xl p-4 cursor-pointer transition-all ${
-                            notification.is_read
-                              ? 'bg-white/5 border border-white/10'
-                              : 'bg-gradient-to-br ' + colorClass + ' bg-opacity-20 border-2 border-blue-500/50 shadow-lg'
-                          }`}
+                          onClick={() => handleNotificationClick(notification)}
+                          className={`relative rounded-xl p-4 cursor-pointer transition-all ${notification.is_read
+                            ? 'bg-white/5 border border-white/10'
+                            : 'bg-gradient-to-br ' + colorClass + ' bg-opacity-20 border-2 border-blue-500/50 shadow-lg'
+                            }`}
                         >
                           {/* Unread indicator */}
                           {!notification.is_read && (
@@ -207,9 +220,8 @@ export default function NotificationsPanel({ user }) {
                           )}
 
                           <div className="flex gap-3">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                              notification.is_read ? 'bg-white/10' : 'bg-white/20'
-                            }`}>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${notification.is_read ? 'bg-white/10' : 'bg-white/20'
+                              }`}>
                               <Icon className={`w-5 h-5 ${notification.is_read ? 'text-gray-400' : 'text-white'}`} />
                             </div>
 
@@ -221,14 +233,14 @@ export default function NotificationsPanel({ user }) {
                                 {notification.message}
                               </p>
                               <div className="flex items-center gap-2">
-                                <Badge className={`text-[10px] ${
-                                  notification.priority === 'high' || notification.priority === 'urgent'
-                                    ? 'bg-red-500/20 text-red-400'
-                                    : 'bg-gray-500/20 text-gray-400'
-                                }`}>
+                                <Badge className={`text-[10px] ${notification.priority === 'high' || notification.priority === 'urgent'
+                                  ? 'bg-red-500/20 text-red-400'
+                                  : 'bg-gray-500/20 text-gray-400'
+                                  }`}>
                                   {notification.type === 'message' ? 'Mensagem' :
-                                   notification.type === 'profile_visit' ? 'Visita' :
-                                   notification.type === 'achievement' ? 'Conquista' : 'Geral'}
+                                    notification.type === 'profile_visit' ? 'Visita' :
+                                      notification.type === 'live_session' ? '🔴 Live' :
+                                        notification.type === 'achievement' ? 'Conquista' : 'Geral'}
                                 </Badge>
                                 <span className="text-[10px] text-gray-500">
                                   {moment(notification.created_date).fromNow()}

@@ -1,96 +1,107 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  Users, 
-  FileText, 
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
   Target,
   Star,
   Zap,
-  X
+  X,
+  Radio
 } from 'lucide-react';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import AdminUsersTab from '@/components/admin/AdminUsersTab';
 import AdminContentTab from '@/components/admin/AdminContentTab';
-import AdminSeletivasTab from '@/components/admin/AdminSeletivasTab'; 
+import AdminSeletivasTab from '@/components/admin/AdminSeletivasTab';
 import AdminStoriesTab from '@/components/admin/AdminStoriesTab';
 import AdminServicesTab from '@/components/admin/AdminServicesTab';
 import AdminStoriesManagement from '@/components/admin/AdminStoriesManagement';
 import AdminFeaturedAthletesTab from '@/components/admin/AdminFeaturedAthletesTab';
+import AdminLivesTab from '@/components/admin/AdminLivesSettingsTab';
 
 const adminTabsConfig = [
-  { 
-    id: 'dashboard', 
-    name: 'Dashboard', 
-    icon: LayoutDashboard, 
+  {
+    id: 'dashboard',
+    name: 'Dashboard',
+    icon: LayoutDashboard,
     component: AdminDashboard,
     description: 'Visão geral da plataforma',
     requiredRole: 'admin',
     gradient: 'from-cyan-500 to-blue-600'
   },
-  { 
-    id: 'users', 
-    name: 'Atletas', 
-    icon: Users, 
+  {
+    id: 'users',
+    name: 'Atletas',
+    icon: Users,
     component: AdminUsersTab,
     description: 'Gestão de atletas e usuários',
     requiredRole: 'admin',
     gradient: 'from-purple-500 to-pink-600'
   },
-  { 
-    id: 'seletivas', 
-    name: 'Seletivas', 
-    icon: Target, 
+  {
+    id: 'seletivas',
+    name: 'Seletivas',
+    icon: Target,
     component: AdminSeletivasTab,
     description: 'Peneiras e avaliações',
     requiredRole: 'revela_admin',
     gradient: 'from-green-500 to-emerald-600'
   },
-  { 
-    id: 'stories', 
-    name: 'Destaques', 
-    icon: Star, 
+  {
+    id: 'stories',
+    name: 'Destaques',
+    icon: Star,
     component: AdminStoriesTab,
     description: 'Atletas em evidência',
     requiredRole: 'revela_admin',
     gradient: 'from-yellow-500 to-orange-600'
   },
-  { 
-    id: 'featured_athletes', 
-    name: 'Figurinhas', 
-    icon: Star, 
+  {
+    id: 'featured_athletes',
+    name: 'Figurinhas',
+    icon: Star,
     component: AdminFeaturedAthletesTab,
     description: 'Atletas em destaque (figurinhas)',
     requiredRole: 'revela_admin',
     gradient: 'from-amber-500 to-yellow-600'
   },
-  { 
-    id: 'stories_abertura', 
-    name: 'Stories', 
-    icon: Star, 
+  {
+    id: 'stories_abertura',
+    name: 'Stories',
+    icon: Star,
     component: AdminStoriesManagement,
     description: 'Stories de abertura do app',
     requiredRole: 'admin',
     gradie: 'from-pink-500 to-rose-600'
   },
-  { 
-    id: 'services', 
-    name: 'Serviços', 
-    icon: Zap, 
+  {
+    id: 'services',
+    name: 'Serviços',
+    icon: Zap,
     component: AdminServicesTab,
     description: 'Serviços em destaque',
     requiredRole: 'admin',
     gradient: 'from-indigo-500 to-purple-600'
   },
-  { 
-    id: 'content', 
-    name: 'Conteúdo', 
-    icon: FileText, 
+  {
+    id: 'content',
+    name: 'Conteúdo',
+    icon: FileText,
     component: AdminContentTab,
     description: 'Vídeos e materiais',
     requiredRole: 'revela_admin',
     gradient: 'from-blue-500 to-cyan-600'
+  },
+  {
+    id: 'lives',
+    name: 'Lives',
+    icon: Radio,
+    component: AdminLivesTab,
+    description: 'Estúdio de transmissão ao vivo',
+    requiredRole: 'admin',
+    gradient: 'from-red-500 to-pink-600'
   }
 ];
 
@@ -104,15 +115,15 @@ export default function AdminPage() {
     const checkAccess = async () => {
       try {
         const user = await base44.auth.me();
-        
+
         const isFullAdmin = user?.role === 'admin';
         const isRevelaAdmin = user?.is_revela_admin === true && user?.role !== 'admin';
-        
+
         if (!isFullAdmin && !isRevelaAdmin) {
           window.location.href = '/RevelaTalentos';
           return;
         }
-        
+
         setCurrentUser(user);
         setActiveTab(isFullAdmin ? 'dashboard' : 'seletivas');
         setIsLoading(false);
@@ -126,25 +137,25 @@ export default function AdminPage() {
 
   const getVisibleTabs = () => {
     if (!currentUser) return [];
-    
+
     const isFullAdmin = currentUser.role === 'admin';
     const isRevelaAdmin = currentUser.is_revela_admin === true && currentUser.role !== 'admin';
-    
+
     if (isFullAdmin) {
       return adminTabsConfig.filter(tab => tab.requiredRole === 'admin' || tab.requiredRole === 'revela_admin');
     }
-    
+
     if (isRevelaAdmin) {
       return adminTabsConfig.filter(tab => tab.requiredRole === 'revela_admin');
     }
-    
+
     return [];
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <motion.div 
+        <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full"
@@ -163,21 +174,21 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-black text-white flex overflow-hidden">
       {/* Sidebar */}
-      <motion.div 
+      <motion.div
         animate={{ width: sidebarCollapsed ? 80 : 280 }}
         className="relative bg-gradient-to-b from-[#0A0A0A] to-black border-r border-gray-800/50 flex flex-col"
       >
         {/* Header */}
         <div className="p-6 border-b border-gray-800/50">
-          <motion.div 
+          <motion.div
             animate={{ opacity: sidebarCollapsed ? 0 : 1 }}
             className="flex items-center gap-3 mb-6"
           >
             <div className="relative">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                <img 
-                  src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" 
-                  alt="EC10" 
+                <img
+                  src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png"
+                  alt="EC10"
                   className="w-8 h-8 object-contain"
                 />
               </div>
@@ -192,9 +203,9 @@ export default function AdminPage() {
               </div>
             )}
           </motion.div>
-          
+
           {!sidebarCollapsed && currentUser && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="p-3 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl border border-cyan-500/20"
@@ -215,7 +226,7 @@ export default function AdminPage() {
             </motion.div>
           )}
         </div>
-        
+
         {/* Navigation */}
         <nav className="flex-1 p-4 overflow-y-auto">
           <div className="space-y-2">
@@ -226,11 +237,10 @@ export default function AdminPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full group relative overflow-hidden rounded-2xl transition-all duration-300 ${
-                  activeTab === tab.id
+                className={`w-full group relative overflow-hidden rounded-2xl transition-all duration-300 ${activeTab === tab.id
                     ? 'bg-gradient-to-r ' + tab.gradient
                     : 'hover:bg-white/5'
-                }`}
+                  }`}
               >
                 {activeTab === tab.id && (
                   <motion.div
