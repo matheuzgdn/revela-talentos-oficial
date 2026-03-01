@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import LiveViewer from "@/components/live/LiveViewer";
 
-// Poll platform settings every 20 seconds
-const POLL_INTERVAL = 20000;
+// Poll platform settings every 5 seconds
+const POLL_INTERVAL = 5000;
 
 async function fetchLiveSettings() {
   try {
@@ -172,8 +172,8 @@ export default function LivesPage() {
             <X className="w-5 h-5" />
           </Button>
           <Badge className={`flex items-center gap-2 px-3 py-1.5 shadow-2xl border ${isLive
-              ? "bg-gradient-to-r from-red-500 to-pink-600 border-red-400/30 animate-pulse shadow-red-500/50"
-              : "bg-gray-800 border-gray-600 text-gray-400"
+            ? "bg-gradient-to-r from-red-500 to-pink-600 border-red-400/30 animate-pulse shadow-red-500/50"
+            : "bg-gray-800 border-gray-600 text-gray-400"
             }`}>
             <Radio className="w-3 h-3" />
             <span className="font-bold text-xs">{isLive ? "AO VIVO" : "OFFLINE"}</span>
@@ -235,8 +235,8 @@ export default function LivesPage() {
                 </h1>
               </div>
               <Badge className={`flex items-center gap-2 px-6 py-3 shadow-2xl border ${isLive
-                  ? "bg-gradient-to-r from-red-500 to-pink-600 border-red-400/30 animate-pulse shadow-red-500/50"
-                  : "bg-gray-800 border-gray-600 text-gray-400"
+                ? "bg-gradient-to-r from-red-500 to-pink-600 border-red-400/30 animate-pulse shadow-red-500/50"
+                : "bg-gray-800 border-gray-600 text-gray-400"
                 }`}>
                 <Radio className="w-5 h-5" />
                 <span className="font-bold text-base">{isLive ? "AO VIVO AGORA" : "OFFLINE"}</span>

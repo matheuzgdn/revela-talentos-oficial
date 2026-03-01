@@ -53,16 +53,28 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     const [isStoppingLive, setIsStoppingLive] = useState(false);
     const [hlsUrl, setHlsUrl] = useState(null);
     const [debugInfo, setDebugInfo] = useState('');
+    const [deviceInUse, setDeviceInUse] = useState(false); // camera busy by another app
 
-    // Save live status to PlatformSettings so all users can poll it
-    const saveLiveStatus = async (isLive) => {
+    // Upsert a PlatformSetting key
+    const upsertSetting = async (key, value) => {
+        const all = await base44.entities.PlatformSettings.list();
+        const existing = all.find(s => s.setting_key === key);
+        if (existing) {
+            await base44.entities.PlatformSettings.update(existing.id, { setting_value: String(value) });
+        } else {
+            await base44.entities.PlatformSettings.create({ setting_key: key, setting_value: String(value) });
+        }
+    };
+
+    // Save live on/off status — writes BOTH keys Lives.jsx and the banner card check
+    const saveLiveStatus = async (isLive, hlsUrl = null) => {
         try {
-            const settings = await base44.entities.PlatformSettings.list();
-            const existing = settings.find(s => s.setting_key === 'is_live');
-            if (existing) {
-                await base44.entities.PlatformSettings.update(existing.id, { setting_value: String(isLive) });
-            } else {
-                await base44.entities.PlatformSettings.create({ setting_key: 'is_live', setting_value: String(isLive) });
+            await upsertSetting('is_live', String(isLive));          // banner card
+            await upsertSetting('is_live_active', String(isLive));   // Lives.jsx check
+            if (hlsUrl) {
+                await upsertSetting('live_hls_url', hlsUrl);         // Lives.jsx player URL
+            } else if (!isLive) {
+                await upsertSetting('live_hls_url', '');             // clear on stop
             }
         } catch (err) {
             console.warn('[Live] Não foi possível salvar status de live:', err);
@@ -87,13 +99,16 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             const url = hlsState.variants[0].url;
             console.log('[100ms] HLS stream URL:', url);
             setHlsUrl(url);
-            onLiveStarted(url);
+            // ⚡ Save URL so ALL viewers can find the stream
+            saveLiveStatus(true, url);
+            if (onLiveStarted) onLiveStarted(url);
         }
     }, [hlsState]);
 
-    const joinRoom = async () => {
-        console.log('[Live] joinRoom called. User:', user?.id);
+    const joinRoom = async (forceVideoOff = false) => {
+        console.log('[Live] joinRoom called. User:', user?.id, '| videoOff:', forceVideoOff);
         setIsJoining(true);
+        setDeviceInUse(false);
         setDebugInfo('Gerando token...');
 
         try {
@@ -104,10 +119,9 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             await hmsActions.join({
                 userName: user.full_name || user.email || 'Admin',
                 authToken: token,
-                // Start muted — user can unmute manually to avoid permission issues
                 settings: {
                     isAudioMuted: true,
-                    isVideoMuted: false,
+                    isVideoMuted: forceVideoOff, // audio-only fallback
                 },
             });
 
@@ -115,9 +129,15 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             setDebugInfo('');
         } catch (err) {
             console.error('[Live] Erro ao conectar:', err);
-            const msg = err?.message || err?.description || String(err);
-            toast.error(`❌ Falha ao conectar: ${msg}`);
-            setDebugInfo(`Erro: ${msg}`);
+            // DeviceInUse = camera occupied by another app (code 3003)
+            if (err?.code === 3003 || err?.name === 'DeviceInUse' || err?.message?.includes('videosource')) {
+                setDeviceInUse(true);
+                setDebugInfo('');
+            } else {
+                const msg = err?.message || err?.description || String(err);
+                toast.error(`❌ Falha ao conectar: ${msg}`);
+                setDebugInfo(`Erro: ${msg}`);
+            }
         } finally {
             setIsJoining(false);
         }
@@ -172,43 +192,78 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             >
                 <HMSErrorHandler />
 
-                <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-3xl opacity-30 animate-pulse" />
-                    <div className="w-24 h-24 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-red-500/30 relative">
-                        <Radio className="w-12 h-12 text-red-400" />
-                    </div>
-                </div>
+                {/* ── DeviceInUse Error Card ── */}
+                {deviceInUse ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="w-full max-w-sm flex flex-col items-center gap-5 p-6 bg-amber-950/40 border border-amber-500/40 rounded-2xl"
+                    >
+                        <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center">
+                            <AlertTriangle className="w-8 h-8 text-amber-400" />
+                        </div>
+                        <div className="text-center">
+                            <h3 className="text-white font-black text-lg mb-1">📷 Câmera em uso</h3>
+                            <p className="text-amber-200/80 text-sm leading-relaxed">
+                                Outro aplicativo está usando a câmera (Teams, Zoom, OBS, etc).
+                                Feche-o ou transmita <strong>só com áudio</strong> agora.
+                            </p>
+                        </div>
+                        <div className="flex flex-col gap-3 w-full">
+                            <Button
+                                onClick={() => joinRoom(true)}
+                                disabled={isJoining}
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black py-4 rounded-xl"
+                            >
+                                {isJoining ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : '🎙️ '}
+                                Entrar só com áudio
+                            </Button>
+                            <Button
+                                onClick={() => joinRoom(false)}
+                                disabled={isJoining}
+                                variant="outline"
+                                className="w-full border-white/20 text-white hover:bg-white/10 py-4 rounded-xl"
+                            >
+                                🔄 Tentar novamente com câmera
+                            </Button>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <>
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-3xl opacity-30 animate-pulse" />
+                            <div className="w-24 h-24 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-red-500/30 relative">
+                                <Radio className="w-12 h-12 text-red-400" />
+                            </div>
+                        </div>
 
-                <div className="text-center">
-                    <h3 className="text-2xl font-black text-white mb-2">Pronto para transmitir?</h3>
-                    <p className="text-gray-400">
-                        {isJoining ? debugInfo || 'Conectando...' : 'Sua câmera será ativada ao conectar'}
-                    </p>
-                </div>
+                        <div className="text-center">
+                            <h3 className="text-2xl font-black text-white mb-2">Pronto para transmitir?</h3>
+                            <p className="text-gray-400">
+                                {isJoining ? debugInfo || 'Conectando...' : 'Sua câmera será ativada ao conectar'}
+                            </p>
+                        </div>
 
-                {/* Debug info */}
-                {debugInfo && !isJoining && (
-                    <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-500/30 rounded-xl w-full max-w-sm">
-                        <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-                        <p className="text-red-400 text-xs break-all">{debugInfo}</p>
-                    </div>
+                        {debugInfo && !isJoining && (
+                            <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-500/30 rounded-xl w-full max-w-sm">
+                                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                                <p className="text-red-400 text-xs break-all">{debugInfo}</p>
+                            </div>
+                        )}
+
+                        <Button
+                            onClick={() => joinRoom()}
+                            disabled={isJoining}
+                            className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-black text-lg px-10 py-6 rounded-2xl shadow-2xl shadow-red-500/40 transition-all hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {isJoining ? (
+                                <><Loader2 className="w-6 h-6 mr-3 animate-spin" />{debugInfo || 'Conectando...'}</>
+                            ) : (
+                                <><Radio className="w-6 h-6 mr-3" />🔴 ENTRAR NA SALA DE LIVE</>
+                            )}
+                        </Button>
+                    </>
                 )}
-
-                <Button
-                    onClick={joinRoom}
-                    disabled={isJoining}
-                    className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-black text-lg px-10 py-6 rounded-2xl shadow-2xl shadow-red-500/40 transition-all hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                    {isJoining ? (
-                        <><Loader2 className="w-6 h-6 mr-3 animate-spin" />{debugInfo || 'Conectando...'}</>
-                    ) : (
-                        <><Radio className="w-6 h-6 mr-3" />🔴 ENTRAR NA SALA DE LIVE</>
-                    )}
-                </Button>
-
-                <p className="text-gray-600 text-xs text-center max-w-xs">
-                    Abra o console do browser (F12) para ver logs detalhados caso haja erros
-                </p>
             </motion.div>
         );
     }
