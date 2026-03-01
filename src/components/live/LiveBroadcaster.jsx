@@ -82,7 +82,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         setDebugInfo('Gerando token...');
 
         try {
-            const token = await generateHmsToken('emissora', user.id || 'admin');
+            const token = await generateHmsToken('broadcaster', user.id || 'admin');
             console.log('[Live] Token gerado com sucesso:', token.substring(0, 40) + '...');
             setDebugInfo('Conectando ao servidor 100ms...');
 

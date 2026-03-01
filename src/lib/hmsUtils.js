@@ -8,7 +8,7 @@ const HMS_ROOM_ID = import.meta.env.VITE_HMS_ROOM_ID || '69a3eb3cb56e5b9623d49e1
 const HMS_SUBDOMAIN = import.meta.env.VITE_HMS_SUBDOMAIN || 'matheus-livestream-427';
 
 export const HMS_ROOM_ID_VALUE = HMS_ROOM_ID;
-export const HMS_MEETING_URL = `https://${HMS_SUBDOMAIN}.app.100ms.live/streaming/meeting?roomId=${HMS_ROOM_ID}&role=emissora`;
+export const HMS_MEETING_URL = `https://${HMS_SUBDOMAIN}.app.100ms.live/streaming/meeting?roomId=${HMS_ROOM_ID}&role=broadcaster`;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -53,6 +53,31 @@ async function hmacSign(message, secretStr) {
 export async function generateHmsToken(role, userId) {
     console.log('[🔑 HMS] Generating token | role:', role, '| user:', userId);
     console.log('[🔑 HMS] Secret starts with:', HMS_SECRET.substring(0, 8), '... length:', HMS_SECRET.length);
+
+    // Debug: log available roles via management API
+    try {
+        const mgToken = await (async () => {
+            const n = Math.floor(Date.now() / 1000);
+            const h = { alg: 'HS256', typ: 'JWT' };
+            const p = { access_key: HMS_ACCESS_KEY, type: 'management', version: 2, jti: crypto.randomUUID(), iat: n, nbf: n - 60, exp: n + 3600 };
+            const msg = `${toBase64url(h)}.${toBase64url(p)}`;
+            const sig = await hmacSign(msg, HMS_SECRET);
+            return `${msg}.${sig}`;
+        })();
+        const roomResp = await fetch(`https://api.100ms.live/v2/rooms/${HMS_ROOM_ID}`, {
+            headers: { Authorization: `Bearer ${mgToken}` }
+        });
+        const roomData = await roomResp.json();
+        console.log('[🔑 HMS] Room template_id:', roomData.template_id, '| name:', roomData.name);
+        // Fetch template to get role names
+        const tplResp = await fetch(`https://api.100ms.live/v2/templates/${roomData.template_id}`, {
+            headers: { Authorization: `Bearer ${mgToken}` }
+        });
+        const tplData = await tplResp.json();
+        console.log('[🔑 HMS] Available roles:', Object.keys(tplData.roles || {}));
+    } catch (e) {
+        console.warn('[🔑 HMS] Could not fetch roles:', e.message);
+    }
 
     const now = Math.floor(Date.now() / 1000);
     const header = { alg: 'HS256', typ: 'JWT' };
