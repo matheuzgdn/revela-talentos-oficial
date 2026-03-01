@@ -1,7 +1,6 @@
 // 100ms Auth Token Generation
-// Generates the auth token JWT DIRECTLY with room_id embedded in the payload.
-// The App Secret (base64url-encoded) must be DECODED to raw bytes before signing.
-// Credentials hardcoded as fallback since .env.local is not committed to git.
+// Uses HMAC-SHA256 with the App Secret as a PLAIN UTF-8 STRING (NOT base64-decoded).
+// This matches the behavior of Python PyJWT and Node.js jsonwebtoken libraries.
 
 const HMS_ACCESS_KEY = import.meta.env.VITE_HMS_APP_ACCESS_KEY || '69a3e96f6a127e1cf12544d3';
 const HMS_SECRET = import.meta.env.VITE_HMS_APP_SECRET || 'Yh-i5SDclN4DQIc-cI4V0jrIpILDNcf5K6exlXUgHPkBnXuP9Sp1Jf7alQkbiWzUZLdPg0sfNhgDI1PAuQx0aC8KfAcxIspXgOnaHpEcR6y7HgOh3bt6HvU-SOLCIy9vsV1t0TW8UqLqx8v_yguuaHOVJ4gCnHmx1zP7Ow2emdI=';
@@ -13,7 +12,6 @@ export const HMS_MEETING_URL = `https://${HMS_SUBDOMAIN}.app.100ms.live/streamin
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Convert any object to a base64url string */
 function toBase64url(obj) {
     const json = JSON.stringify(obj);
     const bytes = new TextEncoder().encode(json);
@@ -23,23 +21,14 @@ function toBase64url(obj) {
 }
 
 /**
- * Decode a base64url string → Uint8Array (raw bytes).
- * The 100ms App Secret is stored as base64url → must be decoded before HMAC use.
+ * HMAC-SHA256 sign — key is treated as plain UTF-8 string (standard JWT behavior).
+ * Standard JWT libraries (PyJWT, jsonwebtoken) do NOT base64-decode the secret.
  */
-function base64urlDecode(str) {
-    const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
-    const binary = atob(padded);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    return bytes;
-}
-
-/** HMAC-SHA256 sign a string with raw key bytes */
-async function hmacSign(message, rawKeyBytes) {
+async function hmacSign(message, secretStr) {
+    const keyBytes = new TextEncoder().encode(secretStr); // plain UTF-8 bytes
     const cryptoKey = await crypto.subtle.importKey(
         'raw',
-        rawKeyBytes,
+        keyBytes,
         { name: 'HMAC', hash: 'SHA-256' },
         false,
         ['sign']
@@ -54,15 +43,16 @@ async function hmacSign(message, rawKeyBytes) {
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
- * Generate a 100ms auth token (JWT) for a given room + role.
- * The key insight: App Secret is base64url-encoded → must be decoded before signing.
+ * Generate a 100ms auth JWT for a given room + role.
+ * Secret used as-is (plain string), matching standard JWT libraries.
  *
  * @param {string} role   e.g. 'emissora'
  * @param {string} userId unique user identifier
  * @returns {Promise<string>} JWT auth token for hmsActions.join()
  */
 export async function generateHmsToken(role, userId) {
-    console.log('[🔑 HMS] Generating auth token → role:', role, '| user:', userId);
+    console.log('[🔑 HMS] Generating token | role:', role, '| user:', userId);
+    console.log('[🔑 HMS] Secret starts with:', HMS_SECRET.substring(0, 8), '... length:', HMS_SECRET.length);
 
     const now = Math.floor(Date.now() / 1000);
     const header = { alg: 'HS256', typ: 'JWT' };
@@ -79,10 +69,9 @@ export async function generateHmsToken(role, userId) {
     };
 
     const message = `${toBase64url(header)}.${toBase64url(payload)}`;
-    const rawKey = base64urlDecode(HMS_SECRET); // ← critical: decode base64url first!
-    const signature = await hmacSign(message, rawKey);
+    const signature = await hmacSign(message, HMS_SECRET);
     const token = `${message}.${signature}`;
 
-    console.log('[🔑 HMS] ✅ Auth token generated:', token.substring(0, 50) + '...');
+    console.log('[🔑 HMS] ✅ Token generated:', token.substring(0, 50) + '...');
     return token;
 }
