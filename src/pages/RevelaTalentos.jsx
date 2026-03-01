@@ -22,7 +22,7 @@ export default function RevelaTalentosPage() {
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
   const [isPlatformRestricted, setIsPlatformRestricted] = useState(false);
   const [showLandingPage, setShowLandingPage] = useState(false);
-  
+
   const [contents, setContents] = useState([]);
   const [userProgress, setUserProgress] = useState([]);
   const [selectedContent, setSelectedContent] = useState(null);
@@ -31,25 +31,26 @@ export default function RevelaTalentosPage() {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [athleteStories, setAthleteStories] = useState([]);
+  const [isLive, setIsLive] = useState(false);
 
   const loadContentData = useCallback(async (currentUser) => {
     try {
-      const fetchedContents = await base44.entities.Content.filter({ 
-        is_published: true 
+      const fetchedContents = await base44.entities.Content.filter({
+        is_published: true
       }, "-created_date", 50).catch(() => []);
       setContents(fetchedContents);
-      
+
       // Carregar atletas em destaque
-      const stories = await base44.entities.AthleteStory.filter({ 
-        is_active: true, 
-        category: 'atleta' 
+      const stories = await base44.entities.AthleteStory.filter({
+        is_active: true,
+        category: 'atleta'
       }, "display_order", 20).catch(() => []);
       setAthleteStories(stories);
-      
+
       if (currentUser) {
         base44.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).then(progress => {
           setUserProgress(progress);
-        }).catch(() => {});
+        }).catch(() => { });
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -59,26 +60,26 @@ export default function RevelaTalentosPage() {
   const checkAccess = useCallback(async () => {
     try {
       const currentUser = await base44.auth.me().catch(() => null);
-      
+
       if (!currentUser) {
         setShowLandingPage(true);
         setIsCheckingAccess(false);
         loadContentData(null);
         return;
       }
-      
+
       setUser(currentUser);
       setShowLandingPage(false);
-      
+
       base44.entities.PlatformSettings.list().then(platformSettings => {
         const restrictionSetting = platformSettings.find(s => s.setting_key === 'is_platform_restricted');
         const isRestricted = restrictionSetting?.setting_value === 'true';
         setIsPlatformRestricted(isRestricted);
-      }).catch(() => {});
-      
+      }).catch(() => { });
+
       loadContentData(currentUser);
       setIsCheckingAccess(false);
-      
+
     } catch (error) {
       console.error('Error checking access:', error);
       setUser(null);
@@ -91,6 +92,20 @@ export default function RevelaTalentosPage() {
   useEffect(() => {
     checkAccess();
   }, [checkAccess]);
+
+  // Poll live status every 15 seconds
+  useEffect(() => {
+    const checkLive = async () => {
+      try {
+        const settings = await base44.entities.PlatformSettings.list();
+        const liveSetting = settings.find(s => s.setting_key === 'is_live');
+        setIsLive(liveSetting?.setting_value === 'true');
+      } catch { }
+    };
+    checkLive();
+    const interval = setInterval(checkLive, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Create welcome notification for new users
@@ -109,7 +124,7 @@ export default function RevelaTalentosPage() {
         priority: 'high',
         is_read: false
       });
-      
+
       // Mark user as having seen welcome
       await base44.auth.updateMe({ has_seen_welcome: true });
     } catch (error) {
@@ -139,7 +154,7 @@ export default function RevelaTalentosPage() {
   ], [t]);
 
   const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
-  
+
   // Hero: EC10 destaque + mentorias gravadas recentes
   const heroContents = useMemo(() => {
     const ec10Hero = {
@@ -150,24 +165,24 @@ export default function RevelaTalentosPage() {
       category: 'hero',
       is_featured: true
     };
-    
+
     const mentoriasRecentes = contents
       .filter(c => c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended'))
       .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
       .slice(0, 9);
-    
+
     return [ec10Hero, ...mentoriasRecentes];
   }, [contents, t]);
 
   const planosContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
-  
+
   // Conteúdos por categoria
   const mentoriaContents = useMemo(() => regularContents.filter(c => c.category === 'mentoria'), [regularContents]);
   const preparacaoFisicaContents = useMemo(() => regularContents.filter(c => c.category === 'preparacao_fisica'), [regularContents]);
   const treinoTaticoContents = useMemo(() => regularContents.filter(c => c.category === 'treino_tatico'), [regularContents]);
   const psicologiaContents = useMemo(() => regularContents.filter(c => c.category === 'psicologia'), [regularContents]);
   const nutricaoContents = useMemo(() => regularContents.filter(c => c.category === 'nutricao'), [regularContents]);
-  
+
   const filteredContents = useMemo(() => {
     if (activeCategory === "all") return regularContents;
     return regularContents.filter(content => content.category === activeCategory);
@@ -197,7 +212,7 @@ export default function RevelaTalentosPage() {
   if (isCheckingAccess) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
-        <motion.div 
+        <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="w-12 h-12 border-2 border-[#00E5FF] border-t-transparent rounded-full"
@@ -232,7 +247,7 @@ export default function RevelaTalentosPage() {
       `}</style>
 
       {/* Header */}
-      <motion.header 
+      <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="sticky top-0 z-40 bg-[#0A0A0A]/95 backdrop-blur-2xl px-4 py-5 md:px-6 border-b border-[#1a1a1a]"
@@ -276,18 +291,18 @@ export default function RevelaTalentosPage() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <img 
+                <img
                   src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
                   alt={activeSlide?.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               )}
-              
+
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/20 to-transparent" />
-              
+
               {/* Neon glow effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/10 via-transparent to-[#0066FF]/10 opacity-60" />
-              
+
               {/* Title with tech effect */}
               <div className="absolute bottom-6 left-6 right-6">
                 <motion.div
@@ -318,11 +333,10 @@ export default function RevelaTalentosPage() {
               <button
                 key={index}
                 onClick={() => setCurrentSlideIndex(index)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  currentSlideIndex === index 
-                    ? 'w-8 bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50' 
-                    : 'w-1.5 bg-[#333] hover:bg-[#555]'
-                }`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${currentSlideIndex === index
+                  ? 'w-8 bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50'
+                  : 'w-1.5 bg-[#333] hover:bg-[#555]'
+                  }`}
               />
             ))}
           </div>
@@ -340,11 +354,10 @@ export default function RevelaTalentosPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.04 }}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`relative whitespace-nowrap px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${
-                  activeCategory === cat.id 
-                    ? 'bg-[#00E5FF] text-black shadow-lg shadow-[#00E5FF]/40' 
-                    : 'bg-[#111111] text-[#666] border border-[#222] hover:border-[#00E5FF]/50 hover:text-white'
-                }`}
+                className={`relative whitespace-nowrap px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ${activeCategory === cat.id
+                  ? 'bg-[#00E5FF] text-black shadow-lg shadow-[#00E5FF]/40'
+                  : 'bg-[#111111] text-[#666] border border-[#222] hover:border-[#00E5FF]/50 hover:text-white'
+                  }`}
               >
                 {cat.name}
               </motion.button>
@@ -352,6 +365,50 @@ export default function RevelaTalentosPage() {
           </div>
         </div>
       </section>
+
+      {/* ── LIVE BANNER ── Shows when admin is broadcasting */}
+      {isLive && (
+        <section className="px-4 md:px-6 py-2">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => window.location.href = createPageUrl('Lives')}
+              className="relative cursor-pointer rounded-[20px] overflow-hidden border-2 border-red-500/60 shadow-2xl shadow-red-500/30 hover:shadow-red-500/50 transition-all duration-300"
+            >
+              {/* Background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-950/90 via-[#0A0A0A]/95 to-red-950/90" />
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-500/10" />
+              {/* Animated glow border */}
+              <div className="absolute inset-0 rounded-[20px] border border-red-400/30 animate-pulse" />
+
+              <div className="relative flex items-center gap-4 p-4 md:p-5">
+                {/* Pulse dot */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-5 h-5 bg-red-500 rounded-full animate-ping absolute inset-0 opacity-75" />
+                  <div className="w-5 h-5 bg-red-500 rounded-full relative" />
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-red-400 text-xs font-black uppercase tracking-widest">🔴 AO VIVO AGORA</span>
+                  </div>
+                  <h3 className="text-white font-black text-base md:text-lg leading-tight truncate">
+                    Live EC10 Talentos — transmissão ao vivo!
+                  </h3>
+                  <p className="text-red-300/70 text-xs mt-0.5">Toque para assistir</p>
+                </div>
+
+                {/* Play button */}
+                <div className="flex-shrink-0 w-12 h-12 bg-red-500 rounded-full flex items-center justify-center shadow-lg shadow-red-500/60 hover:scale-110 transition-transform">
+                  <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Continue Watching */}
       {continueWatchingContents.length > 0 && (
@@ -365,9 +422,9 @@ export default function RevelaTalentosPage() {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {continueWatchingContents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
+                <ContentCard
+                  key={content.id}
+                  content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   progress={userProgress.find(p => p.content_id === content.id)?.progress_percent}
@@ -394,9 +451,9 @@ export default function RevelaTalentosPage() {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {top10Contents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
+                <ContentCard
+                  key={content.id}
+                  content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   showRank={true}
@@ -420,12 +477,12 @@ export default function RevelaTalentosPage() {
               </div>
               <ChevronRight className="w-5 h-5 text-[#00E5FF]" />
             </div>
-            
+
             <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {planosContents.map((plano, index) => (
-                <PlanCard 
-                  key={plano.id} 
-                  plano={plano} 
+                <PlanCard
+                  key={plano.id}
+                  plano={plano}
                   index={index}
                   onClick={() => handleContentSelect(plano)}
                   t={t}
@@ -449,12 +506,12 @@ export default function RevelaTalentosPage() {
                 <p className="text-[#666] text-xs mt-1">{t('home.featured.subtitle')}</p>
               </div>
             </div>
-            
+
             <div className="flex gap-4 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 pb-4">
               {athleteStories.map((story, index) => (
-                <FifaAthleteCard 
-                  key={story.id} 
-                  story={story} 
+                <FifaAthleteCard
+                  key={story.id}
+                  story={story}
                   index={index}
                 />
               ))}
@@ -478,9 +535,9 @@ export default function RevelaTalentosPage() {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {mentoriaContents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
+                <ContentCard
+                  key={content.id}
+                  content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   t={t}
@@ -506,9 +563,9 @@ export default function RevelaTalentosPage() {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {preparacaoFisicaContents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
+                <ContentCard
+                  key={content.id}
+                  content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   t={t}
@@ -534,9 +591,9 @@ export default function RevelaTalentosPage() {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {treinoTaticoContents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
+                <ContentCard
+                  key={content.id}
+                  content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   t={t}
@@ -562,9 +619,9 @@ export default function RevelaTalentosPage() {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {psicologiaContents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
+                <ContentCard
+                  key={content.id}
+                  content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   t={t}
@@ -590,9 +647,9 @@ export default function RevelaTalentosPage() {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
               {nutricaoContents.map((content, index) => (
-                <ContentCard 
-                  key={content.id} 
-                  content={content} 
+                <ContentCard
+                  key={content.id}
+                  content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   t={t}
@@ -614,12 +671,12 @@ export default function RevelaTalentosPage() {
               {t('home.viewAll')} <ChevronRight className="w-3 h-3" />
             </button>
           </div>
-          
+
           <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
             {filteredContents.map((content, index) => (
-              <ContentCard 
-                key={content.id} 
-                content={content} 
+              <ContentCard
+                key={content.id}
+                content={content}
                 index={index}
                 onClick={() => handleContentSelect(content)}
                 t={t}
@@ -630,7 +687,7 @@ export default function RevelaTalentosPage() {
       </section>
 
       {/* Bottom Navigation */}
-      <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} />
+      <MobileBottomNav onUploadClick={() => setShowUploadModal(true)} user={user} />
 
       {/* Upload Modal */}
       <VideoUploadModal
@@ -654,18 +711,18 @@ function ContentCard({ content, index, onClick, progress, showRank, rank, t }) {
       className="relative flex-shrink-0 cursor-pointer group w-[150px] md:w-[180px]"
     >
       <div className="relative aspect-[2/3] rounded-[16px] overflow-hidden bg-[#111111] border border-[#222] shadow-lg hover:shadow-[#00E5FF]/20 transition-all duration-300">
-        <img 
+        <img
           src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"}
           alt={content.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        
+
         {/* Dark gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent opacity-90" />
-        
+
         {/* Neon accent on hover */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/0 to-[#0066FF]/0 group-hover:from-[#00E5FF]/10 group-hover:to-[#0066FF]/10 transition-all duration-300" />
-        
+
         {/* Rank Badge */}
         {showRank && (
           <div className="absolute top-3 left-3 w-8 h-8 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/50">
@@ -676,7 +733,7 @@ function ContentCard({ content, index, onClick, progress, showRank, rank, t }) {
         {/* Progress Bar */}
         {progress && progress > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#222]">
-            <div 
+            <div
               className="h-full bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50"
               style={{ width: `${progress}%` }}
             />
@@ -720,18 +777,18 @@ function PlanCard({ plano, index, onClick, t }) {
       className="relative flex-shrink-0 cursor-pointer group w-[280px] md:w-[320px]"
     >
       <div className="relative aspect-[16/10] rounded-[20px] overflow-hidden bg-gradient-to-br from-[#00E5FF]/20 via-[#0066FF]/20 to-[#0033FF]/20 border-2 border-[#00E5FF]/30 shadow-xl hover:shadow-[#00E5FF]/40 transition-all duration-300">
-        <img 
+        <img
           src={plano.thumbnail_url || "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600"}
           alt={plano.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        
+
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/60 to-transparent" />
-        
+
         {/* Neon glow effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/20 via-transparent to-[#0066FF]/20 opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-        
+
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
           <Badge className="mb-3 bg-[#00E5FF] text-black font-black text-[10px] uppercase tracking-wider">

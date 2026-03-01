@@ -54,7 +54,22 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     const [hlsUrl, setHlsUrl] = useState(null);
     const [debugInfo, setDebugInfo] = useState('');
 
-    // Attach local video to video element
+    // Save live status to PlatformSettings so all users can poll it
+    const saveLiveStatus = async (isLive) => {
+        try {
+            const settings = await base44.entities.PlatformSettings.list();
+            const existing = settings.find(s => s.setting_key === 'is_live');
+            if (existing) {
+                await base44.entities.PlatformSettings.update(existing.id, { setting_value: String(isLive) });
+            } else {
+                await base44.entities.PlatformSettings.create({ setting_key: 'is_live', setting_value: String(isLive) });
+            }
+        } catch (err) {
+            console.warn('[Live] Não foi possível salvar status de live:', err);
+        }
+    };
+
+
     useEffect(() => {
         if (videoRef.current && localVideoTrackId) {
             hmsActions.attachVideo(localVideoTrackId, videoRef.current);
@@ -117,6 +132,9 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 recording: { singleFilePerLayer: true, hlsVod: true },
             });
             toast.success('🔴 HLS iniciado! Aguardando URL do stream...');
+            // Mark live as active in PlatformSettings so all users see the card
+            await saveLiveStatus(true);
+            if (onLiveStarted) onLiveStarted();
         } catch (err) {
             console.error('[Live] Erro ao iniciar HLS:', err);
             toast.error(`❌ Falha no HLS: ${err?.message || err}`);
@@ -130,6 +148,8 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         try {
             if (hlsState?.running) await hmsActions.stopHLSStreaming();
             await hmsActions.leave();
+            // Mark live as offline
+            await saveLiveStatus(false);
             onLiveStopped();
         } catch (err) {
             console.error('[Live] Erro ao encerrar:', err);
