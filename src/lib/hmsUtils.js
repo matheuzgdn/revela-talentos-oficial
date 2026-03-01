@@ -63,6 +63,7 @@ export async function generateHmsToken(role, userId) {
         room_id: HMS_ROOM_ID,
         user_id: String(userId),
         role: role,
+        jti: crypto.randomUUID(), // required by 100ms to prevent replay attacks
         iat: now,
         nbf: now - 60,
         exp: now + 86400,
