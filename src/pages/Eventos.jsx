@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Event } from "@/entities/Event";
+import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import { MapPin, Calendar, Map as MapIcon, Trophy, Globe, Sparkles, Loader2 } from 'lucide-react';
 
 // Paleta de cores por tipo de evento
@@ -180,8 +181,8 @@ export default function Eventos() {
                         <div
                             key={`list-${evento.id}`}
                             className={`bg-[#050505]/80 backdrop-blur-md border rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all duration-300 shadow-[0_0_15px_rgba(0,243,255,0.05)] cursor-pointer group ${eventoAtivo === evento.id
-                                    ? 'border-[#00f3ff]/60 shadow-[0_0_30px_rgba(0,243,255,0.2)] -translate-y-1'
-                                    : 'border-cyan-500/20 hover:border-[#00f3ff]/40 hover:-translate-y-1'
+                                ? 'border-[#00f3ff]/60 shadow-[0_0_30px_rgba(0,243,255,0.2)] -translate-y-1'
+                                : 'border-cyan-500/20 hover:border-[#00f3ff]/40 hover:-translate-y-1'
                                 }`}
                             onMouseEnter={() => setEventoAtivo(evento.id)}
                             onMouseLeave={() => setEventoAtivo(null)}
@@ -255,9 +256,12 @@ export default function Eventos() {
             </main>
 
             {/* Rodapé */}
-            <footer className="w-full text-center py-6 text-gray-600 text-sm border-t border-cyan-900/30 relative z-10">
+            <footer className="w-full text-center py-6 pb-24 md:pb-6 text-gray-600 text-sm border-t border-cyan-900/30 relative z-10">
                 <p>© 2026 EC10 Talentos. Todos os direitos reservados.</p>
             </footer>
+
+            {/* Bottom Nav Mobile */}
+            <MobileBottomNav />
 
             <style dangerouslySetInnerHTML={{
                 __html: `
