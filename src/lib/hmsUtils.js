@@ -89,7 +89,7 @@ export async function generateHmsToken(role, userId) {
         user_id: String(userId),
         role: role,
         jti: crypto.randomUUID(), // required by 100ms to prevent replay attacks
-        iat: now,
+        iat: now - 60,  // recua 60s para compensar clock skew com 100ms
         nbf: now - 60,
         exp: now + 86400,
     };
