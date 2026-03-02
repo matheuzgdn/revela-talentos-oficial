@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Video, Plus, Search, User, Upload, Radio, X } from "lucide-react";
+import { Home, Video, Plus, CalendarDays, User, Upload, Radio, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HMSRoomProvider } from "@100mslive/react-sdk";
 import LiveBroadcaster from "@/components/live/LiveBroadcaster";
@@ -17,7 +17,7 @@ export default function MobileBottomNav({ onUploadClick, user }) {
     { id: "home", icon: Home, label: "Início", path: "RevelaTalentos" },
     { id: "videos", icon: Video, label: "Vídeos", path: "AthleteVideos" },
     { id: "upload", icon: Plus, label: "", isUpload: true },
-    { id: "search", icon: Search, label: "Busca", path: "SearchAthletes" },
+    { id: "events", icon: CalendarDays, label: "Eventos", path: "Eventos" },
     { id: "profile", icon: User, label: "Perfil", path: "AthleteProfile" },
   ];
 
@@ -56,8 +56,8 @@ export default function MobileBottomNav({ onUploadClick, user }) {
                   className="relative -mt-6"
                 >
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg border-4 border-[#0A0A0A] transition-all ${isAdmin
-                      ? "bg-gradient-to-br from-red-500 to-pink-600 shadow-red-500/40"
-                      : "bg-[#00E5FF] shadow-[#00E5FF]/40"
+                    ? "bg-gradient-to-br from-red-500 to-pink-600 shadow-red-500/40"
+                    : "bg-[#00E5FF] shadow-[#00E5FF]/40"
                     }`}>
                     {isAdmin ? (
                       <Radio className="w-6 h-6 text-white" strokeWidth={2.5} />
