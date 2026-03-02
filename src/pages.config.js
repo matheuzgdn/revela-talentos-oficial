@@ -53,6 +53,7 @@ import AnalisePerformance from './pages/AnalisePerformance';
 import AthleteProfile from './pages/AthleteProfile';
 import AthleteVideos from './pages/AthleteVideos';
 import DatacenterDocumentation from './pages/DatacenterDocumentation';
+import Eventos from './pages/Eventos';
 import Home from './pages/Home';
 import Hub from './pages/Hub';
 import Lives from './pages/Lives';
@@ -73,6 +74,7 @@ export const PAGES = {
     "AthleteProfile": AthleteProfile,
     "AthleteVideos": AthleteVideos,
     "DatacenterDocumentation": DatacenterDocumentation,
+    "Eventos": Eventos,
     "Home": Home,
     "Hub": Hub,
     "Lives": Lives,

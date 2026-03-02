@@ -17,7 +17,8 @@ import {
   Lock,
   Menu,
   X,
-  Shield
+  Shield,
+  CalendarDays
 } from
   "lucide-react";
 import {
@@ -40,6 +41,7 @@ const getNavigationItems = (user, t) => {
     { title: t('nav.revela'), url: createPageUrl("RevelaTalentos"), icon: Star },
     { title: t('nav.career'), url: createPageUrl("PlanoCarreira"), icon: TrendingUp },
     { title: t('nav.international'), url: createPageUrl("PlanoInternacional"), icon: Globe },
+    { title: t('nav.events'), url: createPageUrl("Eventos"), icon: CalendarDays, requiresAuth: true },
     { title: t('nav.services'), url: createPageUrl("MeusServicos"), icon: Settings, requiresAuth: true }
   ];
 

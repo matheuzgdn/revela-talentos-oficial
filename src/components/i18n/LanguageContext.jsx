@@ -47,17 +47,18 @@ const translations = {
     'nav.revela': 'Revela Talentos',
     'nav.career': 'Plano de Carreira',
     'nav.international': 'Plano Internacional',
+    'nav.events': 'Eventos',
     'nav.services': 'Meus Serviços',
     'nav.admin': 'Admin',
     'nav.logout': 'Sair',
     'nav.login': 'Entrar',
     'nav.logout.account': 'Sair da Conta',
     'nav.login.google': 'Entrar com Google',
-    
+
     // Header
     'header.hello': 'Olá',
     'header.athlete': 'Atleta',
-    
+
     // Home sections
     'home.hero.title': 'EC10 TALENTOS',
     'home.continue': 'Continue Assistindo',
@@ -73,7 +74,7 @@ const translations = {
     'home.nutrition': 'Nutrição',
     'home.content': 'Conteúdos',
     'home.viewAll': 'Ver Todos',
-    
+
     // Profile page
     'profile.age': 'Idade',
     'profile.country': 'País',
@@ -105,7 +106,7 @@ const translations = {
     'profile.login': 'Faça Login',
     'profile.loginDescription': 'Para acessar seu perfil de atleta',
     'profile.enter': 'Entrar',
-    
+
     // Search page
     'search.topTeams': 'TOP TEAMS',
     'search.athletesFound': 'atletas encontrados',
@@ -119,7 +120,7 @@ const translations = {
     'search.midfielder': 'Volante',
     'search.attacking': 'Meia',
     'search.forward': 'Atacante',
-    
+
     // Videos page
     'videos.title': 'VÍDEOS',
     'videos.available': 'vídeos disponíveis',
@@ -132,13 +133,13 @@ const translations = {
     'videos.allVideos': 'Todos os Vídeos',
     'videos.count': 'vídeos',
     'videos.noVideos': 'Nenhum vídeo encontrado',
-    
+
     // Categories
     'category.all': 'All',
     'category.mentorship': 'Mentorias',
     'category.tactical': 'Tático',
     'category.physical': 'Físico',
-    
+
     // Admin
     'admin.dashboard': 'Dashboard',
     'admin.athletes': 'Atletas',
@@ -149,7 +150,7 @@ const translations = {
     'admin.services': 'Serviços',
     'admin.content': 'Conteúdo',
     'admin.users': 'Usuários',
-    
+
     // Common
     'common.save': 'Salvar',
     'common.cancel': 'Cancelar',
@@ -164,7 +165,7 @@ const translations = {
     'common.active': 'Ativo',
     'common.inactive': 'Inativo',
     'common.min': 'min',
-    
+
     // Positions
     'position.goalkeeper': 'Goleiro',
     'position.defender': 'Zagueiro',
@@ -172,33 +173,34 @@ const translations = {
     'position.midfielder': 'Volante',
     'position.attacking_mid': 'Meia',
     'position.forward': 'Atacante',
-    
+
     // Stats
     'stats.games': 'Jogos',
     'stats.goals': 'Gols',
     'stats.assists': 'Assistências',
-    
+
     // Package names
     'package.career': 'Plano de Carreira',
     'package.revela': 'Revela Talentos',
   },
-  
+
   es: {
     // Navigation
     'nav.revela': 'Revela Talentos',
     'nav.career': 'Plan de Carrera',
     'nav.international': 'Plan Internacional',
+    'nav.events': 'Eventos',
     'nav.services': 'Mis Servicios',
     'nav.admin': 'Admin',
     'nav.logout': 'Salir',
     'nav.login': 'Entrar',
     'nav.logout.account': 'Cerrar Sesión',
     'nav.login.google': 'Entrar con Google',
-    
+
     // Header
     'header.hello': 'Hola',
     'header.athlete': 'Atleta',
-    
+
     // Home sections
     'home.hero.title': 'EC10 TALENTOS',
     'home.continue': 'Continuar Viendo',
@@ -214,7 +216,7 @@ const translations = {
     'home.nutrition': 'Nutrición',
     'home.content': 'Contenidos',
     'home.viewAll': 'Ver Todos',
-    
+
     // Profile page
     'profile.age': 'Edad',
     'profile.country': 'País',
@@ -246,7 +248,7 @@ const translations = {
     'profile.login': 'Iniciar Sesión',
     'profile.loginDescription': 'Para acceder a tu perfil de atleta',
     'profile.enter': 'Entrar',
-    
+
     // Search page
     'search.topTeams': 'TOP TEAMS',
     'search.athletesFound': 'atletas encontrados',
@@ -260,7 +262,7 @@ const translations = {
     'search.midfielder': 'Volante',
     'search.attacking': 'Mediocampista',
     'search.forward': 'Delantero',
-    
+
     // Videos page
     'videos.title': 'VIDEOS',
     'videos.available': 'videos disponibles',
@@ -273,13 +275,13 @@ const translations = {
     'videos.allVideos': 'Todos los Videos',
     'videos.count': 'videos',
     'videos.noVideos': 'Ningún video encontrado',
-    
+
     // Categories
     'category.all': 'Todos',
     'category.mentorship': 'Mentorías',
     'category.tactical': 'Táctico',
     'category.physical': 'Físico',
-    
+
     // Admin
     'admin.dashboard': 'Panel',
     'admin.athletes': 'Atletas',
@@ -290,7 +292,7 @@ const translations = {
     'admin.services': 'Servicios',
     'admin.content': 'Contenido',
     'admin.users': 'Usuarios',
-    
+
     // Common
     'common.save': 'Guardar',
     'common.cancel': 'Cancelar',
@@ -305,7 +307,7 @@ const translations = {
     'common.active': 'Activo',
     'common.inactive': 'Inactivo',
     'common.min': 'min',
-    
+
     // Positions
     'position.goalkeeper': 'Portero',
     'position.defender': 'Defensa',
@@ -313,12 +315,12 @@ const translations = {
     'position.midfielder': 'Volante',
     'position.attacking_mid': 'Mediocampista',
     'position.forward': 'Delantero',
-    
+
     // Stats
     'stats.games': 'Partidos',
     'stats.goals': 'Goles',
     'stats.assists': 'Asistencias',
-    
+
     // Package names
     'package.career': 'Plan de Carrera',
     'package.revela': 'Revela Talentos',
