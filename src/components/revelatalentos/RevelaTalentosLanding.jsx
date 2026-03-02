@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function RevelaTalentosLanding({ onLoginClick }) {
   const [openFaq, setOpenFaq] = useState(null);
+  const [eventoAtivo, setEventoAtivo] = useState(null);
   const carouselRef = useRef(null);
   const casesRef = useRef(null);
 
@@ -219,7 +220,150 @@ export default function RevelaTalentosLanding({ onLoginClick }) {
           </div>
         </section>
 
-        {/* 3. About Section */}
+        {/* 3. Eventos Revela Section */}
+        <section className="bg-[#020617] py-16 md:py-24 relative w-full overflow-hidden border-t border-sky-900/30">
+          <div className="absolute top-[50%] left-[20%] w-64 h-64 bg-[#38bdf8]/10 rounded-full mix-blend-screen filter blur-[120px] animate-blob z-0 pointer-events-none" />
+          <div className="absolute bottom-[10%] right-[10%] w-48 h-48 bg-blue-700/10 rounded-full mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000 z-0 pointer-events-none" />
+
+          <div className="max-w-6xl mx-auto px-5 sm:px-8 md:px-12 relative z-10">
+            {/* Header */}
+            <div className="flex flex-col items-center text-center mb-10 md:mb-14">
+              <h4 className="text-[9px] md:text-[11px] font-bold tracking-[0.2em] uppercase text-[#38bdf8] mb-3 drop-shadow-[0_0_8px_rgba(56,189,248,0.5)] border border-sky-500/30 px-3 py-1 rounded bg-sky-900/20 backdrop-blur-sm">
+                Calendário Internacional
+              </h4>
+              <h2 className="text-3xl md:text-4xl lg:text-[42px] font-black text-white leading-tight drop-shadow-lg mb-3 uppercase tracking-tight flex items-center gap-3">
+                <svg className="w-8 h-8 text-[#38bdf8] animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" /></svg>
+                Eventos <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#38bdf8] to-blue-500">Revela</span>
+                <svg className="w-8 h-8 text-[#38bdf8] animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" /></svg>
+              </h2>
+              <p className="text-[13px] md:text-[15px] text-sky-100/70 font-medium flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+                EVENTOS EC10 2026
+              </p>
+            </div>
+
+            {/* Map Panel */}
+            <div className="relative w-full aspect-[2/1] group mb-16">
+              {/* Map Background */}
+              <div className="absolute inset-0 bg-[#050508] border border-cyan-500/20 rounded-3xl shadow-[0_0_50px_rgba(0,243,255,0.05)] overflow-hidden">
+                <div className="absolute inset-0 opacity-40 pointer-events-none transition-opacity duration-700 group-hover:opacity-60 flex items-center justify-center">
+                  <svg viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" className="w-full h-full drop-shadow-[0_0_8px_rgba(0,243,255,0.3)]">
+                    <image
+                      href="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg"
+                      width="1000"
+                      height="500"
+                      style={{ filter: 'invert(1) sepia(1) saturate(5) hue-rotate(175deg) brightness(0.5) contrast(2)' }}
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Map Pins */}
+              {[
+                { id: 1, nome: 'Sudacademy', cidade: 'Belo Horizonte', pais: 'Brasil', mes: 'Dezembro', posicao: { top: '61.5%', left: '37.5%' } },
+                { id: 2, nome: 'Libertacademy', cidade: 'Buenos Aires', pais: 'Argentina', mes: 'Julho', posicao: { top: '76.4%', left: '34.3%' } },
+                { id: 3, nome: 'Eurocamp', cidade: 'Madrid', pais: 'Espanha', mes: 'Agosto', posicao: { top: '28%', left: '48.5%' } },
+              ].map((evento) => {
+                const isBottomHalf = parseFloat(evento.posicao.top) > 50;
+                return (
+                  <div
+                    key={evento.id}
+                    className={`absolute flex flex-col items-center transition-all duration-300 ${eventoAtivo === evento.id ? 'z-50' : 'z-20'}`}
+                    style={{ top: evento.posicao.top, left: evento.posicao.left, transform: 'translate(-50%, -50%)' }}
+                    onMouseEnter={() => setEventoAtivo(evento.id)}
+                    onMouseLeave={() => setEventoAtivo(null)}
+                  >
+                    {/* Pulsing Pin */}
+                    <div className="relative flex justify-center items-center cursor-pointer">
+                      <div className="absolute w-12 h-12 bg-[#00f3ff]/20 rounded-full animate-ping" />
+                      <div className="absolute w-6 h-6 bg-[#00f3ff]/40 rounded-full animate-pulse" />
+                      <svg className="relative w-8 h-8 text-[#00f3ff] drop-shadow-[0_0_10px_rgba(0,243,255,1)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
+                    </div>
+
+                    {/* Info Card */}
+                    <div className={`
+                      absolute w-56 p-1
+                      transition-all duration-300 ease-out
+                      ${isBottomHalf ? 'bottom-full mb-4 origin-bottom' : 'top-full mt-4 origin-top'}
+                      ${eventoAtivo === evento.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}
+                    `}>
+                      <div className="relative bg-[#050505]/90 backdrop-blur-md border border-[#00f3ff]/40 rounded-xl p-4 shadow-[0_4px_30px_rgba(0,243,255,0.15)]">
+                        {isBottomHalf
+                          ? <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[2px] h-4 bg-gradient-to-t from-[#00f3ff] to-transparent" />
+                          : <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-[2px] h-4 bg-gradient-to-b from-[#00f3ff] to-transparent" />
+                        }
+                        <h3 className="text-[#00f3ff] font-bold text-base tracking-wide flex items-center gap-2 mb-2">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" /></svg>
+                          {evento.nome}
+                        </h3>
+                        <div className="space-y-1.5 text-sm text-gray-300">
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                            <span>{evento.cidade}, <span className="text-white">{evento.pais}</span></span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <svg className="w-4 h-4 text-[#00f3ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                            <span className="font-semibold uppercase text-[#00f3ff]">{evento.mes}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Event List */}
+            <div className="flex flex-col gap-4 max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold text-center text-white mb-4 uppercase tracking-widest flex items-center justify-center gap-3">
+                <svg className="w-6 h-6 text-[#38bdf8]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                Agenda <span className="text-[#38bdf8]">Global</span>
+              </h2>
+
+              {[
+                { id: 1, nome: 'Sudacademy', cidade: 'Belo Horizonte', pais: 'Brasil', mes: 'Dezembro' },
+                { id: 2, nome: 'Libertacademy', cidade: 'Buenos Aires', pais: 'Argentina', mes: 'Julho' },
+                { id: 3, nome: 'Eurocamp', cidade: 'Madrid', pais: 'Espanha', mes: 'Agosto' },
+              ].map((evento) => (
+                <div
+                  key={`list-${evento.id}`}
+                  className={`bg-[#050505]/80 backdrop-blur-md border rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all duration-300 shadow-[0_0_15px_rgba(0,243,255,0.05)] cursor-pointer group ${eventoAtivo === evento.id
+                      ? 'border-[#00f3ff]/60 shadow-[0_0_30px_rgba(0,243,255,0.2)] -translate-y-1'
+                      : 'border-cyan-500/20 hover:border-[#00f3ff]/40 hover:-translate-y-1'
+                    }`}
+                  onMouseEnter={() => setEventoAtivo(evento.id)}
+                  onMouseLeave={() => setEventoAtivo(null)}
+                >
+                  <div className="flex items-center gap-5">
+                    <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 ${eventoAtivo === evento.id ? 'bg-[#00f3ff]/20 shadow-[0_0_15px_rgba(0,243,255,0.4)]' : 'bg-cyan-950/40 group-hover:bg-[#00f3ff]/10'
+                      }`}>
+                      <svg className={`w-7 h-7 transition-colors ${eventoAtivo === evento.id ? 'text-[#00f3ff]' : 'text-cyan-600 group-hover:text-[#00f3ff]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+                    </div>
+                    <div>
+                      <h3 className={`text-2xl font-bold flex items-center gap-2 transition-colors ${eventoAtivo === evento.id ? 'text-[#00f3ff]' : 'text-white group-hover:text-cyan-100'}`}>
+                        {evento.nome}
+                        <svg className={`w-4 h-4 text-[#00f3ff] transition-opacity duration-300 ${eventoAtivo === evento.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`} fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" /></svg>
+                      </h3>
+                      <div className="flex items-center gap-2 text-gray-400 mt-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                        <span>{evento.cidade}, <span className="text-gray-200">{evento.pais}</span></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={`flex items-center gap-3 px-5 py-3 rounded-xl border transition-colors w-full md:w-auto justify-center ${eventoAtivo === evento.id
+                      ? 'bg-[#00f3ff]/15 border-[#00f3ff]/40'
+                      : 'bg-[#00f3ff]/5 border-[#00f3ff]/10 group-hover:bg-[#00f3ff]/10 group-hover:border-[#00f3ff]/30'
+                    }`}>
+                    <svg className="w-5 h-5 text-[#00f3ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>
+                    <span className="font-bold text-[#00f3ff] uppercase tracking-wider">{evento.mes}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. About Section */}
         <section className="relative w-full min-h-[60vh] md:min-h-[85vh] flex flex-col pt-16 md:pt-28 pb-0 bg-[#020617] overflow-hidden">
           <div className="absolute top-0 inset-x-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#38bdf8]/50 to-transparent animate-pulse-line"></div>
           <div className="absolute inset-0 z-0 top-0 mt-24 md:mt-40">
