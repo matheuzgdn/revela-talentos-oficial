@@ -694,6 +694,7 @@ export default function RevelaTalentosPage() {
                 content={content}
                 index={index}
                 onClick={() => handleContentSelect(content)}
+                isLocked={isContentLocked}
                 t={t}
               />
             ))}
