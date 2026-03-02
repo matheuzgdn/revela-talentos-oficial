@@ -260,16 +260,16 @@ export default function LiveViewer({ hlsUrl }) {
                 )}
             </AnimatePresence>
 
-            {/* Video element */}
+            {/* Video element — native controls enabled for reliability */}
             <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
                 autoPlay
                 playsInline
-                controls={false}
+                controls={true}
                 muted
                 onWaiting={() => setDebugState('Buffering...')}
-                onPlaying={() => setDebugState('Reproduzindo')}
+                onPlaying={() => { setDebugState('Reproduzindo'); setIsLoading(false); }}
                 onCanPlay={() => setDebugState('Pronto')}
             />
 
