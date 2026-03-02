@@ -11,11 +11,11 @@ export default function LiveViewer({ hlsUrl }) {
     const hlsRef = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
-    // Always start muted to respect browser autoplay policy
     const [isMuted, setIsMuted] = useState(true);
     // Show tap-to-unmute overlay until user interacts
     const [showUnmuteOverlay, setShowUnmuteOverlay] = useState(true);
     const [retryCount, setRetryCount] = useState(0);
+    const [isBuffering, setIsBuffering] = useState(false);
 
     const logPlaybackError = async (message, details = null) => {
         try {
@@ -109,6 +109,7 @@ export default function LiveViewer({ hlsUrl }) {
             videoRef.current.muted = false;
             setIsMuted(false);
             setShowUnmuteOverlay(false);
+            videoRef.current.play().catch(e => console.warn('Play failed on unmute', e));
         }
     };
 
@@ -117,7 +118,10 @@ export default function LiveViewer({ hlsUrl }) {
             const next = !isMuted;
             videoRef.current.muted = next;
             setIsMuted(next);
-            if (!next) setShowUnmuteOverlay(false);
+            if (!next) {
+                setShowUnmuteOverlay(false);
+                videoRef.current.play().catch(e => console.warn('Play failed on toggle', e));
+            }
         }
     };
 
@@ -145,9 +149,9 @@ export default function LiveViewer({ hlsUrl }) {
                 </div>
             )}
 
-            {/* Loading overlay */}
+            {/* Loading / Buffering overlay */}
             <AnimatePresence>
-                {isLoading && !hasError && !!hlsUrl && (
+                {(isLoading || isBuffering) && !hasError && !!hlsUrl && (
                     <motion.div
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -158,8 +162,8 @@ export default function LiveViewer({ hlsUrl }) {
                             <div className="absolute inset-0 bg-red-500 rounded-full blur-2xl opacity-30 animate-pulse" />
                             <Loader2 className="w-16 h-16 text-red-400 animate-spin relative z-10" />
                         </div>
-                        <p className="text-white font-bold text-lg">Carregando live...</p>
-                        <p className="text-gray-400 text-sm mt-2">Aguarde enquanto carregamos o stream</p>
+                        <p className="text-white font-bold text-lg">{isBuffering ? 'Carregando transmissão...' : 'Carregando live...'}</p>
+                        <p className="text-gray-400 text-sm mt-2">{isBuffering ? 'Sincronizando o vídeo ao vivo' : 'Aguarde enquanto carregamos o stream'}</p>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -216,6 +220,9 @@ export default function LiveViewer({ hlsUrl }) {
                 playsInline
                 controls={false}
                 muted
+                onWaiting={() => setIsBuffering(true)}
+                onPlaying={() => setIsBuffering(false)}
+                onCanPlay={() => setIsBuffering(false)}
             />
 
             {/* Live badge */}
