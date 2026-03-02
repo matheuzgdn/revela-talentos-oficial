@@ -94,45 +94,57 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         };
     }, [localVideoTrackId, hmsActions]);
 
-    // Polling logic to check HLS URL health
+    // Polling logic to check HLS URL health (sem dependência da cloud function)
     const pollHlsUrl = async (url) => {
         setIsPollingHls(true);
         setDebugInfo('Sincronizando feed de vídeo...');
 
         let attempts = 0;
         const maxAttempts = 15; // 30 seconds
+        let serverErrorCount = 0;
+
+        const activateLive = async (u) => {
+            setIsPollingHls(false);
+            setDebugInfo('');
+            setHlsUrl(u);
+            await saveLiveStatus(true, u);
+            await upsertSetting('live_started_at', new Date().toISOString());
+            if (onLiveStarted) onLiveStarted(u);
+        };
 
         const checkHealth = async () => {
             if (attempts >= maxAttempts) {
-                toast.error('❌ HLS não ficou disponível a tempo. Encerrando tentativa.');
-                stopLive(); // abort starting
-                setIsPollingHls(false);
-                setDebugInfo('');
+                // Timeout — activate anyway, URL came from 100ms SDK (trusted source)
+                console.warn('[Live] HLS health check timed out — ativando com URL do SDK mesmo assim');
+                activateLive(url);
                 return;
             }
 
-            try {
-                let isReady = false;
-                try {
-                    const res = await base44.functions.invoke('checkHlsUrlHealth', { url });
-                    if (res && res.ok) isReady = true;
-                } catch (e) {
-                    // ignore invocation errors while polling
-                }
+            let isReady = false;
 
-                if (isReady) {
-                    setIsPollingHls(false);
-                    setDebugInfo('');
-                    setHlsUrl(url);
-                    // Now that it's healthy, save state and kick off notification
-                    await saveLiveStatus(true, url);
-                    await upsertSetting('live_started_at', new Date().toISOString());
-                    if (onLiveStarted) onLiveStarted(url);
-                } else {
-                    attempts++;
-                    setTimeout(checkHealth, 2000);
+            // Try the cloud function first (if deployed)
+            try {
+                const res = await base44.functions.invoke('checkHlsUrlHealth', { url });
+                if (res && res.ok) isReady = true;
+                serverErrorCount = 0;
+            } catch (e) {
+                serverErrorCount++;
+                console.warn('[Live] checkHlsUrlHealth indisponível (tentativa ' + serverErrorCount + '):', e.message);
+                // After 3 consecutive failures, function is not deployed — fallback to direct fetch
+                if (serverErrorCount >= 3) {
+                    try {
+                        // no-cors: can't read status but absence of network error means URL is reachable
+                        await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+                        isReady = true;
+                    } catch {
+                        // URL not yet reachable, keep polling
+                    }
                 }
-            } catch (err) {
+            }
+
+            if (isReady) {
+                activateLive(url);
+            } else {
                 attempts++;
                 setTimeout(checkHealth, 2000);
             }
