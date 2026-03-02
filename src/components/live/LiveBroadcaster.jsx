@@ -460,15 +460,24 @@ export default function LiveBroadcaster({ user }) {
     };
 
     const handleLiveStarted = async (hlsUrl) => {
+        // Step 1: Always activate the live (independent of notifications)
+        try {
+            await saveLiveStatus(true, hlsUrl);
+            toast.success('🔴 Live ativada! Card aparecendo para os usuários.');
+        } catch (err) {
+            console.error('[Live] Erro ao salvar status da live:', err);
+            toast.error('Erro ao ativar o card da live');
+        }
+
+        // Step 2: Try to notify users (best-effort, won't block live activation)
         try {
             setIsSendingNotification(true);
-            await saveLiveStatus(true, hlsUrl);
             const allUsers = await base44.entities.User.list();
             await notifyLiveSession(allUsers, { id: 'live-' + Date.now(), title: '🔴 Live EC10 Talentos' });
-            toast.success(`✅ Live iniciada! ${allUsers.length} atletas notificados.`);
+            toast.success(`✅ ${allUsers.length} atletas notificados!`);
         } catch (err) {
-            console.error('[Live] handleLiveStarted error:', err);
-            toast.error('Erro ao notificar usuários');
+            console.warn('[Live] Notificação não enviada (sem permissão ou erro):', err.message);
+            // Don't show error toast — live is already active, notifications are optional
         } finally {
             setIsSendingNotification(false);
         }
