@@ -150,7 +150,8 @@ export default function NotificationsPanel({ user }) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 300 }}
               transition={{ type: 'spring', damping: 25 }}
-              className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-gradient-to-b from-[#0A1A2A] to-black border-l border-white/10 z-50 flex flex-col"
+              className="fixed right-0 top-0 bottom-0 w-full sm:w-[420px] bg-gradient-to-b from-[#0A1A2A] to-[#050d14] border-l border-white/10 z-50 flex flex-col"
+              style={{ height: '100dvh', maxHeight: '100dvh' }}
             >
               {/* Header */}
               <div className="p-4 border-b border-white/10">
@@ -190,7 +191,7 @@ export default function NotificationsPanel({ user }) {
               </div>
 
               {/* Notifications List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <div className="flex-1 overflow-y-auto overscroll-contain p-4 pb-safe space-y-3" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
                 {notifications.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
                     <Bell className="w-16 h-16 text-gray-700 mb-4" />
