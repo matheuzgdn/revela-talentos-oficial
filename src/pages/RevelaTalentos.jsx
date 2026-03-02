@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus, TrendingUp, Flame, Target, Dumbbell, Brain, Activity, Apple } from "lucide-react";
+import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus, TrendingUp, Flame, Target, Dumbbell, Brain, Activity, Apple, Lock, X, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import VideoPlayer from "../components/content/VideoPlayer";
@@ -32,6 +32,10 @@ export default function RevelaTalentosPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [athleteStories, setAthleteStories] = useState([]);
   const [isLive, setIsLive] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // Verifica se o conteúdo está bloqueado para este usuário
+  const isContentLocked = user && user.has_revela_talentos_access === false;
 
   const loadContentData = useCallback(async (currentUser) => {
     try {
@@ -137,6 +141,11 @@ export default function RevelaTalentosPage() {
       setShowLandingPage(true);
       return;
     }
+    // Conteúdo bloqueado: exibir modal de upgrade
+    if (isContentLocked) {
+      setShowUpgradeModal(true);
+      return;
+    }
     if (content.category === 'live' && content.status === 'live') {
       setSelectedLiveContent(content);
       setSelectedContent(null);
@@ -144,7 +153,7 @@ export default function RevelaTalentosPage() {
       setSelectedContent(content);
       setSelectedLiveContent(null);
     }
-  }, [user]);
+  }, [user, isContentLocked]);
 
   const categories = useMemo(() => [
     { id: "all", name: t('category.all') },
@@ -428,6 +437,7 @@ export default function RevelaTalentosPage() {
                   index={index}
                   onClick={() => handleContentSelect(content)}
                   progress={userProgress.find(p => p.content_id === content.id)?.progress_percent}
+                  isLocked={isContentLocked}
                   t={t}
                 />
               ))}
@@ -458,6 +468,7 @@ export default function RevelaTalentosPage() {
                   onClick={() => handleContentSelect(content)}
                   showRank={true}
                   rank={index + 1}
+                  isLocked={isContentLocked}
                   t={t}
                 />
               ))}
@@ -540,6 +551,7 @@ export default function RevelaTalentosPage() {
                   content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  isLocked={isContentLocked}
                   t={t}
                 />
               ))}
@@ -568,6 +580,7 @@ export default function RevelaTalentosPage() {
                   content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  isLocked={isContentLocked}
                   t={t}
                 />
               ))}
@@ -596,6 +609,7 @@ export default function RevelaTalentosPage() {
                   content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  isLocked={isContentLocked}
                   t={t}
                 />
               ))}
@@ -624,6 +638,7 @@ export default function RevelaTalentosPage() {
                   content={content}
                   index={index}
                   onClick={() => handleContentSelect(content)}
+                  isLocked={isContentLocked}
                   t={t}
                 />
               ))}
@@ -695,12 +710,71 @@ export default function RevelaTalentosPage() {
         onClose={() => setShowUploadModal(false)}
         user={user}
       />
+
+      {/* Upgrade Modal - Conteúdo Bloqueado */}
+      <AnimatePresence>
+        {showUpgradeModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            onClick={() => setShowUpgradeModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.85, y: 30, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.85, y: 30, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 400 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border border-[#00E5FF]/30 rounded-3xl p-7 shadow-2xl shadow-[#00E5FF]/10 relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/5 via-transparent to-[#0066FF]/5 pointer-events-none" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-1 bg-gradient-to-r from-transparent via-[#00E5FF] to-transparent" />
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="absolute top-4 right-4 w-8 h-8 bg-white/5 hover:bg-white/10 rounded-xl flex items-center justify-center border border-white/10 transition-colors"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+              <div className="relative w-20 h-20 mx-auto mb-6">
+                <div className="absolute inset-0 bg-[#00E5FF]/20 rounded-full blur-2xl" />
+                <div className="w-20 h-20 bg-gradient-to-br from-[#00E5FF]/20 to-[#0066FF]/20 border border-[#00E5FF]/30 rounded-full flex items-center justify-center relative">
+                  <Lock className="w-9 h-9 text-[#00E5FF]" />
+                </div>
+              </div>
+              <h2 className="text-white font-black text-2xl text-center mb-2 tracking-tight">
+                Conteúdo <span className="text-[#00E5FF]">Bloqueado</span>
+              </h2>
+              <p className="text-gray-400 text-sm text-center mb-6 leading-relaxed">
+                Este conteúdo faz parte do pacote completo da plataforma EC10 Talentos. Adquira agora para ter acesso ilimitado a todos os conteúdos, vídeos e recursos exclusivos.
+              </p>
+              <a
+                href="https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-black text-base rounded-2xl shadow-xl shadow-[#00E5FF]/30 transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden group mb-3"
+              >
+                <div className="absolute inset-0 bg-white/20 -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700" />
+                <ShoppingCart className="w-5 h-5" />
+                Adquirir Acesso Completo
+              </a>
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="w-full py-3 text-gray-500 text-sm font-medium hover:text-gray-300 transition-colors"
+              >
+                Agora não
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 // Content Card Component - Modern with Title Inside
-function ContentCard({ content, index, onClick, progress, showRank, rank, t }) {
+function ContentCard({ content, index, onClick, progress, showRank, rank, t, isLocked }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -714,51 +788,60 @@ function ContentCard({ content, index, onClick, progress, showRank, rank, t }) {
         <img
           src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"}
           alt={content.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${isLocked ? 'blur-[2px] brightness-50' : ''}`}
         />
 
-        {/* Dark gradient overlay for text readability */}
+        {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent opacity-90" />
 
-        {/* Neon accent on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/0 to-[#0066FF]/0 group-hover:from-[#00E5FF]/10 group-hover:to-[#0066FF]/10 transition-all duration-300" />
-
-        {/* Rank Badge */}
-        {showRank && (
-          <div className="absolute top-3 left-3 w-8 h-8 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/50">
-            <span className="text-xs font-black text-black">{rank}</span>
+        {/* Lock overlay */}
+        {isLocked ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-20">
+            <div className="w-12 h-12 bg-[#00E5FF]/10 border border-[#00E5FF]/40 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg shadow-[#00E5FF]/20">
+              <Lock className="w-6 h-6 text-[#00E5FF]" />
+            </div>
+            <span className="text-[9px] font-bold text-[#00E5FF]/80 uppercase tracking-wider text-center px-2">Bloqueado</span>
           </div>
-        )}
+        ) : (
+          <>
+            {/* Neon accent on hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/0 to-[#0066FF]/0 group-hover:from-[#00E5FF]/10 group-hover:to-[#0066FF]/10 transition-all duration-300" />
 
-        {/* Progress Bar */}
-        {progress && progress > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#222]">
-            <div
-              className="h-full bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        )}
+            {/* Rank Badge */}
+            {showRank && (
+              <div className="absolute top-3 left-3 w-8 h-8 bg-[#00E5FF] rounded-xl flex items-center justify-center shadow-lg shadow-[#00E5FF]/50">
+                <span className="text-xs font-black text-black">{rank}</span>
+              </div>
+            )}
 
-        {/* Duration Badge */}
-        {content.duration && (
-          <div className="absolute top-3 right-3 px-2 py-1 bg-black/80 backdrop-blur-sm rounded-lg border border-[#333]">
-            <span className="text-[10px] text-white font-bold">{content.duration}{t ? t('common.min') : 'min'}</span>
-          </div>
+            {/* Progress Bar */}
+            {progress && progress > 0 && (
+              <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#222]">
+                <div className="h-full bg-[#00E5FF] shadow-lg shadow-[#00E5FF]/50" style={{ width: `${progress}%` }} />
+              </div>
+            )}
+
+            {/* Duration Badge */}
+            {content.duration && (
+              <div className="absolute top-3 right-3 px-2 py-1 bg-black/80 backdrop-blur-sm rounded-lg border border-[#333]">
+                <span className="text-[10px] text-white font-bold">{content.duration}{t ? t('common.min') : 'min'}</span>
+              </div>
+            )}
+
+            {/* Play icon on hover */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="w-14 h-14 bg-[#00E5FF]/90 rounded-full flex items-center justify-center backdrop-blur-sm shadow-2xl shadow-[#00E5FF]/50">
+                <Play className="w-6 h-6 text-black fill-black ml-1" />
+              </div>
+            </div>
+          </>
         )}
 
         {/* Title Inside Card - Bottom */}
         <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-          <h4 className="text-white font-bold text-sm leading-tight line-clamp-2 drop-shadow-lg">
+          <h4 className={`font-bold text-sm leading-tight line-clamp-2 drop-shadow-lg ${isLocked ? 'text-gray-600' : 'text-white'}`}>
             {content.title}
           </h4>
-        </div>
-
-        {/* Play icon on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-14 h-14 bg-[#00E5FF]/90 rounded-full flex items-center justify-center backdrop-blur-sm shadow-2xl shadow-[#00E5FF]/50">
-            <Play className="w-6 h-6 text-black fill-black ml-1" />
-          </div>
         </div>
       </div>
     </motion.div>

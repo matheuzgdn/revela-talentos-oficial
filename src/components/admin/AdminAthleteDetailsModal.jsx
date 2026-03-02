@@ -7,8 +7,9 @@ import {
   BarChart3, Activity, Zap, Lock, Unlock, Users,
   Upload, Eye, Heart, Sparkles, MessageCircle,
   ChevronRight, Video, CircleDot, Footprints, Wind,
-  Crosshair, UserPlus, Gauge, Move, Dumbbell, MapPin, Clock } from
-"lucide-react";
+  Crosshair, UserPlus, Gauge, Move, Dumbbell, MapPin, Clock
+} from
+  "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,8 +53,8 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
   const loadAthleteData = async (userId) => {
     try {
       const [videosData, assessmentsData] = await Promise.all([
-      base44.entities.AthleteVideo.filter({ athlete_id: userId }, '-created_date', 20),
-      base44.entities.WeeklyAssessment.filter({ user_id: userId }, '-week_start_date', 8)]
+        base44.entities.AthleteVideo.filter({ athlete_id: userId }, '-created_date', 20),
+        base44.entities.WeeklyAssessment.filter({ user_id: userId }, '-week_start_date', 8)]
       );
       setVideos(videosData || []);
       setWeeklyAssessments(assessmentsData || []);
@@ -241,12 +242,12 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
 
   // Preparar dados para gráficos
   const fifaData = [
-  { attribute: 'VEL', value: editingUser.fifa_attributes?.pace || 50 },
-  { attribute: 'FIN', value: editingUser.fifa_attributes?.shooting || 50 },
-  { attribute: 'PAS', value: editingUser.fifa_attributes?.passing || 50 },
-  { attribute: 'DRI', value: editingUser.fifa_attributes?.dribbling || 50 },
-  { attribute: 'DEF', value: editingUser.fifa_attributes?.defending || 50 },
-  { attribute: 'FÍS', value: editingUser.fifa_attributes?.physicality || 50 }];
+    { attribute: 'VEL', value: editingUser.fifa_attributes?.pace || 50 },
+    { attribute: 'FIN', value: editingUser.fifa_attributes?.shooting || 50 },
+    { attribute: 'PAS', value: editingUser.fifa_attributes?.passing || 50 },
+    { attribute: 'DRI', value: editingUser.fifa_attributes?.dribbling || 50 },
+    { attribute: 'DEF', value: editingUser.fifa_attributes?.defending || 50 },
+    { attribute: 'FÍS', value: editingUser.fifa_attributes?.physicality || 50 }];
 
 
   const performanceChartData = weeklyAssessments.slice(0, 6).reverse().map((w, idx) => ({
@@ -270,7 +271,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
   const age = calculateAge(editingUser.birth_date);
   const overallRating = Math.round(
     Object.values(editingUser.fifa_attributes || {}).reduce((a, b) => a + b, 0) / (
-    Object.keys(editingUser.fifa_attributes || {}).length || 1)
+      Object.keys(editingUser.fifa_attributes || {}).length || 1)
   );
 
   return (
@@ -313,12 +314,12 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                       {editingUser.position?.toUpperCase() || 'SEM POSIÇÃO'}
                     </Badge>
                     {editingUser.current_club_name &&
-                    <Badge className="bg-white/10 text-white border border-white/20 text-[10px] md:text-xs">
+                      <Badge className="bg-white/10 text-white border border-white/20 text-[10px] md:text-xs">
                         {editingUser.current_club_name}
                       </Badge>
                     }
                     {editingUser.nationality &&
-                    <span className="text-xl md:text-2xl">{editingUser.nationality}</span>
+                      <span className="text-xl md:text-2xl">{editingUser.nationality}</span>
                     }
                   </div>
                   <p className="text-gray-400 text-xs md:text-sm truncate">{editingUser.email}</p>
@@ -431,7 +432,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     Evolução de Performance
                   </h3>
                   {performanceChartData.length > 0 ?
-                  <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={300}>
                       <AreaChart data={performanceChartData}>
                         <defs>
                           <linearGradient id="colorGols" x1="0" y1="0" x2="0" y2="1">
@@ -447,15 +448,15 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                         <XAxis dataKey="week" stroke="#9CA3AF" tick={{ fill: '#9CA3AF', fontSize: 11 }} />
                         <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF', fontSize: 11 }} />
                         <RechartsTooltip
-                        contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }}
-                        labelStyle={{ color: '#fff', fontWeight: 'bold' }} />
+                          contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }}
+                          labelStyle={{ color: '#fff', fontWeight: 'bold' }} />
 
                         <Area type="monotone" dataKey="gols" stroke="#10B981" fillOpacity={1} fill="url(#colorGols)" strokeWidth={2} />
                         <Area type="monotone" dataKey="assists" stroke="#3B82F6" fillOpacity={1} fill="url(#colorAssists)" strokeWidth={2} />
                       </AreaChart>
                     </ResponsiveContainer> :
 
-                  <div className="h-[300px] flex items-center justify-center text-gray-500">
+                    <div className="h-[300px] flex items-center justify-center text-gray-500">
                       <p>Sem dados de performance ainda</p>
                     </div>
                   }
@@ -465,37 +466,37 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
               {/* Quick Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                 {[
-                { label: 'Gols', value: weeklyAssessments.reduce((s, w) => s + (w.goals || 0), 0), icon: CircleDot, color: 'from-red-500 to-orange-500' },
-                { label: 'Assistências', value: weeklyAssessments.reduce((s, w) => s + (w.assists || 0), 0), icon: Footprints, color: 'from-blue-500 to-cyan-500' },
-                { label: 'Jogos', value: weeklyAssessments.filter((w) => w.had_game).length, icon: Trophy, color: 'from-purple-500 to-pink-500' },
-                { label: 'Vídeos', value: videos.length, icon: Video, color: 'from-green-500 to-emerald-500' }].
-                map((stat, idx) =>
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                  className={`bg-gradient-to-br ${stat.color} bg-opacity-10 border border-white/10 rounded-xl p-3 md:p-4 text-center relative overflow-hidden`}>
+                  { label: 'Gols', value: weeklyAssessments.reduce((s, w) => s + (w.goals || 0), 0), icon: CircleDot, color: 'from-red-500 to-orange-500' },
+                  { label: 'Assistências', value: weeklyAssessments.reduce((s, w) => s + (w.assists || 0), 0), icon: Footprints, color: 'from-blue-500 to-cyan-500' },
+                  { label: 'Jogos', value: weeklyAssessments.filter((w) => w.had_game).length, icon: Trophy, color: 'from-purple-500 to-pink-500' },
+                  { label: 'Vídeos', value: videos.length, icon: Video, color: 'from-green-500 to-emerald-500' }].
+                  map((stat, idx) =>
+                    <motion.div
+                      key={stat.label}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className={`bg-gradient-to-br ${stat.color} bg-opacity-10 border border-white/10 rounded-xl p-3 md:p-4 text-center relative overflow-hidden`}>
 
-                    <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/20" />
-                    <stat.icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 text-white relative z-10" />
-                    <p className="text-2xl md:text-3xl font-black text-white relative z-10">{stat.value}</p>
-                    <p className="text-[10px] md:text-xs text-white/70 uppercase tracking-wider font-bold relative z-10">{stat.label}</p>
-                  </motion.div>
-                )}
+                      <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/20" />
+                      <stat.icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 text-white relative z-10" />
+                      <p className="text-2xl md:text-3xl font-black text-white relative z-10">{stat.value}</p>
+                      <p className="text-[10px] md:text-xs text-white/70 uppercase tracking-wider font-bold relative z-10">{stat.label}</p>
+                    </motion.div>
+                  )}
               </div>
             </TabsContent>
 
             {/* VIDEOS TAB */}
             <TabsContent value="videos" className="mt-0 space-y-3 md:space-y-4">
               {selectedVideo ?
-              <div className="space-y-3 md:space-y-4">
+                <div className="space-y-3 md:space-y-4">
                   {/* Video Info Header */}
                   <div className="bg-gradient-to-r from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/30 rounded-2xl p-4">
                     <h3 className="text-white font-bold text-base md:text-lg mb-2">{selectedVideo.title}</h3>
                     {selectedVideo.description &&
-                  <p className="text-gray-400 text-xs md:text-sm mb-3">{selectedVideo.description}</p>
-                  }
+                      <p className="text-gray-400 text-xs md:text-sm mb-3">{selectedVideo.description}</p>
+                    }
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/30">
                         {selectedVideo.position?.toUpperCase() || 'POSIÇÃO'}
@@ -504,60 +505,60 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                         {selectedVideo.category}
                       </Badge>
                       {selectedVideo.status === 'approved' ?
-                    <Badge className="bg-green-500/20 text-green-400 border border-green-500/30">
+                        <Badge className="bg-green-500/20 text-green-400 border border-green-500/30">
                           <Check className="w-3 h-3 mr-1" />
                           Aprovado
                         </Badge> :
-                    selectedVideo.status === 'pending' ?
-                    <Badge className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-                          <Clock className="w-3 h-3 mr-1" />
-                          Em Análise
-                        </Badge> :
+                        selectedVideo.status === 'pending' ?
+                          <Badge className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+                            <Clock className="w-3 h-3 mr-1" />
+                            Em Análise
+                          </Badge> :
 
-                    <Badge className="bg-red-500/20 text-red-400 border border-red-500/30">
-                          <X className="w-3 h-3 mr-1" />
-                          Rejeitado
-                        </Badge>
-                    }
+                          <Badge className="bg-red-500/20 text-red-400 border border-red-500/30">
+                            <X className="w-3 h-3 mr-1" />
+                            Rejeitado
+                          </Badge>
+                      }
                     </div>
                   </div>
 
                   {/* Video Player Cinematográfico */}
                   <div className="relative aspect-video bg-black rounded-2xl overflow-hidden border-2 border-[#00E5FF]/30">
                     <video
-                    ref={videoRef}
-                    src={selectedVideo.video_url}
-                    className="w-full h-full object-contain"
-                    onClick={togglePlay}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)} />
+                      ref={videoRef}
+                      src={selectedVideo.video_url}
+                      className="w-full h-full object-contain"
+                      onClick={togglePlay}
+                      onPlay={() => setIsPlaying(true)}
+                      onPause={() => setIsPlaying(false)} />
 
 
                     {/* Controles Modernos */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity">
                       <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3">
                         <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={togglePlay}
-                        className="w-12 h-12 md:w-14 md:h-14 bg-[#00E5FF] rounded-full flex items-center justify-center shadow-2xl">
+                          whileTap={{ scale: 0.9 }}
+                          onClick={togglePlay}
+                          className="w-12 h-12 md:w-14 md:h-14 bg-[#00E5FF] rounded-full flex items-center justify-center shadow-2xl">
 
                           {isPlaying ?
-                        <Pause className="w-6 h-6 md:w-7 md:h-7 text-black" fill="black" /> :
-                        <Play className="w-6 h-6 md:w-7 md:h-7 text-black ml-1" fill="black" />
-                        }
+                            <Pause className="w-6 h-6 md:w-7 md:h-7 text-black" fill="black" /> :
+                            <Play className="w-6 h-6 md:w-7 md:h-7 text-black ml-1" fill="black" />
+                          }
                         </motion.button>
                         <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={toggleMute}
-                        className="w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
+                          whileTap={{ scale: 0.9 }}
+                          onClick={toggleMute}
+                          className="w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
 
                           {isMuted ? <VolumeX className="w-5 h-5 md:w-6 md:h-6 text-white" /> : <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-white" />}
                         </motion.button>
                         <div className="flex-1" />
                         <motion.button
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => videoRef.current?.requestFullscreen()}
-                        className="w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => videoRef.current?.requestFullscreen()}
+                          className="w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
 
                           <Maximize className="w-5 h-5 md:w-6 md:h-6 text-white" />
                         </motion.button>
@@ -565,28 +566,28 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     </div>
 
                     {!isPlaying &&
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
 
                         <motion.button
-                      whileTap={{ scale: 0.95 }}
-                      onClick={togglePlay}
-                      className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-2xl shadow-[#00E5FF]/50">
+                          whileTap={{ scale: 0.95 }}
+                          onClick={togglePlay}
+                          className="w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-full flex items-center justify-center shadow-2xl shadow-[#00E5FF]/50">
 
                           <Play className="w-10 h-10 md:w-12 md:h-12 text-black ml-1 md:ml-2" fill="black" />
                         </motion.button>
                       </motion.div>
-                  }
+                    }
                   </div>
 
                   {/* Overall Score Card */}
                   {selectedVideo.ai_analysis && selectedVideo.ai_analysis.overall_score &&
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-gradient-to-br from-[#FFD700]/20 to-[#FFA500]/20 border-2 border-[#FFD700]/30 rounded-2xl p-6 text-center">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-gradient-to-br from-[#FFD700]/20 to-[#FFA500]/20 border-2 border-[#FFD700]/30 rounded-2xl p-6 text-center">
 
                       <Trophy className="w-12 h-12 md:w-16 md:h-16 text-[#FFD700] mx-auto mb-4" />
                       <h4 className="text-white font-bold text-lg md:text-xl mb-2">Nota Geral da Performance</h4>
@@ -598,11 +599,11 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                       </div>
                       <Progress value={selectedVideo.ai_analysis.overall_score} className="h-4 mt-4" />
                     </motion.div>
-                }
+                  }
 
                   {/* Video Analysis */}
                   {selectedVideo.ai_analysis &&
-                <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-6">
+                    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-6">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
                           <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
@@ -615,12 +616,12 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
                         {selectedVideo.ai_analysis.performance_analysis && Object.entries(selectedVideo.ai_analysis.performance_analysis).map(([key, value]) => {
-                      const icon = key === 'technical_skills' ? Target :
-                      key === 'positioning' ? MapPin :
-                      key === 'decision_making' ? Activity :
-                      key === 'physical_condition' ? Dumbbell : Wind;
-                      return (
-                        <div key={key} className="bg-white/5 rounded-xl p-3 border border-[#00E5FF]/20">
+                          const icon = key === 'technical_skills' ? Target :
+                            key === 'positioning' ? MapPin :
+                              key === 'decision_making' ? Activity :
+                                key === 'physical_condition' ? Dumbbell : Wind;
+                          return (
+                            <div key={key} className="bg-white/5 rounded-xl p-3 border border-[#00E5FF]/20">
                               <div className="flex justify-between items-center mb-2">
                                 <div className="flex items-center gap-2">
                                   {React.createElement(icon, { className: "w-4 h-4 text-[#00E5FF]" })}
@@ -631,25 +632,25 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                               <Progress value={value} className="h-2" />
                             </div>);
 
-                    })}
+                        })}
                       </div>
 
                       {selectedVideo.ai_analysis.detected_events && selectedVideo.ai_analysis.detected_events.length > 0 &&
-                  <div className="mb-4">
+                        <div className="mb-4">
                           <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
                             <Activity className="w-4 h-4 text-[#00E5FF]" />
                             Eventos Detectados
                           </h4>
                           <div className="space-y-2">
                             {selectedVideo.ai_analysis.detected_events.map((event, idx) => {
-                        const eventIcon = event.type === 'gol' ? CircleDot :
-                        event.type === 'assistencia' ? Footprints :
-                        event.type === 'defesa' ? Shield :
-                        event.type === 'passe' ? Move :
-                        event.type === 'drible' ? Wind :
-                        Crosshair;
-                        return (
-                          <div key={idx} className="bg-white/5 rounded-lg p-3 flex items-center gap-3 border border-white/10">
+                              const eventIcon = event.type === 'gol' ? CircleDot :
+                                event.type === 'assistencia' ? Footprints :
+                                  event.type === 'defesa' ? Shield :
+                                    event.type === 'passe' ? Move :
+                                      event.type === 'drible' ? Wind :
+                                        Crosshair;
+                              return (
+                                <div key={idx} className="bg-white/5 rounded-lg p-3 flex items-center gap-3 border border-white/10">
                                   <div className="w-10 h-10 bg-gradient-to-br from-[#00E5FF] to-[#0066FF] rounded-lg flex items-center justify-center flex-shrink-0">
                                     {React.createElement(eventIcon, { className: "w-5 h-5 text-black" })}
                                   </div>
@@ -662,18 +663,18 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                                   </Badge>
                                 </div>);
 
-                      })}
+                            })}
                           </div>
                         </div>
-                  }
+                      }
 
                       {selectedVideo.ai_analysis.summary &&
-                  <div className="bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
+                        <div className="bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
                           <p className="text-gray-300 text-xs md:text-sm leading-relaxed">{selectedVideo.ai_analysis.summary}</p>
                         </div>
-                  }
+                      }
                     </div>
-                }
+                  }
 
                   {/* Admin Feedback & Analysis Controls */}
                   <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-6 space-y-4">
@@ -684,65 +685,65 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                       </h4>
                       <div className="flex gap-2">
                         {selectedVideo.status !== 'approved' &&
-                      <Button
-                        onClick={() => handleApproveVideo(selectedVideo.id, 'approved')}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white">
+                          <Button
+                            onClick={() => handleApproveVideo(selectedVideo.id, 'approved')}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white">
 
                             <Check className="w-4 h-4 mr-1" />
                             Aprovar
                           </Button>
-                      }
+                        }
                         {selectedVideo.status !== 'rejected' &&
-                      <Button
-                        onClick={() => handleApproveVideo(selectedVideo.id, 'rejected')}
-                        size="sm"
-                        variant="destructive">
+                          <Button
+                            onClick={() => handleApproveVideo(selectedVideo.id, 'rejected')}
+                            size="sm"
+                            variant="destructive">
 
                             <X className="w-4 h-4 mr-1" />
                             Rejeitar
                           </Button>
-                      }
+                        }
                       </div>
                     </div>
 
                     {!selectedVideo.ai_analysis &&
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                      <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-3">
                           <p className="text-gray-300 text-sm">Este vídeo ainda não foi analisado pela IA</p>
                           <Button
-                        onClick={handleProcessAIAnalysis}
-                        disabled={isProcessingAnalysis}
-                        size="sm"
-                        className="bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-bold">
+                            onClick={handleProcessAIAnalysis}
+                            disabled={isProcessingAnalysis}
+                            size="sm"
+                            className="bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-bold">
 
                             {isProcessingAnalysis ?
-                        <>
+                              <>
                                 <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin mr-2" />
                                 Processando...
                               </> :
 
-                        <>
+                              <>
                                 <Sparkles className="w-4 h-4 mr-2" />
                                 Processar Análise IA
                               </>
-                        }
+                            }
                           </Button>
                         </div>
                       </div>
-                  }
+                    }
 
                     <div className="space-y-3">
                       <Label className="text-white font-medium text-sm">Feedback do Analista</Label>
                       <Textarea
-                      value={adminVideoFeedback}
-                      onChange={(e) => setAdminVideoFeedback(e.target.value)}
-                      placeholder="Escreva seu feedback sobre a performance do atleta neste vídeo..."
-                      className="bg-white/5 border-white/20 text-white placeholder:text-gray-500 min-h-[120px] focus:border-[#00E5FF]" />
+                        value={adminVideoFeedback}
+                        onChange={(e) => setAdminVideoFeedback(e.target.value)}
+                        placeholder="Escreva seu feedback sobre a performance do atleta neste vídeo..."
+                        className="bg-white/5 border-white/20 text-white placeholder:text-gray-500 min-h-[120px] focus:border-[#00E5FF]" />
 
                       <Button
-                      onClick={handleSaveVideoFeedback}
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                        onClick={handleSaveVideoFeedback}
+                        className="w-full bg-purple-600 hover:bg-purple-700 text-white">
 
                         <Check className="w-4 h-4 mr-2" />
                         Salvar Feedback
@@ -751,25 +752,25 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                   </div>
 
                   <Button
-                  onClick={() => setSelectedVideo(null)}
-                  variant="outline"
-                  className="w-full border-white/10 text-white hover:bg-white/10">
+                    onClick={() => setSelectedVideo(null)}
+                    variant="outline"
+                    className="w-full border-white/10 text-white hover:bg-white/10">
 
                     ← Voltar aos Vídeos
                   </Button>
                 </div> :
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
                   {videos.map((video, idx) =>
-                <motion.div
-                  key={video.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedVideo(video)}
-                  className="relative aspect-video bg-gradient-to-br from-white/5 to-white/10 border-2 border-[#00E5FF]/20 rounded-xl overflow-hidden cursor-pointer group shadow-lg shadow-[#00E5FF]/10 hover:shadow-[#00E5FF]/30 transition-all">
+                    <motion.div
+                      key={video.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setSelectedVideo(video)}
+                      className="relative aspect-video bg-gradient-to-br from-white/5 to-white/10 border-2 border-[#00E5FF]/20 rounded-xl overflow-hidden cursor-pointer group shadow-lg shadow-[#00E5FF]/10 hover:shadow-[#00E5FF]/30 transition-all">
 
                       <video src={video.video_url} className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
@@ -781,29 +782,29 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                         <div className="absolute bottom-2 md:bottom-3 left-2 md:left-3 right-2 md:right-3">
                           <p className="text-white text-[10px] md:text-xs font-bold line-clamp-2">{video.title}</p>
                           {video.ai_analysis &&
-                      <Badge className="bg-purple-500/90 text-white text-[8px] md:text-[9px] mt-1 border border-purple-400/50">
+                            <Badge className="bg-purple-500/90 text-white text-[8px] md:text-[9px] mt-1 border border-purple-400/50">
                               <Sparkles className="w-2 h-2 md:w-2.5 md:h-2.5 mr-1" />
                               IA: {video.ai_analysis.overall_score}/100
                             </Badge>
-                      }
+                          }
                         </div>
                       </div>
                       <div className="absolute top-2 right-2">
                         <Badge className={`text-[8px] md:text-[9px] ${video.status === 'approved' ? 'bg-green-500/90 text-white border border-green-400/50' :
-                    video.status === 'pending' ? 'bg-yellow-500/90 text-black border border-yellow-400/50' :
-                    'bg-red-500/90 text-white border border-red-400/50'}`
-                    }>
+                          video.status === 'pending' ? 'bg-yellow-500/90 text-black border border-yellow-400/50' :
+                            'bg-red-500/90 text-white border border-red-400/50'}`
+                        }>
                           {video.status === 'approved' ? <Check className="w-2.5 h-2.5" /> : video.status === 'pending' ? <Clock className="w-2.5 h-2.5" /> : <X className="w-2.5 h-2.5" />}
                         </Badge>
                       </div>
                     </motion.div>
-                )}
+                  )}
                   {videos.length === 0 &&
-                <div className="col-span-full bg-white/5 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
+                    <div className="col-span-full bg-white/5 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
                       <Video className="w-12 h-12 md:w-16 md:h-16 text-gray-600 mx-auto mb-4" />
                       <p className="text-gray-400 text-sm md:text-base">Nenhum vídeo enviado ainda</p>
                     </div>
-                }
+                  }
                 </div>
               }
             </TabsContent>
@@ -987,40 +988,40 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   {[
-                  { key: 'pace', label: 'Velocidade', icon: Wind, color: 'green' },
-                  { key: 'shooting', label: 'Finalização', icon: CircleDot, color: 'red' },
-                  { key: 'passing', label: 'Passe', icon: Move, color: 'blue' },
-                  { key: 'dribbling', label: 'Drible', icon: Footprints, color: 'purple' },
-                  { key: 'defending', label: 'Defesa', icon: Shield, color: 'cyan' },
-                  { key: 'physicality', label: 'Físico', icon: Dumbbell, color: 'orange' }].
-                  map((attr) =>
-                  <div key={attr.key} className="space-y-2 bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
-                          {React.createElement(attr.icon, { className: "w-4 h-4 md:w-5 md:h-5 text-[#00E5FF]" })}
-                          {attr.label}
-                        </Label>
-                        <span className="text-xl md:text-2xl font-black text-[#00E5FF]">
-                          {editingUser.fifa_attributes?.[attr.key] || 50}
-                        </span>
+                    { key: 'pace', label: 'Velocidade', icon: Wind, color: 'green' },
+                    { key: 'shooting', label: 'Finalização', icon: CircleDot, color: 'red' },
+                    { key: 'passing', label: 'Passe', icon: Move, color: 'blue' },
+                    { key: 'dribbling', label: 'Drible', icon: Footprints, color: 'purple' },
+                    { key: 'defending', label: 'Defesa', icon: Shield, color: 'cyan' },
+                    { key: 'physicality', label: 'Físico', icon: Dumbbell, color: 'orange' }].
+                    map((attr) =>
+                      <div key={attr.key} className="space-y-2 bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
+                        <div className="flex items-center justify-between">
+                          <Label className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
+                            {React.createElement(attr.icon, { className: "w-4 h-4 md:w-5 md:h-5 text-[#00E5FF]" })}
+                            {attr.label}
+                          </Label>
+                          <span className="text-xl md:text-2xl font-black text-[#00E5FF]">
+                            {editingUser.fifa_attributes?.[attr.key] || 50}
+                          </span>
+                        </div>
+                        <Input
+                          type="range"
+                          min="0"
+                          max="99"
+                          value={editingUser.fifa_attributes?.[attr.key] || 50}
+                          onChange={(e) => handleFieldChange('fifa_attributes', {
+                            ...editingUser.fifa_attributes,
+                            [attr.key]: parseInt(e.target.value)
+                          })}
+                          className="w-full" />
+
+                        <Progress
+                          value={editingUser.fifa_attributes?.[attr.key] || 50}
+                          className="h-2 md:h-3" />
+
                       </div>
-                      <Input
-                      type="range"
-                      min="0"
-                      max="99"
-                      value={editingUser.fifa_attributes?.[attr.key] || 50}
-                      onChange={(e) => handleFieldChange('fifa_attributes', {
-                        ...editingUser.fifa_attributes,
-                        [attr.key]: parseInt(e.target.value)
-                      })}
-                      className="w-full" />
-
-                      <Progress
-                      value={editingUser.fifa_attributes?.[attr.key] || 50}
-                      className="h-2 md:h-3" />
-
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
 
@@ -1059,8 +1060,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-xl">
                   <Label className="flex items-center gap-3 text-white font-medium">
                     {editingUser.is_approved ?
-                    <Unlock className="w-5 h-5 text-green-400" /> :
-                    <Lock className="w-5 h-5 text-red-400" />
+                      <Unlock className="w-5 h-5 text-green-400" /> :
+                      <Lock className="w-5 h-5 text-red-400" />
                     }
                     <span>Acesso Aprovado à Plataforma</span>
                   </Label>
@@ -1081,6 +1082,28 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)}
                     className="data-[state=checked]:bg-yellow-500" />
 
+                </div>
+
+                {/* Toggle: Bloquear Conteúdo */}
+                <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/30 rounded-xl">
+                  <Label className="flex items-center gap-3 text-white font-medium">
+                    {editingUser.has_revela_talentos_access === false
+                      ? <Lock className="w-5 h-5 text-red-400" />
+                      : <Unlock className="w-5 h-5 text-green-400" />
+                    }
+                    <div>
+                      <span className="block">Bloquear Conteúdo da Plataforma</span>
+                      <span className="text-xs text-gray-400 font-normal">
+                        {editingUser.has_revela_talentos_access === false
+                          ? "Ativo — usuário vê cadeado em todos os conteúdos"
+                          : "Inativo — usuário acessa normalmente"}
+                      </span>
+                    </div>
+                  </Label>
+                  <Switch
+                    checked={editingUser.has_revela_talentos_access === false}
+                    onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', !c)}
+                    className="data-[state=checked]:bg-red-500" />
                 </div>
 
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-xl">
