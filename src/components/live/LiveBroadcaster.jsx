@@ -52,6 +52,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     const [isStartingHLS, setIsStartingHLS] = useState(false);
     const [isStoppingLive, setIsStoppingLive] = useState(false);
     const [hlsUrl, setHlsUrl] = useState(null);
+    const [isPollingHls, setIsPollingHls] = useState(false);
     const [debugInfo, setDebugInfo] = useState('');
     const [deviceInUse, setDeviceInUse] = useState(false); // camera busy by another app
 
@@ -93,17 +94,65 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         };
     }, [localVideoTrackId, hmsActions]);
 
+    // Polling logic to check HLS URL health
+    const pollHlsUrl = async (url) => {
+        setIsPollingHls(true);
+        setDebugInfo('Sincronizando feed de vídeo...');
+
+        let attempts = 0;
+        const maxAttempts = 15; // 30 seconds
+
+        const checkHealth = async () => {
+            if (attempts >= maxAttempts) {
+                toast.error('❌ HLS não ficou disponível a tempo. Encerrando tentativa.');
+                stopLive(); // abort starting
+                setIsPollingHls(false);
+                setDebugInfo('');
+                return;
+            }
+
+            try {
+                let isReady = false;
+                try {
+                    const res = await base44.functions.invoke('checkHlsUrlHealth', { url });
+                    if (res && res.ok) isReady = true;
+                } catch (e) {
+                    // ignore invocation errors while polling
+                }
+
+                if (isReady) {
+                    setIsPollingHls(false);
+                    setDebugInfo('');
+                    setHlsUrl(url);
+                    // Now that it's healthy, save state and kick off notification
+                    await saveLiveStatus(true, url);
+                    await upsertSetting('live_started_at', new Date().toISOString());
+                    if (onLiveStarted) onLiveStarted(url);
+                } else {
+                    attempts++;
+                    setTimeout(checkHealth, 2000);
+                }
+            } catch (err) {
+                attempts++;
+                setTimeout(checkHealth, 2000);
+            }
+        };
+
+        checkHealth();
+    };
+
     // Watch HLS state changes — when HLS starts, variants have the stream URL
     useEffect(() => {
         if (hlsState?.running && hlsState?.variants?.length > 0) {
             const url = hlsState.variants[0].url;
             console.log('[100ms] HLS stream URL:', url);
-            setHlsUrl(url);
-            // ⚡ Save URL so ALL viewers can find the stream
-            saveLiveStatus(true, url);
-            if (onLiveStarted) onLiveStarted(url);
+
+            // If we don't have the URL set yet and we are not polling or stopping
+            if (!hlsUrl && !isPollingHls && !isStoppingLive) {
+                pollHlsUrl(url);
+            }
         }
-    }, [hlsState]);
+    }, [hlsState, hlsUrl, isPollingHls, isStoppingLive]);
 
     const joinRoom = async (forceVideoOff = false) => {
         console.log('[Live] joinRoom called. User:', user?.id, '| videoOff:', forceVideoOff);
@@ -151,10 +200,8 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 variants: [{ meetingURL: HMS_MEETING_URL, metadata: 'revela-live' }],
                 recording: { singleFilePerLayer: true, hlsVod: true },
             });
-            toast.success('🔴 HLS iniciado! Aguardando URL do stream...');
-            // Mark live as active in PlatformSettings so all users see the card
-            await saveLiveStatus(true);
-            if (onLiveStarted) onLiveStarted();
+            toast.success('🔴 HLS iniciado! Verificando link de transmissão...');
+            // Removido o saveLiveStatus e onLiveStarted daqui para acontecer apenas pós-polling
         } catch (err) {
             console.error('[Live] Erro ao iniciar HLS:', err);
             toast.error(`❌ Falha no HLS: ${err?.message || err}`);
@@ -165,11 +212,14 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
 
     const stopLive = async () => {
         setIsStoppingLive(true);
+        setIsPollingHls(false);
         try {
             if (hlsState?.running) await hmsActions.stopHLSStreaming();
             await hmsActions.leave();
             // Mark live as offline
             await saveLiveStatus(false);
+            await upsertSetting('live_ended_at', new Date().toISOString());
+            setHlsUrl(null);
             onLiveStopped();
         } catch (err) {
             console.error('[Live] Erro ao encerrar:', err);
@@ -276,11 +326,11 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             {/* Status Bar */}
             <div className="flex items-center justify-between p-4 bg-gray-900/80 rounded-2xl border border-gray-700/50">
                 <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-green-400 animate-pulse" />
+                    <div className={`w-3 h-3 rounded-full ${hlsState?.running && !isPollingHls ? 'bg-red-500' : 'bg-green-400'} animate-pulse`} />
                     <span className="text-white font-bold">
-                        {hlsState?.running ? '🔴 AO VIVO' : 'Conectado — aguardando início'}
+                        {hlsState?.running && !isPollingHls ? '🔴 AO VIVO' : isPollingHls ? '⏳ Sincronizando sinal...' : 'Conectado — aguardando início'}
                     </span>
-                    {hlsState?.running && (
+                    {hlsState?.running && !isPollingHls && (
                         <Badge className="bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse">
                             TRANSMITINDO
                         </Badge>
@@ -307,7 +357,7 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                         <VideoOff className="w-16 h-16 text-gray-600" />
                     </div>
                 )}
-                {hlsState?.running && (
+                {hlsState?.running && !isPollingHls && (
                     <div className="absolute top-4 left-4">
                         <Badge className="bg-red-600 text-white flex items-center gap-2 px-3 py-1.5 animate-pulse shadow-lg">
                             <div className="w-2 h-2 bg-white rounded-full" />
@@ -341,11 +391,11 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             {!hlsState?.running ? (
                 <Button
                     onClick={startHLS}
-                    disabled={isStartingHLS}
+                    disabled={isStartingHLS || isPollingHls}
                     className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-black text-lg py-6 rounded-2xl shadow-2xl shadow-red-500/30"
                 >
-                    {isStartingHLS ? (
-                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Iniciando transmissão...</>
+                    {isStartingHLS || isPollingHls ? (
+                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" />{isPollingHls ? 'Sincronizando feed...' : 'Iniciando transmissão...'}</>
                     ) : (
                         <><PlayCircle className="w-5 h-5 mr-2" />▶ INICIAR TRANSMISSÃO PARA TODOS</>
                     )}

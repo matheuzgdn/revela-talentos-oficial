@@ -156,7 +156,7 @@ export default function LivesPage() {
     );
   }
 
-  const isLive = liveSettings?.isLiveActive && liveSettings?.hlsUrl;
+  const isLive = liveSettings?.isLiveActive;
 
   return (
     <>

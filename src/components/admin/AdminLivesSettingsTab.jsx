@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Radio, Calendar, Clock, Eye, EyeOff, AlertCircle, Save, Trash2, RefreshCw } from 'lucide-react';
+import { Radio, Calendar, Clock, Eye, EyeOff, AlertCircle, Save, Trash2, RefreshCw, Activity, MonitorSmartphone } from 'lucide-react';
 import LiveBroadcaster from '@/components/live/LiveBroadcaster';
 
 export default function AdminLivesSettingsTab() {
@@ -25,6 +25,8 @@ export default function AdminLivesSettingsTab() {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [playbackLogs, setPlaybackLogs] = useState([]);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -35,9 +37,23 @@ export default function AdminLivesSettingsTab() {
         console.error(e);
       }
       await loadSettings();
+      await loadLogs();
     };
     init();
   }, []);
+
+  const loadLogs = async () => {
+    setIsLoadingLogs(true);
+    try {
+      // Usando filter para ordenar, limitando do lado do client para os ultimos 50
+      const logs = await base44.entities.LivePlaybackLogs.filter({}, "-created_date");
+      setPlaybackLogs(logs?.slice(0, 50) || []);
+    } catch (err) {
+      console.warn('Playback Logs entity might not exist yet', err);
+      setPlaybackLogs([]);
+    }
+    setIsLoadingLogs(false);
+  };
 
   const loadSettings = async () => {
     setIsLoading(true);
@@ -212,6 +228,61 @@ export default function AdminLivesSettingsTab() {
               <><Save className="w-5 h-5 mr-2" />Salvar Configurações</>
             )}
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* ── LOGS DE REPRODUÇÃO ── */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-white flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-400" />
+            Logs de Reprodução (Erros dos Usuários)
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadLogs}
+            disabled={isLoadingLogs}
+            className="border-gray-600 text-gray-300 hover:bg-gray-700"
+          >
+            {isLoadingLogs ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            Atualizar Logs
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {playbackLogs.length === 0 ? (
+            <div className="text-center p-8 bg-gray-900 rounded-lg border border-gray-700">
+              <p className="text-gray-400">Nenhum erro de reprodução registrado recentemente.</p>
+            </div>
+          ) : (
+            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+              {playbackLogs.map((log) => (
+                <div key={log.id} className="p-4 bg-gray-900 border border-gray-700 rounded-lg space-y-2">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <Badge variant="destructive" className="mb-2">{log.error_message}</Badge>
+                      <p className="text-sm font-medium text-white flex items-center gap-2">
+                        <MonitorSmartphone className="w-4 h-4 text-gray-400" />
+                        {log.device_info ? log.device_info.substring(0, 50) + '...' : 'Dispositivo desconhecido'}
+                      </p>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      {new Date(log.created_date).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="bg-black/50 p-2 rounded text-xs text-gray-400 font-mono break-all">
+                    URL: {log.live_hls_url}
+                  </div>
+                  {log.error_details && (
+                    <div className="bg-red-900/10 p-2 rounded text-xs text-red-400 font-mono break-all mt-1">
+                      Detalhes: {log.error_details}
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500">User ID: {log.userId}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

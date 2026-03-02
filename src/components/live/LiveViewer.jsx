@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Radio, Loader2, Volume2, VolumeX, Maximize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { base44 } from '@/api/base44Client';
 
 export default function LiveViewer({ hlsUrl }) {
     const videoRef = useRef(null);
@@ -16,8 +17,30 @@ export default function LiveViewer({ hlsUrl }) {
     const [showUnmuteOverlay, setShowUnmuteOverlay] = useState(true);
     const [retryCount, setRetryCount] = useState(0);
 
+    const logPlaybackError = async (message, details = null) => {
+        try {
+            const user = await base44.auth.me();
+            await base44.entities.LivePlaybackLogs.create({
+                userId: user?.id || 'anonymous',
+                device_info: navigator.userAgent,
+                live_hls_url: hlsUrl || 'empty',
+                error_message: message,
+                error_details: details ? JSON.stringify(details) : ''
+            });
+        } catch (e) {
+            console.warn('Could not log playback error:', e);
+        }
+    };
+
     useEffect(() => {
-        if (!hlsUrl || !videoRef.current) return;
+        if (!hlsUrl) {
+            setIsLoading(false);
+            setHasError(false);
+            // It will show the "A live está iniciando" state
+            return;
+        }
+
+        if (!videoRef.current) return;
 
         setIsLoading(true);
         setHasError(false);
@@ -38,7 +61,13 @@ export default function LiveViewer({ hlsUrl }) {
         if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = hlsUrl;
             video.addEventListener('loadedmetadata', onReady);
-            video.addEventListener('error', () => setHasError(true));
+            video.addEventListener('error', (e) => {
+                const errCode = video.error ? video.error.code : 'unknown';
+                const errMsg = video.error ? video.error.message : 'Video native error';
+                console.error('[LiveViewer] Native error', errCode, errMsg);
+                logPlaybackError('Native Video Error', { code: errCode, message: errMsg });
+                setHasError(true);
+            });
             return () => {
                 video.removeEventListener('loadedmetadata', onReady);
             };
@@ -60,6 +89,7 @@ export default function LiveViewer({ hlsUrl }) {
             hls.on(Hls.Events.ERROR, (_event, data) => {
                 if (data.fatal) {
                     console.error('[LiveViewer] HLS fatal error:', data);
+                    logPlaybackError('HLS.js Fatal Error', { type: data.type, details: data.details });
                     setHasError(true);
                 }
             });
@@ -70,6 +100,7 @@ export default function LiveViewer({ hlsUrl }) {
             };
         }
 
+        logPlaybackError('HLS Unsupported', { message: 'Browser does not support HLS or HLS.js' });
         setHasError(true); // browser doesn't support HLS at all
     }, [hlsUrl, retryCount]);
 
@@ -105,9 +136,18 @@ export default function LiveViewer({ hlsUrl }) {
     return (
         <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-red-500/20 group">
 
+            {/* Waiting for URL overlay */}
+            {!hlsUrl && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950 z-20">
+                    <Loader2 className="w-12 h-12 text-red-500 animate-spin mb-4" />
+                    <p className="text-gray-300 font-bold mb-2">A live está iniciando, aguarde alguns segundos...</p>
+                    <p className="text-gray-500 text-sm mb-6">Estamos recebendo o vídeo do estúdio.</p>
+                </div>
+            )}
+
             {/* Loading overlay */}
             <AnimatePresence>
-                {isLoading && !hasError && (
+                {isLoading && !hasError && !!hlsUrl && (
                     <motion.div
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -118,27 +158,27 @@ export default function LiveViewer({ hlsUrl }) {
                             <div className="absolute inset-0 bg-red-500 rounded-full blur-2xl opacity-30 animate-pulse" />
                             <Loader2 className="w-16 h-16 text-red-400 animate-spin relative z-10" />
                         </div>
-                        <p className="text-white font-bold text-lg">Conectando à live...</p>
+                        <p className="text-white font-bold text-lg">Carregando live...</p>
                         <p className="text-gray-400 text-sm mt-2">Aguarde enquanto carregamos o stream</p>
                     </motion.div>
                 )}
             </AnimatePresence>
 
             {/* Error overlay */}
-            {hasError && (
+            {hasError && !!hlsUrl && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950 z-20">
                     <Radio className="w-12 h-12 text-gray-600 mb-4" />
-                    <p className="text-gray-300 font-bold mb-2">Stream temporariamente indisponível</p>
-                    <p className="text-gray-500 text-sm mb-6">O stream pode estar sendo preparado</p>
+                    <p className="text-red-400 font-bold mb-2 text-center px-4">Não foi possível reproduzir a live. Tente novamente.</p>
+                    <p className="text-gray-500 text-sm mb-6 text-center px-4">Pode ser uma instabilidade temporária na rede.</p>
                     <Button onClick={retry} variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
-                        Tentar novamente
+                        🔄 Tentar novamente
                     </Button>
                 </div>
             )}
 
             {/* ── TAP TO UNMUTE overlay — shown until user taps ── */}
             <AnimatePresence>
-                {showUnmuteOverlay && !isLoading && !hasError && (
+                {showUnmuteOverlay && !isLoading && !hasError && !!hlsUrl && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -157,8 +197,12 @@ export default function LiveViewer({ hlsUrl }) {
                             <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-white/30 shadow-2xl">
                                 <VolumeX className="w-9 h-9 text-white" />
                             </div>
-                            <p className="text-white font-black text-xl drop-shadow-lg">🔊 Toque para ativar o som</p>
-                            <p className="text-white/60 text-sm">A transmissão está ao vivo</p>
+                            <Button
+                                onClick={(e) => { e.stopPropagation(); unmute(); }}
+                                className="bg-red-600 hover:bg-red-700 text-white font-black text-lg py-6 px-8 rounded-full shadow-2xl shadow-red-500/30"
+                            >
+                                ▶ Tocar Live
+                            </Button>
                         </motion.div>
                     </motion.div>
                 )}
