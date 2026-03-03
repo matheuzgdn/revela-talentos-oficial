@@ -181,8 +181,8 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 userName: user.full_name || user.email || 'Admin',
                 authToken: token,
                 settings: {
-                    isAudioMuted: true,
-                    isVideoMuted: forceVideoOff, // audio-only fallback
+                    isAudioMuted: false,   // ← MIC ON by default (was true → HLS capturava silêncio)
+                    isVideoMuted: forceVideoOff,
                 },
             });
 
@@ -190,7 +190,6 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
             setDebugInfo('');
         } catch (err) {
             console.error('[Live] Erro ao conectar:', err);
-            // DeviceInUse = camera occupied by another app (code 3003)
             if (err?.code === 3003 || err?.name === 'DeviceInUse' || err?.message?.includes('videosource')) {
                 setDeviceInUse(true);
                 setDebugInfo('');
@@ -205,6 +204,21 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
     };
 
     const startHLS = async () => {
+        // ── Pre-flight: ensure camera and mic are ON before streaming ──
+        if (!isVideoEnabled) {
+            toast.warning('⚠️ Câmera está desligada! Ligando antes de transmitir...');
+            try { await hmsActions.setLocalVideoEnabled(true); } catch (e) {
+                toast.error('Não foi possível ligar a câmera. Verifique se outro app está usando-a.');
+                return;
+            }
+        }
+        if (!isAudioEnabled) {
+            toast.warning('⚠️ Microfone estava mudo! Ligando antes de transmitir...');
+            try { await hmsActions.setLocalAudioEnabled(true); } catch (e) {
+                console.warn('Mic enable failed:', e);
+            }
+        }
+
         setIsStartingHLS(true);
         console.log('[Live] Iniciando HLS. Meeting URL:', HMS_MEETING_URL);
         try {
@@ -213,7 +227,6 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
                 recording: { singleFilePerLayer: true, hlsVod: true },
             });
             toast.success('🔴 HLS iniciado! Verificando link de transmissão...');
-            // Removido o saveLiveStatus e onLiveStarted daqui para acontecer apenas pós-polling
         } catch (err) {
             console.error('[Live] Erro ao iniciar HLS:', err);
             toast.error(`❌ Falha no HLS: ${err?.message || err}`);
