@@ -223,6 +223,7 @@ function BroadcasterStudio({ user }) {
     const [isLive, setIsLive] = useState(false);
     const [deviceInUse, setDeviceInUse] = useState(false);
     const [isFrontCamera, setIsFrontCamera] = useState(true);
+    const [cameraIdx, setCameraIdx] = useState(0);
     const [showViewers, setShowViewers] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [newCommentDot, setNewCommentDot] = useState(0);
@@ -373,15 +374,31 @@ function BroadcasterStudio({ user }) {
 
     // ─── Camera switch ────────────────────────────────────────────────────────
     const switchCamera = async () => {
-        const newFacing = isFrontCamera ? 'environment' : 'user';
         try {
-            await hmsActions.setVideoSettings({ facingMode: newFacing });
-            setIsFrontCamera(f => !f);
+            const allDevices = await navigator.mediaDevices.enumerateDevices();
+            const cameras = allDevices.filter(d => d.kind === 'videoinput');
+            if (cameras.length <= 1) {
+                toast.info('Apenas uma câmera disponível neste dispositivo');
+                return;
+            }
+            const nextIdx = (cameraIdx + 1) % cameras.length;
+            const target = cameras[nextIdx];
+            console.log('[Live] Trocando câmera →', target.label || target.deviceId);
+            await hmsActions.setVideoSettings({ deviceId: target.deviceId });
+            setCameraIdx(nextIdx);
+            setIsFrontCamera(nextIdx === 0);
         } catch (e) {
-            console.warn('[Live] switchCamera failed:', e);
-            toast.error('Não foi possível trocar a câmera');
+            console.error('[Live] switchCamera error:', e);
+            try {
+                const newFacing = isFrontCamera ? 'environment' : 'user';
+                await hmsActions.setVideoSettings({ facingMode: newFacing });
+                setIsFrontCamera(f => !f);
+            } catch {
+                toast.error('Não foi possível trocar a câmera');
+            }
         }
     };
+
 
     const toggleVideo = () => hmsActions.setLocalVideoEnabled(!isVideoEnabled);
     const toggleAudio = () => hmsActions.setLocalAudioEnabled(!isAudioEnabled);
@@ -505,8 +522,8 @@ function BroadcasterStudio({ user }) {
                         <button
                             onClick={toggleVideo}
                             className={`w-11 h-11 backdrop-blur-md border rounded-full flex items-center justify-center transition-all active:scale-90 shadow-xl ${isVideoEnabled
-                                    ? 'bg-black/45 hover:bg-black/65 border-white/15'
-                                    : 'bg-red-600/80 hover:bg-red-500/80 border-red-400/20'
+                                ? 'bg-black/45 hover:bg-black/65 border-white/15'
+                                : 'bg-red-600/80 hover:bg-red-500/80 border-red-400/20'
                                 }`}
                             title={isVideoEnabled ? 'Desligar câmera' : 'Ligar câmera'}
                         >
@@ -520,8 +537,8 @@ function BroadcasterStudio({ user }) {
                         <button
                             onClick={toggleAudio}
                             className={`w-11 h-11 backdrop-blur-md border rounded-full flex items-center justify-center transition-all active:scale-90 shadow-xl ${isAudioEnabled
-                                    ? 'bg-black/45 hover:bg-black/65 border-white/15'
-                                    : 'bg-red-600/80 hover:bg-red-500/80 border-red-400/20'
+                                ? 'bg-black/45 hover:bg-black/65 border-white/15'
+                                : 'bg-red-600/80 hover:bg-red-500/80 border-red-400/20'
                                 }`}
                             title={isAudioEnabled ? 'Mutar microfone' : 'Ativar microfone'}
                         >
