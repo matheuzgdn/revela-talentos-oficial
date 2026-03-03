@@ -27,7 +27,12 @@ export default function LiveViewer({ hlsUrl }) {
                 error_message: message,
                 error_details: details ? JSON.stringify(details) : ''
             });
-        } catch (e) { /* silent */ }
+        } catch (e) {
+            // 404 = entidade ainda não criada no Base44, ignorar silenciosamente
+            if (e?.status !== 404 && !e?.message?.includes('404')) {
+                console.warn('[LiveViewer] Não foi possível salvar log:', e?.message || e);
+            }
+        }
     };
 
     useEffect(() => {
@@ -75,19 +80,25 @@ export default function LiveViewer({ hlsUrl }) {
             setDebugState('Conectando (Safari/iOS)...');
             video.src = hlsUrl;
             video.addEventListener('loadedmetadata', onReady);
-            video.addEventListener('error', (e) => {
+            const onError = () => {
+                // Ignore errors caused by cleanup (video.src cleared during unmount)
+                if (!video.src || video.src === window.location.href) return;
                 clearTimeout(loadTimerRef.current);
                 const code = video.error?.code || 'unknown';
                 const msg = video.error?.message || 'erro nativo';
+                // Ignore 'Empty src attribute' — this is a cleanup artifact, not a real error
+                if (msg.includes('Empty src')) return;
                 logPlaybackError('Native Video Error', { code, message: msg });
                 setDebugState(`Erro: ${msg}`);
                 setHasError(true);
                 setIsLoading(false);
-            });
+            };
+            video.addEventListener('error', onError);
             return () => {
                 clearTimeout(loadTimerRef.current);
-                video.src = '';
+                // Do NOT set video.src = '' here — it fires the error event on Safari
                 video.removeEventListener('loadedmetadata', onReady);
+                video.removeEventListener('error', onError);
             };
         }
 
