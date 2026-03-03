@@ -94,14 +94,45 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         };
     }, [localVideoTrackId, hmsActions]);
 
-    // Polling logic to check HLS URL health (sem dependência da cloud function)
+    // Check if HLS M3U8 URL has actual video segments ready
+    const checkHlsHasSegments = async (masterUrl) => {
+        try {
+            // Fetch master manifest (100ms CDN supports CORS)
+            const resp = await fetch(masterUrl, { method: 'GET' });
+            if (!resp.ok) return false;
+            const text = await resp.text();
+            if (!text.includes('#EXTM3U')) return false;
+
+            // If master manifest lists stream variants, check the first variant playlist
+            const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+            const variantLine = lines.find(l => !l.startsWith('#'));
+
+            if (variantLine) {
+                // Build absolute variant URL
+                const baseUrl = masterUrl.substring(0, masterUrl.lastIndexOf('/') + 1);
+                const variantUrl = variantLine.startsWith('http') ? variantLine : baseUrl + variantLine;
+                const varResp = await fetch(variantUrl, { method: 'GET' });
+                if (!varResp.ok) return false;
+                const varText = await varResp.text();
+                // #EXTINF means there are actual TS segments in the playlist
+                return varText.includes('#EXTINF');
+            }
+
+            // If master manifest itself has segments directly
+            return text.includes('#EXTINF');
+        } catch (e) {
+            console.warn('[Live] checkHlsHasSegments error:', e.message);
+            return false;
+        }
+    };
+
+    // Polling logic to check HLS URL health
     const pollHlsUrl = async (url) => {
         setIsPollingHls(true);
         setDebugInfo('Sincronizando feed de vídeo...');
 
         let attempts = 0;
-        const maxAttempts = 15; // 30 seconds
-        let serverErrorCount = 0;
+        const maxAttempts = 20; // 40 seconds max
 
         const activateLive = async (u) => {
             setIsPollingHls(false);
@@ -122,30 +153,22 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
 
             let isReady = false;
 
-            // Try the cloud function first (if deployed)
+            // Try cloud function first (if deployed)
             try {
                 const res = await base44.functions.invoke('checkHlsUrlHealth', { url });
                 if (res && res.ok) isReady = true;
-                serverErrorCount = 0;
             } catch (e) {
-                serverErrorCount++;
-                console.warn('[Live] checkHlsUrlHealth indisponível (tentativa ' + serverErrorCount + '):', e.message);
-                // After 3 consecutive failures, function is not deployed — fallback to direct fetch
-                if (serverErrorCount >= 3) {
-                    try {
-                        // no-cors: can't read status but absence of network error means URL is reachable
-                        await fetch(url, { method: 'HEAD', mode: 'no-cors' });
-                        isReady = true;
-                    } catch {
-                        // URL not yet reachable, keep polling
-                    }
-                }
+                // Cloud function not deployed — use direct M3U8 segment check
+                console.warn('[Live] Cloud function indisponível, usando verificação direta de segmentos HLS');
+                isReady = await checkHlsHasSegments(url);
             }
 
             if (isReady) {
+                console.log('[Live] HLS pronto com segmentos reais — ativando live');
                 activateLive(url);
             } else {
                 attempts++;
+                setDebugInfo(`Aguardando segmentos de vídeo... (${attempts}/${maxAttempts})`);
                 setTimeout(checkHealth, 2000);
             }
         };
