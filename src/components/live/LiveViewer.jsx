@@ -75,8 +75,15 @@ export default function LiveViewer({ hlsUrl }) {
             });
         };
 
-        // Safari / iOS — native HLS
-        if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // Native HLS ONLY for true Safari / iOS WebKit
+        // Chrome 107+ also returns 'maybe' for canPlayType but has incomplete HLS support
+        // → causes DEMUXER_ERROR_COULD_NOT_PARSE. We must detect actual Safari/iOS.
+        const isSafariOrIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+            (navigator.userAgent.includes('Safari') &&
+                !navigator.userAgent.includes('Chrome') &&
+                !navigator.userAgent.includes('Chromium'));
+
+        if (isSafariOrIOS && video.canPlayType('application/vnd.apple.mpegurl')) {
             setDebugState('Conectando (Safari/iOS)...');
             video.src = hlsUrl;
             video.addEventListener('loadedmetadata', onReady);
