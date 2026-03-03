@@ -8,55 +8,251 @@ import {
     selectIsConnectedToRoom,
     selectLocalVideoTrackID,
     selectHLSState,
-    selectPeers,
+    selectRemotePeers,
     selectIsLocalVideoEnabled,
     selectIsLocalAudioEnabled,
+    selectHMSMessages,
 } from '@100mslive/react-sdk';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { generateHmsToken, HMS_MEETING_URL } from '@/lib/hmsUtils';
 import { notifyLiveSession } from '@/components/admin/NotificationSystem';
 import {
-    Radio, Video, VideoOff, Mic, MicOff, MonitorPlay,
-    Loader2, Users, PlayCircle, StopCircle, AlertTriangle
+    Radio, Video, VideoOff, Mic, MicOff,
+    Loader2, Users, StopCircle, RefreshCcw,
+    X, Send, ChevronDown, MessageSquare,
+    Eye, AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-// ─── Error catcher from 100ms SDK event system ───────────────────────────────
-function HMSErrorHandler() {
+// ─── Avatar helper ─────────────────────────────────────────────────────────────
+const AVATAR_COLORS = [
+    'from-rose-500 to-pink-600',
+    'from-blue-500 to-cyan-500',
+    'from-emerald-500 to-green-600',
+    'from-violet-500 to-purple-600',
+    'from-orange-500 to-amber-500',
+    'from-red-500 to-rose-600',
+];
+
+function PeerAvatar({ name = '?', avatarUrl, size = 'md' }) {
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+    const colorClass = AVATAR_COLORS[(name.charCodeAt(0) || 0) % AVATAR_COLORS.length];
+    const sizeClass = { sm: 'w-8 h-8 text-xs', md: 'w-10 h-10 text-sm', lg: 'w-12 h-12 text-base' }[size];
+    return (
+        <div className={`${sizeClass} rounded-full bg-gradient-to-br ${colorClass} flex items-center justify-center font-black text-white border-2 border-black/60 shadow-md overflow-hidden flex-shrink-0`}>
+            {avatarUrl
+                ? <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+                : <span>{initials}</span>
+            }
+        </div>
+    );
+}
+
+// ─── Error handler inside HMSRoomProvider ──────────────────────────────────────
+function HMSErrorListener() {
     const notification = useHMSNotifications(HMSNotificationTypes.ERROR);
     useEffect(() => {
         if (notification) {
-            const msg = notification.data?.message || 'Erro desconhecido no servidor de live';
-            console.error('[100ms Error]', notification.data);
-            toast.error(`❌ Erro na live: ${msg}`);
+            console.error('[100ms]', notification.data);
+            toast.error(`❌ ${notification.data?.message || 'Erro no servidor de live'}`);
         }
     }, [notification]);
     return null;
 }
 
-// ─── Inner component (needs HMSRoomProvider context) ─────────────────────────
-function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
+// ─── Bottom sheet: Viewers ─────────────────────────────────────────────────────
+function ViewersSheet({ viewers, onClose }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end"
+            onClick={onClose}
+        >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <motion.div
+                initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+                onClick={e => e.stopPropagation()}
+                className="relative w-full bg-[#111] border-t border-white/10 rounded-t-3xl overflow-hidden"
+            >
+                {/* Handle */}
+                <div className="flex justify-center pt-3 pb-1">
+                    <div className="w-10 h-1 bg-white/20 rounded-full" />
+                </div>
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-white/8">
+                    <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4 text-cyan-400" />
+                        <span className="text-white font-black">
+                            {viewers.length > 0 ? `${viewers.length} assistindo agora` : 'Nenhum espectador ainda'}
+                        </span>
+                    </div>
+                    <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+                {/* Viewers grid */}
+                <div className="max-h-72 overflow-y-auto px-4 py-4">
+                    {viewers.length === 0 ? (
+                        <p className="text-gray-600 text-center py-8 text-sm">Aguardando espectadores...</p>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-2">
+                            {viewers.map(peer => {
+                                const meta = (() => { try { return JSON.parse(peer.metadata || '{}'); } catch { return {}; } })();
+                                return (
+                                    <div key={peer.id} className="flex items-center gap-3 bg-white/5 rounded-2xl p-3">
+                                        <PeerAvatar name={peer.name} avatarUrl={meta.avatar} size="sm" />
+                                        <span className="text-white text-sm font-medium truncate">{peer.name}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            </motion.div>
+        </motion.div>
+    );
+}
+
+// ─── Bottom sheet: Comments / Chat ─────────────────────────────────────────────
+function CommentsSheet({ messages, hmsActions, onClose }) {
+    const [input, setInput] = useState('');
+    const bottomRef = useRef(null);
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages.length]);
+
+    const send = async () => {
+        const text = input.trim();
+        if (!text) return;
+        try {
+            await hmsActions.sendBroadcastMessage(text);
+            setInput('');
+        } catch (e) {
+            console.error('[Live] send message error:', e);
+        }
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end"
+            onClick={onClose}
+        >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <motion.div
+                initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+                onClick={e => e.stopPropagation()}
+                className="relative w-full bg-[#111] border-t border-white/10 rounded-t-3xl flex flex-col max-h-[72vh]"
+            >
+                {/* Handle */}
+                <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+                    <div className="w-10 h-1 bg-white/20 rounded-full" />
+                </div>
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-3 border-b border-white/8 flex-shrink-0">
+                    <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-purple-400" />
+                        <span className="text-white font-black">Comentários ao vivo</span>
+                    </div>
+                    <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+                    {messages.length === 0
+                        ? <p className="text-gray-600 text-center py-10 text-sm">Nenhum comentário ainda...</p>
+                        : messages.map(msg => (
+                            <div key={msg.id} className="flex items-start gap-3">
+                                <PeerAvatar name={msg.senderName || 'Admin'} size="sm" />
+                                <div className="min-w-0">
+                                    <p className="text-cyan-400 text-xs font-bold leading-none mb-1">
+                                        {msg.senderName || 'Admin'}
+                                    </p>
+                                    <p className="text-white text-sm break-words leading-snug">{msg.message}</p>
+                                </div>
+                            </div>
+                        ))
+                    }
+                    <div ref={bottomRef} />
+                </div>
+                {/* Input */}
+                <div className="flex items-center gap-3 px-4 pb-6 pt-3 border-t border-white/8 flex-shrink-0">
+                    <input
+                        value={input}
+                        onChange={e => setInput(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && send()}
+                        placeholder="Diga algo aos atletas..."
+                        className="flex-1 bg-white/8 border border-white/15 rounded-full px-5 py-3 text-white text-sm placeholder-gray-600 outline-none focus:border-purple-500/60 transition-colors"
+                    />
+                    <button
+                        onClick={send}
+                        disabled={!input.trim()}
+                        className="w-11 h-11 bg-gradient-to-br from-purple-500 to-violet-600 rounded-full flex items-center justify-center disabled:opacity-30 shadow-lg shadow-purple-500/30 transition-opacity active:scale-95"
+                    >
+                        <Send className="w-4 h-4 text-white" />
+                    </button>
+                </div>
+            </motion.div>
+        </motion.div>
+    );
+}
+
+// ─── Inner studio component ────────────────────────────────────────────────────
+function BroadcasterStudio({ user }) {
     const hmsActions = useHMSActions();
     const isConnected = useHMSStore(selectIsConnectedToRoom);
     const localVideoTrackId = useHMSStore(selectLocalVideoTrackID);
     const hlsState = useHMSStore(selectHLSState);
-    const peers = useHMSStore(selectPeers);
+    const remotePeers = useHMSStore(selectRemotePeers);
     const isVideoEnabled = useHMSStore(selectIsLocalVideoEnabled);
     const isAudioEnabled = useHMSStore(selectIsLocalAudioEnabled);
+    const messages = useHMSStore(selectHMSMessages);
 
     const videoRef = useRef(null);
-    const [isJoining, setIsJoining] = useState(false);
-    const [isStartingHLS, setIsStartingHLS] = useState(false);
-    const [isStoppingLive, setIsStoppingLive] = useState(false);
-    const [hlsUrl, setHlsUrl] = useState(null);
-    const [isPollingHls, setIsPollingHls] = useState(false);
-    const [debugInfo, setDebugInfo] = useState('');
-    const [deviceInUse, setDeviceInUse] = useState(false); // camera busy by another app
+    const prevMsgCountRef = useRef(0);
 
-    // Upsert a PlatformSetting key
+    const [isJoining, setIsJoining] = useState(false);
+    const [isStartingLive, setIsStartingLive] = useState(false);
+    const [isStoppingLive, setIsStoppingLive] = useState(false);
+    const [isLive, setIsLive] = useState(false);
+    const [deviceInUse, setDeviceInUse] = useState(false);
+    const [isFrontCamera, setIsFrontCamera] = useState(true);
+    const [showViewers, setShowViewers] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [newCommentDot, setNewCommentDot] = useState(0);
+    const [liveSeconds, setLiveSeconds] = useState(0);
+
+    // Live timer
+    useEffect(() => {
+        if (!isLive) { setLiveSeconds(0); return; }
+        const t = setInterval(() => setLiveSeconds(s => s + 1), 1000);
+        return () => clearInterval(t);
+    }, [isLive]);
+
+    const formatTime = s =>
+        `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+
+    // New comment badge
+    useEffect(() => {
+        if (messages.length > prevMsgCountRef.current && !showComments) {
+            setNewCommentDot(n => n + messages.length - prevMsgCountRef.current);
+        }
+        prevMsgCountRef.current = messages.length;
+    }, [messages.length]);
+    useEffect(() => { if (showComments) setNewCommentDot(0); }, [showComments]);
+
+    // Viewers = remote peers with viewer role
+    const viewers = remotePeers.filter(p =>
+        p.roleName?.includes('viewer')
+    );
+
+    // ─── Platform Settings helpers ────────────────────────────────────────────
     const upsertSetting = async (key, value) => {
         const all = await base44.entities.PlatformSettings.list();
         const existing = all.find(s => s.setting_key === key);
@@ -67,22 +263,18 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         }
     };
 
-    // Save live on/off status — writes BOTH keys Lives.jsx and the banner card check
-    const saveLiveStatus = async (isLive, hlsUrl = null) => {
+    const saveLiveStatus = async (active, hlsUrl = '') => {
         try {
-            await upsertSetting('is_live', String(isLive));          // banner card
-            await upsertSetting('is_live_active', String(isLive));   // Lives.jsx check
-            if (hlsUrl) {
-                await upsertSetting('live_hls_url', hlsUrl);         // Lives.jsx player URL
-            } else if (!isLive) {
-                await upsertSetting('live_hls_url', '');             // clear on stop
-            }
+            await upsertSetting('is_live', String(active));
+            await upsertSetting('is_live_active', String(active));
+            if (active && hlsUrl) await upsertSetting('live_hls_url', hlsUrl);
+            if (!active) await upsertSetting('live_hls_url', '');
         } catch (err) {
-            console.warn('[Live] Não foi possível salvar status de live:', err);
+            console.warn('[Live] saveLiveStatus error:', err);
         }
     };
 
-
+    // ─── Attach local video ───────────────────────────────────────────────────
     useEffect(() => {
         if (videoRef.current && localVideoTrackId) {
             hmsActions.attachVideo(localVideoTrackId, videoRef.current);
@@ -94,471 +286,345 @@ function BroadcasterControls({ user, onLiveStarted, onLiveStopped }) {
         };
     }, [localVideoTrackId, hmsActions]);
 
-    // Check if HLS M3U8 URL has actual video segments ready
-    const checkHlsHasSegments = async (masterUrl) => {
-        try {
-            // Fetch master manifest (100ms CDN supports CORS)
-            const resp = await fetch(masterUrl, { method: 'GET' });
-            if (!resp.ok) return false;
-            const text = await resp.text();
-            if (!text.includes('#EXTM3U')) return false;
-
-            // If master manifest lists stream variants, check the first variant playlist
-            const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-            const variantLine = lines.find(l => !l.startsWith('#'));
-
-            if (variantLine) {
-                // Build absolute variant URL
-                const baseUrl = masterUrl.substring(0, masterUrl.lastIndexOf('/') + 1);
-                const variantUrl = variantLine.startsWith('http') ? variantLine : baseUrl + variantLine;
-                const varResp = await fetch(variantUrl, { method: 'GET' });
-                if (!varResp.ok) return false;
-                const varText = await varResp.text();
-                // #EXTINF means there are actual TS segments in the playlist
-                return varText.includes('#EXTINF');
-            }
-
-            // If master manifest itself has segments directly
-            return text.includes('#EXTINF');
-        } catch (e) {
-            console.warn('[Live] checkHlsHasSegments error:', e.message);
-            return false;
-        }
-    };
-
-    // Polling logic to check HLS URL health
-    const pollHlsUrl = async (url) => {
-        setIsPollingHls(true);
-        setDebugInfo('Sincronizando feed de vídeo...');
-
-        let attempts = 0;
-        const maxAttempts = 20; // 40 seconds max
-
-        const activateLive = async (u) => {
-            setIsPollingHls(false);
-            setDebugInfo('');
-            setHlsUrl(u);
-            await saveLiveStatus(true, u);
-            await upsertSetting('live_started_at', new Date().toISOString());
-            if (onLiveStarted) onLiveStarted(u);
-        };
-
-        const checkHealth = async () => {
-            if (attempts >= maxAttempts) {
-                // Timeout — activate anyway, URL came from 100ms SDK (trusted source)
-                console.warn('[Live] HLS health check timed out — ativando com URL do SDK mesmo assim');
-                activateLive(url);
-                return;
-            }
-
-            let isReady = false;
-
-            // Try cloud function first (if deployed)
-            try {
-                const res = await base44.functions.invoke('checkHlsUrlHealth', { url });
-                if (res && res.ok) isReady = true;
-            } catch (e) {
-                // Cloud function not deployed — use direct M3U8 segment check
-                console.warn('[Live] Cloud function indisponível, usando verificação direta de segmentos HLS');
-                isReady = await checkHlsHasSegments(url);
-            }
-
-            if (isReady) {
-                console.log('[Live] HLS pronto com segmentos reais — ativando live');
-                activateLive(url);
-            } else {
-                attempts++;
-                setDebugInfo(`Aguardando segmentos de vídeo... (${attempts}/${maxAttempts})`);
-                setTimeout(checkHealth, 2000);
-            }
-        };
-
-        checkHealth();
-    };
-
-    // Watch HLS state changes — when HLS starts, variants have the stream URL
-    useEffect(() => {
-        if (hlsState?.running && hlsState?.variants?.length > 0) {
-            const url = hlsState.variants[0].url;
-            console.log('[100ms] HLS stream URL:', url);
-
-            // If we don't have the URL set yet and we are not polling or stopping
-            if (!hlsUrl && !isPollingHls && !isStoppingLive) {
-                pollHlsUrl(url);
-            }
-        }
-    }, [hlsState, hlsUrl, isPollingHls, isStoppingLive]);
-
+    // ─── Join room ────────────────────────────────────────────────────────────
     const joinRoom = async (forceVideoOff = false) => {
-        console.log('[Live] joinRoom called. User:', user?.id, '| videoOff:', forceVideoOff);
         setIsJoining(true);
         setDeviceInUse(false);
-        setDebugInfo('Gerando token...');
-
         try {
-            const token = await generateHmsToken('broadcaster', user.id || 'admin');
-            console.log('[Live] Token gerado com sucesso:', token.substring(0, 40) + '...');
-            setDebugInfo('Conectando ao servidor 100ms...');
-
-            await hmsActions.join({
-                userName: user.full_name || user.email || 'Admin',
-                authToken: token,
-                settings: {
-                    isAudioMuted: false,   // ← MIC ON by default (was true → HLS capturava silêncio)
-                    isVideoMuted: forceVideoOff,
-                },
+            const token = await generateHmsToken('broadcaster', user?.id || 'admin');
+            const metaData = JSON.stringify({
+                avatar: user?.profile_photo_url || user?.avatar_url || '',
+                role: 'admin',
             });
-
-            console.log('[Live] join() chamado com sucesso');
-            setDebugInfo('');
+            await hmsActions.join({
+                userName: user?.full_name || user?.email || 'Admin',
+                authToken: token,
+                metaData,
+                settings: { isAudioMuted: false, isVideoMuted: forceVideoOff },
+            });
         } catch (err) {
-            console.error('[Live] Erro ao conectar:', err);
-            if (err?.code === 3003 || err?.name === 'DeviceInUse' || err?.message?.includes('videosource')) {
+            console.error('[Live] joinRoom error:', err);
+            if (err?.message?.toLowerCase().includes('device') ||
+                err?.message?.toLowerCase().includes('notreadable') ||
+                err?.message?.toLowerCase().includes('busy')) {
                 setDeviceInUse(true);
-                setDebugInfo('');
             } else {
-                const msg = err?.message || err?.description || String(err);
-                toast.error(`❌ Falha ao conectar: ${msg}`);
-                setDebugInfo(`Erro: ${msg}`);
+                toast.error(`Erro ao conectar: ${err?.message}`);
             }
         } finally {
             setIsJoining(false);
         }
     };
 
-    const startHLS = async () => {
-        // ── Pre-flight: ensure camera and mic are ON before streaming ──
-        if (!isVideoEnabled) {
-            toast.warning('⚠️ Câmera está desligada! Ligando antes de transmitir...');
-            try { await hmsActions.setLocalVideoEnabled(true); } catch (e) {
-                toast.error('Não foi possível ligar a câmera. Verifique se outro app está usando-a.');
-                return;
-            }
-        }
-        if (!isAudioEnabled) {
-            toast.warning('⚠️ Microfone estava mudo! Ligando antes de transmitir...');
-            try { await hmsActions.setLocalAudioEnabled(true); } catch (e) {
-                console.warn('Mic enable failed:', e);
-            }
-        }
-
-        setIsStartingHLS(true);
-        console.log('[Live] Iniciando HLS. Meeting URL:', HMS_MEETING_URL);
+    // ─── Start live ───────────────────────────────────────────────────────────
+    const startLive = async () => {
+        setIsStartingLive(true);
         try {
-            await hmsActions.startHLSStreaming({
-                variants: [{ meetingURL: HMS_MEETING_URL, metadata: 'revela-live' }],
-                recording: { singleFilePerLayer: true, hlsVod: true },
-            });
-            toast.success('🔴 HLS iniciado! Verificando link de transmissão...');
+            // Camera pre-flight
+            if (!isVideoEnabled) {
+                try { await hmsActions.setLocalVideoEnabled(true); } catch { }
+            }
+            if (!isAudioEnabled) {
+                try { await hmsActions.setLocalAudioEnabled(true); } catch { }
+            }
+            // Immediately mark live as active (viewers use WebRTC directly)
+            await saveLiveStatus(true, '');
+            await upsertSetting('live_started_at', new Date().toISOString());
+            setIsLive(true);
+            toast.success('🔴 Live iniciada!');
+
+            // Notify viewers (best-effort)
+            base44.entities.User.list().then(users =>
+                notifyLiveSession(users, { id: 'live-' + Date.now(), title: '🔴 Live EC10 Talentos' })
+            ).catch(() => { });
+
+            // Start HLS for recording in background (non-blocking)
+            hmsActions.startHLSStreaming({
+                variants: [{ meetingURL: HMS_MEETING_URL }],
+                recording: { hlsVod: true, singleFilePerLayer: false },
+            }).catch(e => console.warn('[Live] HLS start (background):', e.message));
+
         } catch (err) {
-            console.error('[Live] Erro ao iniciar HLS:', err);
-            toast.error(`❌ Falha no HLS: ${err?.message || err}`);
+            console.error('[Live] startLive error:', err);
+            toast.error(`Erro ao iniciar: ${err?.message}`);
+            setIsLive(false);
         } finally {
-            setIsStartingHLS(false);
+            setIsStartingLive(false);
         }
     };
 
+    // ─── Stop live ────────────────────────────────────────────────────────────
     const stopLive = async () => {
         setIsStoppingLive(true);
-        setIsPollingHls(false);
         try {
-            if (hlsState?.running) await hmsActions.stopHLSStreaming();
-            await hmsActions.leave();
-            // Mark live as offline
+            if (hlsState?.running) await hmsActions.stopHLSStreaming().catch(() => { });
             await saveLiveStatus(false);
             await upsertSetting('live_ended_at', new Date().toISOString());
-            setHlsUrl(null);
-            onLiveStopped();
+            setIsLive(false);
+            await hmsActions.leave();
+            toast.success('⏹ Live encerrada!');
         } catch (err) {
-            console.error('[Live] Erro ao encerrar:', err);
+            console.error('[Live] stopLive error:', err);
             toast.error('Erro ao encerrar live');
         } finally {
             setIsStoppingLive(false);
         }
     };
 
+    // ─── Camera switch ────────────────────────────────────────────────────────
+    const switchCamera = async () => {
+        const newFacing = isFrontCamera ? 'environment' : 'user';
+        try {
+            await hmsActions.setVideoSettings({ facingMode: newFacing });
+            setIsFrontCamera(f => !f);
+        } catch (e) {
+            console.warn('[Live] switchCamera failed:', e);
+            toast.error('Não foi possível trocar a câmera');
+        }
+    };
+
     const toggleVideo = () => hmsActions.setLocalVideoEnabled(!isVideoEnabled);
     const toggleAudio = () => hmsActions.setLocalAudioEnabled(!isAudioEnabled);
 
-    // ── NOT CONNECTED ──
+    // ── NOT CONNECTED ──────────────────────────────────────────────────────────
     if (!isConnected) {
         return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center justify-center gap-8 p-12"
-            >
-                <HMSErrorHandler />
+            <div className="flex flex-col items-center justify-center gap-8 px-4 py-12">
+                <HMSErrorListener />
 
-                {/* ── DeviceInUse Error Card ── */}
                 {deviceInUse ? (
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="w-full max-w-sm flex flex-col items-center gap-5 p-6 bg-amber-950/40 border border-amber-500/40 rounded-2xl"
+                        className="w-full max-w-sm flex flex-col items-center text-center gap-5 p-7 bg-amber-950/40 border border-amber-500/30 rounded-3xl"
                     >
-                        <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center">
-                            <AlertTriangle className="w-8 h-8 text-amber-400" />
+                        <div className="w-14 h-14 bg-amber-500/15 rounded-2xl flex items-center justify-center">
+                            <AlertTriangle className="w-7 h-7 text-amber-400" />
                         </div>
-                        <div className="text-center">
-                            <h3 className="text-white font-black text-lg mb-1">📷 Câmera em uso</h3>
-                            <p className="text-amber-200/80 text-sm leading-relaxed">
-                                Outro aplicativo está usando a câmera (Teams, Zoom, OBS, etc).
-                                Feche-o ou transmita <strong>só com áudio</strong> agora.
+                        <div>
+                            <h3 className="text-white font-black text-lg mb-1">Câmera em uso</h3>
+                            <p className="text-amber-200/60 text-sm leading-relaxed">
+                                Outro aplicativo está usando a câmera (Teams, Zoom, OBS…). Feche-o ou entre só com áudio.
                             </p>
                         </div>
-                        <div className="flex flex-col gap-3 w-full">
+                        <div className="flex flex-col gap-2 w-full">
                             <Button
-                                onClick={() => joinRoom(true)}
-                                disabled={isJoining}
-                                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black py-4 rounded-xl"
+                                onClick={() => joinRoom(false)} disabled={isJoining}
+                                className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black py-4 rounded-2xl"
                             >
-                                {isJoining ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : '🎙️ '}
-                                Entrar só com áudio
+                                {isJoining ? <Loader2 className="w-4 h-4 animate-spin" /> : '🔄 Tentar novamente'}
                             </Button>
                             <Button
-                                onClick={() => joinRoom(false)}
-                                disabled={isJoining}
+                                onClick={() => joinRoom(true)} disabled={isJoining}
                                 variant="outline"
-                                className="w-full border-white/20 text-white hover:bg-white/10 py-4 rounded-xl"
+                                className="w-full border-white/10 text-white bg-white/5 py-4 rounded-2xl"
                             >
-                                🔄 Tentar novamente com câmera
+                                🎙️ Entrar só com áudio
                             </Button>
                         </div>
                     </motion.div>
                 ) : (
-                    <>
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="flex flex-col items-center gap-6"
+                    >
                         <div className="relative">
-                            <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-3xl opacity-30 animate-pulse" />
-                            <div className="w-24 h-24 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-red-500/30 relative">
-                                <Radio className="w-12 h-12 text-red-400" />
+                            <div className="absolute inset-0 bg-red-500 rounded-full blur-3xl opacity-20 animate-pulse" />
+                            <div className="w-24 h-24 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20 relative">
+                                <Radio className="w-10 h-10 text-red-400" />
                             </div>
                         </div>
-
                         <div className="text-center">
-                            <h3 className="text-2xl font-black text-white mb-2">Pronto para transmitir?</h3>
-                            <p className="text-gray-400">
-                                {isJoining ? debugInfo || 'Conectando...' : 'Sua câmera será ativada ao conectar'}
-                            </p>
+                            <h3 className="text-2xl font-black text-white mb-1">Studio de Transmissão</h3>
+                            <p className="text-gray-500 text-sm">Conecte-se para transmitir ao vivo</p>
                         </div>
-
-                        {debugInfo && !isJoining && (
-                            <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-500/30 rounded-xl w-full max-w-sm">
-                                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-                                <p className="text-red-400 text-xs break-all">{debugInfo}</p>
-                            </div>
-                        )}
-
                         <Button
-                            onClick={() => joinRoom()}
-                            disabled={isJoining}
-                            className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-black text-lg px-10 py-6 rounded-2xl shadow-2xl shadow-red-500/40 transition-all hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
+                            onClick={() => joinRoom(false)} disabled={isJoining}
+                            className="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 text-white font-black py-6 px-12 rounded-2xl shadow-2xl shadow-red-500/25 text-base"
                         >
-                            {isJoining ? (
-                                <><Loader2 className="w-6 h-6 mr-3 animate-spin" />{debugInfo || 'Conectando...'}</>
-                            ) : (
-                                <><Radio className="w-6 h-6 mr-3" />🔴 ENTRAR NA SALA DE LIVE</>
-                            )}
+                            {isJoining
+                                ? <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Conectando...</>
+                                : <>📡 Conectar ao Studio</>
+                            }
                         </Button>
-                    </>
+                    </motion.div>
                 )}
-            </motion.div>
+            </div>
         );
     }
 
-    // ── CONNECTED ──
+    // ── CONNECTED ──────────────────────────────────────────────────────────────
     return (
-        <div className="space-y-6">
-            <HMSErrorHandler />
+        <div className="flex flex-col gap-3 w-full">
+            {/* ─ Video panel ─ */}
+            <div className="relative w-full rounded-3xl overflow-hidden bg-black shadow-2xl shadow-black/80">
+                {/* Portrait video (9/16 on mobile, 16/9 on desktop) */}
+                <div className="aspect-[9/16] md:aspect-video relative">
+                    <video
+                        ref={videoRef}
+                        autoPlay muted playsInline
+                        className="w-full h-full object-cover"
+                    />
 
-            {/* Status Bar */}
-            <div className="flex items-center justify-between p-4 bg-gray-900/80 rounded-2xl border border-gray-700/50">
-                <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${hlsState?.running && !isPollingHls ? 'bg-red-500' : 'bg-green-400'} animate-pulse`} />
-                    <span className="text-white font-bold">
-                        {hlsState?.running && !isPollingHls ? '🔴 AO VIVO' : isPollingHls ? '⏳ Sincronizando sinal...' : 'Conectado — aguardando início'}
-                    </span>
-                    {hlsState?.running && !isPollingHls && (
-                        <Badge className="bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse">
-                            TRANSMITINDO
-                        </Badge>
-                    )}
-                </div>
-                <div className="flex items-center gap-2 text-gray-400 text-sm">
-                    <Users className="w-4 h-4" />
-                    <span>{peers.length} peer(s)</span>
-                </div>
-            </div>
-
-            {/* Video Preview */}
-            <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border-2 border-gray-700/50 shadow-2xl">
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover"
-                    style={{ transform: 'scaleX(-1)' }}
-                />
-                {!isVideoEnabled && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-950">
-                        <VideoOff className="w-16 h-16 text-gray-600" />
-                    </div>
-                )}
-                {hlsState?.running && !isPollingHls && (
-                    <div className="absolute top-4 left-4">
-                        <Badge className="bg-red-600 text-white flex items-center gap-2 px-3 py-1.5 animate-pulse shadow-lg">
-                            <div className="w-2 h-2 bg-white rounded-full" />
-                            AO VIVO
-                        </Badge>
-                    </div>
-                )}
-            </div>
-
-            {/* Camera / Mic controls */}
-            <div className="grid grid-cols-2 gap-3">
-                <Button
-                    onClick={toggleVideo}
-                    variant="outline"
-                    className={`border-gray-700 ${isVideoEnabled ? 'text-white hover:bg-gray-800' : 'text-red-400 border-red-500/50 hover:bg-red-500/10'}`}
-                >
-                    {isVideoEnabled ? <Video className="w-4 h-4 mr-2" /> : <VideoOff className="w-4 h-4 mr-2" />}
-                    {isVideoEnabled ? 'Câmera ON' : 'Câmera OFF'}
-                </Button>
-                <Button
-                    onClick={toggleAudio}
-                    variant="outline"
-                    className={`border-gray-700 ${isAudioEnabled ? 'text-white hover:bg-gray-800' : 'text-red-400 border-red-500/50 hover:bg-red-500/10'}`}
-                >
-                    {isAudioEnabled ? <Mic className="w-4 h-4 mr-2" /> : <MicOff className="w-4 h-4 mr-2" />}
-                    {isAudioEnabled ? 'Mic ON' : 'Mic OFF'}
-                </Button>
-            </div>
-
-            {/* HLS Start / Stop */}
-            {!hlsState?.running ? (
-                <Button
-                    onClick={startHLS}
-                    disabled={isStartingHLS || isPollingHls}
-                    className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-black text-lg py-6 rounded-2xl shadow-2xl shadow-red-500/30"
-                >
-                    {isStartingHLS || isPollingHls ? (
-                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" />{isPollingHls ? 'Sincronizando feed...' : 'Iniciando transmissão...'}</>
-                    ) : (
-                        <><PlayCircle className="w-5 h-5 mr-2" />▶ INICIAR TRANSMISSÃO PARA TODOS</>
-                    )}
-                </Button>
-            ) : (
-                <div className="space-y-3">
-                    {hlsUrl && (
-                        <div className="p-3 bg-green-900/20 border border-green-500/30 rounded-xl">
-                            <p className="text-green-400 text-xs font-mono break-all">{hlsUrl}</p>
+                    {/* Camera off placeholder */}
+                    {!isVideoEnabled && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950">
+                            <VideoOff className="w-10 h-10 text-gray-700 mb-2" />
+                            <p className="text-gray-600 text-sm">Câmera desligada</p>
                         </div>
                     )}
-                    <Button
-                        onClick={stopLive}
-                        disabled={isStoppingLive}
-                        className="w-full bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white font-bold py-5 rounded-2xl border border-gray-600"
-                    >
-                        {isStoppingLive ? (
-                            <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Encerrando...</>
-                        ) : (
-                            <><StopCircle className="w-5 h-5 mr-2" />⏹ ENCERRAR LIVE</>
+
+                    {/* Top bar: LIVE badge + timer */}
+                    <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none">
+                        {isLive && (
+                            <span className="bg-red-600 text-white font-black text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg shadow-red-600/50">
+                                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                                AO VIVO
+                            </span>
                         )}
-                    </Button>
+                        {isLive && (
+                            <span className="bg-black/50 backdrop-blur-md text-white font-mono text-xs px-3 py-1.5 rounded-full border border-white/10">
+                                {formatTime(liveSeconds)}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* ─ Minimalist control icons — bottom-right overlay ─ */}
+                    <div className="absolute bottom-4 right-4 flex flex-col gap-2.5">
+                        {/* Switch camera */}
+                        <button
+                            onClick={switchCamera}
+                            className="w-11 h-11 bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/15 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-xl"
+                            title="Trocar câmera"
+                        >
+                            <RefreshCcw className="w-4 h-4 text-white" />
+                        </button>
+
+                        {/* Toggle video */}
+                        <button
+                            onClick={toggleVideo}
+                            className={`w-11 h-11 backdrop-blur-md border rounded-full flex items-center justify-center transition-all active:scale-90 shadow-xl ${isVideoEnabled
+                                    ? 'bg-black/45 hover:bg-black/65 border-white/15'
+                                    : 'bg-red-600/80 hover:bg-red-500/80 border-red-400/20'
+                                }`}
+                            title={isVideoEnabled ? 'Desligar câmera' : 'Ligar câmera'}
+                        >
+                            {isVideoEnabled
+                                ? <Video className="w-4 h-4 text-white" />
+                                : <VideoOff className="w-4 h-4 text-white" />
+                            }
+                        </button>
+
+                        {/* Toggle audio */}
+                        <button
+                            onClick={toggleAudio}
+                            className={`w-11 h-11 backdrop-blur-md border rounded-full flex items-center justify-center transition-all active:scale-90 shadow-xl ${isAudioEnabled
+                                    ? 'bg-black/45 hover:bg-black/65 border-white/15'
+                                    : 'bg-red-600/80 hover:bg-red-500/80 border-red-400/20'
+                                }`}
+                            title={isAudioEnabled ? 'Mutar microfone' : 'Ativar microfone'}
+                        >
+                            {isAudioEnabled
+                                ? <Mic className="w-4 h-4 text-white" />
+                                : <MicOff className="w-4 h-4 text-white" />
+                            }
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            {/* ─ Viewers row (collapsed — tap to expand) ─ */}
+            <button
+                onClick={() => setShowViewers(true)}
+                className="flex items-center gap-3 w-full bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] rounded-2xl px-4 py-3.5 transition-colors text-left active:scale-[0.98]"
+            >
+                <Eye className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                {/* Avatar bubbles row */}
+                <div className="flex -space-x-2 flex-shrink-0">
+                    {viewers.slice(0, 4).map(peer => {
+                        const meta = (() => { try { return JSON.parse(peer.metadata || '{}'); } catch { return {}; } })();
+                        return <PeerAvatar key={peer.id} name={peer.name} avatarUrl={meta.avatar} size="sm" />;
+                    })}
+                    {viewers.length === 0 && (
+                        <div className="w-8 h-8 rounded-full bg-white/8 border-2 border-black/40 flex items-center justify-center">
+                            <Users className="w-3 h-3 text-gray-600" />
+                        </div>
+                    )}
+                    {viewers.length > 4 && (
+                        <div className="w-8 h-8 rounded-full bg-white/10 border-2 border-black/40 flex items-center justify-center">
+                            <span className="text-white text-[10px] font-black">+{viewers.length - 4}</span>
+                        </div>
+                    )}
+                </div>
+                <span className="text-white font-semibold text-sm flex-1 truncate">
+                    {viewers.length === 0 ? 'Aguardando espectadores...' : `${viewers.length} assistindo`}
+                </span>
+                <ChevronDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
+            </button>
+
+            {/* ─ Comments row (collapsed — tap to expand) ─ */}
+            <button
+                onClick={() => setShowComments(true)}
+                className="relative flex items-center gap-3 w-full bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] rounded-2xl px-4 py-3.5 transition-colors text-left active:scale-[0.98]"
+            >
+                <MessageSquare className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                <span className="text-white font-semibold text-sm flex-1 truncate">
+                    {messages.length === 0
+                        ? 'Nenhum comentário ainda'
+                        : `${messages.length} comentário${messages.length !== 1 ? 's' : ''}`
+                    }
+                </span>
+                {newCommentDot > 0 && (
+                    <span className="w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center animate-bounce flex-shrink-0">
+                        {newCommentDot}
+                    </span>
+                )}
+                <ChevronDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
+            </button>
+
+            {/* ─ Start / End live button ─ */}
+            {!isLive ? (
+                <Button
+                    onClick={startLive} disabled={isStartingLive}
+                    className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 text-white font-black py-5 rounded-2xl shadow-2xl shadow-red-500/25 text-base mt-1"
+                >
+                    {isStartingLive
+                        ? <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Iniciando...</>
+                        : <><Radio className="w-5 h-5 mr-2" /> INICIAR LIVE</>
+                    }
+                </Button>
+            ) : (
+                <Button
+                    onClick={stopLive} disabled={isStoppingLive}
+                    className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-5 rounded-2xl text-base mt-1 transition-all"
+                >
+                    {isStoppingLive
+                        ? <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Encerrando...</>
+                        : <><StopCircle className="w-5 h-5 mr-2" /> ENCERRAR LIVE</>
+                    }
+                </Button>
             )}
+
+            {/* ─ Bottom Sheets ─ */}
+            <AnimatePresence>
+                {showViewers && <ViewersSheet viewers={viewers} onClose={() => setShowViewers(false)} />}
+            </AnimatePresence>
+            <AnimatePresence>
+                {showComments && (
+                    <CommentsSheet messages={messages} hmsActions={hmsActions} onClose={() => setShowComments(false)} />
+                )}
+            </AnimatePresence>
         </div>
     );
 }
 
-// ─── Main exported component (with HMSRoomProvider) ──────────────────────────
+// ─── Main exported component ───────────────────────────────────────────────────
 export default function LiveBroadcaster({ user }) {
-    const [isSendingNotification, setIsSendingNotification] = useState(false);
-
-    const saveLiveStatus = async (active, hlsUrl = '') => {
-        const settings = [
-            { key: 'is_live_active', value: String(active) },
-            { key: 'live_hls_url', value: hlsUrl },
-        ];
-        for (const { key, value } of settings) {
-            try {
-                const existing = await base44.entities.PlatformSettings.filter({ setting_key: key });
-                if (existing.length > 0) {
-                    await base44.entities.PlatformSettings.update(existing[0].id, { setting_value: value, setting_type: 'string' });
-                } else {
-                    await base44.entities.PlatformSettings.create({ setting_key: key, setting_value: value, setting_type: 'string', is_active: true });
-                }
-            } catch (e) {
-                console.error('[Live] Erro salvando setting', key, e);
-            }
-        }
-    };
-
-    const handleLiveStarted = async (hlsUrl) => {
-        // Step 1: Always activate the live (independent of notifications)
-        try {
-            await saveLiveStatus(true, hlsUrl);
-            toast.success('🔴 Live ativada! Card aparecendo para os usuários.');
-        } catch (err) {
-            console.error('[Live] Erro ao salvar status da live:', err);
-            toast.error('Erro ao ativar o card da live');
-        }
-
-        // Step 2: Try to notify users (best-effort, won't block live activation)
-        try {
-            setIsSendingNotification(true);
-            const allUsers = await base44.entities.User.list();
-            await notifyLiveSession(allUsers, { id: 'live-' + Date.now(), title: '🔴 Live EC10 Talentos' });
-            toast.success(`✅ ${allUsers.length} atletas notificados!`);
-        } catch (err) {
-            console.warn('[Live] Notificação não enviada (sem permissão ou erro):', err.message);
-            // Don't show error toast — live is already active, notifications are optional
-        } finally {
-            setIsSendingNotification(false);
-        }
-    };
-
-    const handleLiveStopped = async () => {
-        try {
-            await saveLiveStatus(false, '');
-            toast.success('⏹ Live encerrada com sucesso!');
-        } catch (err) {
-            console.error('[Live] handleLiveStopped error:', err);
-        }
-    };
-
     return (
         <HMSRoomProvider>
-            <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-700/50 rounded-2xl overflow-hidden">
-                {/* Header */}
-                <div className="p-6 border-b border-gray-700/50 bg-gradient-to-r from-red-500/10 to-pink-500/10">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-xl flex items-center justify-center border border-red-500/30">
-                            <MonitorPlay className="w-5 h-5 text-red-400" />
-                        </div>
-                        <div>
-                            <h3 className="text-white font-black text-lg">Estúdio de Transmissão</h3>
-                            <p className="text-gray-400 text-sm">Transmita ao vivo diretamente pelo browser</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                    {isSendingNotification && (
-                        <div className="mb-4 p-3 bg-blue-900/20 border border-blue-500/30 rounded-xl flex items-center gap-3">
-                            <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
-                            <span className="text-blue-400 text-sm">Notificando todos os atletas...</span>
-                        </div>
-                    )}
-                    <BroadcasterControls
-                        user={user}
-                        onLiveStarted={handleLiveStarted}
-                        onLiveStopped={handleLiveStopped}
-                    />
-                </div>
-            </div>
+            <HMSErrorListener />
+            <BroadcasterStudio user={user} />
         </HMSRoomProvider>
     );
 }
