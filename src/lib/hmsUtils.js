@@ -8,7 +8,7 @@ const HMS_ROOM_ID = import.meta.env.VITE_HMS_ROOM_ID || '69a3eb3cb56e5b9623d49e1
 const HMS_SUBDOMAIN = import.meta.env.VITE_HMS_SUBDOMAIN || 'matheus-livestream-427';
 
 export const HMS_ROOM_ID_VALUE = HMS_ROOM_ID;
-export const HMS_MEETING_URL = `https://${HMS_SUBDOMAIN}.app.100ms.live/streaming/meeting?roomId=${HMS_ROOM_ID}&role=broadcaster`;
+export const HMS_MEETING_URL = `https://${HMS_SUBDOMAIN}.app.100ms.live/streaming/meeting?roomId=${HMS_ROOM_ID}&role=viewer-near-realtime`;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
