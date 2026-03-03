@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Radio, Loader2, Volume2, VolumeX, Maximize, RefreshCw } from 'lucide-react';
+import { Radio, Loader2, VolumeX, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
@@ -12,7 +12,6 @@ export default function LiveViewer({ hlsUrl }) {
     const loadTimerRef = useRef(null);
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
-    const [isMuted, setIsMuted] = useState(true);
     const [showUnmuteOverlay, setShowUnmuteOverlay] = useState(true);
     const [retryCount, setRetryCount] = useState(0);
     const [debugState, setDebugState] = useState('Iniciando...');
@@ -28,9 +27,7 @@ export default function LiveViewer({ hlsUrl }) {
                 error_message: message,
                 error_details: details ? JSON.stringify(details) : ''
             });
-        } catch (e) {
-            // silent
-        }
+        } catch (e) { /* silent */ }
     };
 
     useEffect(() => {
@@ -44,37 +41,38 @@ export default function LiveViewer({ hlsUrl }) {
 
         setIsLoading(true);
         setHasError(false);
+        setShowUnmuteOverlay(true);
         setDebugState('Conectando ao stream...');
 
         const video = videoRef.current;
+
+        // IMPORTANT: Remove the muted attribute completely (not just set to false)
+        // React sets muted as an HTML attribute; we must remove it to actually unmute later
+        // Start muted for autoplay policy, will be removed on user click
         video.muted = true;
 
-        // Safety timeout: after 20s of loading, try to play anyway or show error
+        // Safety timeout: after 20s, try to play anyway
         loadTimerRef.current = setTimeout(() => {
-            if (isLoading) {
-                console.warn('[LiveViewer] Load timeout — tentando reproduzir mesmo assim');
-                setDebugState('Timeout — tentando mesmo assim...');
-                video.play().catch(() => {
-                    setHasError(true);
-                    setIsLoading(false);
-                    setDebugState('Erro: timeout ao carregar');
-                });
-            }
+            setDebugState('Timeout — tentando mesmo assim...');
+            video.play().catch(() => {
+                setHasError(true);
+                setIsLoading(false);
+                setDebugState('Erro: timeout ao carregar');
+            });
         }, 20000);
 
         const onReady = () => {
             clearTimeout(loadTimerRef.current);
-            setDebugState('Stream pronto — reproduzindo');
+            setDebugState('Stream pronto');
             setIsLoading(false);
             video.play().catch((err) => {
                 console.warn('[LiveViewer] play() falhou:', err);
-                setDebugState('Clique em Tocar Live para iniciar');
             });
         };
 
         // Safari / iOS — native HLS
         if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            setDebugState('Usando HLS nativo (Safari/iOS)');
+            setDebugState('Conectando (Safari/iOS)...');
             video.src = hlsUrl;
             video.addEventListener('loadedmetadata', onReady);
             video.addEventListener('error', (e) => {
@@ -82,19 +80,20 @@ export default function LiveViewer({ hlsUrl }) {
                 const code = video.error?.code || 'unknown';
                 const msg = video.error?.message || 'erro nativo';
                 logPlaybackError('Native Video Error', { code, message: msg });
-                setDebugState(`Erro nativo: ${msg}`);
+                setDebugState(`Erro: ${msg}`);
                 setHasError(true);
                 setIsLoading(false);
             });
             return () => {
                 clearTimeout(loadTimerRef.current);
+                video.src = '';
                 video.removeEventListener('loadedmetadata', onReady);
             };
         }
 
         // Chrome / Firefox / Edge — HLS.js
         if (Hls.isSupported()) {
-            setDebugState('Usando HLS.js (Chrome/Android)');
+            setDebugState('Conectando (Chrome/Android)...');
             const hls = new Hls({
                 lowLatencyMode: true,
                 backBufferLength: 30,
@@ -107,16 +106,14 @@ export default function LiveViewer({ hlsUrl }) {
             hls.attachMedia(video);
 
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                setDebugState('Manifesto OK — carregando segmentos');
+                setDebugState('Manifesto carregado');
                 onReady();
             });
 
-            hls.on(Hls.Events.MANIFEST_LOADING, () => {
-                setDebugState('Buscando manifesto M3U8...');
-            });
-
-            hls.on(Hls.Events.LEVEL_LOADED, () => {
-                setDebugState('Nível carregado — aguardando vídeo');
+            hls.on(Hls.Events.MANIFEST_LOADING, () => setDebugState('Buscando manifesto...'));
+            hls.on(Hls.Events.LEVEL_LOADED, () => setDebugState('Nível carregado...'));
+            hls.on(Hls.Events.FRAG_BUFFERED, () => {
+                setDebugState('Segmentos recebidos');
             });
 
             hls.on(Hls.Events.ERROR, (_event, data) => {
@@ -124,11 +121,9 @@ export default function LiveViewer({ hlsUrl }) {
                 if (data.fatal) {
                     clearTimeout(loadTimerRef.current);
                     logPlaybackError('HLS.js Fatal Error', { type: data.type, details: data.details });
-                    setDebugState(`Erro fatal: ${data.details}`);
+                    setDebugState(`Erro: ${data.details}`);
                     setHasError(true);
                     setIsLoading(false);
-                } else {
-                    setDebugState(`Aviso HLS: ${data.details}`);
                 }
             });
 
@@ -139,37 +134,32 @@ export default function LiveViewer({ hlsUrl }) {
             };
         }
 
-        // Browser doesn't support HLS at all
         logPlaybackError('HLS Unsupported', { ua: navigator.userAgent });
         setDebugState('Navegador não suporta HLS');
         setHasError(true);
         setIsLoading(false);
     }, [hlsUrl, retryCount]);
 
+    // KEY FIX: removeAttribute('muted') is required in some browsers
+    // Setting video.muted = false alone doesn't work when the attribute is set by React
     const unmute = () => {
-        if (videoRef.current) {
-            videoRef.current.muted = false;
-            setIsMuted(false);
-            setShowUnmuteOverlay(false);
-            setDebugState('Reproduzindo com som');
-            videoRef.current.play().catch(e => console.warn('Play failed on unmute:', e));
-        }
-    };
+        const video = videoRef.current;
+        if (!video) return;
 
-    const toggleMute = () => {
-        if (videoRef.current) {
-            const next = !isMuted;
-            videoRef.current.muted = next;
-            setIsMuted(next);
-            if (!next) {
-                setShowUnmuteOverlay(false);
-                videoRef.current.play().catch(e => console.warn('Play failed on toggle:', e));
-            }
-        }
-    };
+        // Remove the muted HTML attribute (the proper way to unmute)
+        video.removeAttribute('muted');
+        video.muted = false;
+        video.volume = 1.0;
+        setShowUnmuteOverlay(false);
+        setDebugState('Com som ativado');
 
-    const enterFullscreen = () => {
-        videoRef.current?.requestFullscreen?.();
+        // Restart playback to apply the unmute
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(e => {
+                console.warn('[LiveViewer] play() falhou após unmute:', e);
+            });
+        }
     };
 
     const retry = () => {
@@ -181,12 +171,11 @@ export default function LiveViewer({ hlsUrl }) {
         setHasError(false);
         setIsLoading(true);
         setShowUnmuteOverlay(true);
-        setIsMuted(true);
         setDebugState('Tentando novamente...');
     };
 
     return (
-        <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-red-500/20 group">
+        <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-red-500/20">
 
             {/* Waiting for URL */}
             {!hlsUrl && (
@@ -221,15 +210,14 @@ export default function LiveViewer({ hlsUrl }) {
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950 z-20">
                     <Radio className="w-12 h-12 text-gray-600 mb-4" />
                     <p className="text-red-400 font-bold mb-1 text-center px-4">Não foi possível reproduzir a live.</p>
-                    <p className="text-gray-500 text-xs mb-1 text-center px-8">{debugState}</p>
-                    <p className="text-gray-600 text-xs mb-6 text-center px-8">Instabilidade temporária. Tente novamente.</p>
+                    <p className="text-gray-500 text-xs mb-6 text-center px-8">{debugState}</p>
                     <Button onClick={retry} className="bg-red-600 hover:bg-red-700 text-white font-bold">
                         <RefreshCw className="w-4 h-4 mr-2" /> Tentar novamente
                     </Button>
                 </div>
             )}
 
-            {/* TAP TO UNMUTE overlay */}
+            {/* TAP TO UNMUTE overlay — full screen, very visible even on black video */}
             <AnimatePresence>
                 {showUnmuteOverlay && !isLoading && !hasError && !!hlsUrl && (
                     <motion.div
@@ -237,14 +225,14 @@ export default function LiveViewer({ hlsUrl }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={unmute}
-                        className="absolute inset-0 flex flex-col items-center justify-center z-30 cursor-pointer bg-black/60"
+                        className="absolute inset-0 flex flex-col items-center justify-center z-30 cursor-pointer bg-black/70"
                     >
                         <motion.div
                             animate={{ scale: [1, 1.05, 1] }}
                             transition={{ duration: 1.5, repeat: Infinity }}
                             className="flex flex-col items-center gap-4"
                         >
-                            <div className="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center shadow-2xl">
+                            <div className="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center shadow-2xl shadow-red-500/40">
                                 <VolumeX className="w-11 h-11 text-white" />
                             </div>
                             <p className="text-white font-black text-xl drop-shadow-lg">Toque para assistir a Live</p>
@@ -260,49 +248,25 @@ export default function LiveViewer({ hlsUrl }) {
                 )}
             </AnimatePresence>
 
-            {/* Video element — native controls enabled for reliability */}
+            {/* Video element — NO HTML muted attribute so we can unmute properly via JS */}
+            {/* We control muted state via JS only (video.muted = true/false + removeAttribute) */}
             <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
                 autoPlay
                 playsInline
-                controls={true}
-                muted
-                onWaiting={() => setDebugState('Buffering...')}
+                controls
                 onPlaying={() => { setDebugState('Reproduzindo'); setIsLoading(false); }}
+                onWaiting={() => setDebugState('Buffering...')}
                 onCanPlay={() => setDebugState('Pronto')}
             />
 
             {/* Live badge */}
-            <div className="absolute top-4 left-4 z-10">
+            <div className="absolute top-4 left-4 z-10 pointer-events-none">
                 <Badge className="bg-gradient-to-r from-red-500 to-pink-600 text-white flex items-center gap-2 px-3 py-1.5 shadow-2xl shadow-red-500/50 border border-red-400/30 animate-pulse">
                     <div className="w-2 h-2 bg-white rounded-full" />
                     AO VIVO
                 </Badge>
-            </div>
-
-            {/* Controls */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10 md:block hidden">
-                <div className="flex items-center justify-between">
-                    <Button size="icon" variant="ghost" onClick={toggleMute} className="text-white hover:bg-white/20 rounded-xl w-9 h-9">
-                        {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                    </Button>
-                    <Button size="icon" variant="ghost" onClick={enterFullscreen} className="text-white hover:bg-white/20 rounded-xl w-9 h-9">
-                        <Maximize className="w-4 h-4" />
-                    </Button>
-                </div>
-            </div>
-
-            {/* Mobile always-visible controls */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent z-10 md:hidden">
-                <div className="flex items-center justify-between">
-                    <Button size="icon" variant="ghost" onClick={toggleMute} className="text-white hover:bg-white/20 rounded-xl w-10 h-10">
-                        {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-                    </Button>
-                    <Button size="icon" variant="ghost" onClick={enterFullscreen} className="text-white hover:bg-white/20 rounded-xl w-10 h-10">
-                        <Maximize className="w-5 h-5" />
-                    </Button>
-                </div>
             </div>
         </div>
     );
