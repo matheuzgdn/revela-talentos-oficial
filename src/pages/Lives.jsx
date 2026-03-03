@@ -184,7 +184,7 @@ export default function LivesPage() {
           <AnimatePresence mode="wait">
             {isLive ? (
               <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <LiveViewer hlsUrl={liveSettings.hlsUrl} />
+                <LiveViewer user={user} />
                 {/* Chat */}
                 <div className="p-4 pt-0">
                   <div className="bg-gray-900/80 rounded-2xl overflow-hidden border border-gray-700/50 h-64">
@@ -255,7 +255,7 @@ export default function LivesPage() {
             <AnimatePresence mode="wait">
               {isLive ? (
                 <motion.div key="live-desktop" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-                  <LiveViewer hlsUrl={liveSettings.hlsUrl} />
+                  <LiveViewer user={user} />
                 </motion.div>
               ) : (
                 <motion.div key="offline-desktop" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>

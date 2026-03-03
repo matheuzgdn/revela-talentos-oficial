@@ -1,213 +1,113 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Hls from 'hls.js';
+import {
+    HMSRoomProvider,
+    useHMSActions,
+    useHMSStore,
+    useHMSNotifications,
+    HMSNotificationTypes,
+    selectIsConnectedToRoom,
+    selectRemotePeers,
+} from '@100mslive/react-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Radio, Loader2, VolumeX, RefreshCw } from 'lucide-react';
+import { Radio, Loader2, VolumeX, Volume2, RefreshCw, Wifi } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { base44 } from '@/api/base44Client';
+import { generateHmsToken } from '@/lib/hmsUtils';
 
-export default function LiveViewer({ hlsUrl }) {
+// ─── Inner viewer (needs HMSRoomProvider context) ──────────────────────────────
+function ViewerControls({ user }) {
+    const hmsActions = useHMSActions();
+    const isConnected = useHMSStore(selectIsConnectedToRoom);
+    const remotePeers = useHMSStore(selectRemotePeers);
+    const autoplayNotif = useHMSNotifications(HMSNotificationTypes.AUTOPLAY_ERROR);
+
     const videoRef = useRef(null);
-    const hlsRef = useRef(null);
-    const loadTimerRef = useRef(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isJoining, setIsJoining] = useState(false);
     const [hasError, setHasError] = useState(false);
-    const [showUnmuteOverlay, setShowUnmuteOverlay] = useState(true);
-    const [retryCount, setRetryCount] = useState(0);
+    const [errorMsg, setErrorMsg] = useState('');
+    const [isAudioBlocked, setIsAudioBlocked] = useState(true); // Start assuming blocked (safe default)
     const [debugState, setDebugState] = useState('Iniciando...');
 
-    const logPlaybackError = async (message, details = null) => {
-        console.error('[LiveViewer]', message, details);
-        try {
-            const user = await base44.auth.me();
-            await base44.entities.LivePlaybackLogs.create({
-                userId: user?.id || 'anonymous',
-                device_info: navigator.userAgent,
-                live_hls_url: hlsUrl || 'empty',
-                error_message: message,
-                error_details: details ? JSON.stringify(details) : ''
-            });
-        } catch (e) {
-            // 404 = entidade ainda não criada no Base44, ignorar silenciosamente
-            if (e?.status !== 404 && !e?.message?.includes('404')) {
-                console.warn('[LiveViewer] Não foi possível salvar log:', e?.message || e);
-            }
-        }
-    };
-
+    // Detect browser autoplay block
     useEffect(() => {
-        if (!hlsUrl) {
-            setIsLoading(false);
-            setDebugState('Aguardando URL...');
-            return;
+        if (autoplayNotif) {
+            console.warn('[LiveViewer] Autoplay blocked — user gesture needed');
+            setIsAudioBlocked(true);
         }
+    }, [autoplayNotif]);
 
-        if (!videoRef.current) return;
-
-        setIsLoading(true);
-        setHasError(false);
-        setShowUnmuteOverlay(true);
-        setDebugState('Conectando ao stream...');
-
-        const video = videoRef.current;
-
-        // IMPORTANT: Remove the muted attribute completely (not just set to false)
-        // React sets muted as an HTML attribute; we must remove it to actually unmute later
-        // Start muted for autoplay policy, will be removed on user click
-        video.muted = true;
-
-        // Safety timeout: after 20s, try to play anyway
-        loadTimerRef.current = setTimeout(() => {
-            setDebugState('Timeout — tentando mesmo assim...');
-            video.play().catch(() => {
+    // Join room as viewer-realtime
+    useEffect(() => {
+        const join = async () => {
+            if (isJoining) return;
+            setIsJoining(true);
+            setDebugState('Gerando token...');
+            try {
+                const userId = user?.id || user?.email || ('viewer-' + Date.now());
+                const token = await generateHmsToken('viewer-realtime', userId);
+                setDebugState('Conectando ao servidor 100ms...');
+                await hmsActions.join({
+                    userName: user?.full_name || user?.email || 'Espectador',
+                    authToken: token,
+                    settings: {
+                        isAudioMuted: true,  // own mic muted (viewer doesn't broadcast)
+                        isVideoMuted: true,  // own camera off
+                    },
+                });
+                setDebugState('Aguardando broadcaster...');
+            } catch (err) {
+                console.error('[LiveViewer] Join error:', err);
                 setHasError(true);
-                setIsLoading(false);
-                setDebugState('Erro: timeout ao carregar');
-            });
-        }, 20000);
-
-        const onReady = () => {
-            clearTimeout(loadTimerRef.current);
-            setDebugState('Stream pronto');
-            setIsLoading(false);
-            video.play().catch((err) => {
-                console.warn('[LiveViewer] play() falhou:', err);
-            });
+                setErrorMsg(err?.message || 'Falha ao conectar');
+            } finally {
+                setIsJoining(false);
+            }
         };
+        join();
 
-        // Native HLS ONLY for true Safari / iOS WebKit
-        // Chrome 107+ also returns 'maybe' for canPlayType but has incomplete HLS support
-        // → causes DEMUXER_ERROR_COULD_NOT_PARSE. We must detect actual Safari/iOS.
-        const isSafariOrIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-            (navigator.userAgent.includes('Safari') &&
-                !navigator.userAgent.includes('Chrome') &&
-                !navigator.userAgent.includes('Chromium'));
+        return () => {
+            hmsActions.leave().catch(() => { });
+        };
+    }, []);
 
-        if (isSafariOrIOS && video.canPlayType('application/vnd.apple.mpegurl')) {
-            setDebugState('Conectando (Safari/iOS)...');
-            video.src = hlsUrl;
-            video.addEventListener('loadedmetadata', onReady);
-            const onError = () => {
-                // Ignore errors caused by cleanup (video.src cleared during unmount)
-                if (!video.src || video.src === window.location.href) return;
-                clearTimeout(loadTimerRef.current);
-                const code = video.error?.code || 'unknown';
-                const msg = video.error?.message || 'erro nativo';
-                // Ignore 'Empty src attribute' — this is a cleanup artifact, not a real error
-                if (msg.includes('Empty src')) return;
-                logPlaybackError('Native Video Error', { code, message: msg });
-                setDebugState(`Erro: ${msg}`);
-                setHasError(true);
-                setIsLoading(false);
-            };
-            video.addEventListener('error', onError);
-            return () => {
-                clearTimeout(loadTimerRef.current);
-                // Do NOT set video.src = '' here — it fires the error event on Safari
-                video.removeEventListener('loadedmetadata', onReady);
-                video.removeEventListener('error', onError);
-            };
+    // Find broadcaster peer + their video track
+    const broadcaster = remotePeers.find(p =>
+        p.roleName === 'broadcaster' || p.roleName === 'co-broadcaster'
+    );
+    const videoTrackId = broadcaster?.videoTrack;
+
+    // Attach broadcaster's video track to the <video> element
+    useEffect(() => {
+        if (!videoRef.current || !videoTrackId) return;
+        hmsActions.attachVideo(videoTrackId, videoRef.current);
+        setDebugState('Reproduzindo');
+        return () => {
+            if (videoRef.current && videoTrackId) {
+                hmsActions.detachVideo(videoTrackId, videoRef.current).catch(() => { });
+            }
+        };
+    }, [videoTrackId]);
+
+    // Unblock audio after user gesture
+    const handleUnmute = async () => {
+        try {
+            await hmsActions.unblockAudio();
+        } catch (e) {
+            console.warn('[LiveViewer] unblockAudio failed:', e);
         }
-
-        // Chrome / Firefox / Edge — HLS.js
-        if (Hls.isSupported()) {
-            setDebugState('Conectando (Chrome/Android)...');
-            const hls = new Hls({
-                lowLatencyMode: true,
-                backBufferLength: 30,
-                maxBufferLength: 60,
-                manifestLoadingTimeOut: 15000,
-                manifestLoadingMaxRetry: 3,
-            });
-            hlsRef.current = hls;
-            hls.loadSource(hlsUrl);
-            hls.attachMedia(video);
-
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                setDebugState('Manifesto carregado');
-                onReady();
-            });
-
-            hls.on(Hls.Events.MANIFEST_LOADING, () => setDebugState('Buscando manifesto...'));
-            hls.on(Hls.Events.LEVEL_LOADED, () => setDebugState('Nível carregado...'));
-            hls.on(Hls.Events.FRAG_BUFFERED, () => {
-                setDebugState('Segmentos recebidos');
-            });
-
-            hls.on(Hls.Events.ERROR, (_event, data) => {
-                console.warn('[LiveViewer] HLS error:', data.type, data.details, data.fatal);
-                if (data.fatal) {
-                    clearTimeout(loadTimerRef.current);
-                    logPlaybackError('HLS.js Fatal Error', { type: data.type, details: data.details });
-                    setDebugState(`Erro: ${data.details}`);
-                    setHasError(true);
-                    setIsLoading(false);
-                }
-            });
-
-            return () => {
-                clearTimeout(loadTimerRef.current);
-                hls.destroy();
-                hlsRef.current = null;
-            };
-        }
-
-        logPlaybackError('HLS Unsupported', { ua: navigator.userAgent });
-        setDebugState('Navegador não suporta HLS');
-        setHasError(true);
-        setIsLoading(false);
-    }, [hlsUrl, retryCount]);
-
-    // KEY FIX: removeAttribute('muted') is required in some browsers
-    // Setting video.muted = false alone doesn't work when the attribute is set by React
-    const unmute = () => {
-        const video = videoRef.current;
-        if (!video) return;
-
-        // Remove the muted HTML attribute (the proper way to unmute)
-        video.removeAttribute('muted');
-        video.muted = false;
-        video.volume = 1.0;
-        setShowUnmuteOverlay(false);
-        setDebugState('Com som ativado');
-
-        // Restart playback to apply the unmute
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(e => {
-                console.warn('[LiveViewer] play() falhou após unmute:', e);
-            });
-        }
+        setIsAudioBlocked(false);
     };
 
-    const retry = () => {
-        if (hlsRef.current) {
-            hlsRef.current.destroy();
-            hlsRef.current = null;
-        }
-        setRetryCount(c => c + 1);
-        setHasError(false);
-        setIsLoading(true);
-        setShowUnmuteOverlay(true);
-        setDebugState('Tentando novamente...');
-    };
+    const isLoading = !isConnected || !videoTrackId;
 
     return (
         <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-red-500/20">
 
-            {/* Waiting for URL */}
-            {!hlsUrl && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950 z-20">
-                    <Loader2 className="w-12 h-12 text-red-500 animate-spin mb-4" />
-                    <p className="text-gray-300 font-bold mb-2">A live está iniciando, aguarde...</p>
-                    <p className="text-gray-500 text-sm">Estamos recebendo o vídeo do estúdio.</p>
-                </div>
-            )}
-
             {/* Loading overlay */}
             <AnimatePresence>
-                {isLoading && !hasError && !!hlsUrl && (
+                {isLoading && !hasError && (
                     <motion.div
+                        key="loading"
                         initial={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
@@ -217,32 +117,38 @@ export default function LiveViewer({ hlsUrl }) {
                             <div className="absolute inset-0 bg-red-500 rounded-full blur-2xl opacity-30 animate-pulse" />
                             <Loader2 className="w-16 h-16 text-red-400 animate-spin relative z-10" />
                         </div>
-                        <p className="text-white font-bold text-lg">Carregando transmissão...</p>
+                        <p className="text-white font-bold text-lg">Conectando à transmissão...</p>
                         <p className="text-gray-400 text-sm mt-2 px-4 text-center">{debugState}</p>
                     </motion.div>
                 )}
             </AnimatePresence>
 
             {/* Error overlay */}
-            {hasError && !!hlsUrl && (
+            {hasError && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950 z-20">
-                    <Radio className="w-12 h-12 text-gray-600 mb-4" />
-                    <p className="text-red-400 font-bold mb-1 text-center px-4">Não foi possível reproduzir a live.</p>
-                    <p className="text-gray-500 text-xs mb-6 text-center px-8">{debugState}</p>
-                    <Button onClick={retry} className="bg-red-600 hover:bg-red-700 text-white font-bold">
-                        <RefreshCw className="w-4 h-4 mr-2" /> Tentar novamente
+                    <Wifi className="w-12 h-12 text-gray-600 mb-4" />
+                    <p className="text-red-400 font-bold mb-1 text-center px-4">
+                        Não foi possível conectar à live.
+                    </p>
+                    <p className="text-gray-500 text-xs mb-6 text-center px-8">{errorMsg}</p>
+                    <Button
+                        onClick={() => window.location.reload()}
+                        className="bg-red-600 hover:bg-red-700 text-white font-bold"
+                    >
+                        <RefreshCw className="w-4 h-4 mr-2" /> Recarregar
                     </Button>
                 </div>
             )}
 
-            {/* TAP TO UNMUTE overlay — full screen, very visible even on black video */}
+            {/* TAP TO PLAY overlay — shown until user clicks (audio unblock) */}
             <AnimatePresence>
-                {showUnmuteOverlay && !isLoading && !hasError && !!hlsUrl && (
+                {!isLoading && !hasError && isAudioBlocked && (
                     <motion.div
+                        key="unmute"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        onClick={unmute}
+                        onClick={handleUnmute}
                         className="absolute inset-0 flex flex-col items-center justify-center z-30 cursor-pointer bg-black/70"
                     >
                         <motion.div
@@ -253,10 +159,12 @@ export default function LiveViewer({ hlsUrl }) {
                             <div className="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center shadow-2xl shadow-red-500/40">
                                 <VolumeX className="w-11 h-11 text-white" />
                             </div>
-                            <p className="text-white font-black text-xl drop-shadow-lg">Toque para assistir a Live</p>
+                            <p className="text-white font-black text-xl drop-shadow-lg">
+                                Toque para assistir a Live
+                            </p>
                             <p className="text-white/60 text-sm">A transmissão está ao vivo agora</p>
                             <Button
-                                onClick={(e) => { e.stopPropagation(); unmute(); }}
+                                onClick={(e) => { e.stopPropagation(); handleUnmute(); }}
                                 className="bg-red-600 hover:bg-red-700 text-white font-black text-lg py-6 px-10 rounded-full shadow-2xl mt-2"
                             >
                                 ▶ Tocar Live
@@ -266,20 +174,30 @@ export default function LiveViewer({ hlsUrl }) {
                 )}
             </AnimatePresence>
 
-            {/* Video element — NO HTML muted attribute so we can unmute properly via JS */}
-            {/* We control muted state via JS only (video.muted = true/false + removeAttribute) */}
+            {/* Mute button when audio is unblocked */}
+            {!isAudioBlocked && !isLoading && !hasError && (
+                <button
+                    onClick={() => {
+                        hmsActions.setVolume(0);
+                        setIsAudioBlocked(true);
+                    }}
+                    className="absolute bottom-14 right-4 z-10 bg-black/60 hover:bg-black/80 text-white rounded-full p-2.5 border border-white/20 transition-all"
+                    title="Silenciar"
+                >
+                    <Volume2 className="w-5 h-5" />
+                </button>
+            )}
+
+            {/* Video element — shows broadcaster's WebRTC video */}
             <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
                 autoPlay
                 playsInline
-                controls
-                onPlaying={() => { setDebugState('Reproduzindo'); setIsLoading(false); }}
-                onWaiting={() => setDebugState('Buffering...')}
-                onCanPlay={() => setDebugState('Pronto')}
+                muted
             />
 
-            {/* Live badge */}
+            {/* LIVE badge */}
             <div className="absolute top-4 left-4 z-10 pointer-events-none">
                 <Badge className="bg-gradient-to-r from-red-500 to-pink-600 text-white flex items-center gap-2 px-3 py-1.5 shadow-2xl shadow-red-500/50 border border-red-400/30 animate-pulse">
                     <div className="w-2 h-2 bg-white rounded-full" />
@@ -287,5 +205,14 @@ export default function LiveViewer({ hlsUrl }) {
                 </Badge>
             </div>
         </div>
+    );
+}
+
+// ─── Main exported component — wraps with HMSRoomProvider ──────────────────────
+export default function LiveViewer({ user }) {
+    return (
+        <HMSRoomProvider>
+            <ViewerControls user={user} />
+        </HMSRoomProvider>
     );
 }
