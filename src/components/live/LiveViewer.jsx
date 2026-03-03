@@ -231,7 +231,8 @@ function ViewerControls({ user }) {
                 </AnimatePresence>
 
                 {/* Broadcaster video */}
-                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                <video ref={videoRef} autoPlay playsInline muted className={`w-full h-full ${isLandscape ? 'object-cover' : 'object-contain'}`} />
+
 
                 {/* ─ Top HUD ─ */}
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-10">
