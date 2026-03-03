@@ -22,6 +22,7 @@ function ViewerControls({ user }) {
     const autoplayNotif = useHMSNotifications(HMSNotificationTypes.AUTOPLAY_ERROR);
 
     const videoRef = useRef(null);
+    const hasUnblockedRef = useRef(false); // tracks if user already clicked overlay
     const [isJoining, setIsJoining] = useState(false);
     const [hasError, setHasError] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
@@ -30,7 +31,11 @@ function ViewerControls({ user }) {
 
     // Detect browser autoplay block
     useEffect(() => {
-        if (autoplayNotif) {
+        if (!autoplayNotif) return;
+        if (hasUnblockedRef.current) {
+            // User already clicked once — silently re-unblock without showing overlay
+            hmsActions.unblockAudio().catch(() => { });
+        } else {
             console.warn('[LiveViewer] Autoplay blocked — user gesture needed');
             setIsAudioBlocked(true);
         }
@@ -88,8 +93,9 @@ function ViewerControls({ user }) {
         };
     }, [videoTrackId]);
 
-    // Unblock audio after user gesture
+    // Unblock audio after user gesture — remember permanently via ref
     const handleUnmute = async () => {
+        hasUnblockedRef.current = true;
         try {
             await hmsActions.unblockAudio();
         } catch (e) {
