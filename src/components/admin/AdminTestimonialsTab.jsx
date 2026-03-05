@@ -1,5 +1,6 @@
+import { base44 } from '@/api/base44Client';
 import React, { useState, useEffect } from 'react';
-import { Testimonial } from '@/entities/Testimonial';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +23,7 @@ export default function AdminTestimonialsTab() {
   const loadTestimonials = async () => {
     setIsLoading(true);
     try {
-      const data = await Testimonial.list();
+      const data = await base44.entities.Testimonial.list();
       setTestimonials(data);
     } catch (error) {
       toast.error("Falha ao carregar depoimentos.");
@@ -55,7 +56,7 @@ export default function AdminTestimonialsTab() {
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja apagar este depoimento?")) {
       try {
-        await Testimonial.delete(id);
+        await base44.entities.Testimonial.delete(id);
         toast.success("Depoimento apagado com sucesso!");
         loadTestimonials();
       } catch (error) {
@@ -68,10 +69,10 @@ export default function AdminTestimonialsTab() {
     e.preventDefault();
     try {
       if (editingTestimonial) {
-        await Testimonial.update(editingTestimonial.id, formData);
+        await base44.entities.Testimonial.update(editingTestimonial.id, formData);
         toast.success("Depoimento atualizado com sucesso!");
       } else {
-        await Testimonial.create(formData);
+        await base44.entities.Testimonial.create(formData);
         toast.success("Depoimento criado com sucesso!");
       }
       setIsFormOpen(false);

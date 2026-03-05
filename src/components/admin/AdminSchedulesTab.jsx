@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { GameSchedule } from "@/entities/GameSchedule";
-import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +52,7 @@ export default function AdminSchedulesTab() {
     setIsLoading(true);
     try {
       const [schedulesData, usersData] = await Promise.all([
-        GameSchedule.list("-game_date").catch(() => []),
+        base44.entities.GameSchedule.list("-game_date").catch(() => []),
         User.list().catch(() => [])
       ]);
 
@@ -73,10 +73,10 @@ export default function AdminSchedulesTab() {
     e.preventDefault();
     try {
       if (editingSchedule) {
-        await GameSchedule.update(editingSchedule.id, scheduleForm);
+        await base44.entities.GameSchedule.update(editingSchedule.id, scheduleForm);
         toast.success("Jogo atualizado com sucesso!");
       } else {
-        await GameSchedule.create(scheduleForm);
+        await base44.entities.GameSchedule.create(scheduleForm);
         toast.success("Jogo agendado com sucesso!");
       }
       
@@ -109,7 +109,7 @@ export default function AdminSchedulesTab() {
   const handleDelete = async (scheduleId) => {
     if (confirm("Tem certeza que deseja excluir este jogo?")) {
       try {
-        await GameSchedule.delete(scheduleId);
+        await base44.entities.GameSchedule.delete(scheduleId);
         toast.success("Jogo excluído com sucesso!");
         loadData();
       } catch (error) {
@@ -483,3 +483,5 @@ export default function AdminSchedulesTab() {
     </div>
   );
 }
+
+

@@ -5,8 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
 import { X, Radio, Send, MessageCircle, Volume2, VolumeX, Maximize, Users } from 'lucide-react';
-import { Comment } from '@/entities/Comment';
-import { User } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -19,13 +18,13 @@ export default function LiveStreamPlayer({ content, onClose }) {
   const [volume, setVolume] = useState(100);
   const [isPlaying, setIsPlaying] = useState(true);
   const [liveViewers, setLiveViewers] = useState([]);
-  
+
   const playerInstanceRef = useRef(null);
   const playerContainerRef = useRef(null);
 
   // Check if content uses external embed code (Wix, Twitch, etc.)
   const isExternalEmbed = !!content.live_embed_code;
-  
+
   const onPlayerReady = useCallback((event) => {
     playerInstanceRef.current = event.target;
     event.target.setVolume(100);
@@ -66,14 +65,14 @@ export default function LiveStreamPlayer({ content, onClose }) {
       const embedContainer = document.getElementById('live-embed-container');
       if (embedContainer) {
         let processedEmbed = content.live_embed_code;
-        
+
         // Processar códigos do Wix
         if (processedEmbed.includes('wixstatic.com') || processedEmbed.includes('wix.com')) {
           // Para Wix, manter o embed original mas remover controles se possível
           processedEmbed = processedEmbed.replace(/controls/g, 'controls="false"');
           processedEmbed = processedEmbed.replace(/showinfo="1"/g, 'showinfo="0"');
         }
-        
+
         // Processar códigos do YouTube
         if (processedEmbed.includes('youtube.com') || processedEmbed.includes('youtu.be')) {
           processedEmbed = processedEmbed.replace(/src="([^"]+)"/, (match, src) => {
@@ -90,13 +89,13 @@ export default function LiveStreamPlayer({ content, onClose }) {
             return `src="${url.toString()}"`;
           });
         }
-        
+
         // Para lives, sempre bloquear navegação externa
         processedEmbed = processedEmbed.replace(/allowfullscreen/g, '');
         processedEmbed = processedEmbed.replace(/allow="[^"]*"/g, '');
-        
+
         embedContainer.innerHTML = processedEmbed;
-        
+
         // Ajustar iframe
         const iframe = embedContainer.querySelector('iframe');
         if (iframe) {
@@ -105,7 +104,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
           iframe.style.border = 'none';
           iframe.removeAttribute('width');
           iframe.removeAttribute('height');
-          
+
           // Bloquear navegação externa para lives
           iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
         }
@@ -118,7 +117,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
         const match = youtubeUrl.match(/(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([^&\n?#]+)/);
         if (match) videoId = match[1];
       }
-      
+
       if (!videoId) return;
 
       if (!window.YT) {
@@ -145,27 +144,27 @@ export default function LiveStreamPlayer({ content, onClose }) {
     };
 
   }, [content.live_embed_code, content.video_url, createPlayer, isExternalEmbed]);
-  
+
   useEffect(() => {
     // Simular espectadores
     const fetchViewers = async () => {
-        try {
-            const allUsers = await User.list();
-            if(allUsers && allUsers.length > 0) {
-                const viewerCount = Math.floor(Math.random() * (allUsers.length / 2)) + 5;
-                const shuffled = [...allUsers].sort(() => 0.5 - Math.random());
-                setLiveViewers(shuffled.slice(0, Math.min(viewerCount, allUsers.length)));
-            }
-        } catch (error) {
-            console.warn("Não foi possível carregar usuários para simular espectadores.", error);
+      try {
+        const allUsers = await base44.entities.User.list();
+        if (allUsers && allUsers.length > 0) {
+          const viewerCount = Math.floor(Math.random() * (allUsers.length / 2)) + 5;
+          const shuffled = [...allUsers].sort(() => 0.5 - Math.random());
+          setLiveViewers(shuffled.slice(0, Math.min(viewerCount, allUsers.length)));
         }
+      } catch (error) {
+        console.warn("Não foi possível carregar usuários para simular espectadores.", error);
+      }
     };
     fetchViewers();
   }, []);
 
   const loadComments = useCallback(async () => {
     try {
-      const allComments = await Comment.filter({ content_id: content.id }, "-created_date");
+      const allComments = await base44.entities.Comment.filter({ content_id: content.id }, "-created_date");
       setComments(allComments || []);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -175,10 +174,10 @@ export default function LiveStreamPlayer({ content, onClose }) {
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const currentUser = await User.me();
+        const currentUser = await base44.auth.me();
         setUser(currentUser);
-      } catch (error) { 
-        console.error('Error getting current user:', error); 
+      } catch (error) {
+        console.error('Error getting current user:', error);
       }
     };
     getCurrentUser();
@@ -190,7 +189,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
   const handleAddComment = async () => {
     if (!newComment.trim() || !user) return;
     try {
-      await Comment.create({ user_id: user.id, content_id: content.id, comment_text: newComment });
+      await base44.entities.Comment.create({ user_id: user.id, content_id: content.id, comment_text: newComment });
       setNewComment('');
       loadComments();
       toast.success('Comentário enviado!');
@@ -214,7 +213,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
       setIsMuted(true);
     }
   };
-  
+
   const handleVolumeChange = (newVolume) => {
     const player = playerInstanceRef.current;
     if (!player) return;
@@ -229,7 +228,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
       setIsMuted(true);
     }
   };
-  
+
   const toggleFullscreen = () => {
     const iframe = playerContainerRef.current?.querySelector('iframe') || document.querySelector('#live-embed-container iframe');
     if (iframe) {
@@ -265,7 +264,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
               <div className="w-px h-4 bg-red-400"></div>
               <span className="text-sm opacity-80 truncate hidden md:block">{content.title}</span>
             </div>
-            
+
             {/* Espectadores */}
             {liveViewers.length > 0 && (
               <div className="flex items-center gap-3">
@@ -285,7 +284,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
               </div>
             )}
           </div>
-          
+
           {/* Container do Player */}
           <div className="w-full flex-1 relative">
             {isExternalEmbed ? (
@@ -295,9 +294,9 @@ export default function LiveStreamPlayer({ content, onClose }) {
               // Player do YouTube via API
               <div ref={playerContainerRef} id="youtube-player" className="w-full h-full" />
             )}
-            
+
             {/* Camada Transparente para Interceptar Cliques */}
-            <div 
+            <div
               className="absolute inset-0 z-20 bg-transparent cursor-pointer"
               onDoubleClick={toggleFullscreen}
               onClick={(e) => {
@@ -309,55 +308,55 @@ export default function LiveStreamPlayer({ content, onClose }) {
                 e.preventDefault();
                 return false;
               }}
-              style={{ 
+              style={{
                 pointerEvents: 'auto',
                 background: 'rgba(0,0,0,0.01)'
               }}
             />
           </div>
         </div>
-        
+
         {/* Controles Customizados */}
         {!isExternalEmbed && (
           <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-              <div className="flex items-center justify-between max-w-4xl mx-auto">
-                  <div className="flex items-center gap-4">
-                      <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          onClick={(e) => {
-                              e.stopPropagation();
-                              toggleMute();
-                          }}
-                          className="text-white hover:bg-white/20 w-12 h-12"
-                      >
-                          {isMuted || volume === 0 ? (
-                              <VolumeX className="w-6 h-6" />
-                          ) : (
-                              <Volume2 className="w-6 h-6" />
-                          )}
-                      </Button>
-                      <Slider 
-                          value={[volume]} 
-                          onValueChange={handleVolumeChange} 
-                          max={100} 
-                          className="w-32" 
-                          onClick={(e) => e.stopPropagation()}
-                      />
-                  </div>
-
-                  <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFullscreen();
-                      }}
-                      className="text-white hover:bg-white/20 w-12 h-12"
-                  >
-                      <Maximize className="w-6 h-6" />
-                  </Button>
+            <div className="flex items-center justify-between max-w-4xl mx-auto">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMute();
+                  }}
+                  className="text-white hover:bg-white/20 w-12 h-12"
+                >
+                  {isMuted || volume === 0 ? (
+                    <VolumeX className="w-6 h-6" />
+                  ) : (
+                    <Volume2 className="w-6 h-6" />
+                  )}
+                </Button>
+                <Slider
+                  value={[volume]}
+                  onValueChange={handleVolumeChange}
+                  max={100}
+                  className="w-32"
+                  onClick={(e) => e.stopPropagation()}
+                />
               </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFullscreen();
+                }}
+                className="text-white hover:bg-white/20 w-12 h-12"
+              >
+                <Maximize className="w-6 h-6" />
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -373,13 +372,13 @@ export default function LiveStreamPlayer({ content, onClose }) {
           >
             <div className="p-4 border-b border-gray-800 flex justify-between items-center">
               <h3 className="text-white font-semibold">Chat da Live</h3>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowComments(false)}
                 className="text-gray-400 hover:text-white"
               >
-                <X className="w-4 h-4"/>
+                <X className="w-4 h-4" />
               </Button>
             </div>
 
@@ -400,12 +399,12 @@ export default function LiveStreamPlayer({ content, onClose }) {
 
             <div className="p-4 border-t border-gray-800">
               <div className="flex gap-2">
-                <Input 
-                  value={newComment} 
-                  onChange={(e) => setNewComment(e.target.value)} 
-                  placeholder="Digite sua mensagem..." 
-                  className="bg-gray-800 border-gray-700 text-white" 
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddComment()} 
+                <Input
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  placeholder="Digite sua mensagem..."
+                  className="bg-gray-800 border-gray-700 text-white"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
                   disabled={!user}
                 />
                 <Button onClick={handleAddComment} size="icon" disabled={!user}>
@@ -419,11 +418,11 @@ export default function LiveStreamPlayer({ content, onClose }) {
 
       {/* Botão para Mostrar Chat quando escondido */}
       {!showComments && (
-        <Button 
-          className="fixed bottom-24 md:bottom-4 right-4 z-50 rounded-full bg-red-600 hover:bg-red-700" 
+        <Button
+          className="fixed bottom-24 md:bottom-4 right-4 z-50 rounded-full bg-red-600 hover:bg-red-700"
           onClick={() => setShowComments(true)}
         >
-          <MessageCircle className="w-5 h-5 mr-2"/> 
+          <MessageCircle className="w-5 h-5 mr-2" />
           Mostrar Chat
         </Button>
       )}

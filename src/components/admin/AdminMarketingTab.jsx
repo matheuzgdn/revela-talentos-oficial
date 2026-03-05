@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { MarketingCampaign } from '@/entities/MarketingCampaign';
-import { SocialMediaPost } from '@/entities/SocialMediaPost';
-import { ContentIdea } from '@/entities/ContentIdea';
-import { MarketingMaterial } from '@/entities/MarketingMaterial';
-import { MarketingTask } from '@/entities/MarketingTask';
-import { User } from '@/entities/User';
-import { UploadFile } from '@/integrations/Core';
+
+
+
+
+
+import { base44 } from '@/api/base44Client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -714,12 +714,12 @@ export default function AdminMarketingTab() {
     setIsLoading(true);
     try {
       const [campaignsData, postsData, ideasData, materialsData, tasksData, usersData] = await Promise.all([
-        MarketingCampaign.list('-created_date').catch(() => []),
-        SocialMediaPost.list('-scheduled_date').catch(() => []),
-        ContentIdea.list('-created_date').catch(() => []),
-        MarketingMaterial.list('-created_date').catch(() => []),
-        MarketingTask.list('-created_date').catch(() => []),
-        User.list().catch(() => [])
+        base44.entities.MarketingCampaign.list('-created_date').catch(() => []),
+        base44.entities.SocialMediaPost.list('-scheduled_date').catch(() => []),
+        base44.entities.ContentIdea.list('-created_date').catch(() => []),
+        base44.entities.MarketingMaterial.list('-created_date').catch(() => []),
+        base44.entities.MarketingTask.list('-created_date').catch(() => []),
+        base44.entities.User.list().catch(() => [])
       ]);
 
       setCampaigns(campaignsData || []);
@@ -744,10 +744,10 @@ export default function AdminMarketingTab() {
   const handleSaveCampaign = async (campaignData) => {
     try {
       if (editingItem) {
-        await MarketingCampaign.update(editingItem.id, campaignData);
+        await base44.entities.MarketingCampaign.update(editingItem.id, campaignData);
         toast.success('Campanha atualizada!');
       } else {
-        await MarketingCampaign.create(campaignData);
+        await base44.entities.MarketingCampaign.create(campaignData);
         toast.success('Campanha criada!');
       }
       setShowCampaignModal(false);
@@ -761,10 +761,10 @@ export default function AdminMarketingTab() {
   const handleSavePost = async (postData) => {
     try {
       if (editingItem) {
-        await SocialMediaPost.update(editingItem.id, postData);
+        await base44.entities.SocialMediaPost.update(editingItem.id, postData);
         toast.success('Post atualizado!');
       } else {
-        await SocialMediaPost.create(postData);
+        await base44.entities.SocialMediaPost.create(postData);
         toast.success('Post criado!');
       }
       setShowPostModal(false);
@@ -778,10 +778,10 @@ export default function AdminMarketingTab() {
   const handleSaveIdea = async (ideaData) => {
     try {
         if(editingItem) {
-            await ContentIdea.update(editingItem.id, ideaData);
+            await base44.entities.ContentIdea.update(editingItem.id, ideaData);
             toast.success('Ideia atualizada!');
         } else {
-            await ContentIdea.create(ideaData);
+            await base44.entities.ContentIdea.create(ideaData);
             toast.success('Ideia criada!');
         }
         setShowIdeaModal(false);
@@ -794,7 +794,7 @@ export default function AdminMarketingTab() {
   
   const handleSaveMaterial = async (materialData) => {
     try {
-        await MarketingMaterial.create(materialData);
+        await base44.entities.MarketingMaterial.create(materialData);
         toast.success('Material salvo!');
         setShowMaterialModal(false);
         loadData();
@@ -805,7 +805,7 @@ export default function AdminMarketingTab() {
 
   const handleApproveIdea = async (idea) => {
     try {
-      await ContentIdea.update(idea.id, { status: 'approved' });
+      await base44.entities.ContentIdea.update(idea.id, { status: 'approved' });
       toast.success('Ideia aprovada!');
       loadData();
     } catch (error) {
@@ -892,7 +892,7 @@ export default function AdminMarketingTab() {
                 onEdit={(c) => { setEditingItem(c); setShowCampaignModal(true); }}
                 onToggleStatus={(c) => {
                   const newStatus = c.status === 'active' ? 'paused' : 'active';
-                  MarketingCampaign.update(c.id, { status: newStatus }).then(() => {
+                  base44.entities.MarketingCampaign.update(c.id, { status: newStatus }).then(() => {
                     toast.success(`Campanha ${newStatus === 'active' ? 'ativada' : 'pausada'}!`);
                     loadData();
                   });
@@ -955,7 +955,7 @@ export default function AdminMarketingTab() {
             onUpload={() => setShowMaterialModal(true)}
             onDelete={async (m) => {
               if (window.confirm('Tem certeza que deseja remover este material?')) {
-                await MarketingMaterial.delete(m.id);
+                await base44.entities.MarketingMaterial.delete(m.id);
                 toast.success('Material removido!');
                 loadData();
               }
@@ -1004,3 +1004,6 @@ export default function AdminMarketingTab() {
     </div>
   );
 }
+
+
+

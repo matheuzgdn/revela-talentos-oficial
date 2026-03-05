@@ -5,33 +5,32 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
-import { 
-  X, 
-  MessageCircle, 
-  Send, 
-  Volume2, 
-  VolumeX, 
+import {
+  X,
+  MessageCircle,
+  Send,
+  Volume2,
+  VolumeX,
   Maximize,
   Play,
   Pause
 } from 'lucide-react';
-import { Comment } from '@/entities/Comment';
-import { User } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function VideoPlayer({ 
-  content, 
-  onClose, 
-  onProgress, 
+export default function VideoPlayer({
+  content,
+  onClose,
+  onProgress,
   initialProgress = 0,
-  autoPlay = true 
+  autoPlay = true
 }) {
   const videoRef = useRef(null);
   const progressSaveTimeoutRef = useRef(null);
   const lastSavedProgressRef = useRef(initialProgress);
   const playerInstanceRef = useRef(null);
   const playerContainerRef = useRef(null);
-  
+
   const [user, setUser] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
@@ -62,7 +61,7 @@ export default function VideoPlayer({
 
   const loadComments = useCallback(async () => {
     try {
-      const allComments = await Comment.filter({ content_id: content.id });
+      const allComments = await base44.entities.Comment.filter({ content_id: content.id });
       setComments(allComments || []);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -72,7 +71,7 @@ export default function VideoPlayer({
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const currentUser = await User.me();
+        const currentUser = await base44.entities.User.me();
         setUser(currentUser);
       } catch (error) {
         console.error('Error getting current user:', error);
@@ -82,16 +81,16 @@ export default function VideoPlayer({
   }, []);
 
   useEffect(() => {
-    if(user) {
+    if (user) {
       loadComments();
     }
   }, [user, loadComments]);
 
   const handleAddComment = async () => {
     if (!newComment.trim() || !user) return;
-    
+
     try {
-      await Comment.create({
+      await base44.entities.Comment.create({
         user_id: user.id,
         content_id: content.id,
         comment_text: newComment
@@ -163,7 +162,7 @@ export default function VideoPlayer({
       const embedContainer = document.getElementById('embed-container');
       if (embedContainer) {
         let processedEmbed = content.live_embed_code;
-        
+
         // If it's YouTube within the embed code, add parameters to allow autoplay and show controls
         if (isYouTubeUrl(processedEmbed)) {
           processedEmbed = processedEmbed.replace(/src="([^"]+)"/, (match, src) => {
@@ -177,7 +176,7 @@ export default function VideoPlayer({
             return `src="${url.toString()}"`;
           });
         }
-        
+
         // For Wix embeds, add autoplay parameters
         if (processedEmbed.includes('wixstatic.com') || processedEmbed.includes('wix.com')) {
           processedEmbed = processedEmbed.replace(/src="([^"]+)"/, (match, src) => {
@@ -185,14 +184,14 @@ export default function VideoPlayer({
             return `src="${src}${separator}autoplay=${autoPlay ? 1 : 0}"`;
           });
         }
-        
+
         // For lives, remove some attributes but maintain basic functionality
         if (isLiveContent) {
           processedEmbed = processedEmbed.replace(/allowfullscreen/g, '');
         }
-        
+
         embedContainer.innerHTML = processedEmbed;
-        
+
         // Adjust iframe size and attributes
         const iframe = embedContainer.querySelector('iframe');
         if (iframe) {
@@ -201,7 +200,7 @@ export default function VideoPlayer({
           iframe.style.border = 'none';
           iframe.removeAttribute('width');
           iframe.removeAttribute('height');
-          
+
           // For lives, use a more restrictive sandbox; for normal embeds, allow forms too
           if (isLiveContent) {
             iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
@@ -210,14 +209,14 @@ export default function VideoPlayer({
           }
         }
       }
-    } 
+    }
     // Case 2: YouTube API Player via content.video_url (if no generic embed code)
     else if (isYouTubeAPIPlayer) {
       let videoId = '';
       const youtubeUrl = content.video_url;
       const match = youtubeUrl.match(/(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([^&\n?#]+)/);
       if (match) videoId = match[1];
-      
+
       if (videoId) {
         if (!window.YT) {
           const tag = document.createElement('script');
@@ -260,7 +259,7 @@ export default function VideoPlayer({
     // This block runs only if it's an HTML5 video (not external embed and not YouTube API)
     if (isHtml5PlayerWithVideoURL && videoRef.current) {
       const video = videoRef.current;
-      
+
       const handleTimeUpdate = () => {
         setCurrentTime(video.currentTime);
         setProgress((video.currentTime / video.duration) * 100);
@@ -275,7 +274,7 @@ export default function VideoPlayer({
 
       video.addEventListener('timeupdate', handleTimeUpdate);
       video.addEventListener('loadedmetadata', handleLoadedMetadata);
-      
+
       if (autoPlay) {
         video.play().then(() => setIsPlaying(true));
       }
@@ -313,7 +312,7 @@ export default function VideoPlayer({
     const rect = e.currentTarget.getBoundingClientRect();
     const percent = (e.clientX - rect.left) / rect.width;
     const time = percent * duration;
-    
+
     if (isYouTubeAPIPlayer) {
       const player = playerInstanceRef.current;
       if (player && typeof player.seekTo === 'function') {
@@ -345,7 +344,7 @@ export default function VideoPlayer({
   const handleVolumeChange = (newVolume) => {
     const volumeValue = newVolume[0];
     setVolume(volumeValue);
-    
+
     if (isYouTubeAPIPlayer) {
       const player = playerInstanceRef.current;
       if (player && typeof player.setVolume === 'function') {
@@ -421,14 +420,14 @@ export default function VideoPlayer({
         </Button>
 
         {/* Video Container */}
-        <div 
+        <div
           className="relative w-full h-full bg-black flex items-center justify-center"
           onMouseMove={() => {
             // Only show controls if not an external embed (meaning it's YouTube API or HTML5)
             if (!isExternalEmbed) {
-                setShowControls(true);
-                clearTimeout(hideControlsTimeout);
-                hideControlsTimeout = setTimeout(() => setShowControls(false), 3000);
+              setShowControls(true);
+              clearTimeout(hideControlsTimeout);
+              hideControlsTimeout = setTimeout(() => setShowControls(false), 3000);
             }
           }}
         >
@@ -454,20 +453,20 @@ export default function VideoPlayer({
               <p>Conteúdo não disponível</p>
             </div>
           )}
-          
+
           {/* Camada de proteção APENAS para lives incorporadas */}
           {isLiveContent && isExternalEmbed && (
-            <div 
+            <div
               className="absolute inset-0 z-10 bg-transparent"
-              style={{ 
+              style={{
                 pointerEvents: 'none',
                 background: 'transparent'
               }}
-              onClick={(e) => e.preventDefault()} 
+              onClick={(e) => e.preventDefault()}
             />
           )}
         </div>
-        
+
         {/* Controles Customizados - Apenas para YouTube API e HTML5 */}
         <AnimatePresence>
           {showControls && !isExternalEmbed && ( // Controls only for non-external embeds
@@ -480,11 +479,11 @@ export default function VideoPlayer({
               {/* Barra de Progresso - only show for non-live content if duration is known */}
               {duration > 0 && !isLiveContent && (
                 <div className="mb-4">
-                  <div 
+                  <div
                     className="w-full h-2 bg-gray-700 rounded-full cursor-pointer"
                     onClick={handleProgressClick}
                   >
-                    <div 
+                    <div
                       className="h-full bg-red-500 rounded-full"
                       style={{ width: `${progress}%` }}
                     />
@@ -500,9 +499,9 @@ export default function VideoPlayer({
               <div className="flex items-center gap-4 justify-between">
                 <div className="flex items-center gap-4">
                   {/* Play/Pause */}
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={togglePlay}
                     className="text-white hover:bg-white/20 w-12 h-12"
                   >
@@ -515,9 +514,9 @@ export default function VideoPlayer({
 
                   {/* Volume */}
                   <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={toggleMute}
                       className="text-white hover:bg-white/20"
                     >
@@ -527,11 +526,11 @@ export default function VideoPlayer({
                         <Volume2 className="w-5 h-5" />
                       )}
                     </Button>
-                    <Slider 
-                      value={[volume]} 
-                      onValueChange={handleVolumeChange} 
-                      max={100} 
-                      className="w-24" 
+                    <Slider
+                      value={[volume]}
+                      onValueChange={handleVolumeChange}
+                      max={100}
+                      className="w-24"
                     />
                   </div>
                 </div>
@@ -546,10 +545,10 @@ export default function VideoPlayer({
                     <MessageCircle className="w-5 h-5" />
                   </Button>
 
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={toggleFullscreen} 
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleFullscreen}
                     className="text-white hover:bg-white/20"
                   >
                     <Maximize className="w-5 h-5" />

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Comment } from "@/entities/Comment";
-import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
+
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,7 +16,7 @@ export default function CommentSection({ contentId, currentUser }) {
 
   const fetchCommentsAndUsers = useCallback(async () => {
     if (!contentId) return;
-    const fetchedComments = await Comment.filter({ content_id: contentId }, "-created_date");
+    const fetchedComments = await base44.entities.Comment.filter({ content_id: contentId }, "-created_date");
     setComments(fetchedComments);
 
     // Fetch user data for comments
@@ -38,10 +38,10 @@ export default function CommentSection({ contentId, currentUser }) {
   }, [fetchCommentsAndUsers]);
 
   const handlePostComment = async () => {
-    if (!newComment.trim() || !currentUser) return;
+    if (!newbase44.entities.Comment.trim() || !currentUser) return;
     setIsPosting(true);
     try {
-      await Comment.create({
+      await base44.entities.Comment.create({
         user_id: currentUser.id,
         content_id: contentId,
         comment_text: newComment,
@@ -91,19 +91,19 @@ export default function CommentSection({ contentId, currentUser }) {
         {/* Comments List */}
         <div className="space-y-6 pt-4">
           {comments.map(comment => (
-            <div key={comment.id} className="flex gap-3">
+            <div key={base44.entities.Comment.id} className="flex gap-3">
               <Avatar>
-                 <AvatarImage src={getUserAvatar(comment.user_id)} />
-                <AvatarFallback>{getUserDisplayName(comment.user_id).charAt(0)}</AvatarFallback>
+                 <AvatarImage src={getUserAvatar(base44.entities.Comment.user_id)} />
+                <AvatarFallback>{getUserDisplayName(base44.entities.Comment.user_id).charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="bg-gray-800/50 rounded-lg p-3 flex-1">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="font-semibold text-sm text-white">{getUserDisplayName(comment.user_id)}</p>
+                  <p className="font-semibold text-sm text-white">{getUserDisplayName(base44.entities.Comment.user_id)}</p>
                   <p className="text-xs text-gray-500">
-                    {new Date(comment.created_date).toLocaleString('pt-BR')}
+                    {new Date(base44.entities.Comment.created_date).toLocaleString('pt-BR')}
                   </p>
                 </div>
-                <p className="text-gray-300 text-sm whitespace-pre-wrap">{comment.comment_text}</p>
+                <p className="text-gray-300 text-sm whitespace-pre-wrap">{base44.entities.Comment.comment_text}</p>
               </div>
             </div>
           ))}
@@ -112,3 +112,6 @@ export default function CommentSection({ contentId, currentUser }) {
     </div>
   );
 }
+
+
+

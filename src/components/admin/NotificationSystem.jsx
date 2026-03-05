@@ -1,4 +1,4 @@
-import { UserNotification } from "@/entities/UserNotification";
+import { base44 } from "@/api/base44Client";
 
 // Helper function to send notifications to users
 export const sendNotificationToUsers = async (userIds, notificationData) => {
@@ -10,7 +10,7 @@ export const sendNotificationToUsers = async (userIds, notificationData) => {
     
     // Bulk create notifications
     await Promise.all(notifications.map(notification => 
-      UserNotification.create(notification)
+      base44.entities.UserNotification.create(notification)
     ));
     
     return true;

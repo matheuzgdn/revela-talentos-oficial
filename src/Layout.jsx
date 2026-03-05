@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { User } from "@/entities/User";
+
 import StoriesModal from "@/components/stories/StoriesModal";
 import ProfileSetup from "@/components/athlete/ProfileSetup";
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
@@ -73,7 +73,7 @@ function LayoutInner({ children, currentPageName }) {
 
   const loadUser = useCallback(async () => {
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       setUser(currentUser);
       setUserPackageName(currentUser.has_plano_carreira_access ? t('package.career') : t('package.revela'));
       // Abre onboarding automaticamente para novos usuários
@@ -428,3 +428,4 @@ export default function Layout({ children, currentPageName }) {
     </LanguageProvider>
   );
 }
+

@@ -15,8 +15,8 @@ import {
   CheckCircle, 
   XCircle 
 } from "lucide-react";
-import { UploadFile } from "@/integrations/Core";
-import { AthleteUpload } from "@/entities/AthleteUpload";
+
+import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
 export default function MaterialGallery({ user, uploads, onUploadComplete }) {
@@ -86,9 +86,9 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
       setUploadStatus(prev => prev.map((s, idx) => idx === i ? { ...s, status: 'uploading' } : s));
 
       try {
-        const { file_url } = await UploadFile({ file });
+        const { file_url } = await base44.storage.uploadFile({ file });
         
-        await AthleteUpload.create({
+        await base44.entities.AthleteUpload.create({
           user_id: user.id,
           file_url,
           file_name: file.name,
@@ -294,3 +294,5 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
     </div>
   );
 }
+
+

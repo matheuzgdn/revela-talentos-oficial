@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
-import { Content } from "@/entities/Content";
-import { User } from "@/entities/User"; // Added User import
+import { base44 } from "@/api/base44Client";
+ // Added User import
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
   const loadFeaturedContent = async () => {
     setIsLoadingContent(true);
     try {
-      const contents = await Content.filter({ is_published: true }, "-created_date", 6);
+      const contents = await base44.entities.Content.filter({ is_published: true }, "-created_date", 6);
       setFeaturedContents(contents.slice(0, 6)); // Pega os 6 mais recentes
     } catch (error) {
       console.error("Error loading featured content:", error);
@@ -52,7 +52,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
   // Added handleUserUpdate function
   const handleUserUpdate = async () => {
     try {
-      const updatedUser = await User.me();
+      const updatedUser = await base44.auth.me();
       setCurrentUser(updatedUser);
     } catch (error) {
       console.error("Error refreshing user data:", error);
@@ -231,7 +231,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {featuredContents.map((content, index) => (
               <motion.div
-                key={content.id}
+                key={base44.entities.Content.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
@@ -242,23 +242,23 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
                   <Card className="bg-gray-900/50 border-gray-800 hover:border-cyan-400/50 transition-all duration-300 h-full">
                     <div className="relative h-24 overflow-hidden">
                       <img
-                        src={content.thumbnail_url || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=400&h=225&auto=format&fit=crop"}
-                        alt={content.title}
+                        src={base44.entities.Content.thumbnail_url || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=400&h=225&auto=format&fit=crop"}
+                        alt={base44.entities.Content.title}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <Play className="w-6 h-6 text-white" />
                       </div>
-                      <Badge className={`absolute top-1 right-1 text-xs ${content.access_level === 'elite' ? 'bg-yellow-500/80 text-black' : 'bg-blue-500/80 text-white'}`}>
-                        {content.access_level === 'elite' ? 'E' : 'B'}
+                      <Badge className={`absolute top-1 right-1 text-xs ${base44.entities.Content.access_level === 'elite' ? 'bg-yellow-500/80 text-black' : 'bg-blue-500/80 text-white'}`}>
+                        {base44.entities.Content.access_level === 'elite' ? 'E' : 'B'}
                       </Badge>
                     </div>
                     <CardContent className="p-3">
                       <h3 className="text-white text-sm font-medium line-clamp-2 leading-tight">
-                        {content.title}
+                        {base44.entities.Content.title}
                       </h3>
                       <p className="text-gray-400 text-xs mt-1">
-                        {content.duration || 15}min
+                        {base44.entities.Content.duration || 15}min
                       </p>
                     </CardContent>
                   </Card>
@@ -282,3 +282,6 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
     </div>
   );
 }
+
+
+

@@ -1,15 +1,12 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { CRMPipeline } from '@/entities/CRMPipeline';
-import { CRMLead } from '@/entities/CRMLead';
-import { Lead } from '@/entities/Lead';
-import { InternationalLead } from '@/entities/InternationalLead';
-import { CustomTask } from '@/entities/CustomTask'; // Added CustomTask import
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import IndividualCRMDashboard from './crm/IndividualCRMDashboard'; // Novo componente
-import { CheckCircle, BarChart3, Users, DollarSign, Target, Loader2,
+import {
+  CheckCircle, BarChart3, Users, DollarSign, Target, Loader2,
   Building2, Trophy, Plane, TrendingUp, Star, UserPlus
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -35,7 +32,7 @@ const EC10_SERVICES = [
     color: 'bg-green-500'
   },
   {
-    id: 'revela_talentos', 
+    id: 'revela_talentos',
     name: 'Plataforma Revela Talentos',
     description: 'Cadastro e exposição de jogadores',
     icon: Star,
@@ -46,7 +43,7 @@ const EC10_SERVICES = [
     name: 'Campeonatos & Eventos',
     description: 'Libertacademy, Sudacademy, Talentos Cup, Eurocamp',
     icon: Trophy,
-    color: 'bg-red-500'  
+    color: 'bg-red-500'
   },
   {
     id: 'intercambios',
@@ -78,7 +75,7 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
     const activeLeads = repLeads.filter(lead => !['won', 'lost'].includes(lead.current_stage));
     const wonLeads = repLeads.filter(lead => lead.current_stage === 'won');
     const totalValue = wonLeads.reduce((sum, lead) => sum + (lead.value || 0), 0);
-    
+
     return {
       activeLeads: activeLeads.length,
       wonLeads: wonLeads.length,
@@ -99,7 +96,7 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
     .orderBy('date', 'asc')
     .slice(-30) // Last 30 days
     .value();
-    
+
   const closingsData = _.chain(closedLeads)
     .groupBy(l => format(new Date(l.updated_date), 'yyyy-MM-dd'))
     .map((value, key) => ({ date: format(new Date(key), 'dd/MM'), count: value.length }))
@@ -174,41 +171,41 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
       {/* Gráficos do Dashboard */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 bg-gray-800/70 border-gray-700 text-white">
-            <CardHeader>
-                <CardTitle>Atividades por Dia (Últimos 30 dias)</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
-                    <BarChart data={activityData}>
-                        <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2}/>
-                        <XAxis dataKey="date" fontSize={12} />
-                        <YAxis fontSize={12} />
-                        <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none' }}/>
-                        <Bar dataKey="count" fill="#38bdf8" name="Atividades" />
-                    </BarChart>
-                </ResponsiveContainer>
-            </CardContent>
+          <CardHeader>
+            <CardTitle>Atividades por Dia (Últimos 30 dias)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={activityData}>
+                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                <XAxis dataKey="date" fontSize={12} />
+                <YAxis fontSize={12} />
+                <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: 'none' }} />
+                <Bar dataKey="count" fill="#38bdf8" name="Atividades" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
         </Card>
         <Card className="bg-gray-800/70 border-gray-700 text-white">
-            <CardHeader>
-                <CardTitle>Ranking de Vendedores</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {vendorLeaderboard.map((v, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-lg font-bold ${i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-orange-400' : 'text-gray-500'}`}>#{i + 1}</span>
-                      <p className="text-sm font-medium">{v.name}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-green-400">R$ {v.revenue.toLocaleString()}</p>
-                      <p className="text-xs text-gray-400">{v.deals} vendas</p>
-                    </div>
+          <CardHeader>
+            <CardTitle>Ranking de Vendedores</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {vendorLeaderboard.map((v, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-lg font-bold ${i === 0 ? 'text-yellow-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-orange-400' : 'text-gray-500'}`}>#{i + 1}</span>
+                    <p className="text-sm font-medium">{v.name}</p>
                   </div>
-                ))}
-              </div>
-            </CardContent>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-green-400">R$ {v.revenue.toLocaleString()}</p>
+                    <p className="text-xs text-gray-400">{v.deals} vendas</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
         </Card>
       </div>
 
@@ -234,7 +231,7 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
                   </Badge>
                 </div>
                 <div className="flex justify-between items-center mt-3">
-                   <Button size="sm" variant="outline" className="text-xs h-7">Atribuir Lead</Button>
+                  <Button size="sm" variant="outline" className="text-xs h-7">Atribuir Lead</Button>
                 </div>
               </div>
             )) : <p className="text-gray-400 col-span-full text-center py-4">Nenhum lead novo para atribuir.</p>}
@@ -279,7 +276,7 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
                         <span className="text-gray-400">Vendas:</span>
                         <span className="text-white font-semibold">{stats.wonLeads}</span>
                       </div>
-                       <div className="flex justify-between">
+                      <div className="flex justify-between">
                         <span className="text-gray-400">Conversão:</span>
                         <span className="text-white font-semibold">{stats.conversionRate}%</span>
                       </div>
@@ -312,11 +309,11 @@ export default function AdvancedCRM() {
     setIsLoading(true);
     try {
       const [crmLeadsData, generalLeadsData, intlLeadsData, pipelinesData, tasksData] = await Promise.all([
-        CRMLead.list('-created_date').catch(() => []),
-        Lead.list('-created_date').catch(() => []),
-        InternationalLead.list('-created_date').catch(() => []),
-        CRMPipeline.list().catch(() => []),
-        CustomTask.list().catch(() => [])
+        base44.entities.CRMLead.list('-created_date').catch(() => []),
+        base44.entities.Lead.list('-created_date').catch(() => []),
+        base44.entities.InternationalLead.list('-created_date').catch(() => []),
+        base44.entities.CRMPipeline.list().catch(() => []),
+        base44.entities.CustomTask.list().catch(() => [])
       ]);
 
       setAllCrmLeads(crmLeadsData);
@@ -346,7 +343,7 @@ export default function AdvancedCRM() {
 
   if (!selectedRep) {
     return (
-      <CRMMainDashboard 
+      <CRMMainDashboard
         onSelectRep={setSelectedRep}
         allLeads={allCrmLeads}
         allPipelines={allPipelines}
@@ -358,7 +355,7 @@ export default function AdvancedCRM() {
   }
 
   return (
-    <IndividualCRMDashboard 
+    <IndividualCRMDashboard
       salesRep={selectedRep}
       onBack={() => setSelectedRep(null)}
       services={EC10_SERVICES}

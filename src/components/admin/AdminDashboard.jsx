@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '@/entities/User';
 import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, Globe, Target, ArrowUp, ArrowDown, Activity } from 'lucide-react';
@@ -20,17 +19,17 @@ export default function AdminDashboard() {
       setIsLoading(true);
       try {
         const [users, activities] = await Promise.all([
-          User.list(),
+          base44.entities.User.list(),
           base44.entities.ActivityLog.list('-created_date', 20)
         ]);
-        
+
         const totalUsers = users?.length || 0;
         const planoCarreira = (users || []).filter(u => u.has_plano_carreira_access).length;
         const revelaTalentos = (users || []).filter(u => u.has_revela_talentos_access && !u.has_plano_carreira_access).length;
-        
+
         // Calcular crescimento (mock - em produção seria baseado em dados históricos)
         const growth = 12.5;
-        
+
         setStats({ totalUsers, planoCarreira, revelaTalentos, growth });
         setRecentActivities(activities || []);
       } catch (error) {
@@ -45,7 +44,7 @@ export default function AdminDashboard() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-96">
-        <motion.div 
+        <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full"
@@ -122,7 +121,7 @@ export default function AdminDashboard() {
           >
             {/* Gradient Background */}
             <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-            
+
             <div className="relative p-6">
               {/* Icon */}
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center mb-4 shadow-lg`}>
@@ -139,9 +138,8 @@ export default function AdminDashboard() {
 
               {/* Trend */}
               <div className="flex items-center gap-2">
-                <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
-                  card.trend === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                }`}>
+                <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${card.trend === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                  }`}>
                   {card.trend === 'up' ? (
                     <ArrowUp className="w-3 h-3" />
                   ) : (
@@ -173,7 +171,7 @@ export default function AdminDashboard() {
           </div>
           <span className="text-sm text-gray-500">{recentActivities.length} atividades</span>
         </div>
-        
+
         {recentActivities.length > 0 ? (
           <div className="space-y-4">
             {recentActivities.slice(0, 10).map((activity, index) => {
@@ -187,7 +185,7 @@ export default function AdminDashboard() {
                 other: 'gray'
               };
               const color = colorMap[activity.action_type] || 'gray';
-              
+
               return (
                 <motion.div
                   key={activity.id}

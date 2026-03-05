@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckCircle2, Globe2, ShieldCheck, Play, ArrowRight, MapPin, Mail, Phone, User, Loader2 } from "lucide-react";
-import { InternationalLead } from "@/entities/InternationalLead";
-import { InternationalPlan } from "@/entities/InternationalPlan";
+import { base44 } from "@/api/base44Client";
+
 import { toast } from "sonner";
 
 export default function EC10TrialHub() {
@@ -24,7 +24,7 @@ export default function EC10TrialHub() {
   useEffect(() => {
     const loadPageContent = async () => {
       try {
-        const allContent = await InternationalPlan.filter({ is_active: true }, "order");
+        const allContent = await base44.entities.InternationalPlan.filter({ is_active: true }, "order");
         setTestimonials(allContent.filter(c => c.content_type === 'testimonial'));
         setFaqs(allContent.filter(c => c.content_type === 'faq'));
       } catch (error) {
@@ -63,7 +63,7 @@ export default function EC10TrialHub() {
         status: "novo"
       };
       
-      await InternationalLead.create(leadData);
+      await base44.entities.InternationalLead.create(leadData);
       
       toast.success("Inscrição realizada com sucesso! Nossa equipe entrará em contato em breve.");
       setFormData({
@@ -437,3 +437,4 @@ export default function EC10TrialHub() {
     </main>
   );
 }
+

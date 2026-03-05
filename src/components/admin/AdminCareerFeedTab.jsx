@@ -1,6 +1,7 @@
+import { base44 } from '@/api/base44Client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { CareerPost } from '@/entities/CareerPost';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +35,7 @@ export default function AdminCareerFeedTab() {
   const loadPosts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allPosts = await CareerPost.list('-created_date');
+      const allPosts = await base44.entities.CareerPost.list('-created_date');
       setPosts(allPosts || []);
     } catch (error) {
       console.error('Erro ao carregar posts do feed:', error);
@@ -66,7 +67,7 @@ export default function AdminCareerFeedTab() {
   const handleDelete = async (postId) => {
     if (window.confirm("Tem certeza que deseja excluir este post?")) {
       try {
-        await CareerPost.delete(postId);
+        await base44.entities.CareerPost.delete(postId);
         toast.success("Post excluído com sucesso!");
         loadPosts();
       } catch (error) {
@@ -78,10 +79,10 @@ export default function AdminCareerFeedTab() {
   const handleSave = async () => {
     try {
       if (editingPost) {
-        await CareerPost.update(editingPost.id, formData);
+        await base44.entities.CareerPost.update(editingPost.id, formData);
         toast.success("Post atualizado com sucesso!");
       } else {
-        await CareerPost.create(formData);
+        await base44.entities.CareerPost.create(formData);
         toast.success("Post criado com sucesso!");
       }
       setShowModal(false);
@@ -185,3 +186,4 @@ export default function AdminCareerFeedTab() {
     </div>
   );
 }
+

@@ -2,39 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Play, X } from 'lucide-react';
-import { Testimonial } from '@/entities/Testimonial';
+import { base44 } from "@/api/base44Client";
 import { Button } from '@/components/ui/button';
 
 const VideoModal = ({ videoUrl, onClose }) => {
-    if (!videoUrl) return null;
+  if (!videoUrl) return null;
 
-    let embedUrl = videoUrl;
-    // Tenta converter links do YouTube para o formato de embed
-    if (videoUrl.includes("youtube.com/watch?v=")) {
-      const videoId = videoUrl.split('v=')[1].split('&')[0];
-      embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    } else if (videoUrl.includes("youtu.be/")) {
-      const videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
-      embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    }
+  let embedUrl = videoUrl;
+  // Tenta converter links do YouTube para o formato de embed
+  if (videoUrl.includes("youtube.com/watch?v=")) {
+    const videoId = videoUrl.split('v=')[1].split('&')[0];
+    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  } else if (videoUrl.includes("youtu.be/")) {
+    const videoId = videoUrl.split('youtu.be/')[1].split('?')[0];
+    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  }
 
-    return (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={onClose}>
-            <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-white z-50" onClick={onClose}>
-                <X className="w-8 h-8" />
-            </Button>
-            <div className="w-full max-w-4xl aspect-video relative" onClick={(e) => e.stopPropagation()}>
-                <iframe
-                    src={embedUrl}
-                    title="Depoimento EC10 Talentos"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                ></iframe>
-            </div>
-        </div>
-    );
+  return (
+    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-white z-50" onClick={onClose}>
+        <X className="w-8 h-8" />
+      </Button>
+      <div className="w-full max-w-4xl aspect-video relative" onClick={(e) => e.stopPropagation()}>
+        <iframe
+          src={embedUrl}
+          title="Depoimento EC10 Talentos"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        ></iframe>
+      </div>
+    </div>
+  );
 };
 
 
@@ -45,7 +45,7 @@ export default function TestimonialsSection() {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const data = await Testimonial.filter({ is_active: true });
+        const data = await base44.entities.Testimonial.filter({ is_active: true });
         setTestimonials(data);
       } catch (error) {
         console.error("Failed to fetch testimonials", error);
@@ -53,7 +53,7 @@ export default function TestimonialsSection() {
     };
     fetchTestimonials();
   }, []);
-  
+
   const handlePlay = (videoUrl) => {
     setPlayingVideoUrl(videoUrl);
   };
@@ -90,12 +90,12 @@ export default function TestimonialsSection() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.15 }}
             >
-              <Card 
+              <Card
                 className="bg-gray-800/50 border-gray-700/50 hover:border-green-500/30 transition-all duration-300 overflow-hidden cursor-pointer"
                 onClick={() => handlePlay(testimonial.video_url)}
               >
                 <div className="relative group">
-                  <img 
+                  <img
                     src={testimonial.thumbnail_url}
                     alt={testimonial.name}
                     className="w-full h-48 object-cover"
@@ -105,10 +105,10 @@ export default function TestimonialsSection() {
                       <Play className="w-8 h-8 text-white ml-1" />
                     </div>
                   </div>
-                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-                      <h3 className="text-white font-bold text-lg">{testimonial.name}</h3>
-                      <p className="text-green-300 text-sm">{testimonial.position}</p>
-                   </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+                    <h3 className="text-white font-bold text-lg">{testimonial.name}</h3>
+                    <p className="text-green-300 text-sm">{testimonial.position}</p>
+                  </div>
                 </div>
               </Card>
             </motion.div>

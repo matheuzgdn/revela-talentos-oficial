@@ -1,3 +1,4 @@
+import { base44 } from '@/api/base44Client';
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, X } from 'lucide-react';
-import { CRMPipeline } from '@/entities/CRMPipeline';
+
 import { toast } from 'sonner';
 
 export default function CreatePipelineModal({ isOpen, onClose, salesRepId, services, onSuccess }) {
@@ -34,7 +35,7 @@ export default function CreatePipelineModal({ isOpen, onClose, salesRepId, servi
     }
 
     try {
-      await CRMPipeline.create({
+      await base44.entities.CRMPipeline.create({
         pipeline_name: pipelineName,
         service_category: serviceCategory,
         stages: stages.filter(s => s.trim() !== ''),

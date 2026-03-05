@@ -17,12 +17,10 @@ import {
   Eye,
   Calendar // Added
 } from "lucide-react";
-import { Marketing } from "@/entities/Marketing";
-import { AthleteUpload } from "@/entities/AthleteUpload";
-import { UploadFile } from "@/integrations/Core";
-import { toast } from "sonner";
-import { GameSchedule } from "@/entities/GameSchedule";
+import { base44 } from "@/api/base44Client";
 
+
+import { toast } from "sonner";
 // Componente para Informar Próximo Jogo
 const NextGameForm = ({ user }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +38,7 @@ const NextGameForm = ({ user }) => {
     }
     setIsSubmitting(true);
     try {
-      await GameSchedule.create({
+      await base44.entities.GameSchedule.create({
         user_id: user.id,
         ...gameData,
         status: 'scheduled'
@@ -52,7 +50,7 @@ const NextGameForm = ({ user }) => {
     }
     setIsSubmitting(false);
   };
-  
+
   return (
     <Card className="bg-black border-2 border-green-500/50 relative overflow-hidden shadow-2xl shadow-green-500/20 h-full">
       <div className="absolute inset-0 bg-green-500/5 rounded-lg"></div>
@@ -66,25 +64,25 @@ const NextGameForm = ({ user }) => {
       <CardContent className="z-10 relative">
         <p className="text-gray-400 text-sm mb-4">Mantenha nossa equipe de scouting informada sobre suas próximas partidas.</p>
         <form onSubmit={handleGameSubmit} className="space-y-4">
-          <Input 
+          <Input
             name="opponent"
             placeholder="Adversário"
             value={gameData.opponent}
-            onChange={(e) => setGameData({...gameData, opponent: e.target.value})}
+            onChange={(e) => setGameData({ ...gameData, opponent: e.target.value })}
             className="bg-gray-800 border-gray-700"
           />
-          <Input 
+          <Input
             name="game_date"
             type="datetime-local"
             value={gameData.game_date}
-            onChange={(e) => setGameData({...gameData, game_date: e.target.value})}
+            onChange={(e) => setGameData({ ...gameData, game_date: e.target.value })}
             className="bg-gray-800 border-gray-700"
           />
-          <Input 
+          <Input
             name="venue"
             placeholder="Local (Estádio, Cidade)"
             value={gameData.venue}
-            onChange={(e) => setGameData({...gameData, venue: e.target.value})}
+            onChange={(e) => setGameData({ ...gameData, venue: e.target.value })}
             className="bg-gray-800 border-gray-700"
           />
           <Button type="submit" disabled={isSubmitting} className="w-full bg-green-600 hover:bg-green-700">
@@ -115,7 +113,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
     if (!user) return;
     setIsHistoryLoading(true);
     try {
-      const userRequests = await Marketing.filter({ user_id: user.id }, "-created_date");
+      const userRequests = await base44.entities.Marketing.filter({ user_id: user.id }, "-created_date");
       setRequests(userRequests);
     } catch (error) {
       console.error("Error loading marketing requests:", error);
@@ -140,7 +138,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) return;
-    
+
     if (requestType === 'flyer' && selectedPhotos.length === 0) {
       toast.error("Por favor, selecione pelo menos uma foto para o flyer.");
       return;
@@ -148,16 +146,16 @@ export default function MarketingHub({ user, onUploadComplete }) {
 
     setIsLoading(true);
     toast.info("Enviando solicitação e fazendo upload dos arquivos...");
-    
+
     try {
       let uploadedPhotoUrls = [];
 
       if (selectedPhotos.length > 0) {
         for (const photo of selectedPhotos) {
-          const { file_url } = await UploadFile({ file: photo });
+          const { file_url } = await base44.storage.uploadFile({ file: photo });
           uploadedPhotoUrls.push(file_url);
 
-          await AthleteUpload.create({
+          await base44.entities.AthleteUpload.create({
             user_id: user.id,
             file_url,
             file_name: photo.name,
@@ -180,8 +178,8 @@ export default function MarketingHub({ user, onUploadComplete }) {
         additional_info: formData.additional_info
       };
 
-      await Marketing.create(payload);
-      
+      await base44.entities.Marketing.create(payload);
+
       toast.success("Solicitação enviada com sucesso!");
       setFormData({
         video_urls: "",
@@ -199,7 +197,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
     }
     setIsLoading(false);
   };
-  
+
   const statusConfig = {
     pending: { label: "Pendente", color: "bg-yellow-500", icon: Clock },
     in_progress: { label: "Em Produção", color: "bg-blue-500", icon: Loader2 },
@@ -215,7 +213,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -223,15 +221,15 @@ export default function MarketingHub({ user, onUploadComplete }) {
         >
           <NextGameForm user={user} />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
           <Card className="bg-black border-2 border-purple-500/50 relative overflow-hidden shadow-2xl shadow-purple-500/20 h-full">
-             <div className="absolute inset-0 bg-purple-500/5 rounded-lg"></div>
-             <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(192,132,252,0.15)] rounded-lg"></div>
+            <div className="absolute inset-0 bg-purple-500/5 rounded-lg"></div>
+            <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(192,132,252,0.15)] rounded-lg"></div>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-purple-400 z-10 relative">
                 <PlusCircle className="w-5 h-5" />
@@ -285,8 +283,8 @@ export default function MarketingHub({ user, onUploadComplete }) {
                         disabled={isLoading}
                         className="bg-gray-800 border-gray-700 text-white file:text-white file:bg-gray-700 file:border-none file:px-4 file:py-2 file:rounded-lg file:mr-4 hover:file:bg-gray-600"
                       />
-                       {selectedPhotos.length > 0 && (
-                          <p className="text-xs text-gray-400 mt-2">{selectedPhotos.length} foto(s) selecionada(s).</p>
+                      {selectedPhotos.length > 0 && (
+                        <p className="text-xs text-gray-400 mt-2">{selectedPhotos.length} foto(s) selecionada(s).</p>
                       )}
                     </div>
                   </div>
@@ -375,3 +373,6 @@ export default function MarketingHub({ user, onUploadComplete }) {
     </div>
   );
 }
+
+
+

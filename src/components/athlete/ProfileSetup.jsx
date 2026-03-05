@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { UploadFile } from "@/integrations/Core";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
@@ -154,7 +154,7 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await UploadFile({ file });
+      const { file_url } = await base44.storage.uploadFile({ file });
       set("profile_picture_url", file_url);
       toast.success("✅ Foto enviada com sucesso!");
     } catch {

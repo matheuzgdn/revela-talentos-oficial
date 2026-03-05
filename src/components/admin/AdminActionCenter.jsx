@@ -1,3 +1,4 @@
+import { base44 } from '@/api/base44Client';
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,10 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart3, Megaphone, Upload, AlertCircle, CheckCircle, Plus, Clock, Loader2, History, ChevronDown } from 'lucide-react';
-import { CustomTask } from '@/entities/CustomTask';
-import { PerformanceData } from '@/entities/PerformanceData';
-import { Marketing } from '@/entities/Marketing';
-import { AthleteUpload } from '@/entities/AthleteUpload';
+
+
+
+
 import { toast } from 'sonner';
 
 // --- MODAIS DE EDIÇÃO ---
@@ -28,7 +29,7 @@ const EditPerformanceModal = ({ request, onRefresh, onClose }) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await PerformanceData.update(request.id, { ...formState, status: 'completed' });
+      await base44.entities.PerformanceData.update(request.id, { ...formState, status: 'completed' });
       toast.success("Análise de performance salva!");
       onRefresh();
       onClose();
@@ -83,7 +84,7 @@ const EditMarketingModal = ({ request, onRefresh, onClose }) => {
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            await Marketing.update(request.id, formState);
+            await base44.entities.Marketing.update(request.id, formState);
             toast.success("Solicitação de marketing atualizada!");
             onRefresh();
             onClose();
@@ -204,16 +205,16 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
   }, [showHistory]);
 
   const loadCustomTasks = async () => {
-    const tasks = await CustomTask.filter({ status: 'pending' });
+    const tasks = await base44.entities.CustomTask.filter({ status: 'pending' });
     setCustomTasks(tasks || []);
   };
   
   const loadCompletedTasks = async () => {
     const [perf, mark, up, cust] = await Promise.all([
-        PerformanceData.filter({ status: 'completed' }, '-updated_date', 20),
-        Marketing.filter({ status: 'completed' }, '-updated_date', 20),
-        AthleteUpload.filter({ processing_status: 'completed' }, '-updated_date', 20),
-        CustomTask.filter({ status: 'completed' }, '-updated_date', 20),
+        base44.entities.PerformanceData.filter({ status: 'completed' }, '-updated_date', 20),
+        base44.entities.Marketing.filter({ status: 'completed' }, '-updated_date', 20),
+        base44.entities.AthleteUpload.filter({ processing_status: 'completed' }, '-updated_date', 20),
+        base44.entities.CustomTask.filter({ status: 'completed' }, '-updated_date', 20),
     ]);
     const allCompleted = [
         ...(perf || []).map(i => ({...i, title: `Análise: vs ${i.opponent}`, type: 'performance', user_id: i.user_id, updated_date: i.updated_date})),
@@ -228,16 +229,16 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
     try {
       switch (type) {
         case 'performance':
-          await PerformanceData.update(taskId, { status: 'completed' });
+          await base44.entities.PerformanceData.update(taskId, { status: 'completed' });
           break;
         case 'marketing':
-          await Marketing.update(taskId, { status: 'completed' });
+          await base44.entities.Marketing.update(taskId, { status: 'completed' });
           break;
         case 'upload':
-          await AthleteUpload.update(taskId, { processing_status: 'completed' });
+          await base44.entities.AthleteUpload.update(taskId, { processing_status: 'completed' });
           break;
         case 'custom':
-          await CustomTask.update(taskId, { status: 'completed' });
+          await base44.entities.CustomTask.update(taskId, { status: 'completed' });
           break;
         default:
           throw new Error("Tipo de tarefa desconhecido");
@@ -261,7 +262,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
       return;
     }
     try {
-      await CustomTask.create(newTask);
+      await base44.entities.CustomTask.create(newTask);
       toast.success("Nova tarefa criada!");
       setShowTaskForm(false);
       setNewTask({
@@ -280,7 +281,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
 
   const getUserById = (userId) => users.find(u => u.id === userId);
 
-  const pendingPerformance = performanceData.filter(p => p.status === 'pending_analysis');
+  const pendingPerformance = base44.entities.PerformanceData.filter(p => p.status === 'pending_analysis');
   const pendingMarketing = marketingRequests.filter(m => m.status === 'pending');
   const pendingUploads = uploads.filter(u => u.processing_status === 'pending');
   const pendingCustom = customTasks.filter(t => t.status === 'pending');
@@ -430,3 +431,5 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
     </div>
   );
 }
+
+

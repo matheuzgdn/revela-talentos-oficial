@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Lead } from "@/entities/Lead";
-import { InternationalLead } from "@/entities/InternationalLead";
-import { SalesMaterial } from "@/entities/SalesMaterial";
-import { LeadInteraction } from "@/entities/LeadInteraction";
-import { UploadFile } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
+
+
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +18,7 @@ import { toast } from "sonner";
 import { AnimatePresence } from "framer-motion";
 
 const KanbanCard = ({ lead, index, onSelectLead }) => (
-  <Draggable draggableId={lead.id} index={index}>
+  <Draggable draggableId={base44.entities.Lead.id} index={index}>
     {(provided) => (
       <div
         ref={provided.innerRef}
@@ -30,14 +29,14 @@ const KanbanCard = ({ lead, index, onSelectLead }) => (
       >
         <Card className="bg-gray-800 hover:bg-gray-700/80 border-gray-700 transition-colors cursor-pointer">
           <CardContent className="p-3">
-            <p className="font-semibold text-white text-sm">{lead.full_name}</p>
-            <p className="text-xs text-gray-400">{lead.position || "Posição não informada"}</p>
+            <p className="font-semibold text-white text-sm">{base44.entities.Lead.full_name}</p>
+            <p className="text-xs text-gray-400">{base44.entities.Lead.position || "Posição não informada"}</p>
             <div className="flex items-center justify-between mt-2">
-              <Badge className={`text-xs ${lead.type === 'international' ? 'bg-sky-500/20 text-sky-300' : 'bg-green-500/20 text-green-300'}`}>
-                {lead.type === 'international' ? 'Internacional' : 'Geral'}
+              <Badge className={`text-xs ${base44.entities.Lead.type === 'international' ? 'bg-sky-500/20 text-sky-300' : 'bg-green-500/20 text-green-300'}`}>
+                {base44.entities.Lead.type === 'international' ? 'Internacional' : 'Geral'}
               </Badge>
-              {lead.priority && (
-                <Badge variant="destructive" className="capitalize">{lead.priority}</Badge>
+              {base44.entities.Lead.priority && (
+                <Badge variant="destructive" className="capitalize">{base44.entities.Lead.priority}</Badge>
               )}
             </div>
           </CardContent>
@@ -87,17 +86,17 @@ export default function AdminInternationalTab({ leads: initialLeads, internation
     const lead = combinedLeads.find(l => l.id === draggableId);
     const newStatus = destination.droppableId;
 
-    if (lead && lead.status !== newStatus) {
+    if (lead && base44.entities.Lead.status !== newStatus) {
       const originalLeads = [...combinedLeads];
       const updatedLeads = combinedLeads.map(l => l.id === draggableId ? { ...l, status: newStatus } : l);
       setCombinedLeads(updatedLeads);
 
       try {
-        const leadEntity = lead.type === 'general' ? Lead : InternationalLead;
+        const leadEntity = base44.entities.Lead.type === 'general' ? Lead : InternationalLead;
         await leadEntity.update(draggableId, { status: newStatus });
-        await LeadInteraction.create({
+        await base44.entities.LeadInteraction.create({
           lead_id: draggableId,
-          lead_type: lead.type,
+          lead_type: base44.entities.Lead.type,
           interaction_type: 'follow_up',
           notes: `Lead movido para a etapa: ${newStatus}`,
           sales_rep: 'Sistema' // Or current admin user email
@@ -106,7 +105,7 @@ export default function AdminInternationalTab({ leads: initialLeads, internation
         onRefresh();
       } catch (error) {
         setCombinedLeads(originalLeads);
-        toast.error("Erro ao mover o lead.");
+        toast.error("Erro ao mover o base44.entities.Lead.");
       }
     }
   };
@@ -124,8 +123,8 @@ export default function AdminInternationalTab({ leads: initialLeads, internation
     }
     
     try {
-        const { file_url } = await UploadFile({ file: materialFile });
-        await SalesMaterial.create({
+        const { file_url } = await base44.storage.uploadFile({ file: materialFile });
+        await base44.entities.SalesMaterial.create({
             ...materialForm,
             file_url,
             file_type: materialFile.type.split('/')[0] === 'video' ? 'video' : 'pdf',
@@ -141,9 +140,9 @@ export default function AdminInternationalTab({ leads: initialLeads, internation
 
   const filteredLeads = combinedLeads.filter(lead => {
     const searchMatch = !searchTerm || 
-      lead.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const priorityMatch = filterPriority === 'all' || lead.priority === filterPriority;
+      base44.entities.Lead.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      base44.entities.Lead.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const priorityMatch = filterPriority === 'all' || base44.entities.Lead.priority === filterPriority;
     return searchMatch && priorityMatch;
   });
   
@@ -233,7 +232,7 @@ export default function AdminInternationalTab({ leads: initialLeads, internation
                     </CardHeader>
                     <CardContent className="p-2 h-full overflow-y-auto" style={{maxHeight: '70vh'}}>
                       {filteredLeads.filter(l => l.status === stage.name).map((lead, index) => (
-                        <KanbanCard key={lead.id} lead={lead} index={index} onSelectLead={handleSelectLead} />
+                        <KanbanCard key={base44.entities.Lead.id} lead={lead} index={index} onSelectLead={handleSelectLead} />
                       ))}
                       {provided.placeholder}
                     </CardContent>
@@ -250,7 +249,7 @@ export default function AdminInternationalTab({ leads: initialLeads, internation
         {showLeadDetails && selectedLead && (
             <LeadDetailsModal 
                 lead={selectedLead} 
-                interactions={interactions.filter(i => i.lead_id === selectedLead.id)}
+                interactions={interactions.filter(i => i.lead_id === selectedbase44.entities.Lead.id)}
                 salesMaterials={salesMaterials}
                 onClose={() => setShowLeadDetails(false)}
                 onRefresh={onRefresh}
@@ -268,13 +267,13 @@ const LeadDetailsModal = ({ lead, interactions, salesMaterials, onClose, onRefre
     
     const handleSave = async () => {
         try {
-            const leadEntity = lead.type === 'general' ? Lead : InternationalLead;
-            await leadEntity.update(lead.id, editingLead);
+            const leadEntity = base44.entities.Lead.type === 'general' ? Lead : InternationalLead;
+            await leadEntity.update(base44.entities.Lead.id, editingLead);
             toast.success("Lead atualizado com sucesso!");
             setIsEditing(false);
             onRefresh();
         } catch(e) {
-            toast.error("Falha ao atualizar lead.");
+            toast.error("Falha ao atualizar base44.entities.Lead.");
         }
     }
 
@@ -301,10 +300,10 @@ const LeadDetailsModal = ({ lead, interactions, salesMaterials, onClose, onRefre
                 <DialogHeader className="p-6 border-b border-gray-800 flex-shrink-0">
                     <div className="flex justify-between items-start">
                         <div>
-                            <DialogTitle className="text-2xl">{lead.full_name}</DialogTitle>
-                            <p className="text-gray-400">{lead.email}</p>
+                            <DialogTitle className="text-2xl">{base44.entities.Lead.full_name}</DialogTitle>
+                            <p className="text-gray-400">{base44.entities.Lead.email}</p>
                         </div>
-                        <a href={`https://wa.me/${lead.phone}`} target="_blank" rel="noopener noreferrer" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2">
+                        <a href={`https://wa.me/${base44.entities.Lead.phone}`} target="_blank" rel="noopener noreferrer" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2">
                             <Phone className="w-4 h-4"/> WhatsApp
                         </a>
                     </div>
@@ -332,7 +331,7 @@ const LeadDetailsModal = ({ lead, interactions, salesMaterials, onClose, onRefre
                                 </div>
                                 <div className="mt-4">
                                     <label className="text-xs text-gray-400">Notas do Vendedor</label>
-                                    <Textarea value={editingLead.seller_notes} onChange={e => setEditingLead({...editingLead, seller_notes: e.target.value})} className="bg-gray-800 border-gray-700"/>
+                                    <Textarea value={editingbase44.entities.Lead.seller_notes} onChange={e => setEditingLead({...editingLead, seller_notes: e.target.value})} className="bg-gray-800 border-gray-700"/>
                                 </div>
                                 <div className="mt-6 flex justify-end gap-2">
                                     <Button variant="ghost" onClick={() => setIsEditing(false)}>Cancelar</Button>
@@ -347,15 +346,15 @@ const LeadDetailsModal = ({ lead, interactions, salesMaterials, onClose, onRefre
                                         <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}><Edit className="w-3 h-3 mr-2"/>Editar</Button>
                                     </div>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                        <DetailItem icon={<Briefcase/>} label="Posição" value={lead.position} />
-                                        <DetailItem icon={<Calendar/>} label="Nascimento" value={lead.birth_date ? new Date(lead.birth_date).toLocaleDateString() : ''} />
-                                        <DetailItem icon={<Target/>} label="Clube Atual" value={lead.club} />
-                                        <DetailItem icon={<Users/>} label="Altura/Peso" value={`${lead.height || '-'}cm / ${lead.weight || '-'}kg`} />
-                                        <DetailItem icon={<Star/>} label="Pé Preferido" value={lead.preferred_foot} />
-                                        <DetailItem icon={<Globe/>} label="País de Interesse" value={lead.preferred_country} />
+                                        <DetailItem icon={<Briefcase/>} label="Posição" value={base44.entities.Lead.position} />
+                                        <DetailItem icon={<Calendar/>} label="Nascimento" value={base44.entities.Lead.birth_date ? new Date(base44.entities.Lead.birth_date).toLocaleDateString() : ''} />
+                                        <DetailItem icon={<Target/>} label="Clube Atual" value={base44.entities.Lead.club} />
+                                        <DetailItem icon={<Users/>} label="Altura/Peso" value={`${base44.entities.Lead.height || '-'}cm / ${base44.entities.Lead.weight || '-'}kg`} />
+                                        <DetailItem icon={<Star/>} label="Pé Preferido" value={base44.entities.Lead.preferred_foot} />
+                                        <DetailItem icon={<Globe/>} label="País de Interesse" value={base44.entities.Lead.preferred_country} />
                                         <div className="col-span-full">
                                             <DetailItem icon={<FileText/>} label="DVD/Vídeo URL">
-                                                <a href={lead.video_url} target="_blank" rel="noreferrer" className="text-sky-400 hover:underline break-all">{lead.video_url}</a>
+                                                <a href={base44.entities.Lead.video_url} target="_blank" rel="noreferrer" className="text-sky-400 hover:underline break-all">{base44.entities.Lead.video_url}</a>
                                             </DetailItem>
                                         </div>
                                     </div>
@@ -363,17 +362,17 @@ const LeadDetailsModal = ({ lead, interactions, salesMaterials, onClose, onRefre
                                 <Card className="bg-gray-800/50 border-gray-700 p-6">
                                     <h4 className="font-bold text-lg mb-4">Financeiro & Venda</h4>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                        <DetailItem icon={<DollarSign/>} label="Valor Total" value={`R$ ${lead.total_value || 0}`} />
-                                        <DetailItem icon={<CheckCircle/>} label="Valor Pago" value={`R$ ${lead.paid_value || 0}`} />
-                                        <DetailItem icon={<AlertCircle/>} label="Valor Restante" value={`R$ ${lead.total_value - lead.paid_value || 0}`} />
-                                        <DetailItem icon={<TrendingUp/>} label="Status Pagamento" value={lead.payment_status} />
-                                        <DetailItem icon={<Star/>} label="Eurocamp" value={lead.will_participate_eurocamp ? 'Sim' : 'Não'} />
-                                        <DetailItem icon={<Award/>} label="Campeonato EC10" value={lead.will_participate_ec10_championship ? 'Sim' : 'Não'} />
+                                        <DetailItem icon={<DollarSign/>} label="Valor Total" value={`R$ ${base44.entities.Lead.total_value || 0}`} />
+                                        <DetailItem icon={<CheckCircle/>} label="Valor Pago" value={`R$ ${base44.entities.Lead.paid_value || 0}`} />
+                                        <DetailItem icon={<AlertCircle/>} label="Valor Restante" value={`R$ ${base44.entities.Lead.total_value - base44.entities.Lead.paid_value || 0}`} />
+                                        <DetailItem icon={<TrendingUp/>} label="Status Pagamento" value={base44.entities.Lead.payment_status} />
+                                        <DetailItem icon={<Star/>} label="Eurocamp" value={base44.entities.Lead.will_participate_eurocamp ? 'Sim' : 'Não'} />
+                                        <DetailItem icon={<Award/>} label="Campeonato EC10" value={base44.entities.Lead.will_participate_ec10_championship ? 'Sim' : 'Não'} />
                                         <div className="col-span-full">
-                                            <DetailItem icon={<FileText/>} label="Notas do Vendedor" value={lead.seller_notes} />
+                                            <DetailItem icon={<FileText/>} label="Notas do Vendedor" value={base44.entities.Lead.seller_notes} />
                                         </div>
                                          <div className="col-span-full">
-                                            <DetailItem icon={<Trash2/>} label="Motivo Desistência" value={lead.quit_reason} />
+                                            <DetailItem icon={<Trash2/>} label="Motivo Desistência" value={base44.entities.Lead.quit_reason} />
                                         </div>
                                     </div>
                                </Card>
@@ -402,3 +401,6 @@ const LeadDetailsModal = ({ lead, interactions, salesMaterials, onClose, onRefre
         </Dialog>
     );
 };
+
+
+

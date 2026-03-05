@@ -1,3 +1,4 @@
+import { base44 } from '@/api/base44Client';
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -8,7 +9,7 @@ import { Plus, UserPlus, Loader2, DollarSign, MessageSquare, Instagram, MapPin }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
-import { CRMLead } from '@/entities/CRMLead';
+
 import CreatePipelineModal from './CreatePipelineModal';
 import LeadDetailsModal from './LeadDetailsModal';
 import CreateLeadModal from './CreateLeadModal';
@@ -164,7 +165,7 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
     }
 
     try {
-      await CRMLead.update(draggableId, { current_stage: destination.droppableId });
+      await base44.entities.CRMLead.update(draggableId, { current_stage: destination.droppableId });
       toast.success("Lead movido com sucesso!");
       onRefresh();
     } catch (error) {
@@ -190,7 +191,7 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
         sales_rep_id: salesRepId,
         value: 0
       };
-      await CRMLead.create(newLeadData);
+      await base44.entities.CRMLead.create(newLeadData);
       toast.success(`${rawLead.full_name} atribuído com sucesso!`);
       onRefresh();
     } catch (error) {
@@ -204,7 +205,7 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
       return false;
     }
     try {
-        await CRMLead.create({
+        await base44.entities.CRMLead.create({
             ...leadData,
             pipeline_id: activePipelineId,
             current_stage: pipelines.find(p => p.id === activePipelineId)?.stages[0] || 'Novo',
@@ -317,3 +318,4 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
     </>
   );
 }
+

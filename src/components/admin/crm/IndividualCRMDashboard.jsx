@@ -1,11 +1,12 @@
+import { base44 } from '@/api/base44Client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { CRMPipeline } from '@/entities/CRMPipeline';
-import { CRMLead } from '@/entities/CRMLead';
-import { SalesMaterial } from '@/entities/SalesMaterial';
-import { Event } from '@/entities/Event';
-import { CustomTask } from '@/entities/CustomTask';
+
+
+
+
+
 import { Loader2, ArrowLeft, LayoutGrid, Briefcase, Calendar, BarChart } from 'lucide-react';
 import { toast } from 'sonner';
 import PipelineView from './PipelineView';
@@ -26,11 +27,11 @@ export default function IndividualCRMDashboard({ salesRep, onBack, services, una
     setIsLoading(true);
     try {
       const [pipelinesData, leadsData, materialsData, eventsData, tasksData] = await Promise.all([
-        CRMPipeline.filter({ sales_rep_id: salesRep.id }),
-        CRMLead.filter({ sales_rep_id: salesRep.id }),
-        SalesMaterial.list(),
-        Event.filter({ $or: [{ target_users: [] }, { target_users: salesRep.id }] }),
-        CustomTask.filter({ assigned_user_id: salesRep.id })
+        base44.entities.CRMPipeline.filter({ sales_rep_id: salesRep.id }),
+        base44.entities.CRMLead.filter({ sales_rep_id: salesRep.id }),
+        base44.entities.SalesMaterial.list(),
+        base44.entities.Event.filter({ $or: [{ target_users: [] }, { target_users: salesRep.id }] }),
+        base44.entities.CustomTask.filter({ assigned_user_id: salesRep.id })
       ]);
       setPipelines(pipelinesData || []);
       setLeads(leadsData || []);
@@ -99,3 +100,4 @@ export default function IndividualCRMDashboard({ salesRep, onBack, services, una
     </div>
   );
 }
+

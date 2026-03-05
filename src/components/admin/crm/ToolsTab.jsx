@@ -1,3 +1,4 @@
+import { base44 } from '@/api/base44Client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -8,8 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { SalesMaterial } from '@/entities/SalesMaterial';
-import { UploadFile } from '@/integrations/Core';
+
+
 import { toast } from 'sonner';
 import {
   FileText, MessageSquare, Send, Download, Plus,
@@ -45,8 +46,8 @@ const DocumentLibrary = ({ materials, onRefresh, salesRep }) => {
     }
     setIsUploading(true);
     try {
-      const { file_url } = await UploadFile({ file: newMaterial.file });
-      await SalesMaterial.create({
+      const file_url = await base44.storage.uploadFile(newMaterial.file);
+      await base44.entities.SalesMaterial.create({
         title: newMaterial.title,
         description: newMaterial.description,
         file_url: file_url,
@@ -67,7 +68,7 @@ const DocumentLibrary = ({ materials, onRefresh, salesRep }) => {
 
   const handleDownload = async (material) => {
     try {
-      await SalesMaterial.update(material.id, {
+      await base44.entities.SalesMaterial.update(material.id, {
         usage_count: (material.usage_count || 0) + 1
       });
       window.open(material.file_url, '_blank');
@@ -216,7 +217,7 @@ export default function ToolsTab({ materials: initialMaterials, salesRep, onNavi
 
   const handleRefresh = useCallback(async () => {
     try {
-      const updatedMaterials = await SalesMaterial.list('-created_date'); // Assuming list accepts sort
+      const updatedMaterials = await base44.entities.SalesMaterial.list('-created_date'); // Assuming list accepts sort
       setAllMaterials(updatedMaterials || []);
     } catch (error) {
       toast.error('Erro ao recarregar materiais.');
@@ -263,3 +264,5 @@ export default function ToolsTab({ materials: initialMaterials, salesRep, onNavi
     </div>
   );
 }
+
+

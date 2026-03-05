@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { User as UserEntity } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
 // Versículos pré-definidos como fallback
@@ -466,3 +466,4 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
     </div>
   );
 }
+

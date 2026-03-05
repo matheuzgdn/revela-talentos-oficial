@@ -1,6 +1,7 @@
+import { base44 } from '@/api/base44Client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { Event } from '@/entities/Event';
+
 import { toast } from 'sonner';
 import { format, addMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -100,10 +101,10 @@ export default function CalendarTab({ events, leads, salesRepId, onRefresh }) {
   const handleSaveEvent = async (eventData) => {
     try {
       if (selectedEvent) {
-        await Event.update(selectedEvent.id, eventData);
+        await base44.entities.Event.update(selectedEvent.id, eventData);
         toast.success("Evento atualizado!");
       } else {
-        await Event.create({ ...eventData, assigned_to_id: salesRepId });
+        await base44.entities.Event.create({ ...eventData, assigned_to_id: salesRepId });
         toast.success("Evento criado!");
       }
       onRefresh();
@@ -155,3 +156,4 @@ export default function CalendarTab({ events, leads, salesRepId, onRefresh }) {
     </div>
   );
 }
+

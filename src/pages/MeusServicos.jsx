@@ -1,19 +1,18 @@
 
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
-import { UserSubscription } from "@/entities/UserSubscription";
-import { SubscriptionPackage } from "@/entities/SubscriptionPackage";
-import { UploadFile } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
+
+
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Settings, 
-  Crown, 
-  Calendar, 
+import {
+  Settings,
+  Crown,
+  Calendar,
   CreditCard,
   User as UserIcon,
   Mail,
@@ -47,7 +46,7 @@ export default function MeusServicosPage() {
   const loadUserData = async () => {
     setIsLoading(true);
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       setUser(currentUser);
       setProfileData({
         full_name: currentUser.full_name || "",
@@ -58,18 +57,18 @@ export default function MeusServicosPage() {
       });
 
       // Load subscription data
-      const subscriptions = await UserSubscription.filter({ user_id: currentUser.id });
+      const subscriptions = await base44.entities.UserSubscription.filter({ user_id: currentUser.id });
       if (subscriptions.length > 0) {
         const sub = subscriptions[0];
         setUserSubscription(sub);
         if (sub.package_id) {
-          const pkg = await SubscriptionPackage.get(sub.package_id);
+          const pkg = await base44.entities.SubscriptionPackage.get(sub.package_id);
           setCurrentPackage(pkg);
         }
       }
 
       // Load all available packages
-      const allPackages = await SubscriptionPackage.filter({ is_active: true });
+      const allPackages = await base44.entities.SubscriptionPackage.filter({ is_active: true });
       setAvailablePackages(allPackages);
 
     } catch (error) {
@@ -106,7 +105,7 @@ export default function MeusServicosPage() {
 
     setIsUploadingPhoto(true);
     try {
-      const { file_url } = await UploadFile({ file });
+      const { file_url } = await base44.storage.uploadFile({ file });
       await User.updateMyUserData({ profile_picture_url: file_url });
       setUser(prev => ({ ...prev, profile_picture_url: file_url }));
       toast.success("Foto de perfil atualizada com sucesso!");
@@ -116,7 +115,7 @@ export default function MeusServicosPage() {
     }
     setIsUploadingPhoto(false);
   };
-  
+
   const getBillingPeriodLabel = (period) => {
     const labels = {
       monthly: '/mês',
@@ -126,7 +125,7 @@ export default function MeusServicosPage() {
     };
     return labels[period] || '';
   }
-  
+
   const getIconComponent = (iconName) => {
     const icons = { Star, Crown, Package };
     return icons[iconName] || Package;
@@ -145,14 +144,14 @@ export default function MeusServicosPage() {
       {/* Hero Section */}
       <section className="relative h-64 flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img 
+          <img
             src="https://static.wixstatic.com/media/933cdd_3b676d68d7c645bea831a0717eccbe12~mv2.png"
             alt="Meus Serviços"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
         </div>
-        
+
         <div className="relative z-10 px-6 md:px-12 max-w-7xl mx-auto w-full">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -191,7 +190,7 @@ export default function MeusServicosPage() {
                         {user?.full_name?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
-                    
+
                     {/* Photo Upload Button */}
                     <div className="absolute -bottom-2 -right-2">
                       <input
@@ -204,9 +203,8 @@ export default function MeusServicosPage() {
                       />
                       <label
                         htmlFor="photo-upload"
-                        className={`flex items-center justify-center w-8 h-8 bg-purple-600 hover:bg-purple-700 rounded-full cursor-pointer transition-colors shadow-lg ${
-                          isUploadingPhoto ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
+                        className={`flex items-center justify-center w-8 h-8 bg-purple-600 hover:bg-purple-700 rounded-full cursor-pointer transition-colors shadow-lg ${isUploadingPhoto ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
                       >
                         {isUploadingPhoto ? (
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -216,10 +214,10 @@ export default function MeusServicosPage() {
                       </label>
                     </div>
                   </div>
-                  
+
                   <CardTitle className="text-white">{user?.full_name}</CardTitle>
                   {currentPackage && (
-                    <Badge 
+                    <Badge
                       className={`bg-gradient-to-r ${currentPackage.color_gradient || 'from-gray-500 to-gray-600'} text-white`}
                     >
                       <Package className="w-3 h-3 mr-1" />
@@ -227,7 +225,7 @@ export default function MeusServicosPage() {
                     </Badge>
                   )}
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   {isEditing ? (
                     <div className="space-y-4">
@@ -296,8 +294,8 @@ export default function MeusServicosPage() {
                           <span className="text-sm">{user.club}</span>
                         </div>
                       )}
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         onClick={() => setIsEditing(true)}
                         className="w-full mt-4"
                       >
@@ -312,7 +310,7 @@ export default function MeusServicosPage() {
 
             {/* Módulos Ativos Card */}
             {user && (
-               <motion.div
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -325,24 +323,24 @@ export default function MeusServicosPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                     <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                           <Star className="w-5 h-5 text-yellow-400"/>
-                           <span className="text-white font-medium">Revela Talentos</span>
-                        </div>
-                        <Badge className={user.has_revela_talentos_access ? "bg-green-600" : "bg-gray-600"}>
-                           {user.has_revela_talentos_access ? "Ativo" : "Inativo"}
-                        </Badge>
-                     </div>
-                     <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
-                        <div className="flex items-center gap-3">
-                           <TrendingUp className="w-5 h-5 text-green-400"/>
-                           <span className="text-white font-medium">Plano de Carreira</span>
-                        </div>
-                        <Badge className={user.has_plano_carreira_access ? "bg-green-600" : "bg-gray-600"}>
-                           {user.has_plano_carreira_access ? "Ativo" : "Inativo"}
-                        </Badge>
-                     </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Star className="w-5 h-5 text-yellow-400" />
+                        <span className="text-white font-medium">Revela Talentos</span>
+                      </div>
+                      <Badge className={user.has_revela_talentos_access ? "bg-green-600" : "bg-gray-600"}>
+                        {user.has_revela_talentos_access ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <TrendingUp className="w-5 h-5 text-green-400" />
+                        <span className="text-white font-medium">Plano de Carreira</span>
+                      </div>
+                      <Badge className={user.has_plano_carreira_access ? "bg-green-600" : "bg-gray-600"}>
+                        {user.has_plano_carreira_access ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -366,11 +364,11 @@ export default function MeusServicosPage() {
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300">Status:</span>
-                      <Badge className="bg-green-600 text-white capitalize">{userSubscription.status}</Badge>
+                      <Badge className="bg-green-600 text-white capitalize">{base44.entities.UserSubscription.status}</Badge>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300">Próxima renovação:</span>
-                      <span className="text-white">{userSubscription.renewal_date ? new Date(userSubscription.renewal_date).toLocaleDateString('pt-BR') : "N/A"}</span>
+                      <span className="text-white">{base44.entities.UserSubscription.renewal_date ? new Date(base44.entities.UserSubscription.renewal_date).toLocaleDateString('pt-BR') : "N/A"}</span>
                     </div>
                     <Button variant="outline" className="w-full">
                       <CreditCard className="w-4 h-4 mr-2" />
@@ -401,7 +399,7 @@ export default function MeusServicosPage() {
                 {availablePackages.map((plan, index) => {
                   const Icon = getIconComponent(plan.icon);
                   const isCurrent = currentPackage?.id === plan.id;
-                  
+
                   return (
                     <motion.div
                       key={plan.id}
@@ -410,11 +408,10 @@ export default function MeusServicosPage() {
                       transition={{ delay: 0.4 + index * 0.1 }}
                       whileHover={{ scale: 1.02 }}
                     >
-                      <Card className={`relative border-2 transition-all ${
-                        isCurrent
-                          ? 'border-green-500 bg-gray-900/70' 
+                      <Card className={`relative border-2 transition-all ${isCurrent
+                          ? 'border-green-500 bg-gray-900/70'
                           : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
-                      }`}>
+                        }`}>
                         {plan.is_popular && (
                           <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                             <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
@@ -423,7 +420,7 @@ export default function MeusServicosPage() {
                             </Badge>
                           </div>
                         )}
-                        
+
                         <CardHeader className="text-center pb-4">
                           <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${plan.color_gradient} flex items-center justify-center mx-auto mb-4`}>
                             <Icon className="w-8 h-8 text-white" />
@@ -434,7 +431,7 @@ export default function MeusServicosPage() {
                             <span className="text-gray-400">{getBillingPeriodLabel(plan.billing_period)}</span>
                           </div>
                         </CardHeader>
-                        
+
                         <CardContent className="space-y-4">
                           <ul className="space-y-2">
                             {plan.features.map((feature, featureIndex) => (
@@ -444,14 +441,14 @@ export default function MeusServicosPage() {
                               </li>
                             ))}
                           </ul>
-                          
+
                           {isCurrent ? (
                             <Button disabled className="w-full bg-green-600">
                               <Check className="w-4 h-4 mr-2" />
                               Plano Atual
                             </Button>
                           ) : (
-                            <Button 
+                            <Button
                               className={`w-full bg-gradient-to-r ${plan.color_gradient} hover:opacity-90`}
                             >
                               {currentPackage ? 'Mudar Plano' : 'Selecionar Plano'}
@@ -470,3 +467,7 @@ export default function MeusServicosPage() {
     </div>
   );
 }
+
+
+
+

@@ -1,6 +1,7 @@
+import { base44 } from '@/api/base44Client';
 import React, { useState, useEffect } from 'react';
-import { Seletiva } from '@/entities/Seletiva';
-import { Content } from '@/entities/Content';
+
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Video, Trophy, Clock, CheckCircle, AlertCircle, Star } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
@@ -29,8 +30,8 @@ export default function RevelaDashboard() {
     setIsLoading(true);
     try {
       const [submissions, contents] = await Promise.all([
-        Seletiva.list('-created_date').catch(() => []),
-        Content.list('-created_date').catch(() => [])
+        base44.entities.Seletiva.list('-created_date').catch(() => []),
+        base44.entities.Content.list('-created_date').catch(() => [])
       ]);
 
       // Calcular estatísticas de submissões

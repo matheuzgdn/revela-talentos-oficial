@@ -1,5 +1,6 @@
+import { base44 } from '@/api/base44Client';
 import React, { useState, useEffect, useCallback } from 'react';
-import { PlatformSettings } from '@/entities/PlatformSettings';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -62,7 +63,7 @@ export default function AdminPlatformSettingsTab() {
   const loadSettings = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allSettings = await PlatformSettings.list();
+      const allSettings = await base44.entities.PlatformSettings.list();
       const settingsMap = {};
       
       allSettings.forEach(setting => {
@@ -74,7 +75,7 @@ export default function AdminPlatformSettingsTab() {
 
       for (const defaultSetting of defaultSettings()) {
         if (!settingsMap[defaultSetting.key]) {
-          const newSetting = await PlatformSettings.create({
+          const newSetting = await base44.entities.PlatformSettings.create({
             setting_key: defaultSetting.key,
             setting_value: defaultSetting.defaultValue,
             setting_type: defaultSetting.type,
@@ -107,14 +108,14 @@ export default function AdminPlatformSettingsTab() {
       const stringValue = typeof value === 'boolean' ? value.toString() : value;
       
       if (setting && setting.id) {
-        await PlatformSettings.update(setting.id, {
+        await base44.entities.PlatformSettings.update(setting.id, {
           setting_value: stringValue
         });
       } else {
         // Se a configuração não existir, crie-a
         const defaultConfig = defaultSettings().find(s => s.key === key);
         if (defaultConfig) {
-           await PlatformSettings.create({
+           await base44.entities.PlatformSettings.create({
             setting_key: key,
             setting_value: stringValue,
             setting_type: defaultConfig.type,

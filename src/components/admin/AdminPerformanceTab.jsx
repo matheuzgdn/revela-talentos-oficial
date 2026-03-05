@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { PerformanceData } from "@/entities/PerformanceData";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
   // Agrupar performances por usuário
   const performancesByUser = useMemo(() => {
     const grouped = {};
-    performanceData.forEach(performance => {
+    base44.entities.PerformanceData.forEach(performance => {
       const userId = performance.user_id;
       if (!grouped[userId]) {
         grouped[userId] = [];
@@ -84,10 +84,10 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
       }
 
       if (editingPerformance) {
-        await PerformanceData.update(editingPerformance.id, payload);
+        await base44.entities.PerformanceData.update(editingPerformance.id, payload);
         toast.success("Performance atualizada com sucesso!");
       } else {
-        await PerformanceData.create(payload);
+        await base44.entities.PerformanceData.create(payload);
         toast.success("Performance adicionada com sucesso!");
       }
       resetForm();
@@ -377,7 +377,7 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
         })}
       </div>
 
-      {performanceData.length === 0 && (
+      {base44.entities.PerformanceData.length === 0 && (
         <div className="text-center py-12 text-gray-500">
           <BarChart3 className="w-16 h-16 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-white mb-2">Nenhuma performance registrada</h3>

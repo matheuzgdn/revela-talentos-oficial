@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from "react";
-import { ChatMessage } from "@/entities/ChatMessage";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -73,7 +73,7 @@ export default function AdminMessagesTab({ messages, users, onRefresh }) {
 
     setIsSending(true);
     try {
-      await ChatMessage.create({
+      await base44.entities.ChatMessage.create({
         sender_id: replyAs,
         receiver_id: selectedConversation.user.id,
         conversation_id: selectedConversation.id,
@@ -237,3 +237,4 @@ export default function AdminMessagesTab({ messages, users, onRefresh }) {
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { AthleteUpload } from "@/entities/AthleteUpload";
-import { PerformanceData } from "@/entities/PerformanceData";
+import { base44 } from "@/api/base44Client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,7 @@ export default function RegisterPerformanceForm({ user, onNewData }) {
   useEffect(() => {
     const fetchUploads = async () => {
       if (user?.id) {
-        const userUploads = await AthleteUpload.filter({ user_id: user.id, file_type: 'video' });
+        const userUploads = await base44.entities.AthleteUpload.filter({ user_id: user.id, file_type: 'video' });
         setUploads(userUploads);
       }
     };
@@ -39,7 +39,7 @@ export default function RegisterPerformanceForm({ user, onNewData }) {
     }
     setIsLoading(true);
     try {
-      await PerformanceData.create({
+      await base44.entities.PerformanceData.create({
         user_id: user.id,
         ...formData,
         minutes_played: parseInt(formData.minutes_played),
@@ -118,3 +118,5 @@ export default function RegisterPerformanceForm({ user, onNewData }) {
     </Card>
   );
 }
+
+

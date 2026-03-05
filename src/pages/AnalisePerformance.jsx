@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
-import { PerformanceData } from "@/entities/PerformanceData";
+import { base44 } from "@/api/base44Client";
+
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,11 +31,11 @@ export default function AnalisePerformancePage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       setUser(currentUser);
 
       if (currentUser) {
-        const userPerformance = await PerformanceData.filter(
+        const userPerformance = await base44.entities.PerformanceData.filter(
           { user_id: currentUser.id },
           "-game_date",
           50
@@ -53,7 +53,7 @@ export default function AnalisePerformancePage() {
   };
 
   const completedAnalyses = performanceData.filter(d => d.status === 'completed' && d.game_date);
-  
+
   const totalGames = completedAnalyses.length;
   const totalGoals = completedAnalyses.reduce((sum, game) => sum + (game.goals || 0), 0);
   const totalAssists = completedAnalyses.reduce((sum, game) => sum + (game.assists || 0), 0);
@@ -91,7 +91,7 @@ export default function AnalisePerformancePage() {
             Faça login para acessar sua Análise de Performance.
           </p>
           <Button asChild className="bg-gradient-to-r from-blue-600 to-cyan-500">
-             <Link to={createPageUrl("Hub")}>Voltar ao Hub</Link>
+            <Link to={createPageUrl("Hub")}>Voltar ao Hub</Link>
           </Button>
         </div>
       </div>
@@ -107,10 +107,10 @@ export default function AnalisePerformancePage() {
           className="flex items-center justify-between"
         >
           <div className="flex items-center gap-4">
-             <Button asChild variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                <Link to={createPageUrl("PlanoCarreira")}>
-                  <ArrowLeft className="w-6 h-6" />
-                </Link>
+            <Button asChild variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+              <Link to={createPageUrl("PlanoCarreira")}>
+                <ArrowLeft className="w-6 h-6" />
+              </Link>
             </Button>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-white">Análise de Performance</h1>
@@ -162,8 +162,8 @@ export default function AnalisePerformancePage() {
               <Card className="bg-black border border-blue-400/30">
                 <CardHeader>
                   <CardTitle className="text-blue-400 flex items-center gap-3">
-                     <TrendingUp className="w-6 h-6" />
-                     Evolução da Performance
+                    <TrendingUp className="w-6 h-6" />
+                    Evolução da Performance
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -195,18 +195,18 @@ export default function AnalisePerformancePage() {
         )}
 
         {performanceData.length > 0 && (
-           <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h2 className="text-2xl font-bold text-white mb-4">Histórico de Partidas</h2>
-              <div className="space-y-4">
-                {performanceData.map((game) => (
-                  <PerformanceHistoryItem key={game.id} game={game} />
-                ))}
-              </div>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <h2 className="text-2xl font-bold text-white mb-4">Histórico de Partidas</h2>
+            <div className="space-y-4">
+              {performanceData.map((game) => (
+                <PerformanceHistoryItem key={game.id} game={game} />
+              ))}
+            </div>
+          </motion.div>
         )}
       </div>
     </div>

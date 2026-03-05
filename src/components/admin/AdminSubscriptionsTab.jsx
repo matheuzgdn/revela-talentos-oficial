@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { UserSubscription } from "@/entities/UserSubscription";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +41,7 @@ export default function AdminSubscriptionsTab({ subscriptions, users, packages, 
 
   const handleSaveSubscription = async () => {
     try {
-      await UserSubscription.update(editingSubscription.id, editForm);
+      await base44.entities.UserSubscription.update(editingSubscription.id, editForm);
       toast.success("Assinatura atualizada com sucesso!");
       setEditingSubscription(null);
       onRefresh();
@@ -242,3 +242,4 @@ export default function AdminSubscriptionsTab({ subscriptions, users, packages, 
     </div>
   );
 }
+

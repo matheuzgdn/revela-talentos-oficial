@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Event } from "@/entities/Event";
+import { base44 } from "@/api/base44Client";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import { MapPin, Calendar, Map as MapIcon, Trophy, Globe, Sparkles, Loader2 } from 'lucide-react';
 
@@ -59,7 +59,7 @@ export default function Eventos() {
 
     const loadEvents = useCallback(async () => {
         try {
-            const data = await Event.list('-start_date');
+            const data = await base44.entities.Event.list('-start_date');
             setDbEvents(data?.filter((e) => e.is_active) || []);
         } catch {
             setDbEvents([]);
@@ -273,3 +273,4 @@ export default function Eventos() {
         </div>
     );
 }
+

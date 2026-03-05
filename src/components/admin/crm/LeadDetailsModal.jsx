@@ -1,3 +1,4 @@
+import { base44 } from '@/api/base44Client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { UploadFile } from '@/integrations/Core';
-import { CRMLead } from '@/entities/CRMLead';
-import { CustomTask } from '@/entities/CustomTask';
+
+
+
 import { toast } from 'sonner';
 import { 
   User, DollarSign, Edit2, Plus, Loader2, Paperclip, Send, Trash2, 
@@ -379,7 +380,7 @@ const TasksTab = ({ lead }) => {
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   const loadTasks = useCallback(async () => {
-    const relatedTasks = await CustomTask.filter({ related_lead_id: lead.id, related_lead_type: 'Lead' });
+    const relatedTasks = await base44.entities.CustomTask.filter({ related_lead_id: lead.id, related_lead_type: 'Lead' });
     setTasks(relatedTasks || []);
   }, [lead.id]);
 
@@ -387,14 +388,14 @@ const TasksTab = ({ lead }) => {
 
   const handleAddTask = async () => {
     if (!newTaskTitle.trim()) return;
-    await CustomTask.create({ title: newTaskTitle, related_lead_id: lead.id, related_lead_type: 'Lead', status: 'pending' });
+    await base44.entities.CustomTask.create({ title: newTaskTitle, related_lead_id: lead.id, related_lead_type: 'Lead', status: 'pending' });
     setNewTaskTitle('');
     loadTasks();
   };
   
   const toggleTask = async (task) => {
     const newStatus = task.status === 'completed' ? 'pending' : 'completed';
-    await CustomTask.update(task.id, { status: newStatus });
+    await base44.entities.CustomTask.update(task.id, { status: newStatus });
     loadTasks();
   };
 
@@ -462,7 +463,7 @@ export default function LeadDetailsModal({ lead, isOpen, onClose, onUpdate }) {
     setIsSaving(true);
     try {
       const { id, ...updateData } = currentLead;
-      await CRMLead.update(id, updateData);
+      await base44.entities.CRMLead.update(id, updateData);
       onUpdate();
       toast.success("Lead salvo com sucesso!");
     } catch(e) {
@@ -558,3 +559,4 @@ export default function LeadDetailsModal({ lead, isOpen, onClose, onUpdate }) {
     </Dialog>
   );
 }
+

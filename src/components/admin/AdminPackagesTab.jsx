@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SubscriptionPackage } from "@/entities/SubscriptionPackage";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,10 +75,10 @@ export default function AdminPackagesTab({ packages, onRefresh }) {
 
     try {
       if (editingPackage) {
-        await SubscriptionPackage.update(editingPackage.id, payload);
+        await base44.entities.SubscriptionPackage.update(editingPackage.id, payload);
         toast.success("Pacote atualizado com sucesso!");
       } else {
-        await SubscriptionPackage.create(payload);
+        await base44.entities.SubscriptionPackage.create(payload);
         toast.success("Pacote criado com sucesso!");
       }
       resetAndRefresh();
@@ -91,7 +91,7 @@ export default function AdminPackagesTab({ packages, onRefresh }) {
   const handleDelete = async (packageId) => {
     if (window.confirm("Tem certeza que deseja apagar este pacote? Esta ação não pode ser desfeita.")) {
       try {
-        await SubscriptionPackage.delete(packageId);
+        await base44.entities.SubscriptionPackage.delete(packageId);
         toast.success("Pacote apagado com sucesso!");
         onRefresh();
       } catch (error) {

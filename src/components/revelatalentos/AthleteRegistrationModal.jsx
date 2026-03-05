@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { base44 } from '@/api/base44Client';
-import { Seletiva } from '@/entities/Seletiva';
+
 import { toast } from 'sonner';
 import { Loader2, CheckCircle, User as UserIcon, Activity, Video, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -109,7 +109,7 @@ export default function AthleteRegistrationModal({ isOpen, onClose, user, onComp
       });
 
       // Criar registro na Seletiva
-      await Seletiva.create({
+      await base44.entities.Seletiva.create({
         user_id: user.id,
         full_name: formData.full_name,
         birth_date: formData.birth_date,

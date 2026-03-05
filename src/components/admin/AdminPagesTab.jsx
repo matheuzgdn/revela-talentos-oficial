@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LeadPage } from "@/entities/LeadPage";
+import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +38,7 @@ export default function AdminPagesTab() {
 
   const loadPages = async () => {
     try {
-      const allPages = await LeadPage.list('-created_date');
+      const allPages = await base44.entities.LeadPage.list('-created_date');
       setPages(allPages || []);
     } catch (error) {
       console.error('Erro ao carregar páginas:', error);
@@ -72,7 +72,7 @@ export default function AdminPagesTab() {
   const handleDelete = async (pageId) => {
     if (window.confirm("Tem certeza que deseja excluir esta página?")) {
       try {
-        await LeadPage.delete(pageId);
+        await base44.entities.LeadPage.delete(pageId);
         toast.success("Página excluída!");
         loadPages();
       } catch (error) {
@@ -84,10 +84,10 @@ export default function AdminPagesTab() {
   const handleSubmit = async () => {
     try {
       if (editingPage) {
-        await LeadPage.update(editingPage.id, formData);
+        await base44.entities.LeadPage.update(editingPage.id, formData);
         toast.success("Página atualizada!");
       } else {
-        await LeadPage.create(formData);
+        await base44.entities.LeadPage.create(formData);
         toast.success("Página criada!");
       }
       setShowModal(false);

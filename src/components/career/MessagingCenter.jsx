@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Send, Loader2, MessageSquare, ArrowLeft } from "lucide-react";
-import { ChatMessage } from "@/entities/ChatMessage";
+import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
 // Função unificada para gerar ID de conversa
@@ -39,7 +39,7 @@ export default function MessagingCenter({ user }) {
     }
     setIsLoadingMessages(true);
     try {
-      const messages = await ChatMessage.filter(
+      const messages = await base44.entities.ChatMessage.filter(
         { conversation_id: conversationId },
         "created_date"
       );
@@ -64,7 +64,7 @@ export default function MessagingCenter({ user }) {
 
     setIsSending(true);
     try {
-      await ChatMessage.create({
+      await base44.entities.ChatMessage.create({
         sender_id: user.id,
         receiver_id: selectedContactId,
         conversation_id: conversationId,

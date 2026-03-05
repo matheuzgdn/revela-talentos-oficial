@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { User } from "@/entities/User";
+
 import { base44 } from "@/api/base44Client";
 import {
   Star,
@@ -26,7 +26,7 @@ export default function HubPage() {
 
   const loadData = async () => {
     try {
-      const currentUser = await User.me().catch(() => null);
+      const currentUser = await base44.auth.me().catch(() => null);
       setUser(currentUser);
 
       // Load notifications in background only if needed
