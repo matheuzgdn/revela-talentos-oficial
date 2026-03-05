@@ -1106,29 +1106,28 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     className="data-[state=checked]:bg-red-500" />
                 </div>
 
-                {/* Botão: Área de Membros */}
+                {/* Toggle: Área de Membros */}
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-[#00a8e1]/10 to-blue-500/10 border border-[#00a8e1]/30 rounded-xl">
                   <Label className="flex items-center gap-3 text-white font-medium">
-                    <div className="w-5 h-5 flex items-center justify-center text-[#00a8e1]">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><rect width="18" height="18" x="3" y="3" rx="2" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>
-                    </div>
+                    {editingUser.has_zona_membros_access
+                      ? <Unlock className="w-5 h-5 text-[#00a8e1]" />
+                      : <Lock className="w-5 h-5 text-gray-400" />
+                    }
                     <div>
                       <span className="block">Área de Membros</span>
                       <span className="text-xs text-gray-400 font-normal">
-                        Zona exclusiva de conteúdo para membros EC10
+                        {editingUser.has_zona_membros_access
+                          ? "Ativo — usuário é direcionado à Zona de Membros"
+                          : "Inativo — usuário acessa normalmente"}
                       </span>
                     </div>
                   </Label>
-                  <a
-                    href="?page=ZonaMembros"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 bg-[#00a8e1] hover:bg-[#0090c5] text-black font-bold text-sm rounded-xl transition-all duration-200 hover:scale-105 shadow-lg shadow-[#00a8e1]/30 whitespace-nowrap"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" x2="21" y1="14" y2="3" /></svg>
-                    Abrir Área de Membros
-                  </a>
+                  <Switch
+                    checked={!!editingUser.has_zona_membros_access}
+                    onCheckedChange={(c) => handleFieldChange('has_zona_membros_access', c)}
+                    className="data-[state=checked]:bg-[#00a8e1]" />
                 </div>
+
 
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-xl">
                   <Label className="flex items-center gap-3 text-green-300 font-medium">

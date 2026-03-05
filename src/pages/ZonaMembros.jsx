@@ -446,7 +446,14 @@ export default function ZonaMembros() {
                     base44.auth.me().catch(() => null),
                     base44.entities.PlatformSettings.list().catch(() => []),
                 ]);
-                if (u) setUser(u);
+                if (u) {
+                    setUser(u);
+                    // Se admin removeu o acesso a Area de Membros, redirecionar de volta
+                    if (u.has_zona_membros_access !== true) {
+                        window.location.href = '?page=RevelaTalentos';
+                        return;
+                    }
+                }
                 setLive(ps.find(s => s.setting_key === 'is_live')?.setting_value === 'true');
             } catch { }
         }, 30000);

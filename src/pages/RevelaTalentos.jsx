@@ -72,6 +72,12 @@ export default function RevelaTalentosPage() {
         return;
       }
 
+      // Redirecionar automaticamente para a Área de Membros se o admin ativou esse acesso
+      if (currentUser.has_zona_membros_access === true) {
+        window.location.href = createPageUrl('ZonaMembros');
+        return;
+      }
+
       setUser(currentUser);
       setShowLandingPage(false);
 
@@ -92,6 +98,7 @@ export default function RevelaTalentosPage() {
       loadContentData(null);
     }
   }, [loadContentData]);
+
 
   useEffect(() => {
     checkAccess();
