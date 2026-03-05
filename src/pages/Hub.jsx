@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { User } from "@/entities/User";
-import { UserNotification } from "@/entities/UserNotification";
-import { 
-  Star, 
-  TrendingUp, 
-  Globe, 
+import { base44 } from "@/api/base44Client";
+import {
+  Star,
+  TrendingUp,
+  Globe,
   Trophy
 } from "lucide-react";
 import HeroSection from "../components/hub/HeroSection";
@@ -28,15 +28,15 @@ export default function HubPage() {
     try {
       const currentUser = await User.me().catch(() => null);
       setUser(currentUser);
-      
+
       // Load notifications in background only if needed
       if (currentUser) {
-        UserNotification.filter({ 
+        base44.entities.Notification.filter({
           user_id: currentUser.id,
-          is_read: false 
+          is_read: false
         }, null, 10).then(notifications => {
           setUserNotifications(notifications.length);
-        }).catch(() => {});
+        }).catch(() => { });
       }
     } catch (error) {
       setUser(null);
@@ -114,12 +114,12 @@ export default function HubPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <HeroSection 
-        user={user} 
+      <HeroSection
+        user={user}
         totalNotifications={totalNotifications}
         userNotifications={userNotifications}
       />
-      
+
       <main className="relative z-10 bg-black">
         <div className="relative py-16 px-4">
           <div className="absolute inset-0 bg-gradient-to-t from-black via-gray-950/80 to-black pointer-events-none" />
@@ -127,7 +127,7 @@ export default function HubPage() {
             <ModernServiceGrid services={services} user={user} />
           </div>
         </div>
-        
+
         <AboutSection />
         <GlobalPresenceMap />
         <FeaturedAthletesSection />

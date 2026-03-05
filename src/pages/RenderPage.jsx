@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { LeadPage } from '@/entities/LeadPage';
-import { Lead } from '@/entities/Lead';
-import { InternationalLead } from '@/entities/InternationalLead';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
 export default function RenderPage() {
@@ -14,7 +12,7 @@ export default function RenderPage() {
     useEffect(() => {
         const fetchPage = async () => {
             const slug = location.pathname;
-            
+
             if (!slug) {
                 setError("Página não encontrada.");
                 setIsLoading(false);
@@ -22,7 +20,7 @@ export default function RenderPage() {
             }
 
             try {
-                const pages = await LeadPage.filter({ url_slug: slug, is_active: true });
+                const pages = await base44.entities.LeadPage.filter({ url_slug: slug, is_active: true });
                 if (pages && pages.length > 0) {
                     const pageData = pages[0];
                     setPageContent(pageData);
@@ -67,8 +65,8 @@ export default function RenderPage() {
 
         try {
             const targetEntity = pageData.form_connection_info.target_entity;
-            const Entity = targetEntity === 'InternationalLead' ? InternationalLead : Lead;
-            
+            const Entity = targetEntity === 'InternationalLead' ? base44.entities.InternationalLead : base44.entities.Lead;
+
             await Entity.create(submissionData);
 
             toast.success("Inscrição enviada com sucesso!");
@@ -98,7 +96,7 @@ export default function RenderPage() {
             </div>
         );
     }
-    
+
     if (pageContent) {
         return <div dangerouslySetInnerHTML={{ __html: pageContent.html_content }} />;
     }

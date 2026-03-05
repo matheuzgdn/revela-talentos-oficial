@@ -551,7 +551,7 @@ export default function ZonaMembros() {
                                 <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-8 h-8 rounded-full object-cover border border-[#00a8e1]/40" />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-white text-xs font-bold truncate">{user.full_name}</p>
-                                    <p className={`text-[10px] font-semibold ${locked ? 'text-red-400' : 'text-emerald-400'}`}>{locked ? 'Bloqueado' : 'Acesso Ativo'}</p>
+                                    <p className={`text-[10px] font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acesso Ativo'}</p>
                                 </div>
                             </div>
                         </div>
@@ -571,7 +571,7 @@ export default function ZonaMembros() {
                                     <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-10 h-10 rounded-full object-cover" />
                                     <div>
                                         <p className="text-white text-sm font-bold">{user.full_name}</p>
-                                        <p className={`text-xs font-semibold ${locked ? 'text-red-400' : 'text-emerald-400'}`}>{locked ? 'Bloqueado' : 'Acesso Ativo'}</p>
+                                        <p className={`text-xs font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acesso Ativo'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -606,7 +606,7 @@ export default function ZonaMembros() {
                             )}
                         </div>
                         <div className="flex items-center gap-2">
-                            {locked && (
+                            {(user && user.has_revela_talentos_access === false) && (
                                 <button onClick={() => setUpg(true)} className="flex items-center gap-1.5 bg-[#00a8e1]/10 border border-[#00a8e1]/40 text-[#00a8e1] text-[10px] md:text-xs font-black px-3 py-1.5 rounded-full hover:bg-[#00a8e1]/20 transition-all">
                                     <LockKeyhole className="w-3 h-3" /> Desbloquear
                                 </button>
