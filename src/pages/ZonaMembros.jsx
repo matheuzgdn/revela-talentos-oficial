@@ -439,14 +439,20 @@ export default function ZonaMembros() {
             }
         };
         loadData();
+        // Polling: atualiza user e live status a cada 30s para refletir mudancas do admin em tempo real
         const iv = setInterval(async () => {
             try {
-                const ps = await base44.entities.PlatformSettings.list();
+                const [u, ps] = await Promise.all([
+                    base44.auth.me().catch(() => null),
+                    base44.entities.PlatformSettings.list().catch(() => []),
+                ]);
+                if (u) setUser(u);
                 setLive(ps.find(s => s.setting_key === 'is_live')?.setting_value === 'true');
             } catch { }
-        }, 15000);
+        }, 30000);
         return () => clearInterval(iv);
     }, []);
+
 
     const handlePlay = useCallback((item) => {
         if (locked) { setUpg(true); return; }
