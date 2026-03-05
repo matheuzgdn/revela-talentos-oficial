@@ -17,13 +17,13 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import AdminLiveTab from "./content/AdminLiveTab";
 
 const categories = [
-  { value: 'mentoria', label: 'Mentoria' }, 
+  { value: 'mentoria', label: 'Mentoria' },
   { value: 'treino_tatico', label: 'Treino Tático' },
-  { value: 'preparacao_fisica', label: 'Preparação Física' }, 
+  { value: 'preparacao_fisica', label: 'Preparação Física' },
   { value: 'psicologia', label: 'Psicologia' },
-  { value: 'nutricao', label: 'Nutrição' }, 
+  { value: 'nutricao', label: 'Nutrição' },
   { value: 'live', label: 'Live Ao Vivo' },
-  { value: 'planos', label: 'Planos' }, 
+  { value: 'planos', label: 'Planos' },
   { value: 'atletas', label: 'Nossos Atletas' }
 ];
 
@@ -129,6 +129,8 @@ export default function AdminContentTab() {
       is_published: content.is_published || false,
       is_featured: content.is_featured || false,
       is_top_10: content.is_top_10 || false,
+      is_zona_membros_unlocked: content.is_zona_membros_unlocked || false,
+      notify_zona_membros: false,
       thumbnail_url: content.thumbnail_url || '',
       video_url: content.video_url || '',
       preview_video_url: content.preview_video_url || '',
@@ -139,7 +141,7 @@ export default function AdminContentTab() {
       display_order: content.display_order || 0
     });
     setShowAddForm(true);
-    
+
     if (content.category === 'planos') {
       setActiveTab('planos');
     } else {
@@ -150,7 +152,7 @@ export default function AdminContentTab() {
   const handleSaveContent = async () => {
     try {
       const contentData = { ...editForm };
-      
+
       if (contentData.category === 'live' && contentData.video_url && contentData.video_url.includes('youtube.com/watch?v=')) {
         if (!contentData.live_embed_code) {
           const videoId = new URLSearchParams(new URL(contentData.video_url).search).get('v');
@@ -160,8 +162,14 @@ export default function AdminContentTab() {
         }
       }
 
+      const shouldNotifyZonaMembros = contentData.notify_zona_membros;
+      delete contentData.notify_zona_membros; // Não salvar este campo na DB
+
+      let savedId = null;
+
       if (editingContent) {
         await base44.entities.Content.update(editingContent.id, contentData);
+        savedId = editingContent.id;
         toast.success("Conteúdo atualizado com sucesso!");
       } else {
         const newContentStatus = contentData.category === 'live' && contentData.is_published ? 'live' : 'draft';
@@ -169,12 +177,37 @@ export default function AdminContentTab() {
           contentData.display_order = planoContents.length;
         }
 
-        await base44.entities.Content.create({
+        const newContent = await base44.entities.Content.create({
           ...contentData,
           status: newContentStatus
         });
+        savedId = newContent.id;
         toast.success("Conteúdo adicionado com sucesso!");
       }
+
+      // Notificar membros EC10
+      if (shouldNotifyZonaMembros && contentData.is_zona_membros_unlocked && savedId) {
+        toast.info("Enviando notificações para a Zona de Membros...");
+        try {
+          const members = await base44.entities.User.filter({ has_zona_membros_access: true });
+          if (members && members.length > 0) {
+            await Promise.all(members.map(member =>
+              base44.entities.Notification.create({
+                user_id: member.id,
+                title: "Novo Conteúdo VIP 🌟",
+                message: `O conteúdo "${contentData.title}" acabou de ser liberado na Zona de Membros EC10!`,
+                type: "alert",
+                priority: "high"
+              })
+            ));
+            toast.success(`Notificações enviadas para ${members.length} membros!`);
+          }
+        } catch (notifError) {
+          console.error("Erro ao notificar membros:", notifError);
+          toast.error("Erro ao enviar notificações");
+        }
+      }
+
       resetForm();
       loadContents();
     } catch (error) {
@@ -212,7 +245,7 @@ export default function AdminContentTab() {
       toast.error("Erro ao excluir conteúdo");
     }
   };
-  
+
   const videoContents = contents.filter(c => c && c.category !== 'planos');
   const planoContents = contents
     .filter(c => c && c.category === 'planos')
@@ -253,13 +286,13 @@ export default function AdminContentTab() {
   if (isLoading) {
     return <div className="flex justify-center items-center h-full"><Loader2 className="w-8 h-8 animate-spin text-sky-400" /></div>;
   }
-  
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold text-white">Biblioteca de Conteúdo</h3>
         {activeSubTab === "videos" && (
-          <Button 
+          <Button
             onClick={() => {
               setEditingContent(null);
               setEditForm(activeTab === 'planos' ? { category: 'planos', card_color: 'blue' } : { category: 'mentoria', status: 'draft' });
@@ -277,21 +310,19 @@ export default function AdminContentTab() {
       <div className="flex gap-2 border-b border-gray-800">
         <button
           onClick={() => setActiveSubTab("videos")}
-          className={`px-4 py-2 font-medium transition-colors ${
-            activeSubTab === "videos"
+          className={`px-4 py-2 font-medium transition-colors ${activeSubTab === "videos"
               ? "text-blue-500 border-b-2 border-blue-500"
               : "text-gray-400 hover:text-white"
-          }`}
+            }`}
         >
           <Video className="w-4 h-4 mr-2 inline-block" />Vídeos & Conteúdo
         </button>
         <button
           onClick={() => setActiveSubTab("lives")}
-          className={`px-4 py-2 font-medium transition-colors ${
-            activeSubTab === "lives"
+          className={`px-4 py-2 font-medium transition-colors ${activeSubTab === "lives"
               ? "text-red-500 border-b-2 border-red-500"
               : "text-gray-400 hover:text-white"
-          }`}
+            }`}
         >
           <Radio className="w-4 h-4 mr-2 inline-block" />Lives
         </button>
@@ -309,18 +340,18 @@ export default function AdminContentTab() {
               <CardContent className="space-y-4">
                 <div>
                   <label className="block text-white mb-2">Título</label>
-                  <Input 
-                    value={editForm.title || ''} 
-                    onChange={(e) => setEditForm(prev => ({...prev, title: e.target.value}))} 
-                    className="bg-gray-700 border-gray-600 text-white" 
+                  <Input
+                    value={editForm.title || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                    className="bg-gray-700 border-gray-600 text-white"
                   />
                 </div>
 
                 <div>
                   <label className="block text-white mb-2">Categoria</label>
-                  <select 
-                    value={editForm.category || ''} 
-                    onChange={(e) => setEditForm(prev => ({...prev, category: e.target.value}))} 
+                  <select
+                    value={editForm.category || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, category: e.target.value }))}
                     className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2"
                   >
                     <option value="">Selecione...</option>
@@ -332,17 +363,17 @@ export default function AdminContentTab() {
 
                 <div>
                   <label className="block text-white mb-2">URL da Thumbnail (Capa do Vídeo)</label>
-                  <Input 
-                    value={editForm.thumbnail_url || ''} 
-                    onChange={(e) => setEditForm(prev => ({...prev, thumbnail_url: e.target.value}))} 
-                    className="bg-gray-700 border-gray-600 text-white" 
+                  <Input
+                    value={editForm.thumbnail_url || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, thumbnail_url: e.target.value }))}
+                    className="bg-gray-700 border-gray-600 text-white"
                     placeholder="https://exemplo.com/imagem-capa.jpg"
                   />
                   {editForm.thumbnail_url && (
                     <div className="mt-2">
-                      <img 
-                        src={editForm.thumbnail_url} 
-                        alt="Preview da thumbnail" 
+                      <img
+                        src={editForm.thumbnail_url}
+                        alt="Preview da thumbnail"
                         className="w-32 h-18 object-cover rounded border border-gray-600"
                         onError={(e) => {
                           e.target.style.display = 'none';
@@ -354,10 +385,10 @@ export default function AdminContentTab() {
 
                 <div>
                   <label className="block text-white mb-2">URL do Clipe de Pré-visualização (5-10s, sem som)</label>
-                  <Input 
-                    value={editForm.preview_video_url || ''} 
-                    onChange={(e) => setEditForm(prev => ({...prev, preview_video_url: e.target.value}))} 
-                    className="bg-gray-700 border-gray-600 text-white" 
+                  <Input
+                    value={editForm.preview_video_url || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, preview_video_url: e.target.value }))}
+                    className="bg-gray-700 border-gray-600 text-white"
                     placeholder="https://exemplo.com/preview.mp4"
                   />
                   <p className="text-gray-400 text-xs mt-1">Este vídeo tocará automaticamente quando o usuário passar o mouse sobre o card.</p>
@@ -367,28 +398,28 @@ export default function AdminContentTab() {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-white mb-2">URL do Vídeo (para player customizado)</label>
-                      <Input 
-                        value={editForm.video_url || ''} 
-                        onChange={(e) => setEditForm(prev => ({...prev, video_url: e.target.value}))} 
-                        className="bg-gray-700 border-gray-600 text-white" 
+                      <Input
+                        value={editForm.video_url || ''}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, video_url: e.target.value }))}
+                        className="bg-gray-700 border-gray-600 text-white"
                         placeholder="https://..."
                       />
                     </div>
-                    
+
                     <div className="text-center text-gray-400">
                       <span>--- OU ---</span>
                     </div>
-                    
+
                     <div>
-                      <label className="block text-white mb-2">Código de Incorporação (Embed)</label>
-                      <Textarea 
-                        value={editForm.live_embed_code || ''} 
-                        onChange={(e) => setEditForm(prev => ({...prev, live_embed_code: e.target.value}))} 
-                        className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 h-24 font-mono text-sm"
-                        placeholder='<iframe width="560" height="315" src="..." frameborder="0" allowfullscreen></iframe>'
+                      <label className="block text-white mb-2">Código de Incorporação (Janela de Vídeo / Embed)</label>
+                      <Textarea
+                        value={editForm.live_embed_code || ''}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, live_embed_code: e.target.value }))}
+                        className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 h-28 font-mono text-sm"
+                        placeholder='<iframe width="100%" height="100%" src="..." frameborder="0" allowfullscreen></iframe>'
                       />
                       <p className="text-gray-400 text-xs mt-1">
-                        Use esta opção para incorporar vídeos de YouTube, Vimeo, etc. diretamente
+                        Use este campo para incorporar vídeos do YouTube, Vimeo, etc. O player nativo da Zona de Membros exibirá esta janela em tela cheia. Recomendável usar largura e altura 100%.
                       </p>
                     </div>
                   </div>
@@ -396,30 +427,30 @@ export default function AdminContentTab() {
 
                 <div>
                   <label className="block text-white mb-2">Descrição</label>
-                  <Textarea 
-                    value={editForm.description || ''} 
-                    onChange={(e) => setEditForm(prev => ({...prev, description: e.target.value}))} 
+                  <Textarea
+                    value={editForm.description || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
                     className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 h-24"
                   />
                 </div>
 
                 <div>
                   <label className="block text-white mb-2">Instrutor/Mentor</label>
-                  <Input 
-                    value={editForm.instructor || ''} 
-                    onChange={(e) => setEditForm(prev => ({...prev, instructor: e.target.value}))} 
-                    className="bg-gray-700 border-gray-600 text-white" 
+                  <Input
+                    value={editForm.instructor || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, instructor: e.target.value }))}
+                    className="bg-gray-700 border-gray-600 text-white"
                     placeholder="Nome do instrutor"
                   />
                 </div>
 
                 <div>
                   <label className="block text-white mb-2">Duração (em minutos)</label>
-                  <Input 
-                    type="number" 
-                    value={editForm.duration || ''} 
-                    onChange={(e) => setEditForm(prev => ({...prev, duration: e.target.value}))} 
-                    className="bg-gray-700 border-gray-600 text-white" 
+                  <Input
+                    type="number"
+                    value={editForm.duration || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, duration: e.target.value }))}
+                    className="bg-gray-700 border-gray-600 text-white"
                     placeholder="Ex: 45"
                   />
                 </div>
@@ -427,10 +458,10 @@ export default function AdminContentTab() {
                 {(editForm.category === 'planos' || editForm.category === 'atletas') && (
                   <div>
                     <label className="block text-white mb-2">Link Externo</label>
-                    <Input 
-                      value={editForm.external_link || ''} 
-                      onChange={(e) => setEditForm(prev => ({...prev, external_link: e.target.value}))} 
-                      className="bg-gray-700 border-gray-600 text-white" 
+                    <Input
+                      value={editForm.external_link || ''}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, external_link: e.target.value }))}
+                      className="bg-gray-700 border-gray-600 text-white"
                       placeholder="https://exemplo.com/pagina-destino"
                     />
                     <p className="text-gray-400 text-xs mt-1">
@@ -442,9 +473,9 @@ export default function AdminContentTab() {
                 {editForm.category === 'planos' && (
                   <div>
                     <label className="block text-white mb-2">Cor do Card (para efeito neon)</label>
-                    <select 
-                      value={editForm.card_color || 'blue'} 
-                      onChange={(e) => setEditForm(prev => ({...prev, card_color: e.target.value}))} 
+                    <select
+                      value={editForm.card_color || 'blue'}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, card_color: e.target.value }))}
                       className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2"
                     >
                       <option value="blue">Azul</option>
@@ -458,34 +489,63 @@ export default function AdminContentTab() {
                   </div>
                 )}
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-6 flex-wrap">
                   <label className="flex items-center gap-2">
-                    <input 
-                      type="checkbox" 
-                      checked={editForm.is_published || false} 
-                      onChange={(e) => setEditForm(prev => ({...prev, is_published: e.target.checked}))} 
+                    <input
+                      type="checkbox"
+                      checked={editForm.is_published || false}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, is_published: e.target.checked }))}
                       className="w-4 h-4"
                     />
                     <span className="text-white">Publicado</span>
                   </label>
                   <label className="flex items-center gap-2">
-                    <input 
-                      type="checkbox" 
-                      checked={editForm.is_featured || false} 
-                      onChange={(e) => setEditForm(prev => ({...prev, is_featured: e.target.checked}))} 
+                    <input
+                      type="checkbox"
+                      checked={editForm.is_featured || false}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, is_featured: e.target.checked }))}
                       className="w-4 h-4"
                     />
                     <span className="text-white">Destacado</span>
                   </label>
                   <label className="flex items-center gap-2">
-                    <input 
-                      type="checkbox" 
-                      checked={editForm.is_top_10 || false} 
-                      onChange={(e) => setEditForm(prev => ({...prev, is_top_10: e.target.checked}))} 
+                    <input
+                      type="checkbox"
+                      checked={editForm.is_top_10 || false}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, is_top_10: e.target.checked }))}
                       className="w-4 h-4"
                     />
                     <span className="text-white">Top 10</span>
                   </label>
+
+                  {editForm.category !== 'planos' && editForm.category !== 'atletas' && (
+                    <>
+                      <div className="w-px h-6 bg-gray-600 mx-2 hidden md:block"></div>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={editForm.is_zona_membros_unlocked || false}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, is_zona_membros_unlocked: e.target.checked }))}
+                          className="w-4 h-4 accent-[#00a8e1]"
+                        />
+                        <span className="text-[#00a8e1] font-bold flex items-center gap-1">
+                          <Package className="w-4 h-4" /> Liberado na Zona de Membros
+                        </span>
+                      </label>
+
+                      {editForm.is_zona_membros_unlocked && (
+                        <label className="flex items-center gap-2 ml-2">
+                          <input
+                            type="checkbox"
+                            checked={editForm.notify_zona_membros || false}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, notify_zona_membros: e.target.checked }))}
+                            className="w-4 h-4 accent-purple-500"
+                          />
+                          <span className="text-purple-400 text-sm font-medium">Notificar Membros ao Salvar</span>
+                        </label>
+                      )}
+                    </>
+                  )}
                 </div>
 
                 <div className="flex gap-3">

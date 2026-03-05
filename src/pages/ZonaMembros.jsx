@@ -80,33 +80,36 @@ const UpgModal = ({ onClose }) => (
     </div>
 );
 
-const VCard = ({ item, onPlay, isLocked }) => (
-    <div className="flex-none w-[130px] md:w-[220px] aspect-[3/4] relative rounded-2xl overflow-hidden zc bg-[#0a0f14] cursor-pointer snap-start border border-white/5 shadow-lg group" onClick={onPlay}>
-        <img src={item.thumbnail_url || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400'} alt={item.title}
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${isLocked ? 'blur-[3px] brightness-50' : 'opacity-70 group-hover:opacity-90'}`} />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#05080a] via-[#05080a]/50 to-transparent opacity-90" />
-        {isLocked ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-20">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#0a0f14]/80 border border-white/20 flex items-center justify-center">
-                    <LockKeyhole className="w-4 h-4 md:w-5 md:h-5 text-[#00a8e1]" />
+const VCard = ({ item, onPlay }) => {
+    const isLocked = !item.is_zona_membros_unlocked;
+    return (
+        <div className="flex-none w-[130px] md:w-[220px] aspect-[3/4] relative rounded-2xl overflow-hidden zc bg-[#0a0f14] cursor-pointer snap-start border border-white/5 shadow-lg group" onClick={onPlay}>
+            <img src={item.thumbnail_url || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400'} alt={item.title}
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${isLocked ? 'blur-[3px] brightness-50' : 'opacity-70 group-hover:opacity-90'}`} />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#05080a] via-[#05080a]/50 to-transparent opacity-90" />
+            {isLocked ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-20">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#0a0f14]/80 border border-white/20 flex items-center justify-center">
+                        <LockKeyhole className="w-4 h-4 md:w-5 md:h-5 text-[#00a8e1]" />
+                    </div>
+                    <span className="text-[9px] md:text-[10px] font-black text-[#00a8e1] uppercase tracking-[0.2em]">Bloqueado</span>
                 </div>
-                <span className="text-[9px] md:text-[10px] font-black text-[#00a8e1] uppercase tracking-[0.2em]">Bloqueado</span>
-            </div>
-        ) : (
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 bg-black/20">
-                <div className="w-10 h-10 md:w-14 md:h-14 border-2 border-[#00a8e1] rounded-full flex items-center justify-center text-[#00a8e1] bg-[#00a8e1]/20">
-                    <Play className="w-4 h-4 md:w-6 md:h-6 fill-current ml-0.5" />
+            ) : (
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 bg-black/20">
+                    <div className="w-10 h-10 md:w-14 md:h-14 border-2 border-[#00a8e1] rounded-full flex items-center justify-center text-[#00a8e1] bg-[#00a8e1]/20">
+                        <Play className="w-4 h-4 md:w-6 md:h-6 fill-current ml-0.5" />
+                    </div>
                 </div>
+            )}
+            <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-4 z-20">
+                <h4 className="font-bold text-white text-[10px] md:text-sm leading-tight line-clamp-2 drop-shadow-lg">{item.title}</h4>
+                {item.duration && <div className="flex items-center gap-1 mt-1 text-[8px] md:text-[10px] text-white/70 font-bold"><Clock className="w-2.5 h-2.5 text-[#00a8e1]" />{item.duration}</div>}
             </div>
-        )}
-        <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-4 z-20">
-            <h4 className="font-bold text-white text-[10px] md:text-sm leading-tight line-clamp-2 drop-shadow-lg">{item.title}</h4>
-            {item.duration && <div className="flex items-center gap-1 mt-1 text-[8px] md:text-[10px] text-white/70 font-bold"><Clock className="w-2.5 h-2.5 text-[#00a8e1]" />{item.duration}</div>}
         </div>
-    </div>
-);
+    );
+};
 
-const CRow = ({ title, items, onPlay, isLocked }) => {
+const CRow = ({ title, items, onPlay }) => {
     const r = useRef(null);
     if (!items || items.length === 0) return null;
     return (
@@ -116,7 +119,7 @@ const CRow = ({ title, items, onPlay, isLocked }) => {
                 {title}
             </h3>
             <div ref={r} className="flex gap-3 md:gap-5 overflow-x-auto zh pb-4 pt-1 snap-x snap-mandatory">
-                {items.map((item, i) => <VCard key={item.id || i} item={item} onPlay={() => onPlay(item)} isLocked={isLocked} />)}
+                {items.map((item, i) => <VCard key={item.id || i} item={item} onPlay={() => onPlay(item)} />)}
             </div>
         </div>
     );
@@ -124,7 +127,7 @@ const CRow = ({ title, items, onPlay, isLocked }) => {
 
 /* ================== PAGE VIEWS ================== */
 
-const InicioView = ({ contents, isLocked, onPlay, onNav }) => {
+const InicioView = ({ contents, onPlay, onNav }) => {
     const [sl, setSl] = useState(0);
     const slides = [
         { title: 'El proximo paso profesional', desc: 'Entrenamos familias y atletas.', badge: 'BIENVENIDA', img: 'https://images.unsplash.com/photo-1518659739433-286828987456?auto=format&fit=crop&q=80&w=1000' },
@@ -151,10 +154,10 @@ const InicioView = ({ contents, isLocked, onPlay, onNav }) => {
                     <PBtn onClick={() => onNav('empieza')} Ic={Play} v="pr">Comecar Agora</PBtn>
                 </div>
             </div>
-            <CRow title="Latest Release" items={latest} onPlay={onPlay} isLocked={isLocked} />
-            {ment.length > 0 && <CRow title="Mentorias" items={ment} onPlay={onPlay} isLocked={isLocked} />}
-            {trein.length > 0 && <CRow title="Treino Tatico" items={trein} onPlay={onPlay} isLocked={isLocked} />}
-            {fis.length > 0 && <CRow title="Preparacao Fisica" items={fis} onPlay={onPlay} isLocked={isLocked} />}
+            <CRow title="Latest Release" items={latest} onPlay={onPlay} />
+            {ment.length > 0 && <CRow title="Mentorias" items={ment} onPlay={onPlay} />}
+            {trein.length > 0 && <CRow title="Treino Tatico" items={trein} onPlay={onPlay} />}
+            {fis.length > 0 && <CRow title="Preparacao Fisica" items={fis} onPlay={onPlay} />}
             {contents.length === 0 && (
                 <div className="text-center py-16 text-white/40">
                     <Play className="w-12 h-12 mx-auto mb-4 opacity-30" />
@@ -165,8 +168,9 @@ const InicioView = ({ contents, isLocked, onPlay, onNav }) => {
     );
 };
 
-const EmpiezaView = ({ contents, isLocked, onPlay }) => {
+const EmpiezaView = ({ contents, onPlay }) => {
     const intro = contents[0];
+    const isLocked = intro ? !intro.is_zona_membros_unlocked : true;
     return (
         <div className="zp max-w-7xl mx-auto pb-10 pt-4">
             <div className="flex items-center gap-3 mb-6">
@@ -195,7 +199,7 @@ const EmpiezaView = ({ contents, isLocked, onPlay }) => {
                     <Hourglass className="w-8 h-8 text-[#00a8e1] animate-pulse" />
                 </div>
             )}
-            <CRow title="Todos os Cursos" items={contents.slice(0, 8)} onPlay={onPlay} isLocked={isLocked} />
+            <CRow title="Todos os Cursos" items={contents.slice(0, 8)} onPlay={onPlay} />
         </div>
     );
 };
@@ -297,7 +301,7 @@ const IntercambioView = () => {
     );
 };
 
-const ConsejosView = ({ contents, isLocked, onPlay }) => {
+const ConsejosView = ({ contents, onPlay }) => {
     const d = contents.filter(c => ['preparacao_fisica', 'psicologia', 'nutricao'].includes(c.category)).slice(0, 6);
     return (
         <div className="zp max-w-7xl mx-auto pb-10 pt-4">
@@ -309,26 +313,29 @@ const ConsejosView = ({ contents, isLocked, onPlay }) => {
             </div>
             {d.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-10">
-                    {d.map(item => (
-                        <div key={item.id} className="relative aspect-[3/4] rounded-2xl overflow-hidden group cursor-pointer border border-[#00a8e1]/20 bg-[#0a0f14]" onClick={() => onPlay(item)}>
-                            <img src={item.thumbnail_url || 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800'} alt={item.title}
-                                className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isLocked ? 'blur-[3px] brightness-50' : 'opacity-60 group-hover:opacity-80'}`} />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                            {isLocked ? (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-20">
-                                    <LockKeyhole className="w-8 h-8 text-[#00a8e1]" />
-                                    <span className="text-[9px] font-black text-[#00a8e1] uppercase tracking-[0.2em]">Bloqueado</span>
-                                </div>
-                            ) : (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-10 h-10 md:w-14 md:h-14 border border-[#00a8e1] rounded-full flex items-center justify-center text-[#00a8e1]">
-                                        <Play className="w-4 h-4 md:w-6 md:h-6 fill-current ml-0.5" />
+                    {d.map(item => {
+                        const isLocked = !item.is_zona_membros_unlocked;
+                        return (
+                            <div key={item.id} className="relative aspect-[3/4] rounded-2xl overflow-hidden group cursor-pointer border border-[#00a8e1]/20 bg-[#0a0f14]" onClick={() => onPlay(item)}>
+                                <img src={item.thumbnail_url || 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800'} alt={item.title}
+                                    className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isLocked ? 'blur-[3px] brightness-50' : 'opacity-60 group-hover:opacity-80'}`} />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                                {isLocked ? (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-20">
+                                        <LockKeyhole className="w-8 h-8 text-[#00a8e1]" />
+                                        <span className="text-[9px] font-black text-[#00a8e1] uppercase tracking-[0.2em]">Bloqueado</span>
                                     </div>
-                                </div>
-                            )}
-                            <div className="absolute bottom-0 left-0 p-3 md:p-5 z-20"><h3 className="font-black text-sm md:text-lg text-white leading-tight">{item.title}</h3></div>
-                        </div>
-                    ))}
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-10 h-10 md:w-14 md:h-14 border border-[#00a8e1] rounded-full flex items-center justify-center text-[#00a8e1]">
+                                            <Play className="w-4 h-4 md:w-6 md:h-6 fill-current ml-0.5" />
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="absolute bottom-0 left-0 p-3 md:p-5 z-20"><h3 className="font-black text-sm md:text-lg text-white leading-tight">{item.title}</h3></div>
+                            </div>
+                        );
+                    })}
                 </div>
             ) : (
                 <div className="text-center py-16 text-white/40 mb-10">
@@ -404,8 +411,6 @@ export default function ZonaMembros() {
     const [sel, setSel] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const locked = user && user.has_revela_talentos_access === false;
-
     const MENU = [
         { id: 'inicio', label: 'Inicio', icon: Home },
         { id: 'empieza', label: 'Empieza aqui', icon: Play },
@@ -462,9 +467,10 @@ export default function ZonaMembros() {
 
 
     const handlePlay = useCallback((item) => {
-        if (locked) { setUpg(true); return; }
+        const itemIsLocked = !item.is_zona_membros_unlocked;
+        if (itemIsLocked) { setUpg(true); return; }
         setSel(item);
-    }, [locked]);
+    }, []);
 
     // Video player view
     if (sel) return (
@@ -476,7 +482,9 @@ export default function ZonaMembros() {
                         Voltar
                     </button>
                     <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-[#00a8e1]/30">
-                        {sel.video_url
+                        {sel.live_embed_code ? (
+                            <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: sel.live_embed_code }} />
+                        ) : sel.video_url
                             ? <video src={sel.video_url} controls autoPlay className="w-full h-full" />
                             : <div className="w-full h-full flex items-center justify-center text-white/40"><Play className="w-12 h-12 opacity-20" /></div>
                         }
@@ -499,11 +507,11 @@ export default function ZonaMembros() {
     );
 
     const VIEWS = {
-        inicio: <InicioView contents={contents} isLocked={locked} onPlay={handlePlay} onNav={setTab} />,
-        empieza: <EmpiezaView contents={contents} isLocked={locked} onPlay={handlePlay} />,
+        inicio: <InicioView contents={contents} onPlay={handlePlay} onNav={setTab} />,
+        empieza: <EmpiezaView contents={contents} onPlay={handlePlay} />,
         envivo: <EnVivoView isLive={live} />,
         intercambio: <IntercambioView />,
-        consejos: <ConsejosView contents={contents} isLocked={locked} onPlay={handlePlay} />,
+        consejos: <ConsejosView contents={contents} onPlay={handlePlay} />,
         mentorias: <MentoriasView />,
     };
 
