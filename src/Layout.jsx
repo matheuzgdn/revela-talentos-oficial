@@ -169,6 +169,11 @@ function LayoutInner({ children, currentPageName }) {
 
   }
 
+  // ZonaMembros tem seu proprio sidebar — nao aplicar o Layout.jsx
+  if (currentPageName === 'ZonaMembros') {
+    return <>{children}</>;
+  }
+
   return (
     <SidebarProvider>
       <StoriesModal stories={stories} isOpen={showStories} onClose={handleCloseStories} />
