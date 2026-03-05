@@ -62,6 +62,7 @@ import PlanoCarreira from './pages/PlanoCarreira';
 import PlanoInternacional from './pages/PlanoInternacional';
 import RenderPage from './pages/RenderPage';
 import RevelaTalentos from './pages/RevelaTalentos';
+import ZonaMembros from './pages/ZonaMembros';
 import SearchAthletes from './pages/SearchAthletes';
 import SeletivaOnline from './pages/SeletivaOnline';
 import __Layout from './Layout.jsx';
@@ -83,6 +84,7 @@ export const PAGES = {
     "PlanoInternacional": PlanoInternacional,
     "RenderPage": RenderPage,
     "RevelaTalentos": RevelaTalentos,
+    "ZonaMembros": ZonaMembros,
     "SearchAthletes": SearchAthletes,
     "SeletivaOnline": SeletivaOnline,
 }
