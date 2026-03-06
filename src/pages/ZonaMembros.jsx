@@ -243,9 +243,46 @@ const IntercambioView = () => {
     const [at, setAt] = useState(null);
     const [zoom, setZoom] = useState(1);
 
+    const [pan, setPan] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
     const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.3, 3));
-    const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.3, 1));
-    const handleZoomReset = () => setZoom(1);
+    const handleZoomOut = () => setZoom(prev => {
+        const newZoom = Math.max(prev - 0.3, 1);
+        if (newZoom === 1) setPan({ x: 0, y: 0 });
+        return newZoom;
+    });
+    const handleZoomReset = () => {
+        setZoom(1);
+        setPan({ x: 0, y: 0 });
+    };
+
+    const handleMouseDown = (e) => {
+        if (zoom <= 1) return;
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDragging || zoom <= 1) return;
+        setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+    };
+
+    const handleMouseUp = () => setIsDragging(false);
+
+    const handleTouchStart = (e) => {
+        if (zoom <= 1 || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        setIsDragging(true);
+        setDragStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+    };
+
+    const handleTouchMove = (e) => {
+        if (!isDragging || zoom <= 1 || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        setPan({ x: touch.clientX - dragStart.x, y: touch.clientY - dragStart.y });
+    };
 
     return (
         <>
@@ -276,7 +313,16 @@ const IntercambioView = () => {
                     <h2 className="text-2xl md:text-4xl font-black uppercase">EC10 <span className="text-[#00a8e1]">Talentos</span></h2>
                     <Trophy className="w-6 h-6 text-[#00a8e1] animate-pulse" />
                 </div>
-                <div className="relative w-full max-w-5xl mx-auto aspect-[2/1] group mb-10 overflow-hidden rounded-[2rem] border border-[#00a8e1]/20 bg-[#05080a]">
+                <div
+                    className={`relative w-full max-w-5xl mx-auto aspect-[2/1] group mb-10 overflow-hidden rounded-[2rem] border border-[#00a8e1]/20 bg-[#05080a] ${zoom > 1 ? 'cursor-grab active:cursor-grabbing' : ''}`}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleMouseUp}
+                >
                     {/* Controles de Zoom */}
                     <div className="absolute top-4 right-4 z-30 flex flex-col gap-2 bg-[#0a0f14]/80 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-lg">
                         <button onClick={handleZoomIn} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="Zoom In">
@@ -290,8 +336,11 @@ const IntercambioView = () => {
                         </button>
                     </div>
 
-                    <div className="w-full h-full transition-transform duration-500 ease-in-out" style={{ transform: `scale(${zoom})` }}>
-                        <div className="absolute inset-0 opacity-40 group-hover:opacity-70 transition-opacity flex items-center justify-center">
+                    <div
+                        className={`w-full h-full ${isDragging ? 'transition-none' : 'transition-transform duration-300 ease-out'}`}
+                        style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`, transformOrigin: 'center' }}
+                    >
+                        <div className="absolute inset-0 opacity-40 group-hover:opacity-70 transition-opacity flex items-center justify-center pointer-events-none">
                             <svg viewBox="0 0 1000 500" className="w-full h-full">
                                 <image href="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" width="1000" height="500" style={{ filter: 'invert(1) sepia(1) saturate(5) hue-rotate(175deg) brightness(0.6) contrast(2)' }} />
                             </svg>
