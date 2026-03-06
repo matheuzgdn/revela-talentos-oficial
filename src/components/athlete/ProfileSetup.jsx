@@ -247,32 +247,34 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
       toast.error("Selecione apenas arquivos de imagem.");
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("A imagem deve ter no máximo 2MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("A imagem deve ter no máximo 10MB.");
       return;
     }
 
     setUploading(true);
     try {
-      // Convert to base64 data URL directly in the browser (no external upload server needed)
-      const dataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (ev) => resolve(ev.target.result);
-        reader.onerror = () => reject(new Error("Falha ao ler o arquivo"));
-        reader.readAsDataURL(file);
-      });
+      // base44.integrations.Core.UploadFile is the correct way to upload files
+      // (base64 is too large for direct field storage)
+      const result = await base44.integrations.Core.UploadFile({ file });
+      const file_url = result?.url || result?.file_url || result;
 
-      // Save photo immediately to the profile — no need for the user to finish all steps
-      await base44.auth.updateMe({ profile_picture_url: dataUrl });
-      set("profile_picture_url", dataUrl);
-      toast.success("✅ Foto salva com sucesso!");
+      if (file_url && typeof file_url === 'string') {
+        await base44.auth.updateMe({ profile_picture_url: file_url });
+        set("profile_picture_url", file_url);
+        toast.success("✅ Foto salva com sucesso!");
+      } else {
+        console.error("UploadFile response:", result);
+        toast.error("Erro: resposta inesperada do servidor.");
+      }
     } catch (err) {
       console.error("Upload error:", err);
-      toast.error("Erro ao salvar a foto. Tente novamente.");
+      toast.error(`Erro ao salvar foto: ${err?.message || "Tente novamente."}`);
     } finally {
       setUploading(false);
     }
   };
+
 
 
   const handleSave = async () => {
