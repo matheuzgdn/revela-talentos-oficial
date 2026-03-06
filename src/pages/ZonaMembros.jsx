@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock } from 'lucide-react';
-
+import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock, LogOut, Settings } from 'lucide-react';
+import ProfileSetup from '@/components/athlete/ProfileSetup';
 /* ================== CONSTANTS ================== */
 const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c';
 const EVENTS = [
@@ -422,6 +422,17 @@ export default function ZonaMembros() {
     const [live, setLive] = useState(false);
     const [upg, setUpg] = useState(false);
     const [sel, setSel] = useState(null);
+    const [scrolled, setScrolled] = useState(false);
+    const [profileDrop, setProfileDrop] = useState(false);
+    const [showProfileSetup, setShowProfileSetup] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            await base44.auth.logout();
+        } catch (error) {
+            console.error("Erro no logout:", error);
+        }
+    };
     const [loading, setLoading] = useState(true);
 
     const MENU = [
@@ -605,19 +616,36 @@ export default function ZonaMembros() {
                 {/* ---- Main Content ---- */}
                 <main className="flex-1 h-screen overflow-y-auto scroll-smooth relative pb-24 md:pb-0">
                     <header className="flex items-center justify-between px-4 md:px-12 py-5 md:py-7 sticky top-0 z-30 bg-[#05080a]/90 backdrop-blur-xl border-b border-white/5">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 relative">
                             {user ? (
-                                <>
+                                <button onClick={() => setProfileDrop(!profileDrop)} className="flex items-center gap-3 text-left focus:outline-none">
                                     <div className="w-10 h-10 rounded-full p-[2px] border-2 border-[#00a8e1] shadow-[0_0_10px_rgba(0,168,225,0.4)]">
                                         <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-full h-full object-cover rounded-full" />
                                     </div>
-                                    <div>
+                                    <div className="hidden sm:block">
                                         <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Bienvenido,</p>
-                                        <p className="text-sm md:text-base font-black text-white leading-tight">{user.full_name}</p>
+                                        <p className="text-sm font-black text-white leading-tight">{user.full_name}</p>
                                     </div>
-                                </>
+                                </button>
                             ) : (
                                 <div><p className="text-sm font-black text-white">Zona de Miembros</p><p className="text-[10px] text-[#00a8e1]">EC10 Talentos</p></div>
+                            )}
+
+                            {profileDrop && user && (
+                                <div className="absolute top-12 left-0 w-48 bg-[#0a0f14] border border-white/10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] py-2 z-50">
+                                    <button
+                                        onClick={() => { setShowProfileSetup(true); setProfileDrop(false); }}
+                                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-white/80 hover:text-white hover:bg-white/5 transition"
+                                    >
+                                        <Settings className="w-4 h-4" /> Editar Perfil
+                                    </button>
+                                    <button
+                                        onClick={() => { handleLogout(); setProfileDrop(false); }}
+                                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-500/10 transition"
+                                    >
+                                        <LogOut className="w-4 h-4" /> Cerrar Sesión
+                                    </button>
+                                </div>
                             )}
                         </div>
                         <div className="flex items-center gap-2">
@@ -641,18 +669,24 @@ export default function ZonaMembros() {
                     {BOT.map(item => {
                         const active = tab === item.id && !item.isMenu;
                         return (
-                            <button key={item.id} onClick={() => item.isMenu ? setMob(true) : setTab(item.id)} className="flex flex-col items-center gap-1 group relative w-16">
+                            <button key={item.id} onClick={() => item.isMenu ? setMob(true) : setTab(item.id)} className="flex flex-col items-center justify-center relative w-12 h-12">
                                 <div className={`p-2 rounded-xl transition-all duration-300 ${active ? 'bg-[#00a8e1]/15 text-[#00a8e1]' : 'text-gray-400 group-hover:text-white'}`}>
-                                    <item.icon className="w-5 h-5" />
+                                    <item.icon className="w-6 h-6" />
                                 </div>
-                                <span className={`text-[9px] font-bold ${active ? 'text-[#00a8e1]' : 'text-gray-400'}`}>{item.label}</span>
-                                {active && <div className="absolute -bottom-1 w-1 h-1 bg-[#00a8e1] rounded-full shadow-[0_0_5px_#00a8e1]" />}
+                                {active && <div className="absolute top-10 w-1 h-1 bg-[#00a8e1] rounded-full shadow-[0_0_5px_#00a8e1]" />}
                             </button>
                         );
                     })}
                 </div>
 
                 {upg && <UpgModal onClose={() => setUpg(false)} />}
+
+                <ProfileSetup
+                    isOpen={showProfileSetup}
+                    onClose={() => setShowProfileSetup(false)}
+                    user={user}
+                    onSave={() => setShowProfileSetup(false)}
+                />
             </div>
         </>
     );
