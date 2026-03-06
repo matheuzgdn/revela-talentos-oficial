@@ -685,7 +685,11 @@ export default function ZonaMembros() {
                     isOpen={showProfileSetup}
                     onClose={() => setShowProfileSetup(false)}
                     user={user}
-                    onSave={() => setShowProfileSetup(false)}
+                    onSave={async () => {
+                        const u = await base44.auth.me().catch(() => null);
+                        if (u) setUser(u);
+                        setShowProfileSetup(false);
+                    }}
                 />
             </div>
         </>

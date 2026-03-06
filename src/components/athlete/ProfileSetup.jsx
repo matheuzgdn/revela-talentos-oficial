@@ -213,6 +213,7 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
         foot: user.foot || "direito",
         position: user.position || "",
         current_club_name: user.current_club_name || user.club || "",
+        previous_club_name: user.achievements ? user.achievements.replace('Clube Anterior: ', '') : ""
       }));
 
       // Calculate age simply if birth_date exists:
@@ -224,8 +225,14 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
         setForm(prev => ({ ...prev, age: age.toString() }));
       }
 
-      setLang(null);
-      setStep(0);
+      const savedLang = localStorage.getItem('lang_pref');
+      if (user.onboarding_completed) {
+        setLang(savedLang || 'es'); // fallback to ES in Zona Membros
+        setStep(1);
+      } else {
+        setLang(null);
+        setStep(0); // language selection is 00 (null lang)
+      }
     }
   }, [user, isOpen]);
 
