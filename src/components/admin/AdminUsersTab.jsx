@@ -23,8 +23,9 @@ import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle } from
-"lucide-react";
+  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle
+} from
+  "lucide-react";
 
 const NON_EDITABLE_KEYS = new Set([
   'id', 'created_date', 'updated_date', 'role', 'password', 'token',
@@ -65,7 +66,7 @@ const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines,
       const updateData = Object.fromEntries(
         Object.entries(draft).filter(([k]) => !NON_EDITABLE_KEYS.has(k))
       );
-      await User.update(user.id, updateData);
+      await base44.entities.User.update(user.id, updateData);
       toast.success('Atleta atualizado com sucesso!');
       setShowEditModal(false);
       onSave?.();
@@ -198,9 +199,9 @@ const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines,
                   const label = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
                   const valType = value === null || value === undefined ? 'null'
                     : typeof value === 'boolean' ? 'boolean'
-                    : typeof value === 'number' ? 'number'
-                    : typeof value === 'string' ? 'string'
-                    : 'json';
+                      : typeof value === 'number' ? 'number'
+                        : typeof value === 'string' ? 'string'
+                          : 'json';
                   return (
                     <div key={key} className="space-y-1">
                       <Label className="text-xs text-gray-400 font-medium">{label}</Label>
@@ -460,7 +461,7 @@ export default function AdminUsersTab() {
     setIsLoading(true);
     try {
       // Load only users initially
-      const users = await User.list('-created_date', 100);
+      const users = await base44.entities.User.list('-created_date', 100);
       setData({
         users: users || [],
         uploads: [],
@@ -477,7 +478,7 @@ export default function AdminUsersTab() {
         setData((prev) => ({ ...prev, pipelines }));
       }).catch(() => { });
 
-      Userbase44.entities.Pipeline.list().then((userPipelines) => {
+      base44.entities.UserPipeline.list().then((userPipelines) => {
         setData((prev) => ({ ...prev, userPipelines }));
       }).catch(() => { });
     } catch (error) {
@@ -658,7 +659,7 @@ export default function AdminUsersTab() {
       // The logic for role and is_revela_admin is now handled by handleRoleChange
       // so we can directly use updateData without further modification here.
 
-      await User.update(id, updateData);
+      await base44.entities.User.update(id, updateData);
 
       await base44.entities.Notification.create({
         user_id: id,
@@ -959,25 +960,25 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {data.users.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          onSendNotification={handleSendNotification}
+                          onProfileVisit={handleProfileVisit}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines} />
 
-                )}
-                      </AnimatePresence>
-                    </div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 }
 
-                  {(!data.users || data.users.length === 0) && showAllAthletes &&
-                <p className="text-gray-500 text-center py-8">
-                      Nenhum atleta cadastrado no sistema.
-                    </p>
+                {(!data.users || data.users.length === 0) && showAllAthletes &&
+                  <p className="text-gray-500 text-center py-8">
+                    Nenhum atleta cadastrado no sistema.
+                  </p>
                 }
               </div>
 
@@ -1000,15 +1001,15 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {adminUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          onSendNotification={handleSendNotification}
+                          onProfileVisit={handleProfileVisit}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines} />
 
                       )}
                     </AnimatePresence>
@@ -1025,15 +1026,15 @@ export default function AdminUsersTab() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
                       {revelaAdminUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                        <AthleteCard
+                          key={user.id}
+                          user={user}
+                          userData={getUserData(user.id)}
+                          onEdit={handleEditClick}
+                          onSendNotification={handleSendNotification}
+                          onProfileVisit={handleProfileVisit}
+                          pipelines={data.pipelines}
+                          userPipelines={data.userPipelines} />
 
                       )}
                     </AnimatePresence>
@@ -1049,15 +1050,15 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {planoCarreiraUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                      <AthleteCard
+                        key={user.id}
+                        user={user}
+                        userData={getUserData(user.id)}
+                        onEdit={handleEditClick}
+                        onSendNotification={handleSendNotification}
+                        onProfileVisit={handleProfileVisit}
+                        pipelines={data.pipelines}
+                        userPipelines={data.userPipelines} />
 
                     )}
                   </AnimatePresence>
@@ -1073,15 +1074,15 @@ export default function AdminUsersTab() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
                     {revelaTalentosUsers.map((user) =>
-                <AthleteCard
-                  key={user.id}
-                  user={user}
-                  userData={getUserData(user.id)}
-                  onEdit={handleEditClick}
-                  onSendNotification={handleSendNotification}
-                  onProfileVisit={handleProfileVisit}
-                  pipelines={data.pipelines}
-                  userPipelines={data.userPipelines} />
+                      <AthleteCard
+                        key={user.id}
+                        user={user}
+                        userData={getUserData(user.id)}
+                        onEdit={handleEditClick}
+                        onSendNotification={handleSendNotification}
+                        onProfileVisit={handleProfileVisit}
+                        pipelines={data.pipelines}
+                        userPipelines={data.userPipelines} />
 
                     )}
                   </AnimatePresence>
@@ -1095,15 +1096,15 @@ export default function AdminUsersTab() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <AnimatePresence>
                 {filteredUsers.map((user) =>
-            <AthleteCard
-              key={user.id}
-              user={user}
-              userData={getUserData(user.id)}
-              onEdit={handleEditClick}
-              onSendNotification={handleSendNotification}
-              onProfileVisit={handleProfileVisit}
-              pipelines={data.pipelines}
-              userPipelines={data.userPipelines} />
+                  <AthleteCard
+                    key={user.id}
+                    user={user}
+                    userData={getUserData(user.id)}
+                    onEdit={handleEditClick}
+                    onSendNotification={handleSendNotification}
+                    onProfileVisit={handleProfileVisit}
+                    pipelines={data.pipelines}
+                    userPipelines={data.userPipelines} />
 
                 )}
               </AnimatePresence>
