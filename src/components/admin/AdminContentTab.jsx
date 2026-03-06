@@ -129,7 +129,7 @@ export default function AdminContentTab() {
       is_published: content.is_published || false,
       is_featured: content.is_featured || false,
       is_top_10: content.is_top_10 || false,
-      is_zona_membros_unlocked: content.is_zona_membros_unlocked || false,
+      is_zona_membros_unlocked: content.is_zona_membros_unlocked || content.access_level === 'zona_membros' || false,
       notify_zona_membros: false,
       thumbnail_url: content.thumbnail_url || '',
       video_url: content.video_url || '',
@@ -163,7 +163,16 @@ export default function AdminContentTab() {
       }
 
       const shouldNotifyZonaMembros = contentData.notify_zona_membros;
+      const isUnlocked = contentData.is_zona_membros_unlocked;
       delete contentData.notify_zona_membros; // Não salvar este campo na DB
+      delete contentData.is_zona_membros_unlocked; // Bypass custom property dropping
+
+      // Map is_zona_membros_unlocked to access_level which is a known column
+      if (isUnlocked) {
+        contentData.access_level = 'zona_membros';
+      } else if (contentData.access_level === 'zona_membros') {
+        contentData.access_level = 'free';
+      }
 
       let savedId = null;
 
@@ -186,7 +195,7 @@ export default function AdminContentTab() {
       }
 
       // Notificar membros EC10
-      if (shouldNotifyZonaMembros && contentData.is_zona_membros_unlocked && savedId) {
+      if (shouldNotifyZonaMembros && isUnlocked && savedId) {
         toast.info("Enviando notificações para a Zona de Membros...");
         try {
           const members = await base44.entities.User.filter({ has_zona_membros_access: true });
@@ -311,8 +320,8 @@ export default function AdminContentTab() {
         <button
           onClick={() => setActiveSubTab("videos")}
           className={`px-4 py-2 font-medium transition-colors ${activeSubTab === "videos"
-              ? "text-blue-500 border-b-2 border-blue-500"
-              : "text-gray-400 hover:text-white"
+            ? "text-blue-500 border-b-2 border-blue-500"
+            : "text-gray-400 hover:text-white"
             }`}
         >
           <Video className="w-4 h-4 mr-2 inline-block" />Vídeos & Conteúdo
@@ -320,8 +329,8 @@ export default function AdminContentTab() {
         <button
           onClick={() => setActiveSubTab("lives")}
           className={`px-4 py-2 font-medium transition-colors ${activeSubTab === "lives"
-              ? "text-red-500 border-b-2 border-red-500"
-              : "text-gray-400 hover:text-white"
+            ? "text-red-500 border-b-2 border-red-500"
+            : "text-gray-400 hover:text-white"
             }`}
         >
           <Radio className="w-4 h-4 mr-2 inline-block" />Lives

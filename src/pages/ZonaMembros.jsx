@@ -110,7 +110,7 @@ const UpgModal = ({ onClose }) => (
 );
 
 const VCard = ({ item, onPlay }) => {
-    const isLocked = !item.is_zona_membros_unlocked;
+    const isLocked = !item.is_zona_membros_unlocked && item.access_level !== 'zona_membros';
     return (
         <div className="flex-none w-[130px] md:w-[220px] aspect-[3/4] relative rounded-2xl overflow-hidden zc bg-[#0a0f14] cursor-pointer snap-start border border-white/5 shadow-lg group" onClick={onPlay}>
             <img src={item.thumbnail_url || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400'} alt={item.title}
@@ -199,7 +199,7 @@ const InicioView = ({ contents, onPlay, onNav }) => {
 
 const EmpiezaView = ({ contents, onPlay }) => {
     const intro = contents[0];
-    const isLocked = intro ? !intro.is_zona_membros_unlocked : true;
+    const isLocked = intro ? (!intro.is_zona_membros_unlocked && intro.access_level !== 'zona_membros') : true;
     return (
         <div className="zp max-w-7xl mx-auto pb-10 pt-4">
             <div className="flex items-center gap-3 mb-6">
@@ -327,7 +327,7 @@ const ConsejosView = ({ contents, onPlay }) => {
             {d.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-10">
                     {d.map(item => {
-                        const isLocked = !item.is_zona_membros_unlocked;
+                        const isLocked = !item.is_zona_membros_unlocked && item.access_level !== 'zona_membros';
                         return (
                             <div key={item.id} className="relative aspect-[3/4] rounded-2xl overflow-hidden group cursor-pointer border border-[#00a8e1]/20 bg-[#0a0f14]" onClick={() => onPlay(item)}>
                                 <img src={item.thumbnail_url || 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800'} alt={item.title}
@@ -493,7 +493,7 @@ export default function ZonaMembros() {
 
 
     const handlePlay = useCallback((item) => {
-        const itemIsLocked = !item.is_zona_membros_unlocked;
+        const itemIsLocked = !item.is_zona_membros_unlocked && item.access_level !== 'zona_membros';
         if (itemIsLocked) { setUpg(true); return; }
         setSel(item);
     }, []);
