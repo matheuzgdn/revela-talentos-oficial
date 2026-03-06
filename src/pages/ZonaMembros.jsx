@@ -5,10 +5,39 @@ import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Searc
 /* ================== CONSTANTS ================== */
 const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c';
 const EVENTS = [
-    { id: 1, nome: 'Sudacademy', city: 'Belo Horizonte', country: 'Brasil', month: 'Dezembro', pos: { top: '61.5%', left: '37.5%' } },
-    { id: 2, nome: 'Libertacademy', city: 'Buenos Aires', country: 'Argentina', month: 'Julho', pos: { top: '76.4%', left: '34.3%' } },
-    { id: 3, nome: 'Eurocamp', city: 'Madrid', country: 'Espanha', month: 'Agosto', pos: { top: '28%', left: '48.5%' } },
+    { id: 1, nome: 'Sudacademy', city: 'Belo Horizonte', country: 'Brasil', month: 'Diciembre', pos: { top: '61.5%', left: '37.5%' } },
+    { id: 2, nome: 'Libertacademy', city: 'Buenos Aires', country: 'Argentina', month: 'Julio', pos: { top: '76.4%', left: '34.3%' } },
+    { id: 3, nome: 'Eurocamp', city: 'Madrid', country: 'España', month: 'Agosto', pos: { top: '28%', left: '48.5%' } },
 ];
+
+/* ================== AUTO-TRANSLATION ================== */
+const TRANS_CACHE_KEY = 'zm_trans_cache_v1';
+const getTransCache = () => { try { return JSON.parse(localStorage.getItem(TRANS_CACHE_KEY) || '{}'); } catch { return {}; } };
+const setTransCache = (c) => { try { localStorage.setItem(TRANS_CACHE_KEY, JSON.stringify(c)); } catch { } };
+
+const translateText = async (text) => {
+    if (!text || !text.trim()) return text;
+    const cache = getTransCache();
+    if (cache[text]) return cache[text];
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0, 480))}&langpair=pt|es`);
+        const data = await res.json();
+        const out = data?.responseData?.translatedText;
+        const result = (out && out !== 'QUERY LENGTH LIMIT EXCEDEED') ? out : text;
+        cache[text] = result;
+        setTransCache(cache);
+        return result;
+    } catch { return text; }
+};
+
+const translateContents = async (items) =>
+    Promise.all(items.map(async (item) => {
+        const [te, de] = await Promise.all([
+            translateText(item.title),
+            item.description ? translateText(item.description) : Promise.resolve(''),
+        ]);
+        return { ...item, _title_es: te, _desc_es: de };
+    }));
 const LOGO_FULL = 'https://static.wixstatic.com/media/933cdd_2a46d0206f1149cc87acf3ca1dfc003b~mv2.png/v1/fill/w_537,h_537,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933cdd_2a46d0206f1149cc87acf3ca1dfc003b~mv2.png';
 const LOGO_ICON = 'https://static.wixstatic.com/media/933cdd_4d0be2018e134c90accb37a4a6261fa4~mv2.png/v1/fill/w_537,h_537,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933cdd_4d0be2018e134c90accb37a4a6261fa4~mv2.png';
 
@@ -66,16 +95,16 @@ const UpgModal = ({ onClose }) => (
                 </div>
             </div>
             <h2 className="text-white font-black text-2xl text-center mb-2 tracking-tight">
-                Conteudo <span className="text-[#00a8e1]">Bloqueado</span>
+                Contenido <span className="text-[#00a8e1]">Bloqueado</span>
             </h2>
             <p className="text-gray-400 text-sm text-center mb-6 leading-relaxed">
-                Este conteudo faz parte do pacote completo da plataforma EC10 Talentos. Adquira agora para ter acesso ilimitado.
+                Este contenido forma parte del paquete completo de la plataforma EC10 Talentos. Adquiérelo ahora para tener acceso ilimitado.
             </p>
             <a href={PURCHASE_URL} target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r from-[#00a8e1] to-[#0066FF] text-black font-black text-base rounded-2xl shadow-xl shadow-[#00a8e1]/30 transition-all duration-300 hover:-translate-y-0.5 mb-3">
-                <ShoppingCart className="w-5 h-5" />Adquirir Acesso Completo
+                <ShoppingCart className="w-5 h-5" />Adquirir Acceso Completo
             </a>
-            <button onClick={onClose} className="w-full py-3 text-gray-500 text-sm font-medium hover:text-gray-300 transition-colors">Agora nao</button>
+            <button onClick={onClose} className="w-full py-3 text-gray-500 text-sm font-medium hover:text-gray-300 transition-colors">Ahora no</button>
         </div>
     </div>
 );
@@ -102,7 +131,7 @@ const VCard = ({ item, onPlay }) => {
                 </div>
             )}
             <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-4 z-20">
-                <h4 className="font-bold text-white text-[10px] md:text-sm leading-tight line-clamp-2 drop-shadow-lg">{item.title}</h4>
+                <h4 className="font-bold text-white text-[10px] md:text-sm leading-tight line-clamp-2 drop-shadow-lg">{item._title_es || item.title}</h4>
                 {item.duration && <div className="flex items-center gap-1 mt-1 text-[8px] md:text-[10px] text-white/70 font-bold"><Clock className="w-2.5 h-2.5 text-[#00a8e1]" />{item.duration}</div>}
             </div>
         </div>
@@ -151,17 +180,17 @@ const InicioView = ({ contents, onPlay, onNav }) => {
                     <Bdg txt={s.badge} type="rv" Ic={ShieldCheck} />
                     <h1 className="text-2xl md:text-5xl font-black text-white leading-[1.1] mt-4 mb-3 drop-shadow-2xl">{s.title}</h1>
                     <p className="text-white/80 text-xs md:text-base font-medium mb-6 max-w-sm leading-relaxed">{s.desc}</p>
-                    <PBtn onClick={() => onNav('empieza')} Ic={Play} v="pr">Comecar Agora</PBtn>
+                    <PBtn onClick={() => onNav('empieza')} Ic={Play} v="pr">Comenzar Ahora</PBtn>
                 </div>
             </div>
-            <CRow title="Latest Release" items={latest} onPlay={onPlay} />
-            {ment.length > 0 && <CRow title="Mentorias" items={ment} onPlay={onPlay} />}
-            {trein.length > 0 && <CRow title="Treino Tatico" items={trein} onPlay={onPlay} />}
-            {fis.length > 0 && <CRow title="Preparacao Fisica" items={fis} onPlay={onPlay} />}
+            <CRow title="Últimos Lanzamientos" items={latest} onPlay={onPlay} />
+            {ment.length > 0 && <CRow title="Mentorías" items={ment} onPlay={onPlay} />}
+            {trein.length > 0 && <CRow title="Entrenamiento Táctico" items={trein} onPlay={onPlay} />}
+            {fis.length > 0 && <CRow title="Preparación Física" items={fis} onPlay={onPlay} />}
             {contents.length === 0 && (
                 <div className="text-center py-16 text-white/40">
                     <Play className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p className="font-bold">O admin adicionara videos em breve.</p>
+                    <p className="font-bold">El administrador añadirá videos pronto.</p>
                 </div>
             )}
         </div>
@@ -183,8 +212,8 @@ const EmpiezaView = ({ contents, onPlay }) => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-5 md:p-10 z-20 w-full">
                         <Bdg txt="VIDEO PRINCIPAL" type="rv" Ic={Play} />
-                        <h3 className="font-black text-xl md:text-4xl text-white mt-3 mb-2 drop-shadow-2xl">{intro.title}</h3>
-                        {intro.description && <p className="text-white/80 text-xs md:text-base line-clamp-2">{intro.description}</p>}
+                        <h3 className="font-black text-xl md:text-4xl text-white mt-3 mb-2 drop-shadow-2xl">{intro._title_es || intro.title}</h3>
+                        {intro.description && <p className="text-white/80 text-xs md:text-base line-clamp-2">{intro._desc_es || intro.description}</p>}
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/30 backdrop-blur-sm">
                         {isLocked
@@ -199,7 +228,7 @@ const EmpiezaView = ({ contents, onPlay }) => {
                     <Hourglass className="w-8 h-8 text-[#00a8e1] animate-pulse" />
                 </div>
             )}
-            <CRow title="Todos os Cursos" items={contents.slice(0, 8)} onPlay={onPlay} />
+            <CRow title="Todos los Cursos" items={contents.slice(0, 8)} onPlay={onPlay} />
         </div>
     );
 };
@@ -212,15 +241,15 @@ const EnVivoView = ({ isLive }) => (
         </div>
         {isLive ? (
             <>
-                <Bdg txt="AO VIVO AGORA" type="al" />
-                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">Transmissao Ao Vivo!</h1>
-                <a href="?page=Lives" className="mt-4 flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-black py-3 px-8 rounded-full transition-all"><Play className="w-5 h-5 fill-white" /> Assistir Agora</a>
+                <Bdg txt="EN VIVO AHORA" type="al" />
+                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">¡Transmisión En Vivo!</h1>
+                <a href="?page=Lives" className="mt-4 flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-black py-3 px-8 rounded-full transition-all"><Play className="w-5 h-5 fill-white" /> Ver Ahora</a>
             </>
         ) : (
             <>
-                <Bdg txt="Transmision en directo" type="rv" />
-                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">Tus clases te esperan aqui.</h1>
-                <p className="text-sm md:text-xl text-[#00a8e1] font-black flex items-center gap-2"><Hourglass className="w-4 h-4 animate-pulse" /> Disponibles muy pronto!</p>
+                <Bdg txt="Transmisión en directo" type="rv" />
+                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">Tus clases te esperan aquí.</h1>
+                <p className="text-sm md:text-xl text-[#00a8e1] font-black flex items-center gap-2"><Hourglass className="w-4 h-4 animate-pulse" /> ¡Disponibles muy pronto!</p>
             </>
         )}
     </div>
@@ -332,7 +361,7 @@ const ConsejosView = ({ contents, onPlay }) => {
                                         </div>
                                     </div>
                                 )}
-                                <div className="absolute bottom-0 left-0 p-3 md:p-5 z-20"><h3 className="font-black text-sm md:text-lg text-white leading-tight">{item.title}</h3></div>
+                                <div className="absolute bottom-0 left-0 p-3 md:p-5 z-20"><h3 className="font-black text-sm md:text-lg text-white leading-tight">{item._title_es || item.title}</h3></div>
                             </div>
                         );
                     })}
@@ -340,21 +369,21 @@ const ConsejosView = ({ contents, onPlay }) => {
             ) : (
                 <div className="text-center py-16 text-white/40 mb-10">
                     <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p className="font-bold">Nenhum conselho disponivel ainda.</p>
+                    <p className="font-bold">Ningún consejo disponible aún.</p>
                 </div>
             )}
             <div className="bg-[#05080a] border border-[#00a8e1]/40 rounded-3xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                    <h3 className="text-xl md:text-2xl font-black text-white mb-2 uppercase">Quer ir mais alem?</h3>
-                    <p className="text-[#00a8e1] font-bold mb-3 text-xs md:text-base">Acesse nossa MENTORIA COMPLETA.</p>
+                    <h3 className="text-xl md:text-2xl font-black text-white mb-2 uppercase">¿Quieres ir más allá?</h3>
+                    <p className="text-[#00a8e1] font-bold mb-3 text-xs md:text-base">Accede a nuestra MENTORÍA COMPLETA.</p>
                     <ul className="text-white/80 text-xs md:text-base space-y-2">
-                        {['Planos personalizados', 'Acompanhamento', 'Preparacao mental'].map((b, i) => (
+                        {['Planes personalizados', 'Acompañamiento', 'Preparación mental'].map((b, i) => (
                             <li key={i} className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-[#00a8e1]" /> {b}</li>
                         ))}
                     </ul>
                 </div>
                 <a href={PURCHASE_URL} target="_blank" rel="noopener noreferrer">
-                    <PBtn v="bl">COMUNIQUE-SE CONOSCO</PBtn>
+                    <PBtn v="bl">CONTÁCTANOS</PBtn>
                 </a>
             </div>
         </div>
@@ -366,20 +395,20 @@ const MentoriasView = () => (
         <div className="bg-black rounded-3xl overflow-hidden flex flex-col lg:flex-row shadow-xl border border-[#00a8e1]/30 relative">
             <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-[#00a8e1]/10 rounded-full blur-[80px] pointer-events-none z-0" />
             <div className="p-6 md:p-12 lg:p-16 flex-1 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-white/5 relative z-10">
-                <div className="mb-4"><Bdg txt="ATENCAO FAMILIAS" type="al" Ic={AlertCircle} /></div>
+                <div className="mb-4"><Bdg txt="ATENCIÓN FAMILIAS" type="al" Ic={AlertCircle} /></div>
                 <h2 className="text-3xl md:text-5xl font-black text-[#00a8e1] leading-tight uppercase mb-3 tracking-tighter">
-                    NOSSA MENTORIA ESTA EM ANALISE
+                    NUESTRA MENTORÍA ESTÁ EN ANÁLISIS
                 </h2>
-                <p className="text-white/90 text-sm md:text-xl mb-6 font-bold max-w-lg">Prepare seu filho para o proximo nivel profissional.</p>
+                <p className="text-white/90 text-sm md:text-xl mb-6 font-bold max-w-lg">Prepara a tu hijo para el siguiente nivel profesional.</p>
                 <div className="flex flex-col gap-3">
-                    <a href={PURCHASE_URL} target="_blank" rel="noopener noreferrer"><PBtn v="pr" cls="w-full">VAGAS LIMITADAS</PBtn></a>
-                    <PBtn v="ob" cls="w-full">ENTRAR NA LISTA DE ESPERA</PBtn>
+                    <a href={PURCHASE_URL} target="_blank" rel="noopener noreferrer"><PBtn v="pr" cls="w-full">CUPOS LIMITADOS</PBtn></a>
+                    <PBtn v="ob" cls="w-full">LISTA DE ESPERA</PBtn>
                 </div>
             </div>
             <div className="p-6 md:p-12 lg:p-16 bg-[#05080a]/80 flex-1 flex flex-col justify-center relative z-10">
                 <h3 className="text-xl md:text-2xl font-black text-white mb-6 uppercase flex items-center gap-2"><Star className="w-6 h-6 text-[#00a8e1]" /> Beneficios</h3>
                 <ul className="space-y-4 mb-8">
-                    {['Acompanhamento completo', 'Preparacao para eventos', 'Assessoria em viagens e documentacao', 'Cuidados fisicos e mentais'].map((b, i) => (
+                    {['Acompañamiento completo', 'Preparación para eventos', 'Asesoría en viajes y documentación', 'Cuidados físicos y mentales'].map((b, i) => (
                         <li key={i} className="flex items-start gap-3">
                             <div className="w-6 h-6 shrink-0 rounded-full bg-[#0a0f14] border border-[#00a8e1]/50 flex items-center justify-center mt-0.5">
                                 <Check className="w-3 h-3 text-[#00a8e1]" />
@@ -391,7 +420,7 @@ const MentoriasView = () => (
                 <div className="bg-amber-500/5 border border-amber-500/30 p-4 rounded-xl">
                     <h4 className="text-amber-500 font-bold flex items-center gap-2 mb-2 text-xs md:text-base"><AlertTriangle className="w-4 h-4" /> IMPORTANTE</h4>
                     <p className="text-white/70 text-[10px] md:text-sm leading-relaxed">
-                        Considere nossos eventos e a preparacao adequada para que seu atleta esteja pronto.
+                        Considera nuestros eventos y la preparación adecuada para que tu atleta esté listo.
                     </p>
                 </div>
             </div>
@@ -435,7 +464,9 @@ export default function ZonaMembros() {
                     base44.entities.PlatformSettings.list().catch(() => []),
                 ]);
                 setUser(u);
-                setContents(c || []);
+                // Auto-translate content titles/descriptions to Spanish
+                const translated = await translateContents(c || []);
+                setContents(translated);
                 setLive(ps.find(s => s.setting_key === 'is_live')?.setting_value === 'true');
             } catch (e) {
                 console.error('ZonaMembros loadData:', e);
@@ -479,7 +510,7 @@ export default function ZonaMembros() {
             <div className="min-h-screen bg-[#05080a] text-white flex flex-col items-center justify-center p-4">
                 <div className="w-full max-w-4xl">
                     <button onClick={() => setSel(null)} className="mb-4 flex items-center gap-2 text-[#00a8e1] font-bold text-sm hover:text-white transition-colors">
-                        Voltar
+                        Volver
                     </button>
                     <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-[#00a8e1]/30">
                         {sel.live_embed_code ? (
@@ -532,7 +563,7 @@ export default function ZonaMembros() {
                             onClick={() => setTab('inicio')} />
                     </div>
                     <nav className={`flex-1 pt-4 pb-6 flex flex-col gap-1 overflow-y-auto zh ${hov ? 'px-5' : 'px-3'}`}>
-                        {hov && <div className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] mb-1 ml-3">Navegacao</div>}
+                        {hov && <div className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] mb-1 ml-3">Navegación</div>}
                         {MENU.map(item => {
                             const active = tab === item.id;
                             return (
@@ -551,7 +582,7 @@ export default function ZonaMembros() {
                                 <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-8 h-8 rounded-full object-cover border border-[#00a8e1]/40" />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-white text-xs font-bold truncate">{user.full_name}</p>
-                                    <p className={`text-[10px] font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acesso Ativo'}</p>
+                                    <p className={`text-[10px] font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acceso Activo'}</p>
                                 </div>
                             </div>
                         </div>
@@ -571,7 +602,7 @@ export default function ZonaMembros() {
                                     <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-10 h-10 rounded-full object-cover" />
                                     <div>
                                         <p className="text-white text-sm font-bold">{user.full_name}</p>
-                                        <p className={`text-xs font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acesso Ativo'}</p>
+                                        <p className={`text-xs font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acceso Activo'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -597,12 +628,12 @@ export default function ZonaMembros() {
                                         <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-full h-full object-cover rounded-full" />
                                     </div>
                                     <div>
-                                        <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Bem-vindo,</p>
+                                        <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Bienvenido,</p>
                                         <p className="text-sm md:text-base font-black text-white leading-tight">{user.full_name}</p>
                                     </div>
                                 </>
                             ) : (
-                                <div><p className="text-sm font-black text-white">Zona de Membros</p><p className="text-[10px] text-[#00a8e1]">EC10 Talentos</p></div>
+                                <div><p className="text-sm font-black text-white">Zona de Miembros</p><p className="text-[10px] text-[#00a8e1]">EC10 Talentos</p></div>
                             )}
                         </div>
                         <div className="flex items-center gap-2">
