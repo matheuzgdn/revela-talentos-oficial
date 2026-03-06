@@ -242,21 +242,35 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Validate type and size
+    if (!file.type.startsWith('image/')) {
+      toast.error("Por favor, selecione apenas arquivos de imagem");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("A imagem deve ter no máximo 5MB");
+      return;
+    }
+
     setUploading(true);
     try {
       const response = await base44.storage.uploadFile({ file });
+      // base44 usually returns { file_url: "..." }
       const file_url = response?.file_url || response;
-      if (typeof file_url === 'string') {
+      if (file_url && typeof file_url === 'string') {
         set("profile_picture_url", file_url);
-        toast.success("Foto enviada!");
+        toast.success("Foto enviada com sucesso!");
       } else {
-        toast.error("Formato de resposta inválido.");
+        console.error("Upload response:", response);
+        toast.error("Erro: servidor não retornou a URL da imagem.");
       }
     } catch (err) {
       console.error("Upload error:", err);
-      toast.error("Erro no upload.");
+      toast.error("Erro no upload da foto.");
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const handleSave = async () => {
