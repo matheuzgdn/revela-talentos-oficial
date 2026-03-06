@@ -237,9 +237,16 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
     if (!file) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.storage.uploadFile({ file });
-      set("profile_picture_url", file_url);
-    } catch {
+      const response = await base44.storage.uploadFile({ file });
+      const file_url = response?.file_url || response;
+      if (typeof file_url === 'string') {
+        set("profile_picture_url", file_url);
+        toast.success("Foto enviada!");
+      } else {
+        toast.error("Formato de resposta inválido.");
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
       toast.error("Erro no upload.");
     }
     setUploading(false);
@@ -431,7 +438,7 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
               </div>
 
               <button onClick={() => setStep(2)} className="w-full bg-[#00a8e1] text-black font-black text-lg py-4 rounded-xl shadow-[0_0_30px_rgba(0,168,225,0.3)] transition-all flex justify-center items-center">
-                {t.btn_skip} &rarr;
+                {form.profile_picture_url ? t.btn_continue : t.btn_skip} &rarr;
               </button>
             </motion.div>
           )}
