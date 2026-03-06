@@ -243,83 +243,83 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate type and size
     if (!file.type.startsWith('image/')) {
-      toast.error("Por favor, selecione apenas arquivos de imagem");
+      toast.error("Selecione apenas arquivos de imagem.");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("A imagem deve ter no máximo 5MB");
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("A imagem deve ter no máximo 2MB.");
       return;
     }
 
     setUploading(true);
     try {
-      const response = await base44.storage.uploadFile({ file });
-      // base44 usually returns { file_url: "..." }
-      const file_url = response?.file_url || response;
-      if (file_url && typeof file_url === 'string') {
-        set("profile_picture_url", file_url);
-        toast.success("Foto enviada com sucesso!");
-      } else {
-        console.error("Upload response:", response);
-        toast.error("Erro: servidor não retornou a URL da imagem.");
-      }
+      // Convert to base64 data URL directly in the browser (no external upload server needed)
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => resolve(ev.target.result);
+        reader.onerror = () => reject(new Error("Falha ao ler o arquivo"));
+        reader.readAsDataURL(file);
+      });
+
+      // Save photo immediately to the profile — no need for the user to finish all steps
+      await base44.auth.updateMe({ profile_picture_url: dataUrl });
+      set("profile_picture_url", dataUrl);
+      toast.success("✅ Foto salva com sucesso!");
     } catch (err) {
       console.error("Upload error:", err);
-      toast.error("Erro no upload da foto.");
+      toast.error("Erro ao salvar a foto. Tente novamente.");
     } finally {
       setUploading(false);
     }
   };
 
+
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Calculate a roughly approximate birth_date from Age, as API typically expects birth_date date format
+      // Build a valid birth_date from age — only if age is a valid number
       let birth_date = null;
-      if (form.age) {
-        const year = new Date().getFullYear() - parseInt(form.age);
-        birth_date = `${year}-01-01`; // Approximation
+      const ageNum = parseInt(form.age);
+      if (!isNaN(ageNum) && ageNum > 0 && ageNum < 100) {
+        const year = new Date().getFullYear() - ageNum;
+        birth_date = `${year}-01-01`;
       }
 
       let city = null;
       let state = null;
       if (form.cityState) {
-        const parts = form.cityState.split(/[,-]/);
+        const parts = form.cityState.split(/[,\-]/);
         city = parts[0].trim();
         state = parts[1] ? parts[1].trim() : null;
       }
 
       const updateData = {
-        birth_date,
-        position: form.position,
-        nationality: form.nationality,
-        foot: form.foot,
+        ...(birth_date && { birth_date }),
+        position: form.position || null,
+        nationality: form.nationality || "Brasil",
+        foot: form.foot || "direito",
         profile_picture_url: form.profile_picture_url || null,
-        city,
-        state,
-        height: form.height ? Number(form.height) : null,
-        weight: form.weight ? Number(form.weight) : null,
-        current_club_name: form.current_club_name || null,
-        club: form.current_club_name || null,
-        achievements: form.previous_club_name ? `Clube Anterior: ${form.previous_club_name}` : null,
+        ...(city && { city }),
+        ...(state && { state }),
+        ...(form.height && { height: Number(form.height) }),
+        ...(form.weight && { weight: Number(form.weight) }),
+        ...(form.current_club_name && { current_club_name: form.current_club_name, club: form.current_club_name }),
+        ...(form.previous_club_name && { achievements: `Clube Anterior: ${form.previous_club_name}` }),
         onboarding_completed: true
       };
 
       await base44.auth.updateMe(updateData);
-
-      // Save lang preference locally
       if (lang) localStorage.setItem('lang_pref', lang);
-
-      toast.success("Perfil configurado com sucesso!", { duration: 3000 });
+      toast.success("Perfil salvo com sucesso! ✅", { duration: 3000 });
       setTimeout(async () => {
         if (onSave) await onSave();
         setSaving(false);
         if (onClose) onClose();
       }, 600);
     } catch (error) {
-      toast.error("Falha ao salvar.");
+      console.error("Erro ao salvar perfil:", error);
+      toast.error(`Falha ao salvar: ${error?.message || "Tente novamente."}`);
       setSaving(false);
     }
   };
