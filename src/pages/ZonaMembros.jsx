@@ -160,7 +160,7 @@ const InicioView = ({ contents, onPlay, onNav }) => {
     const [sl, setSl] = useState(0);
     const slides = [
         { title: 'El proximo paso profesional', desc: 'Entrenamos familias y atletas.', badge: 'BIENVENIDA', img: 'https://static.wixstatic.com/media/933cdd_ffcf50d1b54a4d5682db7ce83357d16b~mv2.jpg/v1/fill/w_537,h_300,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/933cdd_ffcf50d1b54a4d5682db7ce83357d16b~mv2.jpg' },
-        { title: 'Aulas en vivo', desc: 'Proyectos y planos de carrera.', badge: 'ATENCION', img: 'https://static.wixstatic.com/media/933cdd_0c70200ba5ce423a9a0f58c6b4e8f7d7~mv2.jpeg/v1/fill/w_430,h_537,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/933cdd_0c70200ba5ce423a9a0f58c6b4e8f7d7~mv2.jpeg' },
+        { title: 'Aulas en vivo', desc: 'Proyectos y planos de carrera.', badge: 'ATENCION', img: 'https://static.wixstatic.com/media/933cdd_f02fd6b9fa5f46d89e8b4ab5e3f89f1f~mv2.jpg' },
     ];
     useEffect(() => { const t = setInterval(() => setSl(p => (p + 1) % slides.length), 6000); return () => clearInterval(t); }, []);
     const s = slides[sl];
