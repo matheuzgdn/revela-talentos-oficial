@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock, LogOut, Settings } from 'lucide-react';
+import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock, LogOut, Settings, Plus, Minus, RotateCcw } from 'lucide-react';
 import ProfileSetup from '@/components/athlete/ProfileSetup';
 /* ================== CONSTANTS ================== */
 const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c';
@@ -241,59 +241,80 @@ const EnVivoView = ({ isLive }) => (
 
 const IntercambioView = () => {
     const [at, setAt] = useState(null);
+    const [zoom, setZoom] = useState(1);
+
+    const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.3, 3));
+    const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.3, 1));
+    const handleZoomReset = () => setZoom(1);
+
     return (
-        <div className="zp max-w-7xl mx-auto pb-10 pt-4">
-            <div className="bg-black rounded-[2rem] border border-[#00a8e1]/30 p-5 md:p-12 relative shadow-[0_20px_40px_rgba(0,0,0,0.9)] mb-12 overflow-hidden">
-                <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#00a8e1]/10 rounded-full blur-[80px] pointer-events-none" />
-                <div className="relative z-10">
-                    <Bdg txt="OPORTUNIDAD GLOBAL" type="rv" Ic={Globe} />
-                    <h1 className="text-2xl md:text-5xl font-black text-white mt-5 mb-6 uppercase leading-tight tracking-tighter">
-                        INTERCAMBIOS EN <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00a8e1] to-emerald-400">EUROPA Y BRASIL</span>
-                    </h1>
-                    <div className="bg-[#0a0f14]/80 rounded-2xl p-5 mb-6 border border-white/5">
-                        <p className="text-white font-bold mb-3 text-sm flex items-center gap-2"><AlertTriangle className="w-5 h-5 text-amber-500" /> Para participar:</p>
-                        <div className="inline-flex items-center gap-2 bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/30 mb-3 text-emerald-400 font-bold text-xs"><CheckCircle className="w-4 h-4" /> Preseleccion obligatoria</div>
-                        <ul className="space-y-3 text-white/80 text-xs md:text-sm">
-                            {['Subir el video de tu hijo', 'Prepararlo mental y fisicamente', 'Nuevas reglas de alimentacion'].map((t, i) => (
-                                <li key={i} className="flex items-center gap-3">
-                                    <span className="w-6 h-6 shrink-0 rounded-full bg-[#0a0f14] border border-[#00a8e1]/50 flex items-center justify-center font-bold text-[#00a8e1] text-xs">{i + 1}</span>{t}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3"><PBtn v="bl">INSCRIBIRSE</PBtn><PBtn v="ou">LISTA DE ESPERA</PBtn></div>
-                </div>
-            </div>
-            <div className="flex items-center justify-center gap-3 mb-8">
-                <Trophy className="w-6 h-6 text-[#00a8e1] animate-pulse" />
-                <h2 className="text-2xl md:text-4xl font-black uppercase">EC10 <span className="text-[#00a8e1]">Talentos</span></h2>
-                <Trophy className="w-6 h-6 text-[#00a8e1] animate-pulse" />
-            </div>
-            <div className="relative w-full max-w-5xl mx-auto aspect-[2/1] group mb-10">
-                <div className="absolute inset-0 bg-[#05080a] border border-[#00a8e1]/20 rounded-[2rem] overflow-hidden">
-                    <div className="absolute inset-0 opacity-40 group-hover:opacity-70 transition-opacity flex items-center justify-center">
-                        <svg viewBox="0 0 1000 500" className="w-full h-full">
-                            <image href="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" width="1000" height="500" style={{ filter: 'invert(1) sepia(1) saturate(5) hue-rotate(175deg) brightness(0.6) contrast(2)' }} />
-                        </svg>
-                    </div>
-                </div>
-                {EVENTS.map(ev => (
-                    <div key={ev.id} className="absolute flex flex-col items-center z-20"
-                        style={{ top: ev.pos.top, left: ev.pos.left, transform: 'translate(-50%,-50%)' }}
-                        onMouseEnter={() => setAt(ev.id)} onMouseLeave={() => setAt(null)}>
-                        <div className="relative flex items-center justify-center cursor-pointer">
-                            <div className="absolute w-8 h-8 bg-[#00a8e1]/30 rounded-full animate-ping" />
-                            <MapPin className="relative w-5 h-5 md:w-7 md:h-7 text-[#00a8e1] drop-shadow-[0_0_10px_rgba(0,168,225,1)]" />
+        <>
+            <div className="zp max-w-7xl mx-auto pb-10 pt-4">
+                <div className="bg-black rounded-[2rem] border border-[#00a8e1]/30 p-5 md:p-12 relative shadow-[0_20px_40px_rgba(0,0,0,0.9)] mb-12 overflow-hidden">
+                    <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#00a8e1]/10 rounded-full blur-[80px] pointer-events-none" />
+                    <div className="relative z-10">
+                        <Bdg txt="OPORTUNIDAD GLOBAL" type="rv" Ic={Globe} />
+                        <h1 className="text-2xl md:text-5xl font-black text-white mt-5 mb-6 uppercase leading-tight tracking-tighter">
+                            INTERCAMBIOS EN <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00a8e1] to-emerald-400">EUROPA Y BRASIL</span>
+                        </h1>
+                        <div className="bg-[#0a0f14]/80 rounded-2xl p-5 mb-6 border border-white/5">
+                            <p className="text-white font-bold mb-3 text-sm flex items-center gap-2"><AlertTriangle className="w-5 h-5 text-amber-500" /> Para participar:</p>
+                            <div className="inline-flex items-center gap-2 bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/30 mb-3 text-emerald-400 font-bold text-xs"><CheckCircle className="w-4 h-4" /> Preseleccion obligatoria</div>
+                            <ul className="space-y-3 text-white/80 text-xs md:text-sm">
+                                {['Subir el video de tu hijo', 'Prepararlo mental y fisicamente', 'Nuevas reglas de alimentacion'].map((t, i) => (
+                                    <li key={i} className="flex items-center gap-3">
+                                        <span className="w-6 h-6 shrink-0 rounded-full bg-[#0a0f14] border border-[#00a8e1]/50 flex items-center justify-center font-bold text-[#00a8e1] text-xs">{i + 1}</span>{t}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
-                        <div className={`absolute ${parseFloat(ev.pos.top) > 50 ? 'bottom-full mb-3' : 'top-full mt-3'} w-48 transition-all duration-300 ${at === ev.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                            <div className="bg-[#05080a]/95 border border-[#00a8e1]/50 rounded-xl p-3">
-                                <p className="text-[#00a8e1] font-bold text-sm flex items-center gap-1 mb-1"><Sparkles className="w-3 h-3" />{ev.nome}</p>
-                                <p className="text-gray-300 text-xs mb-1"><Map className="w-3 h-3 inline mr-1 text-gray-500" />{ev.city}, {ev.country}</p>
-                                <p className="text-[#00a8e1] font-bold uppercase text-xs"><Calendar className="w-3 h-3 inline mr-1" />{ev.month}</p>
+                        <div className="flex flex-col sm:flex-row gap-3"><PBtn v="bl">INSCRIBIRSE</PBtn><PBtn v="ou">LISTA DE ESPERA</PBtn></div>
+                    </div>
+                </div>
+                <div className="flex items-center justify-center gap-3 mb-8">
+                    <Trophy className="w-6 h-6 text-[#00a8e1] animate-pulse" />
+                    <h2 className="text-2xl md:text-4xl font-black uppercase">EC10 <span className="text-[#00a8e1]">Talentos</span></h2>
+                    <Trophy className="w-6 h-6 text-[#00a8e1] animate-pulse" />
+                </div>
+                <div className="relative w-full max-w-5xl mx-auto aspect-[2/1] group mb-10 overflow-hidden rounded-[2rem] border border-[#00a8e1]/20 bg-[#05080a]">
+                    {/* Controles de Zoom */}
+                    <div className="absolute top-4 right-4 z-30 flex flex-col gap-2 bg-[#0a0f14]/80 backdrop-blur-md p-2 rounded-xl border border-white/10 shadow-lg">
+                        <button onClick={handleZoomIn} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="Zoom In">
+                            <Plus className="w-4 h-4" />
+                        </button>
+                        <button onClick={handleZoomReset} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="Padrão">
+                            <RotateCcw className="w-4 h-4" />
+                        </button>
+                        <button onClick={handleZoomOut} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="Zoom Out">
+                            <Minus className="w-4 h-4" />
+                        </button>
+                    </div>
+
+                    <div className="w-full h-full transition-transform duration-500 ease-in-out" style={{ transform: `scale(${zoom})` }}>
+                        <div className="absolute inset-0 opacity-40 group-hover:opacity-70 transition-opacity flex items-center justify-center">
+                            <svg viewBox="0 0 1000 500" className="w-full h-full">
+                                <image href="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" width="1000" height="500" style={{ filter: 'invert(1) sepia(1) saturate(5) hue-rotate(175deg) brightness(0.6) contrast(2)' }} />
+                            </svg>
+                        </div>
+                    </div>
+                    {EVENTS.map(ev => (
+                        <div key={ev.id} className="absolute flex flex-col items-center z-20"
+                            style={{ top: ev.pos.top, left: ev.pos.left, transform: 'translate(-50%,-50%)' }}
+                            onMouseEnter={() => setAt(ev.id)} onMouseLeave={() => setAt(null)}>
+                            <div className="relative flex items-center justify-center cursor-pointer">
+                                <div className="absolute w-8 h-8 bg-[#00a8e1]/30 rounded-full animate-ping" />
+                                <MapPin className="relative w-5 h-5 md:w-7 md:h-7 text-[#00a8e1] drop-shadow-[0_0_10px_rgba(0,168,225,1)]" />
+                            </div>
+                            <div className={`absolute ${parseFloat(ev.pos.top) > 50 ? 'bottom-full mb-3' : 'top-full mt-3'} w-48 transition-all duration-300 ${at === ev.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+                                <div className="bg-[#05080a]/95 border border-[#00a8e1]/50 rounded-xl p-3">
+                                    <p className="text-[#00a8e1] font-bold text-sm flex items-center gap-1 mb-1"><Sparkles className="w-3 h-3" />{ev.nome}</p>
+                                    <p className="text-gray-300 text-xs mb-1"><Map className="w-3 h-3 inline mr-1 text-gray-500" />{ev.city}, {ev.country}</p>
+                                    <p className="text-[#00a8e1] font-bold uppercase text-xs"><Calendar className="w-3 h-3 inline mr-1" />{ev.month}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
             <h2 className="text-xl font-bold text-center text-white mb-4 uppercase tracking-widest flex items-center justify-center gap-2">
                 <Calendar className="w-5 h-5 text-[#00a8e1]" /> Agenda <span className="text-[#00a8e1]">Global</span>
@@ -310,7 +331,7 @@ const IntercambioView = () => {
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 
