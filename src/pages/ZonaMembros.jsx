@@ -206,28 +206,12 @@ const EmpiezaView = ({ contents, onPlay }) => {
                 <div className="p-2 md:p-3 bg-[#00a8e1]/10 rounded-xl border border-[#00a8e1]/40"><Rocket className="w-6 h-6 md:w-8 md:h-8 text-[#00a8e1]" /></div>
                 <div><h2 className="text-xl md:text-3xl font-black text-white">EMPIEZA AQUI</h2><p className="text-[#8197a4] text-xs md:text-sm">Introduccion de la plataforma</p></div>
             </div>
-            {intro ? (
-                <div className="relative w-full aspect-video rounded-3xl overflow-hidden group cursor-pointer border border-[#00a8e1]/30 bg-[#0a0f14] shadow-[0_15px_40px_rgba(0,0,0,0.8)] mb-6" onClick={() => onPlay(intro)}>
-                    <img src={intro.thumbnail_url || 'https://images.unsplash.com/photo-1526676037777-05a232554f77?w=1200'} alt="" className="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-all duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-5 md:p-10 z-20 w-full">
-                        <Bdg txt="VIDEO PRINCIPAL" type="rv" Ic={Play} />
-                        <h3 className="font-black text-xl md:text-4xl text-white mt-3 mb-2 drop-shadow-2xl">{intro._title_es || intro.title}</h3>
-                        {intro.description && <p className="text-white/80 text-xs md:text-base line-clamp-2">{intro._desc_es || intro.description}</p>}
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/30 backdrop-blur-sm">
-                        {isLocked
-                            ? <LockKeyhole className="w-12 h-12 text-[#00a8e1]" />
-                            : <div className="w-16 h-16 md:w-24 md:h-24 border-2 border-[#00a8e1] rounded-full flex items-center justify-center text-[#00a8e1] group-hover:bg-[#00a8e1]/20 transition-colors"><Play className="w-6 h-6 md:w-10 md:h-10 ml-1.5 fill-current" /></div>
-                        }
-                    </div>
+            <div className="relative w-full aspect-video rounded-3xl overflow-hidden group border border-[#00a8e1]/30 bg-[#0a0f14] shadow-[0_15px_40px_rgba(0,0,0,0.8)] mb-6">
+                <video src="https://video.wixstatic.com/video/933cdd_996f17564b12463a835c0a139e4f2d1c/1080p/mp4/file.mp4" controls className="w-full h-full object-cover" />
+                <div className="absolute top-0 left-0 p-3 md:p-6 z-20 pointer-events-none">
+                    <Bdg txt="VIDEO PRINCIPAL" type="rv" Ic={Rocket} />
                 </div>
-            ) : (
-                <div className="bg-[#0a0f14] border border-[#00a8e1]/20 rounded-2xl p-6 flex items-center justify-between mb-6">
-                    <div><h3 className="font-bold text-white text-sm md:text-lg">Tus clases te esperan aqui.</h3><p className="text-[#00a8e1] font-bold text-xs">Disponibles muy pronto!</p></div>
-                    <Hourglass className="w-8 h-8 text-[#00a8e1] animate-pulse" />
-                </div>
-            )}
+            </div>
             <CRow title="Todos los Cursos" items={contents.slice(0, 8)} onPlay={onPlay} />
         </div>
     );
