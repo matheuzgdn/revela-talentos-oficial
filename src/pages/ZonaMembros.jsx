@@ -296,24 +296,24 @@ const IntercambioView = () => {
                                 <image href="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg" width="1000" height="500" style={{ filter: 'invert(1) sepia(1) saturate(5) hue-rotate(175deg) brightness(0.6) contrast(2)' }} />
                             </svg>
                         </div>
-                    </div>
-                    {EVENTS.map(ev => (
-                        <div key={ev.id} className="absolute flex flex-col items-center z-20"
-                            style={{ top: ev.pos.top, left: ev.pos.left, transform: 'translate(-50%,-50%)' }}
-                            onMouseEnter={() => setAt(ev.id)} onMouseLeave={() => setAt(null)}>
-                            <div className="relative flex items-center justify-center cursor-pointer">
-                                <div className="absolute w-8 h-8 bg-[#00a8e1]/30 rounded-full animate-ping" />
-                                <MapPin className="relative w-5 h-5 md:w-7 md:h-7 text-[#00a8e1] drop-shadow-[0_0_10px_rgba(0,168,225,1)]" />
-                            </div>
-                            <div className={`absolute ${parseFloat(ev.pos.top) > 50 ? 'bottom-full mb-3' : 'top-full mt-3'} w-48 transition-all duration-300 ${at === ev.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
-                                <div className="bg-[#05080a]/95 border border-[#00a8e1]/50 rounded-xl p-3">
-                                    <p className="text-[#00a8e1] font-bold text-sm flex items-center gap-1 mb-1"><Sparkles className="w-3 h-3" />{ev.nome}</p>
-                                    <p className="text-gray-300 text-xs mb-1"><Map className="w-3 h-3 inline mr-1 text-gray-500" />{ev.city}, {ev.country}</p>
-                                    <p className="text-[#00a8e1] font-bold uppercase text-xs"><Calendar className="w-3 h-3 inline mr-1" />{ev.month}</p>
+                        {EVENTS.map(ev => (
+                            <div key={ev.id} className="absolute flex flex-col items-center z-20"
+                                style={{ top: ev.pos.top, left: ev.pos.left, transform: 'translate(-50%,-50%)' }}
+                                onMouseEnter={() => setAt(ev.id)} onMouseLeave={() => setAt(null)}>
+                                <div className="relative flex items-center justify-center cursor-pointer">
+                                    <div className="absolute w-8 h-8 bg-[#00a8e1]/30 rounded-full animate-ping" />
+                                    <MapPin className="relative w-5 h-5 md:w-7 md:h-7 text-[#00a8e1] drop-shadow-[0_0_10px_rgba(0,168,225,1)]" />
+                                </div>
+                                <div className={`absolute ${parseFloat(ev.pos.top) > 50 ? 'bottom-full mb-3' : 'top-full mt-3'} w-48 transition-all duration-300 ${at === ev.id ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+                                    <div className="bg-[#05080a]/95 border border-[#00a8e1]/50 rounded-xl p-3">
+                                        <p className="text-[#00a8e1] font-bold text-sm flex items-center gap-1 mb-1"><Sparkles className="w-3 h-3" />{ev.nome}</p>
+                                        <p className="text-gray-300 text-xs mb-1"><Map className="w-3 h-3 inline mr-1 text-gray-500" />{ev.city}, {ev.country}</p>
+                                        <p className="text-[#00a8e1] font-bold uppercase text-xs"><Calendar className="w-3 h-3 inline mr-1" />{ev.month}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
             <h2 className="text-xl font-bold text-center text-white mb-4 uppercase tracking-widest flex items-center justify-center gap-2">
