@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Clock, Mail, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
@@ -33,6 +33,21 @@ const TEXTS = {
 export default function PendingApproval({ user }) {
   const [lang, setLang] = useState('pt');
   const t = TEXTS[lang];
+
+  // Polling: verifica a cada 10s se o usuário foi aprovado
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const updatedUser = await base44.auth.me();
+        // Se o usuário foi aprovado OU a plataforma não está mais restrita, recarregar
+        if (updatedUser?.is_approved) {
+          window.location.reload();
+        }
+      } catch { }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     await base44.auth.logout();

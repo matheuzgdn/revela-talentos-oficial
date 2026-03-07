@@ -81,11 +81,13 @@ export default function RevelaTalentosPage() {
       setUser(currentUser);
       setShowLandingPage(false);
 
-      base44.entities.PlatformSettings.list().then(platformSettings => {
+      // Aguardar platform settings ANTES de finalizar o loading
+      try {
+        const platformSettings = await base44.entities.PlatformSettings.list();
         const restrictionSetting = platformSettings.find(s => s.setting_key === 'is_platform_restricted');
         const isRestricted = restrictionSetting?.setting_value === 'true';
         setIsPlatformRestricted(isRestricted);
-      }).catch(() => { });
+      } catch { }
 
       loadContentData(currentUser);
       setIsCheckingAccess(false);
@@ -98,6 +100,7 @@ export default function RevelaTalentosPage() {
       loadContentData(null);
     }
   }, [loadContentData]);
+
 
 
   useEffect(() => {
