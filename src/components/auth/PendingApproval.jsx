@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, Mail, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 
 const TEXTS = {
   pt: {
@@ -33,6 +34,7 @@ const TEXTS = {
 export default function PendingApproval({ user }) {
   const [lang, setLang] = useState('pt');
   const t = TEXTS[lang];
+  const { logout } = useAuth();
 
   // Polling: verifica a cada 10s se o usuário foi aprovado
   useEffect(() => {
@@ -49,9 +51,8 @@ export default function PendingApproval({ user }) {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogout = async () => {
-    await base44.auth.logout();
-    window.location.href = '/';
+  const handleLogout = () => {
+    logout(true); // Redireciona via SDK AuthContext
   };
 
   return (

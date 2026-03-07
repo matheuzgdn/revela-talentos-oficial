@@ -86,6 +86,12 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
     if (!editingUser) return;
     try {
       const { id, ...allData } = editingUser;
+
+      // Garantir booleanos explícitos para evitar problemas no backend
+      if ('is_approved' in allData) {
+        allData.is_approved = !!allData.is_approved;
+      }
+
       const updateData = Object.fromEntries(
         Object.entries(allData).filter(([k]) => !NON_EDITABLE_KEYS.has(k))
       );
@@ -1080,18 +1086,6 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                     checked={!!editingUser.is_approved}
                     onCheckedChange={(c) => handleFieldChange('is_approved', c)}
                     className="data-[state=checked]:bg-green-500" />
-
-                </div>
-
-                <div className="flex items-center justify-between p-5 bg-white/5 border border-white/20 rounded-xl">
-                  <Label className="flex items-center gap-3 text-white font-medium">
-                    <Star className="w-5 h-5 text-yellow-400" />
-                    <span>Acesso ao Revela Talentos</span>
-                  </Label>
-                  <Switch
-                    checked={!!editingUser.has_revela_talentos_access}
-                    onCheckedChange={(c) => handleFieldChange('has_revela_talentos_access', c)}
-                    className="data-[state=checked]:bg-yellow-500" />
 
                 </div>
 
