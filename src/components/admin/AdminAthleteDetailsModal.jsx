@@ -77,10 +77,18 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
     }
   };
 
+  const NON_EDITABLE_KEYS = new Set([
+    'id', 'created_date', 'updated_date', 'password', 'token',
+    'provider', 'email_verified', 'auth_provider', 'email'
+  ]);
+
   const handleSave = async () => {
     if (!editingUser) return;
     try {
-      const { id, ...updateData } = editingUser;
+      const { id, ...allData } = editingUser;
+      const updateData = Object.fromEntries(
+        Object.entries(allData).filter(([k]) => !NON_EDITABLE_KEYS.has(k))
+      );
       await base44.entities.User.update(id, updateData);
 
       await base44.entities.Notification.create({
