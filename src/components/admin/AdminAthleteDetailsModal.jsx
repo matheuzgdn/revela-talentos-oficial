@@ -10,7 +10,7 @@ import {
   Crosshair, UserPlus, Gauge, Move, Dumbbell, MapPin, Clock
 } from
   "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -285,6 +285,9 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] w-full md:w-[1400px] max-h-[95vh] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border-2 border-[#00E5FF]/30 text-white p-0 overflow-hidden flex flex-col">
+        {/* Hidden title for accessibility */}
+        <DialogTitle className="sr-only">Detalhes do Atleta: {editingUser.full_name}</DialogTitle>
+        <DialogDescription className="sr-only">Painel administrativo para editar dados, vídeos e permissões do atleta.</DialogDescription>
         {/* HEADER ESTILO FIFA */}
         <div className="relative overflow-hidden">
           {/* BackgroundPattern */}

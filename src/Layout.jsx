@@ -141,14 +141,8 @@ function LayoutInner({ children, currentPageName }) {
     localStorage.setItem("lastStorySeen", new Date().toDateString());
   };
 
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await User.logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-    window.location.href = createPageUrl("RevelaTalentos");
+  const handleLogout = () => {
+    base44.auth.logout();
   };
 
   const handleNavClick = (item) => {
