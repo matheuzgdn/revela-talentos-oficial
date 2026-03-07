@@ -23,7 +23,7 @@ import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle
+  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle, Trash2
 } from
   "lucide-react";
 
@@ -32,7 +32,7 @@ const NON_EDITABLE_KEYS = new Set([
   'provider', 'email_verified', 'auth_provider', 'email'
 ]);
 
-const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines, onSendNotification, onProfileVisit }) => {
+const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines, onSendNotification, onProfileVisit, onDelete }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [draft, setDraft] = useState({});
   const [jsonErrors, setJsonErrors] = useState({});
@@ -135,6 +135,9 @@ const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines,
             </Button>
             <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white" onClick={() => onEdit(user)}>
               <Edit className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-red-400 hover:text-red-300 hover:bg-red-500/20" onClick={() => onDelete(user)} title="Excluir Atleta">
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -449,6 +452,7 @@ export default function AdminUsersTab() {
     type: 'message',
     priority: 'medium'
   });
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const personas = [
     { id: "analyst_01", name: "Analista de Desempenho" },
@@ -676,6 +680,23 @@ export default function AdminUsersTab() {
     } catch (error) {
       console.error("Failed to update user:", error);
       toast.error("Falha ao atualizar usuário.");
+    }
+  };
+
+  const handleDeleteUser = (user) => {
+    setUserToDelete(user);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    try {
+      await base44.entities.User.delete(userToDelete.id);
+      toast.success("Atleta excluído com sucesso.");
+      setUserToDelete(null);
+      loadAllData();
+    } catch (error) {
+      console.error("Erro ao excluir atleta:", error);
+      toast.error("Erro ao excluir o atleta. Tente novamente.");
     }
   };
 
@@ -965,6 +986,7 @@ export default function AdminUsersTab() {
                           user={user}
                           userData={getUserData(user.id)}
                           onEdit={handleEditClick}
+                          onDelete={handleDeleteUser}
                           onSendNotification={handleSendNotification}
                           onProfileVisit={handleProfileVisit}
                           pipelines={data.pipelines}
@@ -1006,6 +1028,7 @@ export default function AdminUsersTab() {
                           user={user}
                           userData={getUserData(user.id)}
                           onEdit={handleEditClick}
+                          onDelete={handleDeleteUser}
                           onSendNotification={handleSendNotification}
                           onProfileVisit={handleProfileVisit}
                           pipelines={data.pipelines}
@@ -1031,6 +1054,7 @@ export default function AdminUsersTab() {
                           user={user}
                           userData={getUserData(user.id)}
                           onEdit={handleEditClick}
+                          onDelete={handleDeleteUser}
                           onSendNotification={handleSendNotification}
                           onProfileVisit={handleProfileVisit}
                           pipelines={data.pipelines}
@@ -1055,6 +1079,7 @@ export default function AdminUsersTab() {
                         user={user}
                         userData={getUserData(user.id)}
                         onEdit={handleEditClick}
+                        onDelete={handleDeleteUser}
                         onSendNotification={handleSendNotification}
                         onProfileVisit={handleProfileVisit}
                         pipelines={data.pipelines}
@@ -1079,6 +1104,7 @@ export default function AdminUsersTab() {
                         user={user}
                         userData={getUserData(user.id)}
                         onEdit={handleEditClick}
+                        onDelete={handleDeleteUser}
                         onSendNotification={handleSendNotification}
                         onProfileVisit={handleProfileVisit}
                         pipelines={data.pipelines}
@@ -1101,6 +1127,7 @@ export default function AdminUsersTab() {
                     user={user}
                     userData={getUserData(user.id)}
                     onEdit={handleEditClick}
+                    onDelete={handleDeleteUser}
                     onSendNotification={handleSendNotification}
                     onProfileVisit={handleProfileVisit}
                     pipelines={data.pipelines}
@@ -1214,6 +1241,28 @@ export default function AdminUsersTab() {
               <DialogFooter><Button variant="outline" onClick={() => setEditingPerformanceItem(null)}>Cancelar</Button><Button onClick={handleSavePerformanceUpdate}>Salvar Performance</Button></DialogFooter>
             </div>
           }
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
+        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-500">
+              <Trash2 className="w-5 h-5" />
+              Excluir Atleta
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4 text-gray-300">
+            Tem certeza de que deseja excluir permanentemente o atleta <strong>{userToDelete?.full_name}</strong>? Esta ação não pode ser desfeita e todos os dados serão perdidos.
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0 mt-4">
+            <Button variant="outline" className="text-gray-400 border-gray-700 hover:bg-gray-800" onClick={() => setUserToDelete(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteUser} className="bg-red-600 hover:bg-red-700">
+              <Trash2 className="w-4 h-4 mr-2" /> Excluir Definitivamente
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>);
