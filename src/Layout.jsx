@@ -115,9 +115,9 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
-  // Redirect Zona de Membros users directly to member area
+  // If currently on BemVindo and user has Zona de Membros, skip onboarding and go to member area
   useEffect(() => {
-    if (!isLoading && user && user.has_zona_membros_access === true && currentPageName !== 'ZonaMembros') {
+    if (!isLoading && user && user.has_zona_membros_access === true && currentPageName === 'BemVindo') {
       navigate(createPageUrl('ZonaMembros'), { replace: true });
     }
   }, [isLoading, user, currentPageName, navigate]);
