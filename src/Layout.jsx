@@ -147,10 +147,7 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user]);
 
-  const handleCloseStories = () => {
-    setShowStories(false);
-    localStorage.setItem("lastStorySeen", new Date().toDateString());
-  };
+  
 
   const handleLogout = () => {
     base44.auth.logout();
