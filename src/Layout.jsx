@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 
-import StoriesModal from "@/components/stories/StoriesModal";
+
 import ProfileSetup from "@/components/athlete/ProfileSetup";
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
@@ -131,11 +131,7 @@ function LayoutInner({ children, currentPageName }) {
     return () => window.removeEventListener('resize', handleResize);
   }, [loadUser]);
 
-  useEffect(() => {
-    if (!isLoading) {
-      loadStories();
-    }
-  }, [isLoading, loadStories]);
+  
 
   // Redirect new users to BemVindo for onboarding
   useEffect(() => {
@@ -186,7 +182,7 @@ function LayoutInner({ children, currentPageName }) {
 
   return (
     <SidebarProvider>
-      <StoriesModal stories={stories} isOpen={showStories} onClose={handleCloseStories} />
+      
       {user && currentPageName !== 'BemVindo' && (
         <ProfileSetup
           isOpen={showOnboarding}
