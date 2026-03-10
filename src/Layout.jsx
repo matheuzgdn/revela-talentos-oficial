@@ -144,6 +144,14 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
+  // Force redirect to login when unauthenticated
+  useEffect(() => {
+    if (!isLoading && !user) {
+      const nextUrl = window.location.href;
+      base44.auth.redirectToLogin(nextUrl);
+    }
+  }, [isLoading, user]);
+
   const handleCloseStories = () => {
     setShowStories(false);
     localStorage.setItem("lastStorySeen", new Date().toDateString());
