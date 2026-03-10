@@ -76,8 +76,10 @@ function LayoutInner({ children, currentPageName }) {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       setUserPackageName(currentUser.has_plano_carreira_access ? t('package.career') : t('package.revela'));
-      // Abre onboarding automaticamente para novos usuários
-      if (currentUser && !currentUser.onboarding_completed && !currentUser.position) {
+      // Abre onboarding automaticamente para novos usuários (exceto Zona de Membros)
+      if (currentUser && currentUser.has_zona_membros_access === true) {
+        setShowOnboarding(false);
+      } else if (currentUser && !currentUser.onboarding_completed && !currentUser.position) {
         setShowOnboarding(true);
       }
       setIsLoading(false);
@@ -106,10 +108,17 @@ function LayoutInner({ children, currentPageName }) {
 
   
 
-  // Redirect new users to BemVindo for onboarding
+  // Redirect new users to BemVindo for onboarding (skip Zona de Membros)
   useEffect(() => {
-    if (!isLoading && user && !user.onboarding_completed && currentPageName !== 'BemVindo') {
+    if (!isLoading && user && !user.onboarding_completed && user.has_zona_membros_access !== true && currentPageName !== 'BemVindo') {
       navigate(createPageUrl('BemVindo'), { replace: true });
+    }
+  }, [isLoading, user, currentPageName, navigate]);
+
+  // Redirect Zona de Membros users directly to member area
+  useEffect(() => {
+    if (!isLoading && user && user.has_zona_membros_access === true && currentPageName !== 'ZonaMembros') {
+      navigate(createPageUrl('ZonaMembros'), { replace: true });
     }
   }, [isLoading, user, currentPageName, navigate]);
 
