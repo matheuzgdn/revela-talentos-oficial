@@ -144,11 +144,11 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
-  // Force redirect to login when unauthenticated
+  // Force redirect to external login when unauthenticated
   useEffect(() => {
     if (!isLoading && !user) {
-      const nextUrl = window.location.origin; // always send to domain root
-      base44.auth.redirectToLogin(nextUrl);
+      const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/');
+      window.location.replace(forceUrl);
     }
   }, [isLoading, user]);
 
