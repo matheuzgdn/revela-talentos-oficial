@@ -20,6 +20,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
+import InviteAthleteModal from "./InviteAthleteModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
@@ -453,6 +454,7 @@ export default function AdminUsersTab() {
     priority: 'medium'
   });
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const personas = [
     { id: "analyst_01", name: "Analista de Desempenho" },
@@ -887,23 +889,26 @@ export default function AdminUsersTab() {
                 </SelectContent>
               </Select>
               <Button
-                onClick={() => setView(view === "crm" ? "pipelines" : "crm")}
-                variant="outline"
-                className="border-gray-700">
+              onClick={() => setView(view === "crm" ? "pipelines" : "crm")}
+              variant="outline"
+              className="border-gray-700">
 
-                {view === "crm" ?
-                  <>
-                    <GitBranch className="w-4 h-4 mr-2" />
-                    Pipelines
-                  </> :
+              {view === "crm" ?
+                <>
+                  <GitBranch className="w-4 h-4 mr-2" />
+                  Pipelines
+                </> :
 
-                  <>
-                    <Users className="w-4 h-4 mr-2" />
-                    CRM
-                  </>
-                }
+                <>
+                  <Users className="w-4 h-4 mr-2" />
+                  CRM
+                </>
+              }
               </Button>
-            </div>
+              <Button onClick={() => setShowInviteModal(true)} className="bg-cyan-600 hover:bg-cyan-500">
+              <Plus className="w-4 h-4 mr-2" /> Cadastrar Atleta
+              </Button>
+              </div>
           </div>
         </CardContent>
       </Card>
@@ -1148,6 +1153,15 @@ export default function AdminUsersTab() {
         </>
       }
 
+      <InviteAthleteModal
+        open={showInviteModal}
+        onOpenChange={setShowInviteModal}
+        onInvited={() => {
+          setShowInviteModal(false);
+          toast.success("Convite enviado com sucesso!");
+          loadAllData();
+        }}
+      />
       <AdminAthleteDetailsModal
         user={editingUser}
         isOpen={isModalOpen}
@@ -1268,9 +1282,3 @@ export default function AdminUsersTab() {
     </div>);
 
 }
-
-
-
-
-
-
