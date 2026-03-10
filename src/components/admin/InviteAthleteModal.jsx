@@ -4,7 +4,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Copy } from "lucide-react";
 import { Mail, UserPlus, Loader2 } from "lucide-react";
@@ -28,21 +27,24 @@ export default function InviteAthleteModal({ open, onOpenChange, onInvited }) {
     setIsSending(true);
     try {
       await base44.users.inviteUser(email, "user");
+      const code = Array.from(crypto.getRandomValues(new Uint8Array(8)))
+        .map(n => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[n % 62])
+        .join("");
+      const loginLink = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/');
+      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nSeu acesso ao EC10 Talentos foi criado.\nAcesse por este link: ${loginLink}\nCódigo temporário: ${code}\nNo primeiro acesso, crie sua própria senha.\n\n— Equipe EC10 Talentos`;
+      setGeneratedCode(code);
+      setInviteMessage(msg);
+      setCopied(false);
       if (sendWelcome) {
-        const loginLink = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/');
         await base44.integrations.Core.SendEmail({
           to: email,
           from_name: 'EC10 Admin',
           subject: 'Bem-vindo ao EC10 Talentos',
-          body: `Olá${fullName ? ' ' + fullName : ''}!
-\nSeu acesso está liberado. Clique para entrar e criar sua senha:\n${loginLink}
-\nSe precisar de ajuda, responda este e-mail.\n\n— Equipe EC10 Talentos`
+          body: msg
         });
       }
-      toast.success("Convite enviado! O atleta criará a senha e acessará a Zona de Membros.");
+      toast.success("Convite enviado! Mensagem gerada para você copiar e enviar.");
       onInvited?.();
-      setEmail("");
-      setFullName("");
     } catch (e) {
       toast.error("Falha ao enviar convite. Verifique o e-mail.");
     } finally {
@@ -93,6 +95,17 @@ export default function InviteAthleteModal({ open, onOpenChange, onInvited }) {
           </div>
         </div>
 
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="text-gray-300 border-gray-700 hover:bg-gray-800">
+            Cancelar
+          </Button>
+          <Button onClick={handleInvite} disabled={isSending} className="bg-cyan-600 hover:bg-cyan-500">
+            {isSending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <UserPlus className="w-4 h-4 mr-2" />}
+            Enviar Convite
+          </Button>
+        </DialogFooter>
+
         {inviteMessage && (
           <div className="mt-4 bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
@@ -110,15 +123,6 @@ export default function InviteAthleteModal({ open, onOpenChange, onInvited }) {
             <Textarea readOnly value={inviteMessage} className="min-h-[140px] text-sm" />
           </div>
         )}
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="text-gray-300 border-gray-700 hover:bg-gray-800">
-            Cancelar
-          </Button>
-          <Button onClick={handleInvite} disabled={isSending} className="bg-cyan-600 hover:bg-cyan-500">
-            {isSending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <UserPlus className="w-4 h-4 mr-2" />}
-            Enviar Convite
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
