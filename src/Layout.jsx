@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 
@@ -61,6 +61,7 @@ const getNavigationItems = (user, t) => {
 function LayoutInner({ children, currentPageName }) {
   const { t, language } = useLanguage();
   const location = useLocation();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [userPackageName, setUserPackageName] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -136,6 +137,13 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, loadStories]);
 
+  // Redirect new users to BemVindo for onboarding
+  useEffect(() => {
+    if (!isLoading && user && !user.onboarding_completed && currentPageName !== 'BemVindo') {
+      navigate(createPageUrl('BemVindo'), { replace: true });
+    }
+  }, [isLoading, user, currentPageName, navigate]);
+
   const handleCloseStories = () => {
     setShowStories(false);
     localStorage.setItem("lastStorySeen", new Date().toDateString());
@@ -171,7 +179,7 @@ function LayoutInner({ children, currentPageName }) {
   return (
     <SidebarProvider>
       <StoriesModal stories={stories} isOpen={showStories} onClose={handleCloseStories} />
-      {user && (
+      {user && currentPageName !== 'BemVindo' && (
         <ProfileSetup
           isOpen={showOnboarding}
           onClose={() => setShowOnboarding(false)}
@@ -422,4 +430,3 @@ export default function Layout({ children, currentPageName }) {
     </LanguageProvider>
   );
 }
-
