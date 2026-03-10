@@ -18,7 +18,8 @@ export default function BemVindo() {
       try {
         const me = await base44.auth.me();
         if (mounted) setUser(me);
-        if (me && me.onboarding_completed) {
+        if (me) {
+          // Usuários logados sempre entram na Zona de Membros
           navigate(createPageUrl("ZonaMembros"), { replace: true });
         }
       } catch (e) {

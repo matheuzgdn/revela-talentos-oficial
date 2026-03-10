@@ -121,13 +121,18 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
-  // Force redirect to login (exceto na página BemVindo, que pode ser pública)
+  // Visitantes sem login: link de convite → login com retorno; acesso direto → BemVindo
   useEffect(() => {
-    if (!isLoading && !user && currentPageName !== 'BemVindo') {
+    if (isLoading || user) return;
+    if (currentPageName === 'ZonaMembros') {
       const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/?page=ZonaMembros');
       window.location.replace(forceUrl);
+      return;
     }
-  }, [isLoading, user, currentPageName]);
+    if (currentPageName !== 'BemVindo') {
+      navigate(createPageUrl('BemVindo'), { replace: true });
+    }
+  }, [isLoading, user, currentPageName, navigate]);
 
   
 
@@ -140,7 +145,7 @@ function LayoutInner({ children, currentPageName }) {
   };
 
   const handleLoginClick = () => {
-    base44.auth.redirectToLogin();
+    base44.auth.redirectToLogin(createPageUrl('ZonaMembros'));
   };
 
   const navigationItemsToRender = getNavigationItems(user, t);
