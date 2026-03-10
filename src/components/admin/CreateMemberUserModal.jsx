@@ -30,7 +30,29 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nSeu acesso à Zona de Membros (Revela Talentos) foi criado.\nAcesse: ${loginLink}\nNo primeiro acesso, cadastre sua própria senha.\nSenha sugerida: ${code}\n\n— Equipe EC10 Talentos`;
       setInviteMessage(msg);
       setCopied(false);
-      toast.success("Usuário Zona de Membros criado. Copie a mensagem abaixo e envie fora da plataforma.");
+
+      // Enviar e-mail profissional em PT-BR
+      await base44.integrations.Core.SendEmail({
+        to: email,
+        from_name: 'EC10 Talentos',
+        subject: 'Bem-vindo à Zona de Membros - EC10 Talentos',
+        body: `Olá${fullName ? ' ' + fullName : ''}!\n\nSeu acesso à Zona de Membros foi criado.\n\nComo acessar:\n1) Clique neste link: ${loginLink}\n2) Crie sua senha no primeiro acesso (use a senha sugerida abaixo apenas como referência).\n\nSenha sugerida: ${code}\n\nSe precisar de ajuda, responda este e-mail.\n\n— EC10 Talentos`
+      });
+
+      // Ajustar flags para pular onboarding e liberar acesso
+      try {
+        const users = await base44.entities.User.list('-created_date', 200);
+        const created = (users || []).find(u => (u.email || '').toLowerCase() === email.toLowerCase());
+        if (created) {
+          await base44.entities.User.update(created.id, {
+            has_zona_membros_access: true,
+            onboarding_completed: true,
+            language: 'pt'
+          });
+        }
+      } catch {}
+
+      toast.success('Usuário criado e e-mail enviado em português.');
       onInvited?.();
     } catch {
       toast.error("Falha ao criar usuário. Verifique o e-mail.");
@@ -71,7 +93,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
               />
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              A plataforma não envia e-mail automático. Geraremos uma mensagem curta para você copiar e enviar manualmente.
+              Enviaremos um e-mail profissional em português do EC10 Talentos com instruções e senha sugerida. Você também pode copiar a mensagem abaixo.
             </p>
           </div>
         </div>
