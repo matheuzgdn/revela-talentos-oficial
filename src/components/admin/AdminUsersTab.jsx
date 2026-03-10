@@ -23,7 +23,7 @@ import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle, Trash2
+  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle, Trash2, Copy
 } from
   "lucide-react";
 
@@ -431,6 +431,10 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 export default function AdminUsersTab() {
   const [data, setData] = useState({ users: [], uploads: [], messages: [], performance: [], progress: [], pipelines: [], userPipelines: [] });
   const [isLoading, setIsLoading] = useState(true);
+  const [showCreateAthleteModal, setShowCreateAthleteModal] = useState(false);
+  const [newAthleteForm, setNewAthleteForm] = useState({ full_name: '', email: '' });
+  const [generatedCredentials, setGeneratedCredentials] = useState(null);
+  const [isCreatingAthlete, setIsCreatingAthlete] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [view, setView] = useState("crm");
@@ -584,6 +588,62 @@ export default function AdminUsersTab() {
       console.error('Error toggling platform restriction:', error);
       toast.error('Erro ao alterar configuração');
     }
+  };
+
+  const generatePassword = () => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let pass = '';
+    for (let i = 0; i < 8; i++) pass += chars[Math.floor(Math.random() * chars.length)];
+    return pass;
+  };
+
+  const handleCreateAthlete = async () => {
+    if (!newAthleteForm.full_name || !newAthleteForm.email) {
+      toast.error('Preencha nome e e-mail');
+      return;
+    }
+    setIsCreatingAthlete(true);
+    try {
+      const password = generatePassword();
+      await base44.entities.User.create({
+        full_name: newAthleteForm.full_name,
+        email: newAthleteForm.email,
+        password: password,
+        role: 'user',
+        is_approved: true,
+        has_revela_talentos_access: true,
+        is_revela_admin: false
+      });
+
+      const msgPT = `Olá ${newAthleteForm.full_name},
+Seu acesso ao Revela Talentos foi criado com sucesso!
+Email: ${newAthleteForm.email}
+Senha: ${password}
+
+Acesse a plataforma em: https://revelatalentos.com.br
+Nossa equipe está à disposição para qualquer dúvida.`;
+
+      const msgES = `Hola ${newAthleteForm.full_name},
+¡Tu acceso a Revela Talentos ha sido creado con éxito!
+Correo: ${newAthleteForm.email}
+Contraseña: ${password}
+
+Accede a la plataforma en: https://revelatalentos.com.br
+Nuestro equipo está a tu disposición para cualquier duda.`;
+
+      setGeneratedCredentials({ password, msgPT, msgES });
+      toast.success('Atleta criado com sucesso!');
+      loadAllData();
+    } catch (error) {
+      console.error('Erro ao criar atleta:', error);
+      toast.error('Erro ao criar atleta. Verifique se o e-mail já existe.');
+    }
+    setIsCreatingAthlete(false);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success('Copiado para a área de transferência!');
   };
 
   const filteredUsers = useMemo(() => {
@@ -957,72 +1017,134 @@ export default function AdminUsersTab() {
                     <h3 className="text-xl font-bold text-white">Todos os Atletas Cadastrados ({data.users.length || 0})</h3>
                     <Badge className="bg-cyan-600/20 text-cyan-400">Lista Completa</Badge>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowAllAthletes(!showAllAthletes)}
-                    className="text-gray-400 hover:text-white">
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setNewAthleteForm({ full_name: '', email: '' });
+                        setGeneratedCredentials(null);
+                        setShowCreateAthleteModal(true);
+                      }}
+                      className="bg-cyan-600 hover:bg-cyan-500 text-white border-none">
+                      <Plus className="w-4 h-4 mr-2" /> Criar Atleta
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowAllAthletes(!showAllAthletes)}
+                      className="text-gray-400 hover:text-white">
 
-                    {showAllAthletes ?
-                      <>
-                        <EyeOff className="w-4 h-4 mr-2" />
-                        Ocultar
-                      </> :
+                      {showAllAthletes ?
+                        <>
+                          <EyeOff className="w-4 h-4 mr-2" />
+                          Ocultar
+                        </> :
 
-                      <>
-                        <Eye className="w-4 h-4 mr-2" />
-                        Mostrar
-                      </>
-                    }
-                  </Button>
+                        <>
+                          <Eye className="w-4 h-4 mr-2" />
+                          Mostrar
+                        </>
+                      }
+                    </Button>
+                  </div>
+
+                  {showAllAthletes &&
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <AnimatePresence>
+                        {data.users.map((user) =>
+                          <AthleteCard
+                            key={user.id}
+                            user={user}
+                            userData={getUserData(user.id)}
+                            onEdit={handleEditClick}
+                            onDelete={handleDeleteUser}
+                            onSendNotification={handleSendNotification}
+                            onProfileVisit={handleProfileVisit}
+                            pipelines={data.pipelines}
+                            userPipelines={data.userPipelines} />
+
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  }
+
+                  {(!data.users || data.users.length === 0) && showAllAthletes &&
+                    <p className="text-gray-500 text-center py-8">
+                      Nenhum atleta cadastrado no sistema.
+                    </p>
+                  }
                 </div>
 
-                {showAllAthletes &&
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <AnimatePresence>
-                      {data.users.map((user) =>
-                        <AthleteCard
-                          key={user.id}
-                          user={user}
-                          userData={getUserData(user.id)}
-                          onEdit={handleEditClick}
-                          onDelete={handleDeleteUser}
-                          onSendNotification={handleSendNotification}
-                          onProfileVisit={handleProfileVisit}
-                          pipelines={data.pipelines}
-                          userPipelines={data.userPipelines} />
+                <div className="border-t border-gray-800 my-8"></div>
 
-                      )}
-                    </AnimatePresence>
+                <div className="space-y-4 mb-4">
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="w-6 h-6 text-purple-400" />
+                    <h3 className="text-xl font-bold text-white">Visão CRM por Categoria</h3>
+                    <Badge className="bg-purple-600/20 text-purple-400">Organizada por Acesso</Badge>
+                  </div>
+                </div>
+
+                {adminUsers.length > 0 &&
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Shield className="w-6 h-6 text-red-400" />
+                      <h3 className="text-lg font-bold text-white">Administradores Gerais ({adminUsers.length})</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <AnimatePresence>
+                        {adminUsers.map((user) =>
+                          <AthleteCard
+                            key={user.id}
+                            user={user}
+                            userData={getUserData(user.id)}
+                            onEdit={handleEditClick}
+                            onDelete={handleDeleteUser}
+                            onSendNotification={handleSendNotification}
+                            onProfileVisit={handleProfileVisit}
+                            pipelines={data.pipelines}
+                            userPipelines={data.userPipelines} />
+
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
                 }
 
-                {(!data.users || data.users.length === 0) && showAllAthletes &&
-                  <p className="text-gray-500 text-center py-8">
-                    Nenhum atleta cadastrado no sistema.
-                  </p>
+                {revelaAdminUsers.length > 0 &&
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Shield className="w-6 h-6 text-purple-400" />
+                      <h3 className="text-lg font-bold text-white">Administradores Revela ({revelaAdminUsers.length})</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <AnimatePresence>
+                        {revelaAdminUsers.map((user) =>
+                          <AthleteCard
+                            key={user.id}
+                            user={user}
+                            userData={getUserData(user.id)}
+                            onEdit={handleEditClick}
+                            onDelete={handleDeleteUser}
+                            onSendNotification={handleSendNotification}
+                            onProfileVisit={handleProfileVisit}
+                            pipelines={data.pipelines}
+                            userPipelines={data.userPipelines} />
+
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
                 }
-              </div>
 
-              <div className="border-t border-gray-800 my-8"></div>
-
-              <div className="space-y-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <TrendingUp className="w-6 h-6 text-purple-400" />
-                  <h3 className="text-xl font-bold text-white">Visão CRM por Categoria</h3>
-                  <Badge className="bg-purple-600/20 text-purple-400">Organizada por Acesso</Badge>
-                </div>
-              </div>
-
-              {adminUsers.length > 0 &&
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <Shield className="w-6 h-6 text-red-400" />
-                    <h3 className="text-lg font-bold text-white">Administradores Gerais ({adminUsers.length})</h3>
+                    <Crown className="w-6 h-6 text-green-400" />
+                    <h3 className="text-lg font-bold text-white">Plano de Carreira ({planoCarreiraUsers.length})</h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
-                      {adminUsers.map((user) =>
+                      {planoCarreiraUsers.map((user) =>
                         <AthleteCard
                           key={user.id}
                           user={user}
@@ -1037,18 +1159,17 @@ export default function AdminUsersTab() {
                       )}
                     </AnimatePresence>
                   </div>
+                  {planoCarreiraUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta no Plano de Carreira.</p>}
                 </div>
-              }
 
-              {revelaAdminUsers.length > 0 &&
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <Shield className="w-6 h-6 text-purple-400" />
-                    <h3 className="text-lg font-bold text-white">Administradores Revela ({revelaAdminUsers.length})</h3>
+                    <Star className="w-6 h-6 text-yellow-400" />
+                    <h3 className="text-lg font-bold text-white">Apenas Revela Talentos ({revelaTalentosUsers.length})</h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <AnimatePresence>
-                      {revelaAdminUsers.map((user) =>
+                      {revelaTalentosUsers.map((user) =>
                         <AthleteCard
                           key={user.id}
                           user={user}
@@ -1063,17 +1184,15 @@ export default function AdminUsersTab() {
                       )}
                     </AnimatePresence>
                   </div>
+                  {revelaTalentosUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta apenas neste plano.</p>}
                 </div>
-              }
+              </div>
+          }
 
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Crown className="w-6 h-6 text-green-400" />
-                  <h3 className="text-lg font-bold text-white">Plano de Carreira ({planoCarreiraUsers.length})</h3>
-                </div>
+              {filter !== "all" &&
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <AnimatePresence>
-                    {planoCarreiraUsers.map((user) =>
+                    {filteredUsers.map((user) =>
                       <AthleteCard
                         key={user.id}
                         user={user}
@@ -1088,184 +1207,215 @@ export default function AdminUsersTab() {
                     )}
                   </AnimatePresence>
                 </div>
-                {planoCarreiraUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta no Plano de Carreira.</p>}
-              </div>
+              }
 
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Star className="w-6 h-6 text-yellow-400" />
-                  <h3 className="text-lg font-bold text-white">Apenas Revela Talentos ({revelaTalentosUsers.length})</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <AnimatePresence>
-                    {revelaTalentosUsers.map((user) =>
-                      <AthleteCard
-                        key={user.id}
-                        user={user}
-                        userData={getUserData(user.id)}
-                        onEdit={handleEditClick}
-                        onDelete={handleDeleteUser}
-                        onSendNotification={handleSendNotification}
-                        onProfileVisit={handleProfileVisit}
-                        pipelines={data.pipelines}
-                        userPipelines={data.userPipelines} />
-
-                    )}
-                  </AnimatePresence>
-                </div>
-                {revelaTalentosUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta apenas neste plano.</p>}
-              </div>
-            </div>
-          }
-
-          {filter !== "all" &&
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <AnimatePresence>
-                {filteredUsers.map((user) =>
-                  <AthleteCard
-                    key={user.id}
-                    user={user}
-                    userData={getUserData(user.id)}
-                    onEdit={handleEditClick}
-                    onDelete={handleDeleteUser}
-                    onSendNotification={handleSendNotification}
-                    onProfileVisit={handleProfileVisit}
-                    pipelines={data.pipelines}
-                    userPipelines={data.userPipelines} />
-
-                )}
-              </AnimatePresence>
-            </div>
-          }
-
-          {filteredUsers.length === 0 && filter !== "all" &&
-            <div className="text-center py-12 text-gray-500">
-              <Users className="w-16 h-16 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
-              <p>Ajuste os filtros de busca para encontrar atletas.</p>
-            </div>
-          }
-        </>
-      }
-
-      <AdminAthleteDetailsModal
-        user={editingUser}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingUser(null);
-        }}
-        onSave={loadAllData}
-      />
-
-      <Dialog open={showNotificationModal} onOpenChange={setShowNotificationModal}>
-        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-blue-400" />
-              Enviar Notificação para {notificationTarget?.full_name}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <Label className="text-gray-400">Tipo</Label>
-              <Select value={notificationForm.type} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, type: v }))}>
-                <SelectTrigger className="bg-gray-800 border-gray-700">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="message">Mensagem</SelectItem>
-                  <SelectItem value="profile_visit">Visita ao Perfil</SelectItem>
-                  <SelectItem value="achievement">Conquista</SelectItem>
-                  <SelectItem value="general">Geral</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-gray-400">Prioridade</Label>
-              <Select value={notificationForm.priority} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, priority: v }))}>
-                <SelectTrigger className="bg-gray-800 border-gray-700">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">Baixa</SelectItem>
-                  <SelectItem value="medium">Média</SelectItem>
-                  <SelectItem value="high">Alta</SelectItem>
-                  <SelectItem value="urgent">Urgente</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-gray-400">Título</Label>
-              <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
-            </div>
-            <div>
-              <Label className="text-gray-400">Mensagem</Label>
-              <Textarea value={notificationForm.message} onChange={(e) => setNotificationForm((prev) => ({ ...prev, message: e.target.value }))} placeholder="Digite sua mensagem aqui..." className="bg-gray-800 border-gray-700 h-24" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNotificationModal(false)}>Cancelar</Button>
-            <Button onClick={handleSubmitNotification} className="bg-blue-600 hover:bg-blue-700">
-              <Send className="w-4 h-4 mr-2" />
-              Enviar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
-        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
-          <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
-          {editingPerformanceItem &&
-            <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
-              {editingPerformanceItem.associated_video_url &&
-                <div className="space-y-3">
-                  <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
-                  <div className="p-4 bg-gray-800 rounded-lg space-y-2">
-                    <h4 className="font-semibold text-white">Diário do Atleta</h4>
-                    <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
-                    <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
-                  </div>
+              {filteredUsers.length === 0 && filter !== "all" &&
+                <div className="text-center py-12 text-gray-500">
+                  <Users className="w-16 h-16 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
+                  <p>Ajuste os filtros de busca para encontrar atletas.</p>
                 </div>
               }
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
-                <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
-                <div><Label className="text-gray-400">Minutos Jogados</Label><Input type="number" value={performanceForm.minutes_played} onChange={(e) => setPerformanceForm((p) => ({ ...p, minutes_played: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
-                <div><Label className="text-gray-400">Gols</Label><Input type="number" value={performanceForm.goals} onChange={(e) => setPerformanceForm((p) => ({ ...p, goals: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
-                <div><Label className="text-gray-400">Assistências</Label><Input type="number" value={performanceForm.assists} onChange={(e) => setPerformanceForm((p) => ({ ...p, assists: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
-                <div><Label className="text-gray-400">Nota (1-10)</Label><Input type="number" step="0.1" value={performanceForm.rating} onChange={(e) => setPerformanceForm((p) => ({ ...p, rating: parseFloat(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
-              </div>
-              <div><Label className="text-gray-400">Observações do Analista</Label><Textarea value={performanceForm.analyst_notes} onChange={(e) => setPerformanceForm((p) => ({ ...p, analyst_notes: e.target.value }))} className="bg-gray-800 border-gray-700 h-24" /></div>
-              <DialogFooter><Button variant="outline" onClick={() => setEditingPerformanceItem(null)}>Cancelar</Button><Button onClick={handleSavePerformanceUpdate}>Salvar Performance</Button></DialogFooter>
-            </div>
+            </>
           }
-        </DialogContent>
-      </Dialog>
 
-      <Dialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
-        <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-500">
-              <Trash2 className="w-5 h-5" />
-              Excluir Atleta
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-4 text-gray-300">
-            Tem certeza de que deseja excluir permanentemente o atleta <strong>{userToDelete?.full_name}</strong>? Esta ação não pode ser desfeita e todos os dados serão perdidos.
-          </div>
-          <DialogFooter className="gap-2 sm:gap-0 mt-4">
-            <Button variant="outline" className="text-gray-400 border-gray-700 hover:bg-gray-800" onClick={() => setUserToDelete(null)}>
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={confirmDeleteUser} className="bg-red-600 hover:bg-red-700">
-              <Trash2 className="w-4 h-4 mr-2" /> Excluir Definitivamente
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>);
+          <AdminAthleteDetailsModal
+            user={editingUser}
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setEditingUser(null);
+            }}
+            onSave={loadAllData}
+          />
+
+          <Dialog open={showNotificationModal} onOpenChange={setShowNotificationModal}>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-blue-400" />
+                  Enviar Notificação para {notificationTarget?.full_name}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div>
+                  <Label className="text-gray-400">Tipo</Label>
+                  <Select value={notificationForm.type} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, type: v }))}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="message">Mensagem</SelectItem>
+                      <SelectItem value="profile_visit">Visita ao Perfil</SelectItem>
+                      <SelectItem value="achievement">Conquista</SelectItem>
+                      <SelectItem value="general">Geral</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-gray-400">Prioridade</Label>
+                  <Select value={notificationForm.priority} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, priority: v }))}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Baixa</SelectItem>
+                      <SelectItem value="medium">Média</SelectItem>
+                      <SelectItem value="high">Alta</SelectItem>
+                      <SelectItem value="urgent">Urgente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-gray-400">Título</Label>
+                  <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
+                </div>
+                <div>
+                  <Label className="text-gray-400">Mensagem</Label>
+                  <Textarea value={notificationForm.message} onChange={(e) => setNotificationForm((prev) => ({ ...prev, message: e.target.value }))} placeholder="Digite sua mensagem aqui..." className="bg-gray-800 border-gray-700 h-24" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowNotificationModal(false)}>Cancelar</Button>
+                <Button onClick={handleSubmitNotification} className="bg-blue-600 hover:bg-blue-700">
+                  <Send className="w-4 h-4 mr-2" />
+                  Enviar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
+              <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
+              {editingPerformanceItem &&
+                <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
+                  {editingPerformanceItem.associated_video_url &&
+                    <div className="space-y-3">
+                      <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
+                      <div className="p-4 bg-gray-800 rounded-lg space-y-2">
+                        <h4 className="font-semibold text-white">Diário do Atleta</h4>
+                        <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
+                        <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
+                      </div>
+                    </div>
+                  }
+                  <div className="grid grid-cols-2 gap-4">
+                    <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
+                    <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
+                    <div><Label className="text-gray-400">Minutos Jogados</Label><Input type="number" value={performanceForm.minutes_played} onChange={(e) => setPerformanceForm((p) => ({ ...p, minutes_played: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                    <div><Label className="text-gray-400">Gols</Label><Input type="number" value={performanceForm.goals} onChange={(e) => setPerformanceForm((p) => ({ ...p, goals: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                    <div><Label className="text-gray-400">Assistências</Label><Input type="number" value={performanceForm.assists} onChange={(e) => setPerformanceForm((p) => ({ ...p, assists: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                    <div><Label className="text-gray-400">Nota (1-10)</Label><Input type="number" step="0.1" value={performanceForm.rating} onChange={(e) => setPerformanceForm((p) => ({ ...p, rating: parseFloat(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                  </div>
+                  <div><Label className="text-gray-400">Observações do Analista</Label><Textarea value={performanceForm.analyst_notes} onChange={(e) => setPerformanceForm((p) => ({ ...p, analyst_notes: e.target.value }))} className="bg-gray-800 border-gray-700 h-24" /></div>
+                  <DialogFooter><Button variant="outline" onClick={() => setEditingPerformanceItem(null)}>Cancelar</Button><Button onClick={handleSavePerformanceUpdate}>Salvar Performance</Button></DialogFooter>
+                </div>
+              }
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
+            <DialogContent className="bg-gray-950 border-gray-800 text-white max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-red-500">
+                  <Trash2 className="w-5 h-5" />
+                  Excluir Atleta
+                </DialogTitle>
+              </DialogHeader>
+              <div className="py-4 text-gray-300">
+                Tem certeza de que deseja excluir permanentemente o atleta <strong>{userToDelete?.full_name}</strong>? Esta ação não pode ser desfeita e todos os dados serão perdidos.
+              </div>
+              <DialogFooter className="gap-2 sm:gap-0 mt-4">
+                <Button variant="outline" className="text-gray-400 border-gray-700 hover:bg-gray-800" onClick={() => setUserToDelete(null)}>
+                  Cancelar
+                </Button>
+                <Button variant="destructive" onClick={confirmDeleteUser} className="bg-red-600 hover:bg-red-700">
+                  <Trash2 className="w-4 h-4 mr-2" /> Excluir Definitivamente
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showCreateAthleteModal} onOpenChange={setShowCreateAthleteModal}>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-cyan-400" />
+                  Criar Novo Atleta
+                </DialogTitle>
+              </DialogHeader>
+
+              {!generatedCredentials ? (
+                <div className="space-y-4 py-4">
+                  <div>
+                    <Label className="text-gray-400">Nome do Atleta</Label>
+                    <Input
+                      value={newAthleteForm.full_name}
+                      onChange={(e) => setNewAthleteForm((prev) => ({ ...prev, full_name: e.target.value }))}
+                      placeholder="Nome completo"
+                      className="bg-gray-800 border-gray-700"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gray-400">E-mail</Label>
+                    <Input
+                      value={newAthleteForm.email}
+                      onChange={(e) => setNewAthleteForm((prev) => ({ ...prev, email: e.target.value }))}
+                      placeholder="email@exemplo.com"
+                      type="email"
+                      className="bg-gray-800 border-gray-700"
+                    />
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowCreateAthleteModal(false)}>Cancelar</Button>
+                    <Button
+                      onClick={handleCreateAthlete}
+                      disabled={isCreatingAthlete}
+                      className="bg-cyan-600 hover:bg-cyan-700 text-white"
+                    >
+                      {isCreatingAthlete ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+                      Gerar e Criar
+                    </Button>
+                  </DialogFooter>
+                </div>
+              ) : (
+                <div className="space-y-6 py-4">
+                  <div className="p-4 bg-green-900/20 border border-green-800 rounded-lg">
+                    <h3 className="text-green-400 font-bold mb-2">Conta criada com sucesso!</h3>
+                    <p className="text-sm text-gray-300">A senha gerada foi: <strong className="text-white bg-gray-800 px-2 py-1 rounded">{generatedCredentials.password}</strong></p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-gray-400 font-medium">Mensagem em Português</Label>
+                        <Button size="sm" variant="ghost" className="h-8 text-xs text-gray-400 hover:text-white" onClick={() => copyToClipboard(generatedCredentials.msgPT)}>
+                          <Copy className="w-3 h-3 mr-1" /> Copiar
+                        </Button>
+                      </div>
+                      <Textarea readOnly value={generatedCredentials.msgPT} className="bg-gray-800 border-gray-700 h-32 font-mono text-xs" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-gray-400 font-medium">Mensaje en Español</Label>
+                        <Button size="sm" variant="ghost" className="h-8 text-xs text-gray-400 hover:text-white" onClick={() => copyToClipboard(generatedCredentials.msgES)}>
+                          <Copy className="w-3 h-3 mr-1" /> Copiar
+                        </Button>
+                      </div>
+                      <Textarea readOnly value={generatedCredentials.msgES} className="bg-gray-800 border-gray-700 h-32 font-mono text-xs" />
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button onClick={() => setShowCreateAthleteModal(false)} className="w-full bg-gray-800 hover:bg-gray-700 text-white">Fechar</Button>
+                  </DialogFooter>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>);
 
 }
 

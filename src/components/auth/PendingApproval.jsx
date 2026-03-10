@@ -45,7 +45,12 @@ export default function PendingApproval({ user }) {
         if (updatedUser?.is_approved) {
           window.location.reload();
         }
-      } catch { }
+      } catch (err) {
+        // Se a chamada falhar (ex: usuario excluido), o token eh invalido. Desloga e redireciona.
+        if (err?.status === 401 || err?.status === 404 || err?.message?.includes('401')) {
+          logout(true);
+        }
+      }
     }, 10000);
 
     return () => clearInterval(interval);

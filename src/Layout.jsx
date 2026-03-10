@@ -7,6 +7,7 @@ import StoriesModal from "@/components/stories/StoriesModal";
 import ProfileSetup from "@/components/athlete/ProfileSetup";
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
+import { useAuth } from "@/lib/AuthContext";
 import {
   Star,
   TrendingUp,
@@ -60,6 +61,7 @@ const getNavigationItems = (user, t) => {
 
 function LayoutInner({ children, currentPageName }) {
   const { t, language } = useLanguage();
+  const { logout } = useAuth();
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [userPackageName, setUserPackageName] = useState(null);
@@ -142,7 +144,7 @@ function LayoutInner({ children, currentPageName }) {
   };
 
   const handleLogout = () => {
-    base44.auth.logout();
+    logout(true);
   };
 
   const handleNavClick = (item) => {
