@@ -147,7 +147,7 @@ function LayoutInner({ children, currentPageName }) {
   // Force redirect to login when unauthenticated
   useEffect(() => {
     if (!isLoading && !user) {
-      const nextUrl = window.location.href;
+      const nextUrl = window.location.origin; // always send to domain root
       base44.auth.redirectToLogin(nextUrl);
     }
   }, [isLoading, user]);

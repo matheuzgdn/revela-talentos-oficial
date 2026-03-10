@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Mail, UserPlus, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
@@ -11,6 +12,7 @@ export default function InviteAthleteModal({ open, onOpenChange, onInvited }) {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [sendWelcome, setSendWelcome] = useState(true);
 
   const handleInvite = async () => {
     if (!email) {
@@ -20,6 +22,17 @@ export default function InviteAthleteModal({ open, onOpenChange, onInvited }) {
     setIsSending(true);
     try {
       await base44.users.inviteUser(email, "user");
+      if (sendWelcome) {
+        const loginLink = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/');
+        await base44.integrations.Core.SendEmail({
+          to: email,
+          from_name: 'EC10 Admin',
+          subject: 'Bem-vindo ao EC10 Talentos',
+          body: `Olá${fullName ? ' ' + fullName : ''}!
+\nSeu acesso está liberado. Clique para entrar e criar sua senha:\n${loginLink}
+\nSe precisar de ajuda, responda este e-mail.\n\n— Equipe EC10 Talentos`
+        });
+      }
       toast.success("Convite enviado! O atleta criará a senha e acessará a Zona de Membros.");
       onInvited?.();
       setEmail("");
@@ -65,6 +78,10 @@ export default function InviteAthleteModal({ open, onOpenChange, onInvited }) {
             <p className="text-xs text-gray-500 mt-2">
               O atleta receberá um e-mail para criar a senha. Após o primeiro login, ele será direcionado à Zona de Membros.
             </p>
+            <div className="flex items-center justify-between mt-3">
+              <Label className="text-gray-400">Enviar e-mail de boas-vindas</Label>
+              <Switch checked={sendWelcome} onCheckedChange={setSendWelcome} className="data-[state=checked]:bg-cyan-500" />
+            </div>
           </div>
         </div>
         <DialogFooter>
