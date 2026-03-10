@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import InviteAthleteModal from "./InviteAthleteModal";
+import CreateMemberUserModal from "./CreateMemberUserModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
@@ -455,6 +456,7 @@ export default function AdminUsersTab() {
   });
   const [userToDelete, setUserToDelete] = useState(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showCreateMemberModal, setShowCreateMemberModal] = useState(false);
 
   const personas = [
     { id: "analyst_01", name: "Analista de Desempenho" },
@@ -908,6 +910,9 @@ export default function AdminUsersTab() {
               <Button onClick={() => setShowInviteModal(true)} className="bg-cyan-600 hover:bg-cyan-500">
               <Plus className="w-4 h-4 mr-2" /> Cadastrar Atleta
               </Button>
+              <Button onClick={() => setShowCreateMemberModal(true)} className="bg-emerald-600 hover:bg-emerald-500">
+              <Plus className="w-4 h-4 mr-2" /> Cadastrar Usu e1rio Zona de Membros
+              </Button>
               </div>
           </div>
         </CardContent>
@@ -1159,6 +1164,14 @@ export default function AdminUsersTab() {
         onInvited={() => {
           setShowInviteModal(false);
           toast.success("Convite enviado com sucesso!");
+          loadAllData();
+        }}
+      />
+      <CreateMemberUserModal
+        open={showCreateMemberModal}
+        onOpenChange={setShowCreateMemberModal}
+        onInvited={() => {
+          setShowCreateMemberModal(false);
           loadAllData();
         }}
       />
