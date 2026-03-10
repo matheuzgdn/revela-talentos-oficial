@@ -22,7 +22,7 @@ export default function BemVindo() {
           navigate(createPageUrl("ZonaMembros"), { replace: true });
         }
       } catch (e) {
-        base44.auth.redirectToLogin(createPageUrl("BemVindo"));
+        // Visitante não autenticado: mantém na página BemVindo sem redirecionar para login
       }
     })();
     return () => { mounted = false; };

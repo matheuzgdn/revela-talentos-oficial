@@ -121,13 +121,13 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
-  // Force redirect to external login when unauthenticated
+  // Force redirect to login (exceto na página BemVindo, que pode ser pública)
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!isLoading && !user && currentPageName !== 'BemVindo') {
       const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/?page=ZonaMembros');
       window.location.replace(forceUrl);
     }
-  }, [isLoading, user]);
+  }, [isLoading, user, currentPageName]);
 
   
 
