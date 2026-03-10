@@ -87,33 +87,7 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [t]);
 
-  const loadStories = useCallback(async () => {
-    try {
-      const activeStories = await base44.entities.Story.filter({ is_active: true }, "order", 20);
-      if (activeStories?.length > 0) {
-        // Filtrar por público-alvo
-        const filteredStories = activeStories.filter(story => {
-          if (story.target_audience === "all") return true;
-          if (story.target_audience === "athletes" && user) return true;
-          if (story.target_audience === "guests" && !user) return true;
-          return false;
-        });
 
-        if (filteredStories.length > 0) {
-          setStories(filteredStories);
-
-          // Verificar se já viu os stories hoje
-          const lastStorySeen = localStorage.getItem("lastStorySeen");
-          const today = new Date().toDateString();
-          if (lastStorySeen !== today) {
-            setShowStories(true);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao carregar stories:", error);
-    }
-  }, [user]);
 
   useEffect(() => {
     loadUser();
