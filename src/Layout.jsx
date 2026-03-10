@@ -68,8 +68,7 @@ function LayoutInner({ children, currentPageName }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
-  const [stories, setStories] = useState([]);
-  const [showStories, setShowStories] = useState(false);
+  
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const loadUser = useCallback(async () => {
