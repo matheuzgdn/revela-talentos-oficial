@@ -702,13 +702,14 @@ export default function ZonaMembros() {
                             {user ? (
                                 <button onClick={() => setProfileDrop(!profileDrop)} className="flex items-center gap-3 text-left focus:outline-none">
                                     <div className="w-10 h-10 rounded-full p-[2px] border-2 border-[#00a8e1] shadow-[0_0_10px_rgba(0,168,225,0.4)]">
-                                                                            {user?.profile_picture_url ? (
-                                          <img src={user.profile_picture_url} alt="" className="w-full h-full object-cover rounded-full" />
-                                        ) : (
-                                          <div className="w-full h-full rounded-full bg-[#0a0f14] flex items-center justify-center">
-                                                                              <User className="w-5 h-5 text-[#00a8e1]" />
-                                                                            </div>
-                                                                          </div>
+                                      {user?.profile_picture_url ? (
+                                        <img src={user.profile_picture_url} alt="" className="w-full h-full object-cover rounded-full" />
+                                      ) : (
+                                        <div className="w-full h-full rounded-full bg-[#0a0f14] flex items-center justify-center">
+                                          <User className="w-5 h-5 text-[#00a8e1]" />
+                                        </div>
+                                      )}
+                                    </div>
                                     <div className="hidden sm:block">
                                         <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Bienvenido,</p>
                                         <p className="text-sm font-black text-white leading-tight">{user.full_name}</p>
