@@ -124,7 +124,7 @@ function LayoutInner({ children, currentPageName }) {
   // Force redirect to external login when unauthenticated
   useEffect(() => {
     if (!isLoading && !user) {
-      const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/');
+      const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/?page=ZonaMembros');
       window.location.replace(forceUrl);
     }
   }, [isLoading, user]);

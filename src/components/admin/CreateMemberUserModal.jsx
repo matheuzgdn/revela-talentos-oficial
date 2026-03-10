@@ -26,17 +26,17 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       const code = Array.from(crypto.getRandomValues(new Uint8Array(8)))
         .map(n => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[n % 62])
         .join("");
-      const loginLink = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/');
-      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nSeu acesso à Zona de Membros (Revela Talentos) foi criado.\nAcesse: ${loginLink}\nNo primeiro acesso, cadastre sua própria senha.\nSenha sugerida: ${code}\n\n— Equipe EC10 Talentos`;
+      const zonaLink = 'https://revelatalentos.com/?page=ZonaMembros';
+      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nVocê receberá um e‑mail de convite para criar sua senha de acesso.\nApós definir a senha, acesse: ${zonaLink}\nSenha sugerida (referência): ${code}\n\n— Equipe EC10 Talentos`;
       setInviteMessage(msg);
       setCopied(false);
 
-      // Enviar e-mail profissional em PT-BR
+      // E-mail informativo em PT-BR (o convite oficial com link de criação de senha é enviado automaticamente pela plataforma)
       await base44.integrations.Core.SendEmail({
         to: email,
         from_name: 'EC10 Talentos',
-        subject: 'Bem-vindo à Zona de Membros - EC10 Talentos',
-        body: `Olá${fullName ? ' ' + fullName : ''}!\n\nSeu acesso à Zona de Membros foi criado.\n\nComo acessar:\n1) Clique neste link: ${loginLink}\n2) Crie sua senha no primeiro acesso (use a senha sugerida abaixo apenas como referência).\n\nSenha sugerida: ${code}\n\nSe precisar de ajuda, responda este e-mail.\n\n— EC10 Talentos`
+        subject: 'Convite enviado: crie sua senha para a Zona de Membros',
+        body: `Olá${fullName ? ' ' + fullName : ''}!\n\nAcabamos de enviar um convite automático com o link para você criar sua senha de acesso à Zona de Membros.\nApós definir a senha, acesse: https://revelatalentos.com/?page=ZonaMembros\n\nSenha sugerida (referência): ${code}\n\nSe precisar de ajuda, responda este e-mail.\n\n— EC10 Talentos`
       });
 
       // Ajustar flags para pular onboarding e liberar acesso
