@@ -153,7 +153,7 @@ const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines,
         {currentPipeline &&
           <div className="flex items-center gap-2 text-sm text-gray-300">
             <GitBranch className="w-4 h-4 text-purple-400" />
-            <span className="truncate">{currentbase44.entities.Pipeline.name}</span>
+            <span className="truncate">{currentPipeline?.name}</span>
             {userPipelineInfo.current_stage &&
               <Badge variant="outline" className="text-xs whitespace-nowrap">
                 {userPipelineInfo.current_stage}
@@ -326,13 +326,13 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(pipelines || []).map((pipeline) =>
-          <Card key={base44.entities.Pipeline.id} className="bg-gray-800 border-gray-700">
+          <Card key={pipeline.id} className="bg-gray-800 border-gray-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full bg-${base44.entities.Pipeline.color}-500`} />
-                {base44.entities.Pipeline.name}
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: pipeline.color || '#06b6d4' }} />
+                {pipeline.name}
               </CardTitle>
-              <p className="text-xs text-gray-400">{base44.entities.Pipeline.description}</p>
+              <p className="text-xs text-gray-400">{pipeline.description}</p>
             </CardHeader>
             <CardContent>
               {/* Content can be added here if needed */}
@@ -351,14 +351,14 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
               <div>
                 <Label>Nome do Pipeline</Label>
                 <Input
-                  value={newbase44.entities.Pipeline.name}
+                  value={newPipeline.name}
                   onChange={(e) => setNewPipeline((prev) => ({ ...prev, name: e.target.value }))}
                   className="bg-gray-800 border-gray-700" />
 
               </div>
               <div>
                 <Label>Cor</Label>
-                <Select value={newbase44.entities.Pipeline.color} onValueChange={(v) => setNewPipeline((prev) => ({ ...prev, color: v }))}>
+                <Select value={newPipeline.color} onValueChange={(v) => setNewPipeline((prev) => ({ ...prev, color: v }))}>
                   <SelectTrigger className="bg-gray-800 border-gray-700">
                     <SelectValue />
                   </SelectTrigger>
@@ -375,7 +375,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
             <div>
               <Label>Descrição</Label>
               <Textarea
-                value={newbase44.entities.Pipeline.description}
+                value={newPipeline.description}
                 onChange={(e) => setNewPipeline((prev) => ({ ...prev, description: e.target.value }))}
                 className="bg-gray-800 border-gray-700" />
 
@@ -390,7 +390,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
                 </Button>
               </div>
               <div className="space-y-3">
-                {newbase44.entities.Pipeline.stages.map((stage, index) =>
+                {newPipeline.stages.map((stage, index) =>
                   <div key={index} className="flex gap-2 items-start">
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <Input
@@ -420,7 +420,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
             <DialogClose asChild>
               <Button type="button" variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button onClick={handleCreatePipeline} disabled={!newbase44.entities.Pipeline.name}>
+            <Button onClick={handleCreatePipeline} disabled={!newPipeline.name}>
               Criar Pipeline
             </Button>
           </DialogFooter>
@@ -1219,13 +1219,13 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                 </div>
               }
 
-<<<<<<< HEAD
+
               {filteredUsers.length === 0 && filter !== "all" &&
                 <div className="text-center py-12 text-gray-500">
                   <Users className="w-16 h-16 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
                   <p>Ajuste os filtros de busca para encontrar atletas.</p>
-=======
+
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Star className="w-6 h-6 text-yellow-400" />
@@ -1379,7 +1379,7 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
                   </div>
->>>>>>> 99f2e07efe190840525c033f12aaf186e8620230
+
                 </div>
               }
             </>
