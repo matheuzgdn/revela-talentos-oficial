@@ -45,7 +45,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       setGeneratedCode(code);
 
       // 2. Format the message for the email body
-      const zonaLink = 'https://revelatalentos.com/?page=ZonaMembros';
+      const zonaLink = 'https://revelatalentos.com/ZonaMembros';
       const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado.\nPara simplificar seu acesso, já criamos a sua conta e você pode entrar direto.\n\nAcesse a plataforma através do link abaixo:\n🔗 Link de Acesso: ${zonaLink}\n\nSuas credenciais para entrar:\n📧 E-mail: ${email}\n🔑 Senha temporária: ${code}\n\n(Aconselhamos que você altere sua senha após o primeiro acesso no seu perfil).\n\nEstamos felizes em ter você conosco!\nUm abraço,\nEquipe EC10 Talentos`;
 
       setInviteMessage(msg);
