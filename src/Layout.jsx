@@ -68,7 +68,7 @@ function LayoutInner({ children, currentPageName }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
-  
+
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const loadUser = useCallback(async () => {
@@ -117,7 +117,7 @@ function LayoutInner({ children, currentPageName }) {
     return () => window.removeEventListener('resize', handleResize);
   }, [loadUser]);
 
-  
+
 
 
 
@@ -127,8 +127,7 @@ function LayoutInner({ children, currentPageName }) {
   useEffect(() => {
     if (isLoading || user) return;
     if (currentPageName === 'ZonaMembros') {
-      const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/?page=ZonaMembros');
-      window.location.replace(forceUrl);
+      base44.auth.redirectToLogin(createPageUrl('ZonaMembros'));
       return;
     }
   }, [isLoading, user, currentPageName, navigate]);
@@ -144,7 +143,7 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
-  
+
 
   const handleLogout = () => {
     base44.auth.logout();
@@ -175,7 +174,7 @@ function LayoutInner({ children, currentPageName }) {
 
   return (
     <SidebarProvider>
-      
+
       {user && currentPageName !== 'BemVindo' && (
         <ProfileSetup
           isOpen={showOnboarding}
