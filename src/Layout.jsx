@@ -133,6 +133,17 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
+  // Redirecionamento global: qualquer rota "BemVindo" vai para o destino correto
+  useEffect(() => {
+    if (isLoading) return;
+    if (currentPageName === 'BemVindo') {
+      const target = user
+        ? (user.has_zona_membros_access ? 'ZonaMembros' : (user.has_plano_carreira_access ? 'PlanoCarreira' : 'RevelaTalentos'))
+        : 'RevelaTalentos';
+      navigate(createPageUrl(target), { replace: true });
+    }
+  }, [isLoading, user, currentPageName, navigate]);
+
   
 
   const handleLogout = () => {
