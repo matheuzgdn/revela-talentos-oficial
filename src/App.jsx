@@ -17,6 +17,14 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
+// Helper to redirect to login when hitting a protected route
+const LoginRedirect = () => {
+  useEffect(() => {
+    base44.auth.redirectToLogin(window.location.href);
+  }, []);
+  return null;
+};
+
 // Protected Route Component
 const ProtectedRoute = ({ children, isPublic }) => {
   const { isAuthenticated, isLoadingAuth } = useAuth();
@@ -24,7 +32,7 @@ const ProtectedRoute = ({ children, isPublic }) => {
   if (isLoadingAuth) return null; // Let the main loader handle it
 
   if (!isAuthenticated && !isPublic) {
-    return <Navigate to="/" replace />;
+    return <LoginRedirect />;
   }
 
   return children;
