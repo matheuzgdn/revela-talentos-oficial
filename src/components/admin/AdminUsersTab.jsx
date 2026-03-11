@@ -907,17 +907,17 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                 'bg-green-600 hover:bg-green-700' :
                 'bg-red-600 hover:bg-red-700'}>
 
-              {isPlatformRestricted ?
+              {isPlatformRestricted ? (
                 <>
                   <Unlock className="w-4 h-4 mr-2" />
                   Liberar Plataforma
-     :
-
+                </>
+              ) : (
                 <>
                   <Lock className="w-4 h-4 mr-2" />
                   Restringir Plataforma
-    
-              }
+                </>
+              )}
             </Button>
           </div>
         </CardContent>
@@ -955,17 +955,17 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
               variant="outline"
               className="border-gray-700">
 
-              {view === "crm" ?
+              {view === "crm" ? (
                 <>
                   <GitBranch className="w-4 h-4 mr-2" />
                   Pipelines
-     :
-
+                </>
+              ) : (
                 <>
                   <Users className="w-4 h-4 mr-2" />
                   CRM
-    
-              }
+                </>
+              )}
               </Button>
               <Button onClick={() => setShowInviteModal(true)} className="bg-cyan-600 hover:bg-cyan-500">
               <Plus className="w-4 h-4 mr-2" /> Cadastrar Atleta
@@ -1018,7 +1018,7 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
           </div>
 
           {/* All Athletes Grid */}
-          {filter === "all" &&
+          {filter === "all" && (
             <div className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -1044,17 +1044,17 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                       onClick={() => setShowAllAthletes(!showAllAthletes)}
                       className="text-gray-400 hover:text-white">
 
-                      {showAllAthletes ?
+                      {showAllAthletes ? (
                         <>
                           <EyeOff className="w-4 h-4 mr-2" />
                           Ocultar
-             :
-
+                        </>
+                      ) : (
                         <>
                           <Eye className="w-4 h-4 mr-2" />
                           Mostrar
-            
-                      }
+                        </>
+                      )}
                     </Button>
                   </div>
 
@@ -1197,11 +1197,9 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                   {revelaTalentosUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta apenas neste plano.</p>}
                 </div>
               </div>
-          }
+              )}
 
-
-
-
+              {/* Extra block removed - ensure no duplicates */
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Star className="w-6 h-6 text-yellow-400" />
@@ -1345,9 +1343,9 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
       <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
         <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
           <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
-          {editingPerformanceItem &&
+          {editingPerformanceItem && (
             <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
-              {editingPerformanceItem.associated_video_url &&
+              {editingPerformanceItem.associated_video_url && (
                 <div className="space-y-3">
                   <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
                   <div className="p-4 bg-gray-800 rounded-lg space-y-2">
@@ -1355,11 +1353,10 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
                   </div>
-
                 </div>
-              }
-
-          }
+              )}
+            </div>
+          )}
 
           <AdminAthleteDetailsModal
             user={editingUser}
