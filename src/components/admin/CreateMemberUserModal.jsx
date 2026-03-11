@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Copy, Mail, UserPlus, Loader2, CheckCircle2, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -64,7 +65,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       });
 
       // 2. Format the message for the email body
-      const zonaLink = 'https://revelatalentos.com/ZonaMembros';
+      const zonaLink = `${window.location.origin}${createPageUrl('ZonaMembros')}`;
       const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado.\nPara simplificar seu processo, já criamos a sua conta em nosso sistema.\n\nComo este é o seu primeiro acesso, você precisa definir a sua senha pessoal.\n\nSiga os passos abaixo:\n1. Acesse a plataforma pelo link: ${zonaLink}\n2. Na tela de Login, clique em "Forgot password?" (Esqueci minha senha).\n3. Insira este seu e-mail (${email}) e você receberá um link/código seguro no seu e-mail para criar a sua senha definitiva.\n\nDepois disso, é só aproveitar o conteúdo!\n\nUm abraço,\nEquipe EC10 Talentos`;
 
       setInviteMessage(msg);
