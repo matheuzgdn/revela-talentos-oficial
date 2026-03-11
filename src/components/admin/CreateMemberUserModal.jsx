@@ -14,6 +14,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
   const [fullName, setFullName] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [inviteMessage, setInviteMessage] = useState("");
+  const [copied, setCopied] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Reset state when modal is opened/closed
@@ -22,6 +23,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       setEmail("");
       setFullName("");
       setInviteMessage("");
+      setCopied(false);
       setIsSuccess(false);
     }
   }, [open]);
