@@ -245,7 +245,17 @@ export default function RevelaTalentosPage() {
   }
 
   if (showLandingPage) {
-    return <RevelaTalentosLanding onLoginClick={() => base44.auth.redirectToLogin()} />;
+    const openLogin = () => {
+      const isBase44 = window.location.host.endsWith('base44.app');
+      const nextPath = createPageUrl('ZonaMembros');
+      if (!isBase44) {
+        const base = `${window.location.protocol}//revelatalentos.base44.app`;
+        window.location.href = `${base}/login?from_url=${encodeURIComponent(base + nextPath)}`;
+      } else {
+        base44.auth.redirectToLogin(nextPath);
+      }
+    };
+    return <RevelaTalentosLanding onLoginClick={openLogin} />;
   }
 
   if (selectedLiveContent) {
