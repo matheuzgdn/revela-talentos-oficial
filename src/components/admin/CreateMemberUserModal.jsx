@@ -14,8 +14,6 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
   const [fullName, setFullName] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [inviteMessage, setInviteMessage] = useState("");
-  const [generatedCode, setGeneratedCode] = useState("");
-  const [copied, setCopied] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Reset state when modal is opened/closed
@@ -24,8 +22,6 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       setEmail("");
       setFullName("");
       setInviteMessage("");
-      setGeneratedCode("");
-      setCopied(false);
       setIsSuccess(false);
     }
   }, [open]);
@@ -37,23 +33,12 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
     }
     setIsSending(true);
     try {
-      // 1. Generate a temporary password
-      const code = Array.from(crypto.getRandomValues(new Uint8Array(8)))
-        .map(n => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[n % 62])
-        .join("");
-
-      setGeneratedCode(code);
-
-      // 2. Format the message for the email body
-      const zonaLink = 'https://revelatalentos.com/ZonaMembros';
-      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado.\nPara simplificar seu acesso, já criamos a sua conta e você pode entrar direto.\n\nAcesse a plataforma através do link abaixo:\n🔗 Link de Acesso: ${zonaLink}\n\nSuas credenciais para entrar:\n📧 E-mail: ${email}\n🔑 Senha temporária: ${code}\n\n(Aconselhamos que você altere sua senha após o primeiro acesso no seu perfil).\n\nEstamos felizes em ter você conosco!\nUm abraço,\nEquipe EC10 Talentos`;
-
-      setInviteMessage(msg);
-
-      // 3. Create the user directly with all required fields to pass validation
+      // 1. Silent Registration
+      // We create the user. Note that 'password' is not hashed by the entity API, 
+      // so they MUST use "Forgot Password" to set it up initially.
       await base44.entities.User.create({
         email: email.toLowerCase(),
-        password: code,
+        password: Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8), // Dummy password
         full_name: fullName || email.split('@')[0],
         has_zona_membros_access: true,
         onboarding_completed: true,
@@ -76,7 +61,13 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
         current_club_name: ''
       });
 
-      // 4. Show success screen
+      // 2. Format the message for the email body
+      const zonaLink = 'https://revelatalentos.com/ZonaMembros';
+      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado.\nPara simplificar seu processo, já criamos a sua conta em nosso sistema.\n\nComo este é o seu primeiro acesso, você precisa definir a sua senha pessoal.\n\nSiga os passos abaixo:\n1. Acesse a plataforma pelo link: ${zonaLink}\n2. Na tela de Login, clique em "Forgot password?" (Esqueci minha senha).\n3. Insira este seu e-mail (${email}) e você receberá um link/código seguro no seu e-mail para criar a sua senha definitiva.\n\nDepois disso, é só aproveitar o conteúdo!\n\nUm abraço,\nEquipe EC10 Talentos`;
+
+      setInviteMessage(msg);
+
+      // 3. Show success screen
       setIsSuccess(true);
       toast.success('Usuário criado com sucesso e acesso liberado!');
       onInvited?.();
@@ -138,7 +129,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  O sistema criará a conta do atleta instantaneamente com acesso liberado à Zona de Membros e uma senha gerada.
+                  O sistema criará a conta do atleta instantaneamente com acesso à Zona de Membros. A própria plataforma fará a gestão da redefinição de segurança.
                 </p>
               </div>
 
@@ -155,32 +146,32 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
           ) : (
             <motion.div
               key="success"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="py-4 flex flex-col items-center"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="py-6 flex flex-col items-center text-center space-y-6"
             >
-              <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+              <div className="w-16 h-16 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                <CheckCircle2 className="w-8 h-8 text-cyan-400" />
               </div>
-              <h3 className="text-xl font-black text-white mb-2 text-center">Conta Criada!</h3>
-              <p className="text-sm text-gray-400 text-center mb-6">
-                O acesso à Zona de Membros foi ativado para <span className="text-white font-bold">{email}</span>.
-              </p>
 
-              <div className="w-full bg-gray-900 border border-gray-800 rounded-xl p-4 mb-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-gray-500 font-bold uppercase tracking-wider">Senha Gerada:</span>
-                  <span className="text-lg font-mono font-bold text-cyan-400 select-all">{generatedCode}</span>
-                </div>
-                <p className="text-[10px] text-gray-500 line-clamp-2 md:line-clamp-none">
-                  O atleta já pode acessar o sistema com o e-mail e esta senha. Envie o convite abaixo para notificá-lo.
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-white">Usuário Criado!</h3>
+                <p className="text-sm text-gray-400">
+                  O atleta já está cadastrado no sistema. Agora, mande o e-mail para ele definir a própria senha.
                 </p>
+              </div>
+
+              <div className="w-full bg-gray-900 rounded-xl p-4 space-y-3 text-left border border-gray-800">
+                <div>
+                  <span className="text-xs text-gray-500 uppercase font-bold">E-mail Cadastrado</span>
+                  <p className="text-white font-medium">{email}</p>
+                </div>
               </div>
 
               <div className="w-full space-y-3">
                 <Button
                   onClick={handleOpenGmail}
-                  className="w-full h-12 bg-white text-black hover:bg-gray-200 font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                  className="w-full text-base py-6 bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-500/20"
                 >
                   <Mail className="w-5 h-5 mr-2" />
                   Enviar Convite pelo Meu Gmail
