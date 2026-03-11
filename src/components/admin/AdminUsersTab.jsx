@@ -911,12 +911,12 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                 <>
                   <Unlock className="w-4 h-4 mr-2" />
                   Liberar Plataforma
-                </> :
+     :
 
                 <>
                   <Lock className="w-4 h-4 mr-2" />
                   Restringir Plataforma
-                </>
+    
               }
             </Button>
           </div>
@@ -959,12 +959,12 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                 <>
                   <GitBranch className="w-4 h-4 mr-2" />
                   Pipelines
-                </> :
+     :
 
                 <>
                   <Users className="w-4 h-4 mr-2" />
                   CRM
-                </>
+    
               }
               </Button>
               <Button onClick={() => setShowInviteModal(true)} className="bg-cyan-600 hover:bg-cyan-500">
@@ -1048,12 +1048,12 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                         <>
                           <EyeOff className="w-4 h-4 mr-2" />
                           Ocultar
-                        </> :
+             :
 
                         <>
                           <Eye className="w-4 h-4 mr-2" />
                           Mostrar
-                        </>
+            
                       }
                     </Button>
                   </div>
@@ -1199,32 +1199,8 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
               </div>
           }
 
-              {filter !== "all" &&
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <AnimatePresence>
-                    {filteredUsers.map((user) =>
-                      <AthleteCard
-                        key={user.id}
-                        user={user}
-                        userData={getUserData(user.id)}
-                        onEdit={handleEditClick}
-                        onDelete={handleDeleteUser}
-                        onSendNotification={handleSendNotification}
-                        onProfileVisit={handleProfileVisit}
-                        pipelines={data.pipelines}
-                        userPipelines={data.userPipelines} />
-
-                    )}
-                  </AnimatePresence>
-                </div>
-              }
 
 
-              {filteredUsers.length === 0 && filter !== "all" &&
-                <div className="text-center py-12 text-gray-500">
-                  <Users className="w-16 h-16 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
-                  <p>Ajuste os filtros de busca para encontrar atletas.</p>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -1382,7 +1358,7 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
 
                 </div>
               }
-            </>
+
           }
 
           <AdminAthleteDetailsModal
