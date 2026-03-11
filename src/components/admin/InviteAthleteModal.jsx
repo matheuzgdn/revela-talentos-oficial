@@ -30,7 +30,7 @@ export default function InviteAthleteModal({ open, onOpenChange, onInvited }) {
       const code = Array.from(crypto.getRandomValues(new Uint8Array(8)))
         .map(n => "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"[n % 62])
         .join("");
-      const loginLink = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/');
+      const loginLink = `${window.location.origin}/login?from_url=` + encodeURIComponent(`${window.location.origin}/`);
       const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nSeu acesso ao EC10 Talentos foi criado.\nAcesse por este link: ${loginLink}\nCódigo temporário: ${code}\nNo primeiro acesso, crie sua própria senha.\n\n— Equipe EC10 Talentos`;
       setGeneratedCode(code);
       setInviteMessage(msg);

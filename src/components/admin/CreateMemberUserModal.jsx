@@ -65,7 +65,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       });
 
       // 2. Format the message for the email body (Gmail do Admin)
-      const zonaLink = `https://revelatalentos.com/ZonaMembros`;
+      const zonaLink = `${window.location.origin}/ZonaMembros`;
       const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado e o seu e-mail já foi autorizado no nosso sistema VIP.\n\nPara acessar a plataforma, siga os passos abaixo:\n\n1. Acesse o link: ${zonaLink}\n2. Na tela que abrir, clique em "Sign up" (Criar Conta / Inscrever-se).\n3. Cadastre-se utilizando este mesmo e-mail (${email}) para que o sistema reconheça a sua liberação automática, e crie a sua senha pessoal.\n\nDepois de criar a conta, é só aproveitar todo o conteúdo!\n\nUm abraço,\nEquipe EC10 Talentos`;
 
       setInviteMessage(msg);
