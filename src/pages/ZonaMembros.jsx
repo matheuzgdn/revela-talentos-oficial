@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock, LogOut, Settings, Plus, Minus, RotateCcw } from 'lucide-react';
+import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock, LogOut, Settings, Plus, Minus, RotateCcw, User } from 'lucide-react';
 import ProfileSetup from '@/components/athlete/ProfileSetup';
 /* ================== CONSTANTS ================== */
 const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c';
@@ -644,8 +644,14 @@ export default function ZonaMembros() {
                     {user && hov && (
                         <div className="border-t border-white/5 p-4">
                             <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                                <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-8 h-8 rounded-full object-cover border border-[#00a8e1]/40" />
-                                <div className="flex-1 min-w-0">
+                                {user?.profile_picture_url ? (
+                                    <img src={user.profile_picture_url} alt="" className="w-8 h-8 rounded-full object-cover border border-[#00a0e1]/40" />
+                                  ) : (
+                                    <div className="w-8 h-8 rounded-full border border-[#00a8e1]/40 bg-[#0a0f14] flex items-center justify-center">
+                                    <User className="w-4 h-4 text-[#00a8e1]" />
+                                  </div>
+                                                                    )}
+                                                                    <div className="flex-1 min-w-0">
                                     <p className="text-white text-xs font-bold truncate">{user.full_name}</p>
                                     <p className={`text-[10px] font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acceso Activo'}</p>
                                 </div>
@@ -664,7 +670,13 @@ export default function ZonaMembros() {
                         {user && (
                             <div className="px-5 pt-4 pb-2">
                                 <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-10 h-10 rounded-full object-cover" />
+                                    {user?.profile_picture_url ? (
+                                    <img src={user.profile_picture_url} alt="" className="w-10 h-10 rounded-full object-cover border border-[#00a8e1]/40" />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-full bg-[#0a0f14] border border-[#00a8e1]/40 flex items-center justify-center">
+                                    <User className="w-5 h-5 text-[#00a8e1]" />
+                                  </div>
+                                  )}
                                     <div>
                                         <p className="text-white text-sm font-bold">{user.full_name}</p>
                                         <p className={`text-xs font-semibold ${(user && user.has_revela_talentos_access === false) ? 'text-red-400' : 'text-emerald-400'}`}>{(user && user.has_revela_talentos_access === false) ? 'Bloqueado' : 'Acceso Activo'}</p>
@@ -690,7 +702,13 @@ export default function ZonaMembros() {
                             {user ? (
                                 <button onClick={() => setProfileDrop(!profileDrop)} className="flex items-center gap-3 text-left focus:outline-none">
                                     <div className="w-10 h-10 rounded-full p-[2px] border-2 border-[#00a8e1] shadow-[0_0_10px_rgba(0,168,225,0.4)]">
-                                        <img src={user.profile_picture_url || 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=200'} alt="" className="w-full h-full object-cover rounded-full" />
+                                      {user?.profile_picture_url ? (
+                                        <img src={user.profile_picture_url} alt="" className="w-full h-full object-cover rounded-full" />
+                                      ) : (
+                                        <div className="w-full h-full rounded-full bg-[#0a0f14] flex items-center justify-center">
+                                          <User className="w-5 h-5 text-[#00a8e1]" />
+                                        </div>
+                                      )}
                                     </div>
                                     <div className="hidden sm:block">
                                         <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Bienvenido,</p>

@@ -1,11 +1,14 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 
 export default function PageNotFound({}) {
     const location = useLocation();
     const pageName = location.pathname.substring(1);
+    const navigate = useNavigate();
 
     const { data: authData, isFetched } = useQuery({
         queryKey: ['user'],
@@ -18,9 +21,26 @@ export default function PageNotFound({}) {
             }
         }
     });
+
+    // Redireciona rotas legadas (ex.: /BemVindo)
+    useEffect(() => {
+        const lower = (pageName || '').toLowerCase();
+        if (lower === 'bemvindo' || lower === 'bem-vindo') {
+            if (!isFetched) return;
+            const user = authData?.user;
+            const target = user
+              ? (user.has_zona_membros_access ? 'ZonaMembros' : (user.has_plano_carreira_access ? 'PlanoCarreira' : 'RevelaTalentos'))
+              : 'RevelaTalentos';
+            navigate(createPageUrl(target), { replace: true });
+        }
+    }, [pageName, isFetched, authData, navigate]);
     
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
+            {/* Se for rota BemVindo, mostra feedback rápido enquanto redireciona */}
+            {(pageName?.toLowerCase?.() === 'bemvindo' || pageName?.toLowerCase?.() === 'bem-vindo') && (
+                <div className="fixed top-4 left-1/2 -translate-x-1/2 text-sm text-slate-500">Redirecionando…</div>
+            )}
             <div className="max-w-md w-full">
                 <div className="text-center space-y-6">
                     {/* 404 Error Code */}

@@ -20,6 +20,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
+import InviteAthleteModal from "./InviteAthleteModal";
+import CreateMemberUserModal from "./CreateMemberUserModal";
 import {
   Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
   Send, Loader2, Megaphone, Crown, Plus, Users,
@@ -457,6 +459,8 @@ export default function AdminUsersTab() {
     priority: 'medium'
   });
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showCreateMemberModal, setShowCreateMemberModal] = useState(false);
 
   const personas = [
     { id: "analyst_01", name: "Analista de Desempenho" },
@@ -947,23 +951,29 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                 </SelectContent>
               </Select>
               <Button
-                onClick={() => setView(view === "crm" ? "pipelines" : "crm")}
-                variant="outline"
-                className="border-gray-700">
+              onClick={() => setView(view === "crm" ? "pipelines" : "crm")}
+              variant="outline"
+              className="border-gray-700">
 
-                {view === "crm" ?
-                  <>
-                    <GitBranch className="w-4 h-4 mr-2" />
-                    Pipelines
-                  </> :
+              {view === "crm" ?
+                <>
+                  <GitBranch className="w-4 h-4 mr-2" />
+                  Pipelines
+                </> :
 
-                  <>
-                    <Users className="w-4 h-4 mr-2" />
-                    CRM
-                  </>
-                }
+                <>
+                  <Users className="w-4 h-4 mr-2" />
+                  CRM
+                </>
+              }
               </Button>
-            </div>
+              <Button onClick={() => setShowInviteModal(true)} className="bg-cyan-600 hover:bg-cyan-500">
+              <Plus className="w-4 h-4 mr-2" /> Cadastrar Atleta
+              </Button>
+              <Button onClick={() => setShowCreateMemberModal(true)} className="bg-emerald-600 hover:bg-emerald-500">
+              <Plus className="w-4 h-4 mr-2" /> Cadastrar Usu e1rio Zona de Membros
+              </Button>
+              </div>
           </div>
         </CardContent>
       </Card>
@@ -1209,11 +1219,167 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
                 </div>
               }
 
+<<<<<<< HEAD
               {filteredUsers.length === 0 && filter !== "all" &&
                 <div className="text-center py-12 text-gray-500">
                   <Users className="w-16 h-16 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
                   <p>Ajuste os filtros de busca para encontrar atletas.</p>
+=======
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Star className="w-6 h-6 text-yellow-400" />
+                  <h3 className="text-lg font-bold text-white">Apenas Revela Talentos ({revelaTalentosUsers.length})</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <AnimatePresence>
+                    {revelaTalentosUsers.map((user) =>
+                      <AthleteCard
+                        key={user.id}
+                        user={user}
+                        userData={getUserData(user.id)}
+                        onEdit={handleEditClick}
+                        onDelete={handleDeleteUser}
+                        onSendNotification={handleSendNotification}
+                        onProfileVisit={handleProfileVisit}
+                        pipelines={data.pipelines}
+                        userPipelines={data.userPipelines} />
+
+                    )}
+                  </AnimatePresence>
+                </div>
+                {revelaTalentosUsers.length === 0 && <p className="text-gray-500 text-center py-4">Nenhum atleta apenas neste plano.</p>}
+              </div>
+            </div>
+          }
+
+          {filter !== "all" &&
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <AnimatePresence>
+                {filteredUsers.map((user) =>
+                  <AthleteCard
+                    key={user.id}
+                    user={user}
+                    userData={getUserData(user.id)}
+                    onEdit={handleEditClick}
+                    onDelete={handleDeleteUser}
+                    onSendNotification={handleSendNotification}
+                    onProfileVisit={handleProfileVisit}
+                    pipelines={data.pipelines}
+                    userPipelines={data.userPipelines} />
+
+                )}
+              </AnimatePresence>
+            </div>
+          }
+
+          {filteredUsers.length === 0 && filter !== "all" &&
+            <div className="text-center py-12 text-gray-500">
+              <Users className="w-16 h-16 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta encontrado</h3>
+              <p>Ajuste os filtros de busca para encontrar atletas.</p>
+            </div>
+          }
+        </>
+      }
+
+      <InviteAthleteModal
+        open={showInviteModal}
+        onOpenChange={setShowInviteModal}
+        onInvited={() => {
+          setShowInviteModal(false);
+          toast.success("Convite enviado com sucesso!");
+          loadAllData();
+        }}
+      />
+      <CreateMemberUserModal
+        open={showCreateMemberModal}
+        onOpenChange={setShowCreateMemberModal}
+        onInvited={() => {
+          setShowCreateMemberModal(false);
+          loadAllData();
+        }}
+      />
+      <AdminAthleteDetailsModal
+        user={editingUser}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingUser(null);
+        }}
+        onSave={loadAllData}
+      />
+
+      <Dialog open={showNotificationModal} onOpenChange={setShowNotificationModal}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bell className="w-5 h-5 text-blue-400" />
+              Enviar Notificação para {notificationTarget?.full_name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label className="text-gray-400">Tipo</Label>
+              <Select value={notificationForm.type} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, type: v }))}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="message">Mensagem</SelectItem>
+                  <SelectItem value="profile_visit">Visita ao Perfil</SelectItem>
+                  <SelectItem value="achievement">Conquista</SelectItem>
+                  <SelectItem value="general">Geral</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gray-400">Prioridade</Label>
+              <Select value={notificationForm.priority} onValueChange={(v) => setNotificationForm((prev) => ({ ...prev, priority: v }))}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Baixa</SelectItem>
+                  <SelectItem value="medium">Média</SelectItem>
+                  <SelectItem value="high">Alta</SelectItem>
+                  <SelectItem value="urgent">Urgente</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-gray-400">Título</Label>
+              <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
+            </div>
+            <div>
+              <Label className="text-gray-400">Mensagem</Label>
+              <Textarea value={notificationForm.message} onChange={(e) => setNotificationForm((prev) => ({ ...prev, message: e.target.value }))} placeholder="Digite sua mensagem aqui..." className="bg-gray-800 border-gray-700 h-24" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNotificationModal(false)}>Cancelar</Button>
+            <Button onClick={handleSubmitNotification} className="bg-blue-600 hover:bg-blue-700">
+              <Send className="w-4 h-4 mr-2" />
+              Enviar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editingPerformanceItem} onOpenChange={() => setEditingPerformanceItem(null)}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-3xl">
+          <DialogHeader><DialogTitle>Analisar Performance</DialogTitle></DialogHeader>
+          {editingPerformanceItem &&
+            <div className="space-y-4 py-4 max-h-[70vh] overflow-y-auto">
+              {editingPerformanceItem.associated_video_url &&
+                <div className="space-y-3">
+                  <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
+                  <div className="p-4 bg-gray-800 rounded-lg space-y-2">
+                    <h4 className="font-semibold text-white">Diário do Atleta</h4>
+                    <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
+                    <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
+                  </div>
+>>>>>>> 99f2e07efe190840525c033f12aaf186e8620230
                 </div>
               }
             </>
@@ -1418,9 +1584,3 @@ Nuestro equipo está a tu disposición para cualquier duda.`;
         </div>);
 
 }
-
-
-
-
-
-

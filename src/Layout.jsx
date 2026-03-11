@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 
-import StoriesModal from "@/components/stories/StoriesModal";
+
 import ProfileSetup from "@/components/athlete/ProfileSetup";
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
@@ -63,23 +63,36 @@ function LayoutInner({ children, currentPageName }) {
   const { t, language } = useLanguage();
   const { logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [userPackageName, setUserPackageName] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
-  const [stories, setStories] = useState([]);
-  const [showStories, setShowStories] = useState(false);
+  
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const loadUser = useCallback(async () => {
     try {
-      const currentUser = await base44.auth.me();
+      let currentUser = await base44.auth.me();
+
+      // Auto-ativar acesso se e-mail estiver na whitelist
+      if (currentUser && currentUser.has_zona_membros_access !== true) {
+        const wl = await base44.entities.AccessWhitelist.filter({ email: currentUser.email, is_active: true }, '-created_date', 1);
+        const allowed = Array.isArray(wl) && wl.length > 0 && (!wl[0].expires_at || new Date(wl[0].expires_at) > new Date());
+        if (allowed) {
+          await base44.auth.updateMe({ has_zona_membros_access: true, onboarding_completed: true });
+          currentUser = await base44.auth.me();
+        }
+      }
+
       setUser(currentUser);
-      setUserPackageName(currentUser.has_plano_carreira_access ? t('package.career') : t('package.revela'));
-      // Abre onboarding automaticamente para novos usuários
-      if (currentUser && !currentUser.onboarding_completed && !currentUser.position) {
+      setUserPackageName(currentUser?.has_plano_carreira_access ? t('package.career') : t('package.revela'));
+      // Abre onboarding automaticamente para novos usuários (exceto Zona de Membros)
+      if (currentUser && currentUser.has_zona_membros_access === true) {
+        setShowOnboarding(false);
+      } else if (currentUser && !currentUser.onboarding_completed && !currentUser.position) {
         setShowOnboarding(true);
       }
       setIsLoading(false);
@@ -89,33 +102,7 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [t]);
 
-  const loadStories = useCallback(async () => {
-    try {
-      const activeStories = await base44.entities.Story.filter({ is_active: true }, "order", 20);
-      if (activeStories?.length > 0) {
-        // Filtrar por público-alvo
-        const filteredStories = activeStories.filter(story => {
-          if (story.target_audience === "all") return true;
-          if (story.target_audience === "athletes" && user) return true;
-          if (story.target_audience === "guests" && !user) return true;
-          return false;
-        });
 
-        if (filteredStories.length > 0) {
-          setStories(filteredStories);
-
-          // Verificar se já viu os stories hoje
-          const lastStorySeen = localStorage.getItem("lastStorySeen");
-          const today = new Date().toDateString();
-          if (lastStorySeen !== today) {
-            setShowStories(true);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao carregar stories:", error);
-    }
-  }, [user]);
 
   useEffect(() => {
     loadUser();
@@ -132,16 +119,34 @@ function LayoutInner({ children, currentPageName }) {
     return () => window.removeEventListener('resize', handleResize);
   }, [loadUser]);
 
-  useEffect(() => {
-    if (!isLoading) {
-      loadStories();
-    }
-  }, [isLoading, loadStories]);
+  
 
-  const handleCloseStories = () => {
-    setShowStories(false);
-    localStorage.setItem("lastStorySeen", new Date().toDateString());
-  };
+
+
+
+
+  // Visitantes sem login: ZonaMembros exige login; demais páginas permanecem públicas
+  useEffect(() => {
+    if (isLoading || user) return;
+    if (currentPageName === 'ZonaMembros') {
+      const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/?page=ZonaMembros');
+      window.location.replace(forceUrl);
+      return;
+    }
+  }, [isLoading, user, currentPageName, navigate]);
+
+  // Redirecionamento global: qualquer rota "BemVindo" vai para o destino correto
+  useEffect(() => {
+    if (isLoading) return;
+    if (currentPageName === 'BemVindo') {
+      const target = user
+        ? (user.has_zona_membros_access ? 'ZonaMembros' : (user.has_plano_carreira_access ? 'PlanoCarreira' : 'RevelaTalentos'))
+        : 'RevelaTalentos';
+      navigate(createPageUrl(target), { replace: true });
+    }
+  }, [isLoading, user, currentPageName, navigate]);
+
+  
 
   const handleLogout = () => {
     logout(true);
@@ -152,7 +157,7 @@ function LayoutInner({ children, currentPageName }) {
   };
 
   const handleLoginClick = () => {
-    base44.auth.redirectToLogin();
+    base44.auth.redirectToLogin(createPageUrl('ZonaMembros'));
   };
 
   const navigationItemsToRender = getNavigationItems(user, t);
@@ -172,8 +177,8 @@ function LayoutInner({ children, currentPageName }) {
 
   return (
     <SidebarProvider>
-      <StoriesModal stories={stories} isOpen={showStories} onClose={handleCloseStories} />
-      {user && (
+      
+      {user && currentPageName !== 'BemVindo' && (
         <ProfileSetup
           isOpen={showOnboarding}
           onClose={() => setShowOnboarding(false)}
@@ -254,14 +259,14 @@ function LayoutInner({ children, currentPageName }) {
                     {sidebarExpanded ?
                       <>
                         <div className="flex items-center gap-3 p-3 bg-gray-900 rounded-lg border border-gray-800">
-                          <Avatar className="h-10 w-10 flex-shrink-0"><AvatarImage src={user.profile_picture_url} /><AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white">{user.full_name?.charAt(0) || 'A'}</AvatarFallback></Avatar>
+                          <Avatar className="h-10 w-10 flex-shrink-0"><AvatarImage src={user.profile_picture_url} /><AvatarFallback className="bg-[#0a0f14] text-white"><UserIcon className="w-4 h-4" /></AvatarFallback></Avatar>
                           <div className="flex-1 min-w-0"><p className="font-medium text-white text-sm truncate">{user.full_name}</p>{userPackageName && <Badge className={`text-xs ${userPackageName === 'Plano de Carreira' ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'}`}>{userPackageName}</Badge>}</div>
                         </div>
                         <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-gray-400 hover:text-white hover:bg-gray-900"><LogOut className="w-4 h-4 mr-2" />{t('nav.logout')}</Button>
                       </> :
 
                       <div className="flex flex-col items-center space-y-2">
-                        <Avatar className="h-8 w-8"><AvatarImage src={user.profile_picture_url} /><AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-sm">{user.full_name?.charAt(0) || 'A'}</AvatarFallback></Avatar>
+                        <Avatar className="h-8 w-8"><AvatarImage src={user.profile_picture_url} /><AvatarFallback className="bg-[#0a0f14] text-white"><UserIcon className="w-3 h-3" /></AvatarFallback></Avatar>
                         <Button variant="ghost" size="sm" onClick={handleLogout} className="text-gray-400 hover:text-white hover:bg-gray-900 p-2"><LogOut className="w-4 h-4" /></Button>
                       </div>
                     }
@@ -334,8 +339,8 @@ function LayoutInner({ children, currentPageName }) {
                 <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl border border-cyan-500/20">
                   <Avatar className="h-12 w-12 border-2 border-cyan-500/50">
                     <AvatarImage src={user.profile_picture_url} />
-                    <AvatarFallback className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold">
-                      {user.full_name?.charAt(0) || 'A'}
+                    <AvatarFallback className="bg-[#0a0f14] text-white font-bold">
+                      <UserIcon className="w-5 h-5" />
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
@@ -424,4 +429,3 @@ export default function Layout({ children, currentPageName }) {
     </LanguageProvider>
   );
 }
-
