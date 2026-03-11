@@ -891,29 +891,29 @@ export default function AdminUsersTab() {
                 </SelectContent>
               </Select>
               <Button
-              onClick={() => setView(view === "crm" ? "pipelines" : "crm")}
-              variant="outline"
-              className="border-gray-700">
+                onClick={() => setView(view === "crm" ? "pipelines" : "crm")}
+                variant="outline"
+                className="border-gray-700">
 
-              {view === "crm" ?
-                <>
-                  <GitBranch className="w-4 h-4 mr-2" />
-                  Pipelines
-                </> :
+                {view === "crm" ?
+                  <>
+                    <GitBranch className="w-4 h-4 mr-2" />
+                    Pipelines
+                  </> :
 
-                <>
-                  <Users className="w-4 h-4 mr-2" />
-                  CRM
-                </>
-              }
+                  <>
+                    <Users className="w-4 h-4 mr-2" />
+                    CRM
+                  </>
+                }
               </Button>
               <Button onClick={() => setShowInviteModal(true)} className="bg-cyan-600 hover:bg-cyan-500">
-              <Plus className="w-4 h-4 mr-2" /> Cadastrar Atleta
+                <Plus className="w-4 h-4 mr-2" /> Cadastrar Atleta
               </Button>
               <Button onClick={() => setShowCreateMemberModal(true)} className="bg-emerald-600 hover:bg-emerald-500">
-              <Plus className="w-4 h-4 mr-2" /> Cadastrar Usu e1rio Zona de Membros
+                <Plus className="w-4 h-4 mr-2" /> Cadastrar Usu e1rio Zona de Membros
               </Button>
-              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -1171,7 +1171,6 @@ export default function AdminUsersTab() {
         open={showCreateMemberModal}
         onOpenChange={setShowCreateMemberModal}
         onInvited={() => {
-          setShowCreateMemberModal(false);
           loadAllData();
         }}
       />
