@@ -127,7 +127,14 @@ function LayoutInner({ children, currentPageName }) {
   useEffect(() => {
     if (isLoading || user) return;
     if (currentPageName === 'ZonaMembros') {
-      base44.auth.redirectToLogin(createPageUrl('ZonaMembros'));
+      const nextPath = createPageUrl('ZonaMembros');
+      const isBase44 = window.location.host.endsWith('base44.app');
+      if (!isBase44) {
+        const base = `${window.location.protocol}//revelatalentos.base44.app`;
+        window.location.href = `${base}/login?from_url=${encodeURIComponent(base + nextPath)}`;
+      } else {
+        base44.auth.redirectToLogin(nextPath);
+      }
       return;
     }
   }, [isLoading, user, currentPageName, navigate]);
@@ -154,7 +161,14 @@ function LayoutInner({ children, currentPageName }) {
   };
 
   const handleLoginClick = () => {
-    base44.auth.redirectToLogin(createPageUrl('ZonaMembros'));
+    const nextPath = createPageUrl('ZonaMembros');
+    const isBase44 = window.location.host.endsWith('base44.app');
+    if (!isBase44) {
+      const base = `${window.location.protocol}//revelatalentos.base44.app`;
+      window.location.href = `${base}/login?from_url=${encodeURIComponent(base + nextPath)}`;
+      return;
+    }
+    base44.auth.redirectToLogin(nextPath);
   };
 
   const navigationItemsToRender = getNavigationItems(user, t);
