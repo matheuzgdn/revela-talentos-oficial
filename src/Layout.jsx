@@ -119,18 +119,9 @@ function LayoutInner({ children, currentPageName }) {
 
   
 
-  // Onboarding redirecionado: não usar mais a página BemVindo
-  // (mantemos efeito vazio para preservar estrutura)
-  useEffect(() => {
-    // Intencionalmente sem redirecionamento para 'BemVindo'
-  }, [isLoading, user, currentPageName, navigate]);
 
-  // If currently on BemVindo and user has Zona de Membros, skip onboarding and go to member area
-  useEffect(() => {
-    if (!isLoading && user && user.has_zona_membros_access === true && currentPageName === 'BemVindo') {
-      navigate(createPageUrl('ZonaMembros'), { replace: true });
-    }
-  }, [isLoading, user, currentPageName, navigate]);
+
+
 
   // Visitantes sem login: ZonaMembros exige login; demais páginas permanecem públicas
   useEffect(() => {

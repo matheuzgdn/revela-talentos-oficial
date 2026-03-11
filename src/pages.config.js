@@ -52,7 +52,6 @@ import AdminDashboard from './pages/AdminDashboard';
 import AnalisePerformance from './pages/AnalisePerformance';
 import AthleteProfile from './pages/AthleteProfile';
 import AthleteVideos from './pages/AthleteVideos';
-import BemVindo from './pages/BemVindo';
 import DatacenterDocumentation from './pages/DatacenterDocumentation';
 import Eventos from './pages/Eventos';
 import Home from './pages/Home';
@@ -75,7 +74,6 @@ export const PAGES = {
     "AnalisePerformance": AnalisePerformance,
     "AthleteProfile": AthleteProfile,
     "AthleteVideos": AthleteVideos,
-    "BemVindo": BemVindo,
     "DatacenterDocumentation": DatacenterDocumentation,
     "Eventos": Eventos,
     "Home": Home,
