@@ -35,37 +35,28 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
     }
     setIsSending(true);
     try {
-      // 1. Silent Registration
-      // We create the user. Note that 'password' is not hashed by the entity API, 
-      // so they MUST use "Forgot Password" to set it up initially.
-      await base44.entities.User.create({
-        email: email.toLowerCase(),
-        password: Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8), // Dummy password
-        full_name: fullName || email.split('@')[0],
-        has_zona_membros_access: true,
-        onboarding_completed: true,
-        is_approved: true,
-        role: 'user',
-        language: 'pt',
-        achievements: '',
-        career_highlights: '',
-        profile_picture_url: '',
-        birth_date: '2000-01-01',
-        fifa_attributes: {},
-        career_stats: {},
-        jersey_number: '0',
-        height: 0,
-        player_cutout_url: '',
-        weight: 0,
-        current_club_crest_url: '',
-        nationality: '',
-        position: '',
-        current_club_name: ''
-      });
+      // 1. Criar o Usuário no sistema de Autenticação (Isso envia o e-mail oficial com o link de redefinição de senha).
+      // Esta é a única forma de o Base44 registrar a "Identidade" do usuário para o login.
+      const inviteRes = await base44.users.inviteUser(email.toLowerCase(), 'user');
+      const authUserId = inviteRes.data?.user?.id; // Tentamos pegar o ID, mas se não vier, o filtro abaixo pega.
 
-      // 2. Format the message for the email body
+      // 2. Localizar a linha do Banco de Dados criada automaticamente pelo inviteUser
+      const docs = await base44.entities.User.filter({ email: email.toLowerCase() });
+      if (docs.length > 0) {
+        const dbUser = docs[0];
+        // 3. Atualizar o usuário para dar permissão restrita da Zona de Membros
+        await base44.entities.User.update(dbUser.id, {
+          full_name: fullName || email.split('@')[0],
+          has_zona_membros_access: true,
+          onboarding_completed: true,
+          is_approved: true,
+          language: 'pt'
+        });
+      }
+
+      // 4. Format the message for the email body (Gmail do Admin)
       const zonaLink = 'https://revelatalentos.com/ZonaMembros';
-      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado.\nPara simplificar seu processo, já criamos a sua conta em nosso sistema.\n\nComo este é o seu primeiro acesso, você precisa definir a sua senha pessoal.\n\nSiga os passos abaixo:\n1. Acesse a plataforma pelo link: ${zonaLink}\n2. Na tela de Login, clique em "Forgot password?" (Esqueci minha senha).\n3. Insira este seu e-mail (${email}) e você receberá um link/código seguro no seu e-mail para criar a sua senha definitiva.\n\nDepois disso, é só aproveitar o conteúdo!\n\nUm abraço,\nEquipe EC10 Talentos`;
+      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado.\nPara simplificar seu processo, já criamos a sua conta em nosso sistema.\n\nIMPORTANTE: Para sua segurança, a plataforma lhe enviou agora um e-mail oficial de "Convite/Redefinição".\nPor favor, vá até o seu e-mail (procure na caixa de Spam se necessário), abra a mensagem do sistema e clique no link para definir a sua senha pessoal.\n\nApós definir a senha, você já pode acessar todo o conteúdo!\n\nUm abraço,\nEquipe EC10 Talentos`;
 
       setInviteMessage(msg);
 
