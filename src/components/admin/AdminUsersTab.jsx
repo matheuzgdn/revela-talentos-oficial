@@ -465,21 +465,16 @@ export default function AdminUsersTab() {
     { id: "marketing_01", name: "Equipe de Marketing" }];
 
 
-  const loadAllData = useCallback(async () => {
-    setIsLoading(true);
+  const loadAllData = useCallback(async (isBackgroundLoad = false) => {
+    if (!isBackgroundLoad) setIsLoading(true);
     try {
       // Load only users initially
       const users = await base44.entities.User.list('-created_date', 100);
-      setData({
+      setData((prev) => ({
+        ...prev,
         users: users || [],
-        uploads: [],
-        messages: [],
-        performance: [],
-        progress: [],
-        pipelines: [],
-        userPipelines: []
-      });
-      setIsLoading(false);
+      }));
+      if (!isBackgroundLoad) setIsLoading(false);
 
       // Load other data only when needed (in background)
       base44.entities.Pipeline.filter({ is_active: true }).then((pipelines) => {
@@ -1164,14 +1159,14 @@ export default function AdminUsersTab() {
         onInvited={() => {
           setShowInviteModal(false);
           toast.success("Convite enviado com sucesso!");
-          loadAllData();
+          loadAllData(true);
         }}
       />
       <CreateMemberUserModal
         open={showCreateMemberModal}
         onOpenChange={setShowCreateMemberModal}
         onInvited={() => {
-          loadAllData();
+          loadAllData(true);
         }}
       />
       <AdminAthleteDetailsModal
