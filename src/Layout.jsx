@@ -73,9 +73,20 @@ function LayoutInner({ children, currentPageName }) {
 
   const loadUser = useCallback(async () => {
     try {
-      const currentUser = await base44.auth.me();
+      let currentUser = await base44.auth.me();
+
+      // Auto-ativar acesso se e-mail estiver na whitelist
+      if (currentUser && currentUser.has_zona_membros_access !== true) {
+        const wl = await base44.entities.AccessWhitelist.filter({ email: currentUser.email, is_active: true }, '-created_date', 1);
+        const allowed = Array.isArray(wl) && wl.length > 0 && (!wl[0].expires_at || new Date(wl[0].expires_at) > new Date());
+        if (allowed) {
+          await base44.auth.updateMe({ has_zona_membros_access: true, onboarding_completed: true });
+          currentUser = await base44.auth.me();
+        }
+      }
+
       setUser(currentUser);
-      setUserPackageName(currentUser.has_plano_carreira_access ? t('package.career') : t('package.revela'));
+      setUserPackageName(currentUser?.has_plano_carreira_access ? t('package.career') : t('package.revela'));
       // Abre onboarding automaticamente para novos usuários (exceto Zona de Membros)
       if (currentUser && currentUser.has_zona_membros_access === true) {
         setShowOnboarding(false);
@@ -121,16 +132,13 @@ function LayoutInner({ children, currentPageName }) {
     }
   }, [isLoading, user, currentPageName, navigate]);
 
-  // Visitantes sem login: link de convite → login com retorno; acesso direto → BemVindo
+  // Visitantes sem login: ZonaMembros exige login; demais páginas permanecem públicas
   useEffect(() => {
     if (isLoading || user) return;
     if (currentPageName === 'ZonaMembros') {
       const forceUrl = 'https://revelatalentos.com/login?from_url=' + encodeURIComponent('https://revelatalentos.com/?page=ZonaMembros');
       window.location.replace(forceUrl);
       return;
-    }
-    if (currentPageName !== 'BemVindo') {
-      navigate(createPageUrl('BemVindo'), { replace: true });
     }
   }, [isLoading, user, currentPageName, navigate]);
 
