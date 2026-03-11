@@ -50,7 +50,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
 
       setInviteMessage(msg);
 
-      // 3. Create the user directly
+      // 3. Create the user directly with all required fields to pass validation
       await base44.entities.User.create({
         email: email.toLowerCase(),
         password: code,
@@ -59,7 +59,21 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
         onboarding_completed: true,
         is_approved: true,
         role: 'user',
-        language: 'pt'
+        language: 'pt',
+        achievements: '',
+        career_highlights: '',
+        profile_picture_url: '',
+        birth_date: '2000-01-01',
+        fifa_attributes: {},
+        career_stats: {},
+        jersey_number: '0',
+        height: 0,
+        player_cutout_url: '',
+        weight: 0,
+        current_club_crest_url: '',
+        nationality: '',
+        position: '',
+        current_club_name: ''
       });
 
       // 4. Show success screen
