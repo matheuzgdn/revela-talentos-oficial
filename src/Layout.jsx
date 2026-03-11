@@ -7,7 +7,6 @@ import { base44 } from "@/api/base44Client";
 import ProfileSetup from "@/components/athlete/ProfileSetup";
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
-import { useAuth } from "@/lib/AuthContext";
 import {
   Star,
   TrendingUp,
@@ -61,7 +60,6 @@ const getNavigationItems = (user, t) => {
 
 function LayoutInner({ children, currentPageName }) {
   const { t, language } = useLanguage();
-  const { logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -149,7 +147,7 @@ function LayoutInner({ children, currentPageName }) {
   
 
   const handleLogout = () => {
-    logout(true);
+    base44.auth.logout();
   };
 
   const handleNavClick = (item) => {
