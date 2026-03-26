@@ -4,7 +4,6 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 
 
-import ProfileSetup from "@/components/athlete/ProfileSetup";
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
 import {
@@ -69,7 +68,6 @@ function LayoutInner({ children, currentPageName }) {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
 
-  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const loadUser = useCallback(async () => {
     try {
@@ -87,12 +85,6 @@ function LayoutInner({ children, currentPageName }) {
 
       setUser(currentUser);
       setUserPackageName(currentUser?.has_plano_carreira_access ? t('package.career') : t('package.revela'));
-      // Abre onboarding automaticamente para novos usuários (exceto Zona de Membros)
-      if (currentUser && currentUser.has_zona_membros_access === true) {
-        setShowOnboarding(false);
-      } else if (currentUser && !currentUser.onboarding_completed && !currentUser.position) {
-        setShowOnboarding(true);
-      }
       setIsLoading(false);
     } catch (error) {
       setUser(null);
@@ -189,14 +181,7 @@ function LayoutInner({ children, currentPageName }) {
   return (
     <SidebarProvider>
 
-      {user && currentPageName !== 'BemVindo' && (
-        <ProfileSetup
-          isOpen={showOnboarding}
-          onClose={() => setShowOnboarding(false)}
-          user={user}
-          onSave={loadUser}
-        />
-      )}
+
       <div className="min-h-screen flex w-full bg-black">
         {/* Desktop Sidebar */}
         {user && <div
