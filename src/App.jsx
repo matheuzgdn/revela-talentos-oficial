@@ -71,7 +71,7 @@ const AuthenticatedApp = () => {
           <MainPage />
         </LayoutWrapper>
       } />
-      <Route path="/checkout" element={
+      <Route path="/thanks" element={
         <ProtectedRoute isPublic={true}>
           <LayoutWrapper currentPageName="checkout">
             <CheckoutSuccess />
