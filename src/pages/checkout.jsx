@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/AuthContext';
+import jsPDF from 'jspdf';
 import { CheckCircle, Calendar, CreditCard, User, Mail, ShieldCheck, Download, PlayCircle, Star } from 'lucide-react';
 
 const REVELA_LOGO = 'https://static.wixstatic.com/media/933cdd_2a46d0206f1149cc87acf3ca1dfc003b~mv2.png/v1/fill/w_537,h_537,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933cdd_2a46d0206f1149cc87acf3ca1dfc003b~mv2.png';
@@ -21,7 +22,7 @@ export default function CheckoutSuccess() {
     date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
     plan: "Plano Internacional PRO",
     status: "Acesso Liberado",
-    amount: "R$ 497,00"
+    amount: "R$ 297,00"
   };
 
   return (
@@ -75,7 +76,14 @@ export default function CheckoutSuccess() {
               </div>
 
               <div className="flex gap-4">
-                <button className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-[0_0_20px_rgba(234,179,8,0.3)]" onClick={() => window.location.href = '/Hub'}>
+                <button className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-[0_0_20px_rgba(234,179,8,0.3)]" onClick={() => {
+                    const isBase44 = window.location.host.endsWith('base44.app');
+                    if (user) {
+                      window.location.href = '/RevelaTalentos';
+                    } else {
+                      window.location.href = isBase44 ? '/' : 'https://revelatalentos.com/';
+                    }
+                  }}>
                   <PlayCircle className="w-5 h-5" />
                   Acessar Plataforma
                 </button>
@@ -111,6 +119,8 @@ export default function CheckoutSuccess() {
                   <div>
                     <p className="text-gray-500 text-sm mb-1 flex items-center gap-1"><ShieldCheck className="w-4 h-4"/> Plano</p>
                     <p className="text-yellow-400 font-bold">{clientInfo.plan}</p>
+                    <p className="text-gray-400 text-sm mt-1">REVELA TALENTOS</p>
+                    <p className="text-white font-medium">VALOR R$ 297,00</p>
                   </div>
                   <div>
                     <p className="text-gray-500 text-sm mb-1 flex items-center gap-1"><CheckCircle className="w-4 h-4"/> Status</p>
@@ -129,7 +139,7 @@ export default function CheckoutSuccess() {
 
               <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
                 <span className="text-gray-500 text-xs font-mono">ID: {clientInfo.orderId}</span>
-                <button className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm group">
+                <button onClick={() => { const doc = new jsPDF(); doc.setFontSize(16); doc.text('Recibo - Revela Talentos', 14, 20); doc.setFontSize(12); doc.text(`Pedido: ${clientInfo.orderId}`, 14, 35); doc.text(`Atleta: ${clientInfo.name}`, 14, 45); doc.text(`Email: ${clientInfo.email}`, 14, 55); doc.text(`Plano: ${clientInfo.plan}`, 14, 65); doc.text('REVELA TALENTOS', 14, 75); doc.text(`Data: ${clientInfo.date}`, 14, 85); doc.text(`Valor: ${clientInfo.amount}`, 14, 95); doc.save(`recibo-${clientInfo.orderId}.pdf`); }} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm group">
                   <Download className="w-4 h-4 group-hover:-translate-y-1 transition-transform" /> Baixar Recibo
                 </button>
               </div>
