@@ -6,6 +6,7 @@ import { pagesConfig } from './pages.config'
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
+import CheckoutSuccess from './pages/checkout';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { base44 } from '@/api/base44Client';
@@ -69,6 +70,13 @@ const AuthenticatedApp = () => {
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />
         </LayoutWrapper>
+      } />
+      <Route path="/checkout" element={
+        <ProtectedRoute isPublic={true}>
+          <LayoutWrapper currentPageName="checkout">
+            <CheckoutSuccess />
+          </LayoutWrapper>
+        </ProtectedRoute>
       } />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
