@@ -20,7 +20,7 @@ export default function CheckoutSuccess() {
     email: user?.email || "atleta@revelatalentos.com",
     orderId: "RT-" + Math.floor(Math.random() * 1000000),
     date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
-    plan: "Plano Internacional PRO",
+    plan: "Plano",
     status: "Acesso Liberado",
     amount: "R$ 297,00"
   };
@@ -118,7 +118,7 @@ export default function CheckoutSuccess() {
                 <div className="grid grid-cols-2 gap-6">
                   <div>
                     <p className="text-gray-500 text-sm mb-1 flex items-center gap-1"><ShieldCheck className="w-4 h-4"/> Plano</p>
-                    <p className="text-yellow-400 font-bold">{clientInfo.plan}</p>
+
                     <p className="text-gray-400 text-sm mt-1">REVELA TALENTOS</p>
                     <p className="text-white font-medium">VALOR R$ 297,00</p>
                   </div>
@@ -139,7 +139,18 @@ export default function CheckoutSuccess() {
 
               <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
                 <span className="text-gray-500 text-xs font-mono">ID: {clientInfo.orderId}</span>
-                <button onClick={() => { const doc = new jsPDF(); doc.setFontSize(16); doc.text('Recibo - Revela Talentos', 14, 20); doc.setFontSize(12); doc.text(`Pedido: ${clientInfo.orderId}`, 14, 35); doc.text(`Atleta: ${clientInfo.name}`, 14, 45); doc.text(`Email: ${clientInfo.email}`, 14, 55); doc.text(`Plano: ${clientInfo.plan}`, 14, 65); doc.text('REVELA TALENTOS', 14, 75); doc.text(`Data: ${clientInfo.date}`, 14, 85); doc.text(`Valor: ${clientInfo.amount}`, 14, 95); doc.save(`recibo-${clientInfo.orderId}.pdf`); }} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm group">
+                <button onClick={() => { const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [80, 160] }); doc.setDrawColor(200); doc.roundedRect(5, 5, 70, 150, 3, 3);
+  doc.setFillColor(0, 229, 255); doc.rect(5, 10, 70, 12, 'F'); doc.setTextColor(0,0,0); doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.text('REVELA TALENTOS', 40, 18, { align: 'center' });
+  doc.setTextColor(30); doc.setFontSize(11); doc.text('RECIBO DE COMPRA', 40, 28, { align: 'center' });
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(80); doc.text(`Pedido: ${clientInfo.orderId}`, 10, 38); doc.text(`Data: ${clientInfo.date}`, 10, 44);
+  if (doc.setLineDash) { doc.setLineDash([1,1], 0); } doc.setDrawColor(180); doc.line(8, 50, 72, 50); if (doc.setLineDash) { doc.setLineDash([]); }
+  doc.setTextColor(120); doc.text('Atleta', 10, 58); doc.setTextColor(0); doc.text(`${clientInfo.name}`, 10, 64, { maxWidth: 60 });
+  doc.setTextColor(120); doc.text('Email', 10, 72); doc.setTextColor(0); doc.text(`${clientInfo.email}`, 10, 78, { maxWidth: 60 });
+  doc.setTextColor(120); doc.text('Plano', 10, 86); doc.setTextColor(0); doc.text('REVELA TALENTOS', 10, 92);
+  doc.setDrawColor(200); doc.line(8, 100, 72, 100);
+  doc.setFillColor(0, 229, 255); doc.roundedRect(10, 106, 60, 14, 3, 3, 'F'); doc.setTextColor(0); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text('VALOR', 40, 112, { align: 'center' }); doc.setFontSize(14); doc.text(`${clientInfo.amount}`, 40, 119, { align: 'center' });
+  doc.setTextColor(120); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('Ambiente 100% seguro', 40, 136, { align: 'center' }); doc.text('suporte@revelatalentos.com', 40, 141, { align: 'center' });
+  doc.setDrawColor(180); doc.setLineWidth(0.2); if (doc.setLineDash){ doc.setLineDash([1,1],0);} doc.line(8, 148, 72, 148); if (doc.setLineDash){ doc.setLineDash([]);} doc.save(`recibo-${clientInfo.orderId}.pdf`); }} className="text-gray-400 hover:text-white transition-colors flex items-center gap-2 text-sm group">
                   <Download className="w-4 h-4 group-hover:-translate-y-1 transition-transform" /> Baixar Recibo
                 </button>
               </div>
