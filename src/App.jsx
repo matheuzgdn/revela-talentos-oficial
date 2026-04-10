@@ -78,6 +78,7 @@ const AuthenticatedApp = () => {
           </LayoutWrapper>
         </ProtectedRoute>
       } />
+      <Route path="/checkout" element={<Navigate to="/thanks" replace />} />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
