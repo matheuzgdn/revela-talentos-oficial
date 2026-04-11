@@ -225,36 +225,41 @@ export default function EscolaParceira() {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_45%,transparent_0%,rgba(0,0,0,0.12)_35%,rgba(0,0,0,0.62)_100%)]" />
           <div className="absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black/85 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
         <div className="relative z-10 mx-auto flex min-h-[100vh] w-full max-w-[1400px] flex-col justify-between px-6 pb-8 pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="max-w-3xl">
-            <div className="mb-6 flex items-center gap-3 font-['Inter']">
-              <span className="text-[2.6rem] font-black leading-none text-[#E50914] md:text-[3rem]">N</span>
-              <span className="text-[1.85rem] font-medium uppercase tracking-tight text-white/95 md:text-[2.15rem]">
-                Series
+            <div className="mb-6 flex items-center gap-4 font-['Inter']">
+              <img
+                src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png"
+                alt="Revela Talentos"
+                className="h-9 w-auto md:h-11"
+              />
+              <span className="border-l border-cyan-400/30 pl-4 text-base font-semibold uppercase tracking-[0.28em] text-cyan-300/90 md:text-lg">
+                Escolas Parceiras
               </span>
             </div>
 
             <div className="space-y-5 font-['Inter']">
               <h1 className="max-w-3xl text-4xl font-extrabold uppercase tracking-tight text-white md:text-5xl lg:text-[3.45rem]">
-                ESCOLA PARCEIRA
+                REVELA TALENTOS
               </h1>
 
               <p className="max-w-2xl text-base leading-7 text-white/88 md:text-[1.15rem] md:leading-8">
-                Em um cenário em que disciplina, visão e preparo fazem toda a diferença, a parceria com a Revela Talentos apresenta uma nova jornada de desenvolvimento para alunos e famílias. Em uma experiência de lançamento com clima cinematográfico, você vai conhecer a metodologia, os pilares da formação e como a escola passa a acelerar o futuro do seu filho dentro e fora da sala de aula.
+                Para os pais de atletas das nossas escolas parceiras, este é o momento de entender como a Revela Talentos pode fortalecer disciplina, confiança e visão de futuro no dia a dia dos seus filhos. Em uma apresentação com linguagem clara e impacto cinematográfico, você vai conhecer a metodologia, os benefícios da parceria e como essa jornada apoia o desenvolvimento esportivo, escolar e humano de cada aluno.
               </p>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row font-['Inter']">
               <a href="#" onClick={(e) => e.preventDefault()}>
-                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border-0 bg-white px-6 text-base font-semibold text-black hover:bg-white/90">
+                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border-0 bg-white px-6 text-base font-semibold text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90">
                   <Play className="h-5 w-5 fill-current" />
                   Assistir agora
                 </Button>
               </a>
               <Link to="/vsl-escola-parceira">
-                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border-0 bg-[#6d6d6eb3] px-6 text-base font-semibold text-white hover:bg-[#808080cc]">
+                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-6 text-base font-semibold text-white hover:bg-[rgba(30,41,59,0.92)]">
                   <span className="text-xl leading-none">+</span>
                   Minha lista
                 </Button>
@@ -266,7 +271,7 @@ export default function EscolaParceira() {
             {heroPreviewCards.map((card, index) => (
               <article
                 key={card.title}
-                className={`group relative aspect-[16/9] overflow-hidden bg-black/40 shadow-[0_18px_50px_rgba(0,0,0,0.45)] ${index === 0 ? 'ring-2 ring-white/80' : 'ring-1 ring-white/10'}`}
+                className={`group relative aspect-[16/9] overflow-hidden bg-black/40 shadow-[0_18px_50px_rgba(0,0,0,0.45)] ${index === 0 ? 'ring-2 ring-cyan-300/80' : 'ring-1 ring-white/10'}`}
               >
                 <img
                   src={card.image}
