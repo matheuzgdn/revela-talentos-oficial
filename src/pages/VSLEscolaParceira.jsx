@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Play, Shield, Volume2 } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, Play, Shield, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -9,7 +9,19 @@ const posterUrl = 'https://static.wixstatic.com/media/933cdd_7baddddb15fc4bb0ad2
 
 export default function VSLEscolaParceira() {
   const [isFocusedPlayback, setIsFocusedPlayback] = useState(false);
+  const [isStoryMessageVisible, setIsStoryMessageVisible] = useState(true);
+  const [shouldAutoCollapseMessage, setShouldAutoCollapseMessage] = useState(true);
   const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const hasSeenStoryMessage = window.sessionStorage.getItem('vsl_story_message_seen') === 'true';
+    if (hasSeenStoryMessage) {
+      setIsStoryMessageVisible(false);
+      setShouldAutoCollapseMessage(false);
+    }
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -26,8 +38,27 @@ export default function VSLEscolaParceira() {
     video.play().catch(() => {});
   }, [isFocusedPlayback]);
 
+  useEffect(() => {
+    if (!isStoryMessageVisible || !shouldAutoCollapseMessage) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setIsStoryMessageVisible(false);
+      setShouldAutoCollapseMessage(false);
+
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem('vsl_story_message_seen', 'true');
+      }
+    }, 4200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isStoryMessageVisible, shouldAutoCollapseMessage]);
+
   const handleActivatePlayback = () => {
     setIsFocusedPlayback(true);
+  };
+
+  const handleToggleStoryMessage = () => {
+    setIsStoryMessageVisible((current) => !current);
   };
 
   return (
@@ -87,15 +118,41 @@ export default function VSLEscolaParceira() {
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.15)_0%,rgba(0,0,0,0.45)_62%,rgba(0,0,0,0.88)_100%)]" />
 
               <div className="absolute bottom-0 left-0 right-0 z-20 p-5 sm:p-6">
-                <Badge className="mb-3 border border-cyan-400/25 bg-cyan-500/12 text-[10px] uppercase tracking-[0.22em] text-cyan-300">
-                  Eric Cena
-                </Badge>
-                <h2 className="max-w-[15ch] text-3xl font-black uppercase leading-[0.95] text-white">
-                  Revela Talentos
-                </h2>
-                <p className="mt-3 max-w-[28ch] text-sm leading-6 text-white/80">
-                  Mesmo sem participar ao vivo, aqui voce entende os servicos, a metodologia e como aproveitar a parceria da sua escola com a Revela Talentos.
-                </p>
+                <div className={`overflow-hidden transition-all duration-500 ease-out ${isStoryMessageVisible ? 'mb-5 max-h-72 opacity-100' : 'mb-0 max-h-0 opacity-0'}`}>
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <Badge className="border border-cyan-400/25 bg-cyan-500/12 text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                        Eric Cena
+                      </Badge>
+                      <button
+                        type="button"
+                        onClick={handleToggleStoryMessage}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-black/35 text-white/70 transition-colors hover:bg-black/55 hover:text-white"
+                        aria-label="Recolher mensagem"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <h2 className="max-w-[15ch] text-3xl font-black uppercase leading-[0.95] text-white">
+                      Revela Talentos
+                    </h2>
+                    <p className="max-w-[28ch] text-sm leading-6 text-white/80">
+                      Mesmo sem participar ao vivo, aqui voce entende os servicos, a metodologia e como aproveitar a parceria da sua escola com a Revela Talentos.
+                    </p>
+                  </div>
+                </div>
+
+                {!isStoryMessageVisible && (
+                  <button
+                    type="button"
+                    onClick={handleToggleStoryMessage}
+                    className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/45 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80 transition-colors hover:bg-black/60 hover:text-white"
+                  >
+                    <ChevronUp className="h-3.5 w-3.5" />
+                    Mostrar mensagem
+                  </button>
+                )}
 
                 <div className="mt-5 flex flex-col gap-3">
                   <Button
