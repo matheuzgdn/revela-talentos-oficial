@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { 
   Sparkles, Award, LineChart, Users, Rocket, 
   ChevronDown, ChevronUp, ArrowRight,
-  Star, BookOpen, Shield, Zap, Calendar, User, Eye, MapPin, Lock
+  Star, Globe, BookOpen, Shield, Zap, Calendar, User, Eye, MapPin, Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -447,55 +447,20 @@ export default function EscolaParceira() {
           <video
             src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
             autoPlay muted loop playsInline controls={false}
-            className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
+            className="absolute inset-0 w-full h-full object-cover animate-cinematic-zoom opacity-55"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-x-0 top-0 h-[48svh] overflow-hidden sm:hidden">
-            <video
-              src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls={false}
-              className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.92]"
-              style={{ pointerEvents: 'none' }}
-            />
-            <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.78)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
-          </div>
           <div className="absolute inset-0 bg-black/30" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_45%,transparent_0%,rgba(0,0,0,0.12)_35%,rgba(0,0,0,0.62)_100%)]" />
           <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/85 to-transparent md:w-[58%]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
-          <div className="absolute inset-x-0 top-0 z-[1] h-[48svh] sm:hidden">
-            <div className="relative z-10 absolute inset-x-0 bottom-0 px-4 pb-4">
-              <div className="max-w-[340px] font-['Inter']">
-                <h1 className="text-[2.85rem] font-extrabold leading-[0.92] tracking-tight text-white">
-                  Revela Talentos
-                </h1>
-                <p className="mt-3 max-w-[17rem] text-[15px] leading-7 text-white/88">
-                  Desenvolva suas habilidades com nosso conteudo exclusivo e mentorias de alto nivel.
-                </p>
-
-                <div className="mt-5 flex items-center gap-2">
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <span
-                      key={index}
-                      className={`h-1.5 rounded-full ${index === 0 ? 'w-10 bg-cyan-400 shadow-[0_0_14px_rgba(34,211,238,0.9)]' : 'w-6 bg-white/22'}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-          </div>
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-[47svh] sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
+        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-24 sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="max-w-3xl">
-            <div className="mb-5 hidden flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:flex sm:gap-4">
+            <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:gap-4">
               <img
                 src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png"
                 alt="Revela Talentos"
@@ -506,7 +471,7 @@ export default function EscolaParceira() {
               </span>
             </div>
 
-            <div className="hidden space-y-5 font-['Inter'] sm:block">
+            <div className="space-y-5 font-['Inter']">
               <h1 className="max-w-3xl text-[2.45rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">
                 REVELA TALENTOS
               </h1>
@@ -516,7 +481,7 @@ export default function EscolaParceira() {
               </p>
             </div>
 
-            <div className="mt-2 space-y-4 font-['Inter'] sm:mt-8 sm:space-y-5">
+            <div className="mt-7 space-y-4 font-['Inter'] sm:mt-8 sm:space-y-5">
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button
                   type="button"
