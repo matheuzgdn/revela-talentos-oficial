@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, ChevronUp, Play, Shield, Volume2 } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, Play, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 const videoUrl = 'https://video.wixstatic.com/video/933cdd_0331ab67517b44d0af21dd72e8b0cb59/1080p/mp4/file.mp4';
 const posterUrl = 'https://static.wixstatic.com/media/933cdd_7baddddb15fc4bb0ad2e2455589ba598~mv2.jpg/v1/fill/w_1200,h_675,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Eric%20Cena.jpg';
+const enrollmentUrl = 'https://www.ec10talentos.com/_paylink/AZ1-ne5r';
 
 export default function VSLEscolaParceira() {
   const [isFocusedPlayback, setIsFocusedPlayback] = useState(false);
@@ -155,19 +156,25 @@ export default function VSLEscolaParceira() {
                 )}
 
                 <div className="mt-5 flex flex-col gap-3">
-                  <Button
-                    type="button"
-                    onClick={handleActivatePlayback}
-                    className="h-12 w-full justify-center gap-3 rounded-full border-0 bg-white font-semibold text-black hover:bg-white/90"
-                  >
-                    {isFocusedPlayback ? <Volume2 className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
-                    {isFocusedPlayback ? 'Audio ativado' : 'Assistir e entender agora'}
-                  </Button>
-
-                  <div className="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-white/55">
-                    <span>{isFocusedPlayback ? 'Video completo' : 'Preview em movimento'}</span>
-                    <span>{isFocusedPlayback ? 'Com controles' : 'Autoplay silencioso'}</span>
-                  </div>
+                  {isFocusedPlayback ? (
+                    <Button
+                      asChild
+                      className="h-12 w-full justify-center gap-3 rounded-full border-0 bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold text-white shadow-[0_16px_40px_rgba(14,165,233,0.35)] hover:from-cyan-400 hover:to-blue-500"
+                    >
+                      <a href={enrollmentUrl}>
+                        Fazer parte agora
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={handleActivatePlayback}
+                      className="h-12 w-full justify-center gap-3 rounded-full border-0 bg-white font-semibold text-black hover:bg-white/90"
+                    >
+                      <Play className="h-4 w-4 fill-current" />
+                      Assistir e entender melhor
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
