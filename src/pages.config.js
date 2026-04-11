@@ -65,6 +65,7 @@ import RevelaTalentos from './pages/RevelaTalentos';
 import SearchAthletes from './pages/SearchAthletes';
 import SeletivaOnline from './pages/SeletivaOnline';
 import ZonaMembros from './pages/ZonaMembros';
+import EscolaParceira from './pages/EscolaParceira';
 import __Layout from './Layout.jsx';
 
 
@@ -87,6 +88,7 @@ export const PAGES = {
     "SearchAthletes": SearchAthletes,
     "SeletivaOnline": SeletivaOnline,
     "ZonaMembros": ZonaMembros,
+    "escola-parceira": EscolaParceira,
 }
 
 export const pagesConfig = {
