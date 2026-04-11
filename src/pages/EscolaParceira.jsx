@@ -296,18 +296,6 @@ function FAQItem({ q, a }) {
   );
 }
 
-export default function EscolaParceira() {
-  const [scrolled, setScrolled] = useState(false);
-  const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
-  const [isLoadingSchools, setIsLoadingSchools] = useState(false);
-  const [partnerSchools, setPartnerSchools] = useState([]);
-  const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
-  const [scheduleForm, setScheduleForm] = useState({
-    full_name: "",
-    phone: "",
-    email: "",
-    school: "",
-  });
   
   // Spotlight / Social Proof states
   const trackRef = useRef(null);
@@ -374,6 +362,8 @@ export default function EscolaParceira() {
       behavior: 'smooth',
       block: window.innerWidth < 640 ? 'center' : 'start',
     });
+
+    setShowOpportunityHero(true);
 
     target.classList.remove('signup-spotlight');
     void target.offsetWidth;
@@ -523,14 +513,16 @@ export default function EscolaParceira() {
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
-              <div className="rounded-[1.35rem] border border-cyan-400/14 bg-[linear-gradient(135deg,rgba(8,47,73,0.22),rgba(15,23,42,0.54))] px-4 py-3.5 shadow-[0_18px_42px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:max-w-[520px] sm:px-5">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[11px]">
-                  Oportunidade exclusiva
-                </p>
-                <p className="mt-1 text-sm leading-6 text-white/78 sm:text-[15px]">
-                  Para atletas no Revela Talentos. Inscreva-se agora e avance para os CTAs abaixo.
-                </p>
-              </div>
+              {showOpportunityHero && (
+                <div className="rounded-[1.35rem] border border-cyan-400/14 bg-[linear-gradient(135deg,rgba(8,47,73,0.22),rgba(15,23,42,0.54))] px-4 py-3.5 shadow-[0_18px_42px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:max-w-[520px] sm:px-5">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[11px]">
+                    Oportunidade exclusiva
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-white/78 sm:text-[15px]">
+                    Para atletas no Revela Talentos. Inscreva-se agora e avance para os CTAs abaixo.
+                  </p>
+                </div>
+              )}
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button

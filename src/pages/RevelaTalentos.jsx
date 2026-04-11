@@ -33,6 +33,12 @@ export default function RevelaTalentosPage() {
   const [athleteStories, setAthleteStories] = useState([]);
   const [isLive, setIsLive] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+
+  const handleOpportunityClick = useCallback((opportunity) => {
+    setSelectedOpportunity(opportunity);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   // Verifica se o conteúdo está bloqueado para este usuário
   const isContentLocked = user && user.has_revela_talentos_access === false;
@@ -340,9 +346,25 @@ export default function RevelaTalentosPage() {
                   transition={{ delay: 0.2 }}
                   className="space-y-2"
                 >
-                  <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl">
-                    {activeSlide?.title}
+                  <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl uppercase">
+                    {selectedOpportunity ? "Oportunidade Exclusiva para Atleta no RevelaTalentos" : activeSlide?.title}
                   </h2>
+                  {selectedOpportunity && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className="flex flex-col gap-1"
+                    >
+                      <p className="text-[#00E5FF] font-black text-lg md:text-2xl uppercase tracking-tight">
+                        {selectedOpportunity.title}
+                      </p>
+                      {selectedOpportunity.description && (
+                        <p className="text-white/70 text-sm md:text-base max-w-xl line-clamp-2 italic">
+                          {selectedOpportunity.description}
+                        </p>
+                      )}
+                    </motion.div>
+                  )}
                   {activeSlide?.id !== 'ec10-hero' && (
                     <div className="flex items-center gap-2">
                       <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/40 backdrop-blur-sm">
@@ -515,7 +537,7 @@ export default function RevelaTalentosPage() {
                   key={plano.id}
                   plano={plano}
                   index={index}
-                  onClick={() => handleContentSelect(plano)}
+                  onClick={() => handleOpportunityClick(plano)}
                   t={t}
                 />
               ))}
