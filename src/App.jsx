@@ -121,6 +121,40 @@ const QueryRedirector = () => {
   return null;
 };
 
+const BrowserThemeManager = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const isEscolaFlow = ['/escola-parceira', '/vsl-escola-parceira'].includes(location.pathname);
+    const themeColor = isEscolaFlow ? '#07111f' : '#040507';
+    const background = isEscolaFlow
+      ? 'linear-gradient(180deg, #040507 0%, #07111f 100%)'
+      : '#040507';
+
+    const ensureMeta = (name) => {
+      let element = document.querySelector(`meta[name="${name}"]`);
+
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute('name', name);
+        document.head.appendChild(element);
+      }
+
+      return element;
+    };
+
+    ensureMeta('theme-color').setAttribute('content', themeColor);
+    ensureMeta('msapplication-navbutton-color').setAttribute('content', themeColor);
+
+    document.documentElement.style.background = background;
+    document.body.style.background = background;
+  }, [location.pathname]);
+
+  return null;
+};
+
 function App() {
 
   return (
@@ -128,6 +162,7 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <QueryRedirector />
+          <BrowserThemeManager />
           <NavigationTracker />
           <AuthenticatedApp />
         </Router>
