@@ -450,7 +450,7 @@ export default function EscolaParceira() {
             className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-x-0 top-0 h-[58svh] overflow-hidden sm:hidden">
+          <div className="absolute inset-x-0 top-0 h-[48svh] overflow-hidden sm:hidden">
             <video
               src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
               autoPlay
@@ -461,7 +461,7 @@ export default function EscolaParceira() {
               className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.92]"
               style={{ pointerEvents: 'none' }}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.06)_0%,rgba(2,6,23,0.12)_30%,rgba(3,7,18,0.28)_62%,rgba(4,5,7,0.84)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.78)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
           </div>
           <div className="absolute inset-0 bg-black/30" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50" />
@@ -469,8 +469,8 @@ export default function EscolaParceira() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_45%,transparent_0%,rgba(0,0,0,0.12)_35%,rgba(0,0,0,0.62)_100%)]" />
           <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/85 to-transparent md:w-[58%]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
-          <div className="absolute inset-x-0 top-0 z-[1] h-[58svh] sm:hidden">
-            <div className="relative z-10 absolute inset-x-0 bottom-0 px-4 pb-7">
+          <div className="absolute inset-x-0 top-0 z-[1] h-[48svh] sm:hidden">
+            <div className="relative z-10 absolute inset-x-0 bottom-0 px-4 pb-4">
               <div className="max-w-[340px] font-['Inter']">
                 <h1 className="text-[2.85rem] font-extrabold leading-[0.92] tracking-tight text-white">
                   Revela Talentos
@@ -490,11 +490,10 @@ export default function EscolaParceira() {
               </div>
             </div>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.92)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-[60svh] sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
+        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-[47svh] sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="max-w-3xl">
             <div className="mb-5 hidden flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:flex sm:gap-4">
               <img
