@@ -447,7 +447,7 @@ export default function EscolaParceira() {
           <video
             src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
             autoPlay muted loop playsInline controls={false}
-            className="absolute inset-0 w-full h-full object-cover animate-cinematic-zoom opacity-55"
+            className="absolute inset-0 w-full h-full object-cover object-[58%_24%] animate-cinematic-zoom opacity-55 sm:object-center"
             style={{ pointerEvents: 'none' }}
           />
           <div className="absolute inset-0 bg-black/30" />
@@ -458,7 +458,7 @@ export default function EscolaParceira() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-24 sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
+        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-32 sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="max-w-3xl">
             <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:gap-4">
               <img
