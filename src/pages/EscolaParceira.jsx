@@ -251,35 +251,59 @@ export default function EscolaParceira() {
               </p>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row font-['Inter']">
-              <a href="#" onClick={(e) => e.preventDefault()}>
-                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border-0 bg-white px-6 text-base font-semibold text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90">
-                  <Play className="h-5 w-5 fill-current" />
-                  Assistir agora
-                </Button>
-              </a>
-              <Link to="/vsl-escola-parceira">
-                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-6 text-base font-semibold text-white hover:bg-[rgba(30,41,59,0.92)]">
-                  <span className="text-xl leading-none">+</span>
-                  Minha lista
-                </Button>
-              </Link>
-            </div>
+            <div className="mt-8 space-y-5 font-['Inter']">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <a href="#" onClick={(e) => e.preventDefault()}>
+                  <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border-0 bg-white px-6 text-base font-semibold text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90">
+                    <Play className="h-5 w-5 fill-current" />
+                    Assistir agora
+                  </Button>
+                </a>
+                <Link to="/vsl-escola-parceira">
+                  <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-6 text-base font-semibold text-white hover:bg-[rgba(30,41,59,0.92)]">
+                    <span className="text-xl leading-none">+</span>
+                    Minha lista
+                  </Button>
+                </Link>
+              </div>
 
-            <div className="mt-8 flex flex-wrap gap-4 font-['Inter']">
-              {heroPreviewCards.map((card, index) => (
-                <div
-                  key={card.title}
-                  className={`flex min-w-[120px] items-center gap-3 rounded-full border px-4 py-3 backdrop-blur-xl ${index === 0 ? 'border-cyan-300/70 bg-[rgba(8,47,73,0.72)] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)]' : 'border-white/12 bg-[rgba(15,23,42,0.62)] text-white/88 shadow-[0_10px_30px_rgba(0,0,0,0.2)]'}`}
-                >
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${index === 0 ? 'bg-cyan-400/14' : 'bg-white/8'}`}>
-                    <card.icon className="h-[18px] w-[18px]" strokeWidth={2.1} />
-                  </div>
-                  <span className="text-sm font-semibold tracking-wide">
-                    {card.title}
-                  </span>
+              <div className="flex max-w-[460px] items-center gap-4 rounded-[22px] border border-cyan-400/18 bg-[linear-gradient(135deg,rgba(15,23,42,0.88),rgba(8,47,73,0.52))] px-4 py-4 shadow-[0_24px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl">
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 rounded-full bg-cyan-400/25 blur-md" />
+                  <img
+                    src="https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg"
+                    alt="Eric Cena"
+                    className="relative h-14 w-14 rounded-full border border-white/20 object-cover"
+                  />
                 </div>
-              ))}
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-cyan-300/80">
+                    Apresentação Especial
+                  </p>
+                  <p className="mt-1 text-lg font-bold tracking-tight text-white">
+                    Eric Cena
+                  </p>
+                  <p className="text-sm text-white/68">
+                    Fundador da Revela Talentos e responsável pela live de lançamento.
+                  </p>
+                </div>
+              </div>
+
+              <div className="hero-icon-row flex flex-nowrap gap-3 overflow-x-auto pb-2 pr-2 font-['Inter']">
+                {heroPreviewCards.map((card, index) => (
+                  <div
+                    key={card.title}
+                    className={`flex shrink-0 items-center gap-2.5 rounded-full border px-3.5 py-2.5 backdrop-blur-xl ${index === 0 ? 'border-cyan-300/70 bg-[rgba(8,47,73,0.72)] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)]' : 'border-white/12 bg-[rgba(15,23,42,0.62)] text-white/88 shadow-[0_10px_30px_rgba(0,0,0,0.2)]'}`}
+                  >
+                    <div className={`flex h-9 w-9 items-center justify-center rounded-full ${index === 0 ? 'bg-cyan-400/14' : 'bg-white/8'}`}>
+                      <card.icon className="h-4 w-4" strokeWidth={2.1} />
+                    </div>
+                    <span className="text-[13px] font-semibold tracking-wide whitespace-nowrap">
+                      {card.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -298,6 +322,13 @@ export default function EscolaParceira() {
           }
           .animate-cinematic-zoom {
             animation: cinematic-zoom 26s ease-in-out infinite;
+          }
+          .hero-icon-row {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          .hero-icon-row::-webkit-scrollbar {
+            display: none;
           }
           .escola-parceira-hero::after {
             content: '';
