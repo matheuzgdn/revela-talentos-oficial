@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import MainLandingCarousel from "../components/hub/MainLandingCarousel";
 import { Link } from "react-router-dom";
 import { 
   Sparkles, Award, LineChart, Users, Rocket, 
@@ -112,12 +113,57 @@ const testimonials = [
   }
 ];
 
+// === DADOS E FUNÇÕES DE PROVAS SOCIAIS INJETADOS ===
+const athleteSpotlights = {
+  default: {
+    eyebrow: '/ Atletas Revelados',
+    highlight: 'DESENVOLVIMENTO',
+    description: 'Atletas e alunos que já vêm sendo forjados por nossa metodologia desde a base até o exterior.',
+    accent: 'cyan',
+    items: [
+      ['Theo e Luccas', 'America Mineiro', 'https://static.wixstatic.com/media/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg/v1/fill/w_600,h_437,al_c,q_80,enc_auto/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg'],
+      ['Destaque Cruzeiro', 'Cruzeiro', 'https://static.wixstatic.com/media/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg/v1/fill/w_448,h_600,al_c,lg_1,q_80,enc_auto/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg'],
+      ['Arthur', 'Inter de Limeira', 'https://video.wixstatic.com/video/933cdd_6c1ddd2b23494c7db12be6d59cad2ceb/480p/mp4/file.mp4'],
+      ['Cristofer', 'SC Braga', 'https://static.wixstatic.com/media/933cdd_bd442822567b47b89fba73ff96de5ef9~mv2.jpg'],
+      ['Eduardo', 'Estoril', 'https://video.wixstatic.com/video/933cdd_c5ddcbf7072b4f6aa12e3dc225532342/720p/mp4/file.mp4'],
+      ['Juan', 'Atletico de Madrid', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg'],
+    ],
+  }
+};
+
+const marqueeCards = [
+  ['GETAFE CF', 'Espanha', 'https://static.wixstatic.com/media/933cdd_205438f6941b4a4ab93e71747b9d3d8e~mv2.png'],
+  ['NOVOHORIZONTINO', 'Brasil', 'https://static.wixstatic.com/media/933cdd_1bd05dce59264c96aaf31a31e0a59341~mv2.png'],
+  ['ATLETICO', 'Espanha', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg'],
+  ['SC BRAGA', 'Portugal', 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg'],
+  ['ROYAL CITY', 'Índia', 'https://static.wixstatic.com/media/933cdd_a60fbc26f42f402c9674ca2f869bbafe~mv2.jpeg'],
+  ['AMERICA', 'Brasil', 'https://static.wixstatic.com/media/933cdd_14ccc273b64f4cabbe2e143c50b26878~mv2.png'],
+];
+
+const statsData = {
+  statOneValue: '150+',
+  statOneLabel: 'ATLETAS AGENCIADOS / REVELADOS',
+  statOneText: 'Jovens em preparação para oportunidades reais no Brasil e no exterior.',
+  statOneImage: 'https://static.wixstatic.com/media/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg/v1/fill/w_450,h_600,al_c,q_80,enc_auto/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg',
+  statTwoEyebrow: 'MERCADO INTERNACIONAL',
+  statTwoValue: '+14',
+  statTwoTitle: 'PAÍSES',
+  statTwoCaption: 'ATIVOS AGORA',
+  statTwoVideo: 'https://video.wixstatic.com/video/933cdd_eb14b07c4db843ac878f02fed62bb4c6/720p/mp4/file.mp4',
+  countries: ['Espanha', 'Portugal', 'Polônia', 'Eslováquia', 'EUA'],
+};
+
+const accentText = { cyan: 'text-[#00f3ff]' };
+const accentGradient = { cyan: 'from-[#00f3ff] via-cyan-200 to-white' };
+
+function isVideoMedia(value = '') {
+  return /\.mp4($|\?)/i.test(value) || String(value).includes('/mp4/');
+}
+
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div
-      className={`border border-white/10 rounded-xl overflow-hidden transition-all duration-300 ${open ? 'bg-white/5' : 'bg-white/[0.02]'}`}
-    >
+    <div className={`border border-white/10 rounded-xl overflow-hidden transition-all duration-300 ${open ? 'bg-white/5' : 'bg-white/[0.02]'}`}>
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-6 text-left gap-4"
@@ -136,6 +182,13 @@ function FAQItem({ q, a }) {
 
 export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
+  
+  // Spotlight / Social Proof states
+  const trackRef = useRef(null);
+  const variant = 'default';
+  const spotlight = useMemo(() => athleteSpotlights[variant] || athleteSpotlights.default, [variant]);
+  const accentClass = accentText[spotlight.accent] || accentText.cyan;
+  const accentGlow = accentGradient[spotlight.accent] || accentGradient.cyan;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -143,46 +196,48 @@ export default function EscolaParceira() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const scrollTrack = (direction) => {
+    if (!trackRef.current) return;
+    trackRef.current.scrollBy({
+      left: direction * trackRef.current.clientWidth * 0.82,
+      behavior: 'smooth',
+    });
+  };
+
   return (
-    <div className="bg-black min-h-screen text-white overflow-x-hidden">
+    <div className="bg-[#040507] min-h-screen text-white overflow-x-hidden">
+      {/* Background Effect globally */}
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(0,243,255,0.08),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_30%)]" />
 
       {/* STICKY HEADER */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between relative z-10">
           <Link to="/">
             <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-10 w-auto" />
           </Link>
           <a href="#como-funciona">
-            <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold px-6 rounded-xl shadow-lg shadow-cyan-500/20">
+            <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold px-6 rounded-xl shadow-lg shadow-cyan-500/20 border-0">
               Sobre a Live
             </Button>
           </a>
         </div>
       </header>
 
-      {/* HERO — VIDEO BACKGROUND (EC10 PRINCIPAL) NETFLIX STYLE */}
+      {/* HERO — VIDEO BACKGROUND */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Video BG Oficial EC10 */}
         <div className="absolute inset-0 z-0">
           <video
             src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            controls={false}
+            autoPlay muted loop playsInline controls={false}
             className="absolute inset-0 w-full h-full object-cover transform scale-[1.03] opacity-60"
             style={{ pointerEvents: 'none' }}
           />
-          {/* Cinematic overlays */}
           <div className="absolute inset-0 bg-black/50" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 md:from-black/95 via-black/40 to-black/80" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-transparent to-transparent" />
         </div>
 
-        {/* Hero Content */}
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-2 gap-12 items-center">
-          {/* Left: Copy voltado para Pais */}
           <div className="space-y-6">
             <Badge className="bg-red-500/10 text-red-500 border border-red-500/30 px-4 py-1.5 text-sm font-bold rounded-full animate-pulse flex inline-flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
@@ -190,38 +245,41 @@ export default function EscolaParceira() {
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold leading-tight">
               A Educação do Século <span className="text-white">XXI</span>{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
                 Chegou Na Escola do Seu Filho(a)
               </span>
             </h1>
             <p className="text-gray-300 text-xl leading-relaxed tracking-wide">
-              Prepare-se para o encontro que vai transformar a rotina, a disciplina e o foco do jovem atleta de casa. Reserve a sua presença na <strong>Live de Lançamento</strong> com a metodologia da Revela Talentos.
+              Prepare-se para o encontro que vai transformar a rotina, a disciplina e o foco do jovem de casa. Reserve a sua presença na <strong>Live de Lançamento</strong> com a metodologia da Revela Talentos.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4 pb-4">
-              <a href="#video-teasers" className="w-full sm:w-auto">
-                <Button className="h-14 px-8 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-lg rounded-xl shadow-xl shadow-cyan-500/30 transition-all duration-300 hover:scale-105 w-full">
+              <a href="#" onClick={(e) => e.preventDefault()} className="w-full sm:w-auto">
+                <Button className="h-14 px-8 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-lg rounded-xl shadow-xl shadow-cyan-500/30 transition-all duration-300 hover:scale-105 w-full border-0">
                   <Calendar className="mr-2 w-5 h-5" /> Colocar na Agenda
                 </Button>
               </a>
+              <Link to="/vsl-escola-parceira" className="w-full sm:w-auto">
+                <Button variant="outline" className="h-14 px-8 border-white/20 text-gray-300 hover:bg-white/5 hover:text-white font-bold text-lg rounded-xl transition-all duration-300 w-full border">
+                  Não poderei participar no dia
+                </Button>
+              </Link>
             </div>
 
-            {/* Apresentador - Eric Cena */}
             <div className="flex items-center gap-4 pt-6 border-t border-white/10">
               <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/40 shadow-lg shadow-cyan-500/20">
                 <img src="https://static.wixstatic.com/media/933cdd_7baddddb15fc4bb0ad2e2455589ba598~mv2.jpg/v1/fill/w_300,h_300,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Eric%20Cena.jpg" alt="Eric Cena" className="w-full h-full object-cover" />
               </div>
               <div>
                 <p className="text-white font-bold text-lg leading-none">Com Eric Cena</p>
-                <p className="text-cyan-400 text-sm mt-1">Fundador da Revela Talentos</p>
+                <p className={`${accentClass} text-sm mt-1`}>Fundador da Revela Talentos</p>
               </div>
             </div>
           </div>
 
-          {/* Right: Embedded Video no lugar do form */}
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 group backdrop-blur-md bg-black/60 p-2">
             <h3 className="absolute z-10 top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4 pb-8 text-center text-sm text-gray-300 font-semibold pointer-events-none">
-              Vídeo Promocional
+              Vídeo Promocional do Lançamento
             </h3>
             <div className="w-full h-full rounded-xl overflow-hidden relative">
               <iframe
@@ -235,30 +293,36 @@ export default function EscolaParceira() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
           <ChevronDown className="w-8 h-8 text-white/40" />
         </div>
       </section>
 
+      {/* 1. SOCIAL PROOF MARQUEE */}
+      <MainLandingCarousel 
+        eyebrow="/ Nossa Estrutura Global" 
+        title="CONEXÕES EUROPEIAS E NACIONAIS" 
+        description="A metodologia que será integrada à escola já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo."
+      />
+
       {/* DESAFIO DOS PAIS */}
-      <section className="py-24 bg-gradient-to-b from-black to-gray-950">
+      <section className="py-24 relative">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <Badge className="bg-white/5 text-gray-400 border border-white/10 px-4 py-1.5 text-sm rounded-full mb-6">
             O Cenário Atual
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Seu Filho(a) Está Pronto para{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
               os Desafios Reais?
             </span>
           </h2>
-          <p className="text-gray-400 text-lg mb-12">No mundo exigente de hoje, estudar é metade do processo. A outra é forjar uma mente inabalável.</p>
+          <p className="text-gray-400 text-lg mb-12">No mundo exigente de hoje, estudar é metade do processo. A outra é forjar uma mente inabalável para esportes e pra vida.</p>
           <div className="grid md:grid-cols-3 gap-6">
             {[
               "Como dar confiança para ele acreditar nos próprios talentos além das telas e celulares?",
               "Como motivá-lo a manter dedicação aos estudos alinhada com seus sonhos e paixões e esporte?",
-              "O que as grandes academias preparam mentalmente em atletas e que pode ser trazido à escola?"
+              "O que as grandes academias treinam na mente dos atletas de base e que pode ser trazido à escola?"
             ].map((q, i) => (
               <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-left hover:border-cyan-500/30 transition-all duration-300 hover:bg-white/[0.06]">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-sm font-bold mb-4">{i + 1}</div>
@@ -266,31 +330,24 @@ export default function EscolaParceira() {
               </div>
             ))}
           </div>
-          <div className="mt-12 p-6 bg-gradient-to-r from-blue-900/20 to-cyan-900/20 border border-cyan-500/20 rounded-2xl">
-            <p className="text-lg text-gray-300 leading-relaxed">
-              Descubra na Live que a solução inclui criar <span className="text-cyan-400 font-semibold">novos desafios emocionantes</span> que eleve o padrão moral, a disciplina, saúde e o ânimo do jovem para dentro de sala e dos gramados.
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* BENFICÍCIOS DIRETOS */}
-      <section className="py-24 bg-black">
+      {/* BENEFÍCIOS DIRETOS */}
+      <section className="pb-16 pt-8">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-white/5 text-gray-400 border border-white/10 px-4 py-1.5 text-sm rounded-full mb-6">
-              Vantagens para Casa e Escola
-            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Por Trás da Nova{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
                 Mentalidade Em Formação
               </span>
             </h2>
+            <p className="text-gray-400 text-lg">As vantagens diretas dessa conexão dentro e fora de casa.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((b, i) => (
-              <div key={i} className="group bg-white/[0.03] border border-white/10 rounded-2xl p-6 hover:border-white/20 hover:bg-white/[0.06] transition-all duration-300 hover:-translate-y-1 cursor-default">
+              <div key={i} className="group bg-white/[0.03] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${b.color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                   <b.icon className="w-6 h-6 text-white" />
                 </div>
@@ -302,27 +359,85 @@ export default function EscolaParceira() {
         </div>
       </section>
 
+      {/* 2. SOCIAL PROOF STATS */}
+      <section className="py-12 md:py-20 relative z-10 px-6">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>/ Nossa Força</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">NÚMEROS QUE COMPROVAM</h2>
+          </div>
+          <div className="grid max-w-6xl mx-auto grid-cols-1 gap-8 lg:grid-cols-2">
+            {/* Stat One */}
+            <article className="relative flex h-[300px] flex-col justify-end overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0a0a0a] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[390px] sm:rounded-[2rem] sm:p-6 md:h-[470px] md:p-10">
+              <img src={statsData.statOneImage} alt="Atletas" className="absolute inset-0 h-full w-full object-cover opacity-50" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-[#040507]/60 to-transparent" />
+              <div className="relative z-10">
+                <div className="mb-2 text-[2.7rem] font-black tracking-tighter text-white sm:text-6xl md:text-7xl">
+                  {statsData.statOneValue.replace('+', '')}
+                  <span className={accentClass}>+</span>
+                </div>
+                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-gray-300 sm:text-sm sm:tracking-[0.3em] md:text-base">
+                  {statsData.statOneLabel}
+                </div>
+                <p className="mt-4 max-w-sm text-[12px] leading-relaxed text-gray-300 sm:mt-5 sm:text-sm">{statsData.statOneText}</p>
+              </div>
+            </article>
+
+            {/* Stat Two */}
+            <article className="relative flex h-[300px] flex-col justify-end overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0a0a0a] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[390px] sm:rounded-[2rem] sm:p-6 md:h-[470px] md:p-10">
+              <video autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover opacity-55">
+                <source src={statsData.statTwoVideo} type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#040507]/90 via-[#040507]/40 to-transparent" />
+              <div className="relative z-10">
+                <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-gray-300 sm:text-sm sm:tracking-[0.3em] md:text-base">
+                  {statsData.statTwoEyebrow}
+                </div>
+                <div className="flex items-end gap-3">
+                  <div className="text-5xl font-black tracking-tight text-white sm:text-6xl md:text-7xl">
+                    {statsData.statTwoValue}
+                  </div>
+                  <div className="pb-1 font-mono text-[11px] font-bold uppercase tracking-[0.28em] text-white/70 sm:text-xs">
+                    {statsData.statTwoCaption}
+                  </div>
+                </div>
+                <div className={`mt-2 text-2xl font-black uppercase tracking-tight sm:text-3xl ${accentClass}`}>
+                  {statsData.statTwoTitle}
+                </div>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {statsData.countries.map((country) => (
+                    <span key={country} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur sm:text-[11px]">
+                      {country}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       {/* CRONOGRAMA */}
-      <section id="como-funciona" className="py-24 bg-gradient-to-b from-gray-950 to-black">
-        <div className="max-w-5xl mx-auto px-6">
+      <section id="como-funciona" className="py-24 relative bg-gradient-to-b from-[#040507] to-gray-950 px-6">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-4 py-1.5 text-sm rounded-full mb-6">
+            <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-4 py-1.5 text-sm rounded-full mb-6 relative z-10">
               Passos a Seguir
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 relative z-10">
               Tudo Começa no Dia{" "}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
                 20 de Abril
               </span>
             </h2>
-            <p className="text-gray-400 text-xl">Como vai funcionar esta trajetória inesquecível para pais e alunos</p>
+            <p className="text-gray-400 text-xl relative z-10">Como vai funcionar esta trajetória inesquecível para pais e alunos nas próximas etapas.</p>
           </div>
           <div className="relative">
             <div className="hidden md:block absolute top-12 left-1/2 -translate-x-1/2 w-[2px] h-[calc(100%-96px)] bg-gradient-to-b from-cyan-500/50 to-transparent" />
             <div className="space-y-8">
               {steps.map((step, i) => (
                 <div key={i} className={`flex flex-col md:flex-row gap-8 items-center ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
-                  <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-2xl p-8 hover:border-cyan-500/30 hover:bg-white/[0.06] transition-all duration-300">
+                  <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-2xl p-8 hover:border-cyan-500/30 hover:bg-white/[0.06] transition-all duration-300 z-10 relative">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="text-5xl font-black text-white/10">{step.num}</span>
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
@@ -343,19 +458,88 @@ export default function EscolaParceira() {
         </div>
       </section>
 
+      {/* 3. SOCIAL PROOF GALLERY (Spotlights) */}
+      <section className="py-24 relative px-4 md:px-8 bg-gray-950 border-y border-white/5">
+        <div className="container mx-auto">
+          <div className="mb-8 flex flex-col gap-4 md:mb-12 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-3xl">
+              <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>{spotlight.eyebrow}</span>
+              <h2 className="text-[2rem] font-black uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl md:text-5xl">
+                Exemplos de <span className={`bg-gradient-to-r bg-clip-text text-transparent ${accentGlow}`}>{spotlight.highlight}</span>
+              </h2>
+              <p className="mt-4 max-w-2xl text-[13px] leading-relaxed text-gray-400 md:text-base">{spotlight.description}</p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 md:px-6">
+              <button
+                type="button"
+                onClick={() => scrollTrack(-1)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/20 hover:bg-white/10 sm:h-11 sm:w-11"
+              >
+                <span className="text-lg leading-none">&lsaquo;</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTrack(1)}
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/20 hover:bg-white/10 sm:h-11 sm:w-11 ${accentClass}`}
+              >
+                <span className="text-lg leading-none">&rsaquo;</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="relative mb-10 md:mb-4">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-12 bg-gradient-to-r from-gray-950 via-gray-950/80 to-transparent md:block" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-12 bg-gradient-to-l from-gray-950 via-gray-950/80 to-transparent md:block" />
+
+            <div
+              ref={trackRef}
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pl-1 pr-1 scroll-smooth sm:gap-5 md:px-6"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {spotlight.items.map(([name, club, image], index) => (
+                <article
+                  key={`${name}-${club}-${index}`}
+                  className="group relative aspect-[4/5] w-[82vw] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-[1.7rem] border border-white/10 bg-black/40 shadow-[0_25px_90px_rgba(0,0,0,0.35)] sm:w-[290px] sm:rounded-[2rem] md:w-[300px]"
+                >
+                  {isVideoMedia(image) ? (
+                    <video src={image} controls playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ) : (
+                    <img src={image} alt={`${name} - ${club}`} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  )}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10" />
+                  <div className="pointer-events-none relative z-10 flex h-full flex-col justify-between p-4 sm:p-5 md:p-6">
+                    <div className="flex justify-between gap-4">
+                      <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/80 backdrop-blur sm:text-[10px]">
+                        EC10
+                      </span>
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.18em] text-white/70 sm:text-[10px]">
+                        Evolução
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/60 sm:text-[11px] sm:tracking-[0.22em]">{club}</p>
+                      <h3 className="mt-3 text-[1.7rem] font-black uppercase leading-[0.95] tracking-tight text-white sm:text-2xl md:text-3xl">{name}</h3>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* DEPOIMENTOS FAMÍLIA */}
-      <section className="py-24 bg-black">
+      <section className="py-24 bg-[#040507]">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-4 py-1.5 text-sm rounded-full mb-6">
-              Opinião de Outras Famílias
-            </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               O Que Dizem os Pais{" "}
               <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
                 Experientes
               </span>
             </h2>
+            <p className="text-gray-400">Famílias que já vivenciam a metodologia de inteligência e disciplina.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {testimonials.map((t, i) => (
@@ -391,15 +575,15 @@ export default function EscolaParceira() {
           </Badge>
           <h2 className="text-4xl md:text-6xl font-bold mb-6">
             Sua Presença é{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
               Fundamental!
             </span>
           </h2>
           <p className="text-gray-300 text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
-            Nós te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos focados para seu filho. Preste atenção nas mensagens oficiais enviadas pela escola e não perca!
+            Nós te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenção nas mensagens oficiais enviadas pela escola e não perca!
           </p>
           <a href="#" onClick={(e) => e.preventDefault()}>
-            <Button className="h-16 px-12 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-bold text-xl rounded-xl shadow-2xl shadow-red-500/30 transition-all duration-300 hover:-translate-y-1">
+            <Button className="h-16 px-12 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-bold text-xl rounded-xl shadow-2xl shadow-red-500/30 transition-all duration-300 hover:-translate-y-1 border-0">
               <Calendar className="mr-3 w-6 h-6" /> Agendar Lembrete na Live
             </Button>
           </a>
@@ -407,12 +591,9 @@ export default function EscolaParceira() {
       </section>
 
       {/* FAQ */}
-      <section className="py-24 bg-gray-950">
+      <section className="py-24 bg-gray-950 border-t border-white/5">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-white/5 text-gray-400 border border-white/10 px-4 py-1.5 text-sm rounded-full mb-6">
-              Dúvidas da Família
-            </Badge>
             <h2 className="text-4xl font-bold mb-4">Perguntas Comuns</h2>
             <p className="text-gray-400">O que você precisa saber antes do lançamento de 20/04.</p>
           </div>
@@ -423,7 +604,7 @@ export default function EscolaParceira() {
       </section>
 
       {/* FOOTER */}
-      <footer className="py-12 bg-black border-t border-white/10">
+      <footer className="py-12 bg-[#040507] border-t border-white/10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto opacity-80" />
           <p className="text-gray-600 text-sm text-center">
