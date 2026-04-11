@@ -143,64 +143,58 @@ const heroPreviewCards = [
 
 const opportunitiesData = [
   {
-    title: 'Avaliação Técnica Premium',
+    title: 'Avaliação Premium',
     location: 'São Paulo, Brasil',
     flag: '🇧🇷',
     country: 'Brasil',
     market: 'Base Nacional',
     format: 'Presencial',
-    summary: 'Janela aberta para atletas em desenvolvimento com foco em performance, disciplina e leitura de jogo.',
-    tags: ['Sub-13 a Sub-16', 'Scout Day', 'Escolas Parceiras'],
+    teaser: 'Vagas limitadas para escolas parceiras.',
   },
   {
-    title: 'Imersão de Alta Performance',
+    title: 'Alta Performance',
     location: 'Belo Horizonte, Brasil',
     flag: '🇧🇷',
     country: 'Brasil',
     market: 'Desenvolvimento',
     format: 'Presencial',
-    summary: 'Experiência intensiva com observação técnica, rotina orientada e trilha de evolução acompanhada pela plataforma.',
-    tags: ['Sub-14 a Sub-17', 'Treino Guiado', 'Mentoria'],
+    teaser: 'Ambiente ideal para acelerar evolução.',
   },
   {
-    title: 'Janela Internacional Portugal',
+    title: 'Janela Portugal',
     location: 'Braga, Portugal',
     flag: '🇵🇹',
     country: 'Portugal',
     market: 'Europa',
     format: 'Híbrido',
-    summary: 'Oportunidade para atletas que buscam preparação estratégica para processos de avaliação e adaptação ao futebol europeu.',
-    tags: ['Pré-análise', 'Perfil Internacional', 'Visibilidade'],
+    teaser: 'Uma rota aberta para o mercado europeu.',
   },
   {
-    title: 'Camp de Observação Espanha',
+    title: 'Camp Espanha',
     location: 'Madrid, Espanha',
     flag: '🇪🇸',
     country: 'Espanha',
     market: 'Europa',
     format: 'Híbrido',
-    summary: 'Programa com curadoria Revela Talentos para atletas com ambição competitiva e potencial de projeção internacional.',
-    tags: ['Camp', 'Análise de Vídeo', 'Posicionamento'],
+    teaser: 'Curadoria especial para atletas promissores.',
   },
   {
-    title: 'Programa de Exposição Polônia',
+    title: 'Exposição Polônia',
     location: 'Varsóvia, Polônia',
     flag: '🇵🇱',
     country: 'Polônia',
     market: 'Europa',
     format: 'Online + Presencial',
-    summary: 'Rota de preparação para atletas que querem acessar oportunidades em mercados emergentes do futebol europeu.',
-    tags: ['Mercado Europeu', 'Planejamento', 'Match Analysis'],
+    teaser: 'Uma vitrine estratégica em crescimento.',
   },
   {
-    title: 'Rota de Entrada Eslováquia',
+    title: 'Entrada Eslováquia',
     location: 'Bratislava, Eslováquia',
     flag: '🇸🇰',
     country: 'Eslováquia',
     market: 'Europa',
     format: 'Online + Presencial',
-    summary: 'Trilha de acompanhamento para famílias que desejam entender requisitos, timing e nível competitivo da oportunidade.',
-    tags: ['Família + Atleta', 'Diagnóstico', 'Internacional'],
+    teaser: 'Descubra uma porta de entrada competitiva.',
   },
 ];
 
@@ -543,10 +537,10 @@ export default function EscolaParceira() {
                 <article
                   key={`${opportunity.title}-${opportunity.location}-${index}`}
                   aria-hidden={index >= opportunitiesData.length}
-                  className={`group relative w-[330px] shrink-0 overflow-hidden rounded-[1.8rem] border bg-[rgba(5,10,18,0.9)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${index % opportunitiesData.length === 0 ? 'border-cyan-400/35' : 'border-white/10 hover:border-cyan-400/25'}`}
+                  className={`group relative w-[250px] shrink-0 overflow-hidden rounded-[1.55rem] border bg-[rgba(5,10,18,0.92)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.32)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${index % opportunitiesData.length === 0 ? 'border-cyan-400/35' : 'border-white/10 hover:border-cyan-400/25'}`}
                 >
                   <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.06),transparent_42%)] opacity-70 pointer-events-none" />
-                  <div className="absolute -right-4 top-2 text-[5.5rem] leading-none opacity-[0.14] saturate-150 pointer-events-none select-none">
+                  <div className="absolute -right-3 top-1 text-[4.3rem] leading-none opacity-[0.12] saturate-150 pointer-events-none select-none">
                     {opportunity.flag}
                   </div>
                   <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400/0 via-cyan-300/70 to-cyan-400/0 opacity-80" />
@@ -557,60 +551,45 @@ export default function EscolaParceira() {
                         <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />
                         Aberta
                       </span>
-                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/65">
-                        {opportunity.market}
+                      <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/65">
+                        {opportunity.country}
                       </span>
                     </div>
 
-                    <div className="mt-5 flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-[rgba(8,47,73,0.28)] text-[1.55rem] shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
+                    <div className="mt-4 flex items-center gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-[rgba(8,47,73,0.28)] text-[1.35rem] shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
                         <span aria-hidden="true">{opportunity.flag}</span>
                       </div>
                       <div>
                         <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-cyan-200/75">
-                          {opportunity.country}
+                          {opportunity.market}
                         </p>
-                        <p className="text-sm text-white/55">
+                        <p className="text-xs text-white/55">
                           Plataforma Revela Talentos
                         </p>
                       </div>
                     </div>
 
-                    <h3 className="mt-6 text-2xl font-black leading-tight text-white">
+                    <h3 className="mt-5 text-[1.65rem] font-black leading-[1.05] text-white">
                       {opportunity.title}
                     </h3>
 
-                    <div className="mt-4 flex flex-wrap gap-3 text-sm text-white/70">
+                    <div className="mt-3 flex flex-wrap gap-3 text-[13px] text-white/70">
                       <span className="inline-flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-cyan-300" />
                         {opportunity.location}
                       </span>
-                      <span className="inline-flex items-center gap-2">
-                        <Globe className="h-4 w-4 text-cyan-300" />
-                        {opportunity.format}
-                      </span>
                     </div>
 
-                    <p className="mt-5 text-[15px] leading-7 text-gray-300">
-                      {opportunity.summary}
+                    <p className="mt-4 text-sm leading-6 text-gray-300">
+                      {opportunity.teaser}
                     </p>
 
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {opportunity.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    <a href="#" onClick={(e) => e.preventDefault()} className="mt-7 block">
+                    <a href="#" onClick={(e) => e.preventDefault()} className="mt-5 block">
                       <div className="flex items-center justify-between rounded-2xl border border-cyan-400/20 bg-[rgba(8,47,73,0.26)] px-4 py-3 text-sm font-semibold text-cyan-100 transition-all duration-300 group-hover:border-cyan-300/35 group-hover:bg-[rgba(8,47,73,0.34)]">
                         <span className="inline-flex items-center gap-3">
                           <Lock className="h-4 w-4" />
-                          Assine a plataforma para ver mais
+                          Ver oportunidade
                         </span>
                         <ArrowRight className="h-4 w-4" />
                       </div>
