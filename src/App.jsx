@@ -79,19 +79,22 @@ const AuthenticatedApp = () => {
         </ProtectedRoute>
       } />
       <Route path="/checkout" element={<Navigate to="/thanks" replace />} />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <ProtectedRoute isPublic={false}>
-              <LayoutWrapper currentPageName={path}>
-                <Page />
-              </LayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-      ))}
+      {Object.entries(Pages).map(([path, Page]) => {
+        const isPublicPage = ['escola-parceira', 'vsl-escola-parceira'].includes(path);
+        return (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={
+              <ProtectedRoute isPublic={isPublicPage}>
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              </ProtectedRoute>
+            }
+          />
+        );
+      })}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

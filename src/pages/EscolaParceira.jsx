@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import MainLandingCarousel from "../components/hub/MainLandingCarousel";
+import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos";
 import { Link } from "react-router-dom";
 import { 
   Sparkles, Award, LineChart, Users, Rocket, 
@@ -29,44 +30,8 @@ const faqs = [
   }
 ];
 
-const benefits = [
-  {
-    icon: Sparkles,
-    title: "Descoberta de Talentos",
-    desc: "Ajudamos os atletas a identificarem suas vocações com clareza, gerando autoconfiança e a motivação necessária para o alto rendimento e estudos diários.",
-    color: "from-blue-500 to-cyan-400"
-  },
-  {
-    icon: Award,
-    title: "Metodologia de Campeões",
-    desc: "Acesso a conceitos de excelência utilizados por grandes clubes adaptados inteligentemente ao cotidiano da escola.",
-    color: "from-yellow-500 to-orange-400"
-  },
-  {
-    icon: LineChart,
-    title: "Acompanhamento 360º",
-    desc: "Desenvolvimento pautado nas partes táticas, técnicas, físicas e comportamentais, impulsionando a inteligência emocional do seu filho.",
-    color: "from-green-500 to-emerald-400"
-  },
-  {
-    icon: Users,
-    title: "Família e Escola Conectadas",
-    desc: "Uma comunidade unida, na qual os pais possuem clareza sobre os avanços e podem guiar as decisões de futuro das crianças em conjunto.",
-    color: "from-purple-500 to-pink-400"
-  },
-  {
-    icon: Rocket,
-    title: "Mente Preparada para Superar",
-    desc: "Fortalecimento de foco, disciplina criativa e resiliência cruciais para suportar as transições da adolescência e carreira.",
-    color: "from-cyan-500 to-blue-400"
-  },
-  {
-    icon: Globe,
-    title: "Oportunidades Reais",
-    desc: "Conexão a uma robusta rede de contatos nacional e internacional para que cada jovem voe mais longe.",
-    color: "from-red-500 to-rose-400"
-  }
-];
+// benefits constant removed as it's now handled by BeneficiosRevelaTalentos component
+
 
 const steps = [
   {
@@ -333,31 +298,8 @@ export default function EscolaParceira() {
         </div>
       </section>
 
-      {/* BENEFÍCIOS DIRETOS */}
-      <section className="pb-16 pt-8">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Por Trás da Nova{" "}
-              <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
-                Mentalidade Em Formação
-              </span>
-            </h2>
-            <p className="text-gray-400 text-lg">As vantagens diretas dessa conexão dentro e fora de casa.</p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {benefits.map((b, i) => (
-              <div key={i} className="group bg-white/[0.03] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 hover:-translate-y-1">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${b.color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <b.icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">{b.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{b.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* BENEFÍCIOS REVELA TALENTOS (Cinematic Marquee) */}
+      <BeneficiosRevelaTalentos />
 
       {/* 2. SOCIAL PROOF STATS */}
       <section className="py-12 md:py-20 relative z-10 px-6">

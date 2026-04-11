@@ -55,12 +55,11 @@ export default function VSLEscolaParceira() {
               </div>
             </div>
           ) : (
-            <iframe
-              src="https://www.youtube.com/embed/9xGNPAYuRb4?autoplay=1&rel=0&modestbranding=1"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
+            <video
+              src="https://video.wixstatic.com/video/933cdd_0331ab67517b44d0af21dd72e8b0cb59/1080p/mp4/file.mp4"
+              controls
+              autoPlay
               className="absolute inset-0 w-full h-full border-0 z-10"
-              title="Vídeo Obrigatório Revela Talentos"
             />
           )}
         </div>
