@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import MainLandingCarousel from "../components/hub/MainLandingCarousel";
 import { base44 } from "@/api/base44Client";
 import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos";
@@ -27,10 +27,6 @@ const faqs = [
   {
     q: "O que é a nova parceria da escola com a Revela Talentos?",
     a: "É uma união inovadora onde a escola passa a contar com a metodologia de desenvolvimento humano, esportivo e socioemocional da EC10 Talentos, potencializando o aprendizado e a descoberta das vocações do seu filho dentro e fora das salas de aula."
-  },
-  {
-    q: "Eu preciso pagar algo a mais por isso?",
-    a: "Não. Como a instituição do seu filho tornou-se uma Escola Parceira, os acessos básicos às ferramentas educativas e à jornada da Revela Talentos já estão inclusos e estruturados pelo colégio."
   },
   {
     q: "Como será a Live de Lançamento com o Eric Cena?",
