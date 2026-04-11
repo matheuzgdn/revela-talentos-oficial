@@ -17,7 +17,7 @@ export default function MainLandingCarousel({
   hideIntro = false,
 }) {
   return (
-    <section className="relative z-20 overflow-hidden border-y border-white/5 bg-[linear-gradient(180deg,#05060a,#030305)] py-14 md:py-20">
+    <section className="relative z-20 overflow-hidden border-y border-white/5 bg-[linear-gradient(180deg,#05060a,#030305)] py-12 sm:py-14 md:py-20">
       {!hideIntro ? (
         <div className="container relative z-20 mx-auto mb-8 px-4 md:mb-10 md:px-8">
           <div className="max-w-3xl">
@@ -39,13 +39,13 @@ export default function MainLandingCarousel({
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-14 bg-gradient-to-l from-black via-black/85 to-transparent md:block" />
 
         <div
-          className="flex shrink-0 gap-4 px-4 sm:gap-5 md:p-6"
-          style={{ width: 'max-content', animation: 'marquee 40s linear infinite' }}
+          className="flex shrink-0 gap-3 px-4 sm:gap-5 md:p-6"
+          style={{ width: 'max-content', animation: 'marquee 42s linear infinite' }}
         >
           {[...cards, ...cards, ...cards].map(([club, country, img], index) => (
             <article
               key={`${club}-${country}-${index}`}
-              className="relative h-[20rem] w-[14.5rem] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0b0d12] shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[24rem] sm:w-[17rem] sm:rounded-[1.8rem] md:h-[26rem] md:w-[18.5rem] lg:h-[27rem] lg:w-[19rem]"
+              className="relative h-[16rem] w-[11.25rem] overflow-hidden rounded-[1.25rem] border border-white/10 bg-[#0b0d12] shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[24rem] sm:w-[17rem] sm:rounded-[1.8rem] md:h-[26rem] md:w-[18.5rem] lg:h-[27rem] lg:w-[19rem]"
             >
               <img
                 src={img}
@@ -56,8 +56,8 @@ export default function MainLandingCarousel({
               <div className="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1.5 text-[10px] font-black tracking-widest text-white sm:left-4 sm:top-4 sm:text-[11px]">
                 EC10
               </div>
-              <div className="absolute bottom-0 w-full p-4 md:p-5">
-                <span className="mb-2 block truncate text-base font-black uppercase leading-none tracking-tight text-white sm:text-xl md:text-2xl">
+              <div className="absolute bottom-0 w-full p-3 sm:p-4 md:p-5">
+                <span className="mb-2 block truncate text-sm font-black uppercase leading-none tracking-tight text-white sm:text-xl md:text-2xl">
                   {club}
                 </span>
                 <div className="flex items-center justify-between gap-3">

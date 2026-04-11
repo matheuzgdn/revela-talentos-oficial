@@ -68,7 +68,7 @@ function InfoCard({ title, text, media, isVideo, highlight, expanded, onToggle }
     : 'object-center';
 
   return (
-    <article className="group relative min-h-[26rem] overflow-hidden rounded-[1.7rem] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-2 hover:border-[#00f3ff]/25 sm:min-h-[30rem] sm:rounded-[2rem]">
+    <article className="group relative min-h-[22rem] overflow-hidden rounded-[1.4rem] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-2 hover:border-[#00f3ff]/25 sm:min-h-[30rem] sm:rounded-[2rem]">
       {isVideo ? (
         <video
           className="absolute inset-0 h-full w-full object-cover opacity-50 transition-opacity duration-700 group-hover:opacity-70"
@@ -95,7 +95,7 @@ function InfoCard({ title, text, media, isVideo, highlight, expanded, onToggle }
         </div>
       ) : null}
 
-      <div className="absolute bottom-0 left-0 z-10 w-full p-4 text-left sm:p-6 md:p-7">
+      <div className="absolute bottom-0 left-0 z-10 w-full p-3.5 text-left sm:p-6 md:p-7">
         <div
           className={`rounded-[1.2rem] border border-white/10 px-4 py-4 shadow-[0_18px_38px_rgba(0,0,0,0.34)] backdrop-blur-md transition-all duration-300 sm:rounded-[1.5rem] sm:px-5 sm:py-5 ${
             expanded
@@ -103,7 +103,7 @@ function InfoCard({ title, text, media, isVideo, highlight, expanded, onToggle }
               : 'bg-[linear-gradient(180deg,rgba(8,12,22,0.14),rgba(5,9,18,0.82))]'
           }`}
         >
-          <h3 className="font-display text-lg font-black uppercase leading-tight text-white sm:text-2xl">
+          <h3 className="font-display text-base font-black uppercase leading-tight text-white sm:text-2xl">
             {title}
           </h3>
 
@@ -115,7 +115,7 @@ function InfoCard({ title, text, media, isVideo, highlight, expanded, onToggle }
             }`}
           >
             <div className="max-h-28 overflow-y-auto pr-1 sm:max-h-36">
-              <p className="text-[12px] leading-relaxed text-white/88 sm:text-sm">{text}</p>
+              <p className="text-[11px] leading-relaxed text-white/88 sm:text-sm">{text}</p>
             </div>
           </div>
 
@@ -149,9 +149,9 @@ export default function BeneficiosRevelaTalentos() {
   return (
     <section
       id="servicos"
-      className="relative overflow-hidden border-b border-white/5 bg-[#030305] py-14 md:py-24"
+      className="relative overflow-hidden border-b border-white/5 bg-[#030305] py-12 sm:py-14 md:py-24"
     >
-      <div className="container relative z-10 mx-auto px-4 text-center border-t border-white/5 pt-12 md:pt-16">
+      <div className="container relative z-10 mx-auto border-t border-white/5 px-4 pt-10 text-center sm:pt-12 md:pt-16">
         <div className="mx-auto mb-10 max-w-4xl sm:mb-16">
           <span className="mb-4 block font-mono text-xs uppercase tracking-widest text-[#00f3ff]">
             {servicesSection.eyebrow}
