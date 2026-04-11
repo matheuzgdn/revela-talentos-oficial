@@ -118,6 +118,29 @@ const statsData = {
   countries: ['Espanha', 'Portugal', 'PolÃ´nia', 'EslovÃ¡quia', 'EUA'],
 };
 
+const heroPreviewCards = [
+  {
+    title: 'Disciplina',
+    image: 'https://static.wixstatic.com/media/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg/v1/fill/w_450,h_600,al_c,q_80,enc_auto/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg',
+  },
+  {
+    title: 'Performance',
+    image: 'https://static.wixstatic.com/media/933cdd_bd442822567b47b89fba73ff96de5ef9~mv2.jpg',
+  },
+  {
+    title: 'Visão',
+    image: 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg',
+  },
+  {
+    title: 'Estratégia',
+    image: 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg',
+  },
+  {
+    title: 'Futuro',
+    image: 'https://static.wixstatic.com/media/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg/v1/fill/w_448,h_600,al_c,lg_1,q_80,enc_auto/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg',
+  },
+];
+
 const accentText = { cyan: 'text-[#00f3ff]' };
 const accentGradient = { cyan: 'from-[#00f3ff] via-cyan-200 to-white' };
 
@@ -188,147 +211,76 @@ export default function EscolaParceira() {
         </div>
       </header>
 
-      {/* HERO â€” VIDEO BACKGROUND (Netflix-inspired cinematic layout) */}
-      <section className="relative min-h-[110vh] flex items-center justify-center overflow-hidden escola-parceira-hero">
+      {/* HERO â€” Netflix title-page layout */}
+      <section className="relative min-h-[100vh] overflow-hidden escola-parceira-hero bg-black">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <video
             src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
             autoPlay muted loop playsInline controls={false}
-            className="absolute inset-0 w-full h-full object-cover animate-cinematic-zoom opacity-40"
+            className="absolute inset-0 w-full h-full object-cover animate-cinematic-zoom opacity-55"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-0 bg-black/55" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,243,255,0.14),transparent_26%),radial-gradient(circle_at_82%_26%,rgba(37,99,235,0.18),transparent_24%),radial-gradient(circle_at_center,transparent_18%,rgba(0,0,0,0.68)_100%)]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#040507] via-[#040507]/94 to-[#040507]/72 lg:via-[#040507]/90 lg:to-[#040507]/42" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-[#040507]/38 to-black/70" />
-          <div className="absolute inset-0 opacity-30 bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.03)_42%,transparent_100%)]" />
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_55%_45%,transparent_0%,rgba(0,0,0,0.12)_35%,rgba(0,0,0,0.62)_100%)]" />
+          <div className="absolute inset-y-0 left-0 w-[58%] bg-gradient-to-r from-black/85 to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 w-full">
-          <div className="grid gap-14 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.75fr)] lg:items-center">
-            <div className="max-w-4xl space-y-8">
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge className="bg-red-600/20 text-red-500 border border-red-600/30 px-5 py-2 text-[11px] font-black rounded-full animate-pulse flex inline-flex items-center gap-2 tracking-[0.32em] uppercase font-['Manrope']">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-[0_0_12px_rgba(220,38,38,1)]"></span>
-                  Lançamento Oficial | Dia 20/04
-                </Badge>
-                <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.32em] text-white/70 backdrop-blur-md font-['Manrope']">
-                  Escola Parceira + EC10
-                </span>
-              </div>
-
-              <div className="space-y-6">
-                <p className="text-sm uppercase tracking-[0.45em] text-white/55 font-['Manrope']">
-                  Experiência Cinematográfica de Lançamento
-                </p>
-                <h1 className="max-w-4xl text-[4rem] leading-[0.82] tracking-[0.01em] text-white sm:text-[5.3rem] lg:text-[7.4rem] font-['Bebas_Neue']">
-                  A EDUCAÇÃO
-                  <span className={`block bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
-                    GANHA ESCALA
-                  </span>
-                  NA ESCOLA DO
-                  <span className="block text-white/92">SEU FILHO</span>
-                </h1>
-
-                <p className="max-w-2xl text-base leading-8 text-gray-200 sm:text-lg lg:text-[1.35rem] lg:leading-9 font-['Manrope']">
-                  Uma estreia com clima de produção premium: narrativa forte, metodologia exclusiva e um encontro pensado para mostrar como disciplina, esporte e visão de futuro podem transformar a rotina do jovem.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-3 text-[11px] uppercase tracking-[0.32em] text-white/60 font-['Manrope']">
-                <span className="rounded-full border border-white/10 bg-black/35 px-4 py-2 backdrop-blur-md">Ao vivo com Eric Cena</span>
-                <span className="rounded-full border border-white/10 bg-black/35 px-4 py-2 backdrop-blur-md">Metodologia Revela Talentos</span>
-                <span className="rounded-full border border-white/10 bg-black/35 px-4 py-2 backdrop-blur-md">Para famílias e estudantes</span>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 pt-3">
-                <a href="#" onClick={(e) => e.preventDefault()} className="group">
-                  <Button className="h-16 px-9 bg-white text-black hover:bg-white/90 font-extrabold text-lg rounded-md shadow-[0_18px_60px_rgba(255,255,255,0.18)] transition-all duration-300 hover:scale-[1.02] w-full border-0 flex items-center justify-center gap-3 font-['Manrope']">
-                    <Calendar className="w-5 h-5" /> QUERO ENTRAR NA LIVE
-                  </Button>
-                </a>
-                <Link to="/vsl-escola-parceira">
-                  <Button variant="outline" className="h-16 px-9 border-white/20 bg-black/35 text-white backdrop-blur-xl hover:bg-white/10 font-extrabold text-lg rounded-md transition-all duration-300 hover:scale-[1.02] w-full border flex items-center justify-center gap-3 font-['Manrope']">
-                    <Play className="w-5 h-5" /> VER A APRESENTAÇÃO
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="grid gap-6 border-t border-white/10 pt-8 sm:grid-cols-[auto_1fr] sm:items-center">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-cyan-500 rounded-full blur-md opacity-20 animate-pulse"></div>
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 shadow-xl">
-                      <img src="https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg" alt="Eric Cena" className="w-full h-full object-cover" />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-white text-2xl leading-none font-['Bebas_Neue'] tracking-[0.08em]">ERIC CENA</p>
-                    <p className={`${accentClass} text-[11px] font-['Manrope'] uppercase tracking-[0.34em] mt-1`}>Fundador Revela Talentos</p>
-                  </div>
-                </div>
-                <p className="max-w-xl text-sm leading-7 text-white/68 font-['Manrope']">
-                  Conduzindo a apresentação que mostra por que a escola está elevando o padrão da formação acadêmica, esportiva e socioemocional.
-                </p>
-              </div>
+        <div className="relative z-10 mx-auto flex min-h-[100vh] w-full max-w-[1400px] flex-col justify-between px-6 pb-8 pt-28 md:px-10 md:pt-32 lg:px-14">
+          <div className="max-w-3xl">
+            <div className="mb-6 flex items-center gap-3 font-['Inter']">
+              <span className="text-[2.6rem] font-black leading-none text-[#E50914] md:text-[3rem]">N</span>
+              <span className="text-[1.85rem] font-medium uppercase tracking-tight text-white/95 md:text-[2.15rem]">
+                Series
+              </span>
             </div>
 
-            <div className="relative">
-              <div className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_center,rgba(0,243,255,0.18),transparent_58%)] blur-3xl opacity-90" />
-              <div className="absolute inset-y-[10%] -left-10 hidden w-24 bg-gradient-to-r from-cyan-500/30 to-transparent blur-2xl lg:block" />
-              <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_45px_120px_rgba(0,0,0,0.75)] backdrop-blur-sm">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/30" />
-                <div className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]" />
-                <div className="aspect-[4/5] sm:aspect-[5/6] lg:aspect-[4/5] relative overflow-hidden">
-                  <video
-                    src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    controls={false}
-                    className="absolute inset-0 h-full w-full object-cover scale-[1.08]"
-                    style={{ pointerEvents: 'none' }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/18 to-black/10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/58 via-transparent to-black/24" />
-                  <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-[10px] uppercase tracking-[0.32em] text-white/75 backdrop-blur-md font-['Manrope']">
-                    Preview Oficial
-                  </div>
-                  <div className="absolute right-5 top-5 flex items-center gap-2 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-[10px] uppercase tracking-[0.32em] text-white/75 backdrop-blur-md font-['Manrope']">
-                    <span className="h-2 w-2 rounded-full bg-red-500 shadow-[0_0_12px_rgba(239,68,68,1)]" />
-                    Ao Vivo
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
-                    <div className="rounded-[1.5rem] border border-white/10 bg-black/45 p-5 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
-                      <div className="flex items-center justify-between gap-4">
-                        <div>
-                          <p className="text-[10px] uppercase tracking-[0.3em] text-white/55 font-['Manrope']">Live de Lançamento</p>
-                          <p className="mt-2 text-3xl text-white font-['Bebas_Neue'] tracking-[0.08em]">UM NOVO CAPÍTULO</p>
-                        </div>
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-[0_10px_30px_rgba(255,255,255,0.25)]">
-                          <Play className="ml-1 h-5 w-5 fill-current" />
-                        </div>
-                      </div>
-                      <div className="mt-5 grid grid-cols-3 gap-3 text-center">
-                        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-                          <p className="text-2xl text-white font-['Bebas_Neue'] tracking-[0.08em]">20/04</p>
-                          <p className="mt-1 text-[9px] uppercase tracking-[0.28em] text-white/55 font-['Manrope']">Estreia</p>
-                        </div>
-                        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-                          <p className="text-2xl text-white font-['Bebas_Neue'] tracking-[0.08em]">AO VIVO</p>
-                          <p className="mt-1 text-[9px] uppercase tracking-[0.28em] text-white/55 font-['Manrope']">Evento</p>
-                        </div>
-                        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-                          <p className="text-2xl text-white font-['Bebas_Neue'] tracking-[0.08em]">EC10</p>
-                          <p className="mt-1 text-[9px] uppercase tracking-[0.28em] text-white/55 font-['Manrope']">Método</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="space-y-5 font-['Inter']">
+              <h1 className="max-w-3xl text-4xl font-extrabold uppercase tracking-tight text-white md:text-5xl lg:text-[3.45rem]">
+                ESCOLA PARCEIRA
+              </h1>
+
+              <p className="max-w-2xl text-base leading-7 text-white/88 md:text-[1.15rem] md:leading-8">
+                Em um cenário em que disciplina, visão e preparo fazem toda a diferença, a parceria com a Revela Talentos apresenta uma nova jornada de desenvolvimento para alunos e famílias. Em uma experiência de lançamento com clima cinematográfico, você vai conhecer a metodologia, os pilares da formação e como a escola passa a acelerar o futuro do seu filho dentro e fora da sala de aula.
+              </p>
             </div>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row font-['Inter']">
+              <a href="#" onClick={(e) => e.preventDefault()}>
+                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border-0 bg-white px-6 text-base font-semibold text-black hover:bg-white/90">
+                  <Play className="h-5 w-5 fill-current" />
+                  Assistir agora
+                </Button>
+              </a>
+              <Link to="/vsl-escola-parceira">
+                <Button className="h-14 min-w-[168px] justify-center gap-3 rounded-none border-0 bg-[#6d6d6eb3] px-6 text-base font-semibold text-white hover:bg-[#808080cc]">
+                  <span className="text-xl leading-none">+</span>
+                  Minha lista
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:mt-16 lg:grid-cols-5">
+            {heroPreviewCards.map((card, index) => (
+              <article
+                key={card.title}
+                className={`group relative aspect-[16/9] overflow-hidden bg-black/40 shadow-[0_18px_50px_rgba(0,0,0,0.45)] ${index === 0 ? 'ring-2 ring-white/80' : 'ring-1 ring-white/10'}`}
+              >
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 px-3 py-2 font-['Inter']">
+                  <p className="text-sm font-semibold tracking-wide text-white md:text-[15px]">
+                    {card.title}
+                  </p>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
 
@@ -337,22 +289,22 @@ export default function EscolaParceira() {
         </div>
 
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;700;800&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
           @keyframes cinematic-zoom {
             0% { transform: scale(1.05); }
-            50% { transform: scale(1.15); }
+            50% { transform: scale(1.11); }
             100% { transform: scale(1.05); }
           }
           .animate-cinematic-zoom {
-            animation: cinematic-zoom 30s ease-in-out infinite;
+            animation: cinematic-zoom 26s ease-in-out infinite;
           }
           .escola-parceira-hero::after {
             content: '';
             position: absolute;
             inset: auto 0 0;
-            height: 180px;
-            background: linear-gradient(180deg, transparent 0%, #040507 100%);
+            height: 160px;
+            background: linear-gradient(180deg, transparent 0%, rgba(4,5,7,0.98) 100%);
             z-index: 2;
             pointer-events: none;
           }
