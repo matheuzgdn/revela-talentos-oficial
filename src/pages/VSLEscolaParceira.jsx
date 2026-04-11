@@ -49,10 +49,10 @@ export default function VSLEscolaParceira() {
             Replay em story
           </Badge>
           <h1 className="text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
-            Se voce nao puder estar presente no dia, assista em <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">formato story</span>
+            Mesmo sem estar presente no dia, voce ainda pode <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">usufruir dos servicos da Revela Talentos</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-400 sm:text-lg">
-            O preview ja entra em movimento para gerar contexto imediato. Quando quiser acompanhar a apresentacao completa, basta ativar o audio.
+            Assista ao video e entenda como a metodologia, os beneficios da parceria e os proximos passos dessa jornada podem apoiar o desenvolvimento do seu filho mesmo apos a apresentacao ao vivo.
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export default function VSLEscolaParceira() {
                   Revela Talentos
                 </h2>
                 <p className="mt-3 max-w-[28ch] text-sm leading-6 text-white/80">
-                  Metodologia, beneficios da parceria e o caminho de desenvolvimento para os alunos das escolas parceiras.
+                  Mesmo sem participar ao vivo, aqui voce entende os servicos, a metodologia e como aproveitar a parceria da sua escola com a Revela Talentos.
                 </p>
 
                 <div className="mt-5 flex flex-col gap-3">
@@ -104,7 +104,7 @@ export default function VSLEscolaParceira() {
                     className="h-12 w-full justify-center gap-3 rounded-full border-0 bg-white font-semibold text-black hover:bg-white/90"
                   >
                     {isFocusedPlayback ? <Volume2 className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
-                    {isFocusedPlayback ? 'Audio ativado' : 'Ativar audio e assistir'}
+                    {isFocusedPlayback ? 'Audio ativado' : 'Assistir e entender agora'}
                   </Button>
 
                   <div className="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-white/55">
