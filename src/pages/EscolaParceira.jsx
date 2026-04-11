@@ -551,9 +551,6 @@ export default function EscolaParceira() {
                         <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />
                         Aberta
                       </span>
-                      <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/65">
-                        {opportunity.country}
-                      </span>
                     </div>
 
                     <div className="mt-4 flex items-center gap-3">
