@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { 
   Sparkles, Award, LineChart, Users, Rocket, 
   ChevronDown, ChevronUp, Play, ArrowRight,
-  Star, Globe, BookOpen, Shield, Zap, Calendar, User
+  Star, Globe, BookOpen, Shield, Zap, Calendar, User, Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -121,22 +121,27 @@ const statsData = {
 const heroPreviewCards = [
   {
     title: 'Disciplina',
+    icon: Shield,
     image: 'https://static.wixstatic.com/media/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg/v1/fill/w_450,h_600,al_c,q_80,enc_auto/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg',
   },
   {
     title: 'Performance',
+    icon: Award,
     image: 'https://static.wixstatic.com/media/933cdd_bd442822567b47b89fba73ff96de5ef9~mv2.jpg',
   },
   {
     title: 'Visão',
+    icon: Eye,
     image: 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg',
   },
   {
     title: 'Estratégia',
+    icon: LineChart,
     image: 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg',
   },
   {
     title: 'Futuro',
+    icon: Rocket,
     image: 'https://static.wixstatic.com/media/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg/v1/fill/w_448,h_600,al_c,lg_1,q_80,enc_auto/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg',
   },
 ];
@@ -271,6 +276,7 @@ export default function EscolaParceira() {
             {heroPreviewCards.map((card, index) => (
               <article
                 key={card.title}
+                title={card.title}
                 className={`group relative aspect-[16/9] overflow-hidden bg-black/40 shadow-[0_18px_50px_rgba(0,0,0,0.45)] ${index === 0 ? 'ring-2 ring-cyan-300/80' : 'ring-1 ring-white/10'}`}
               >
                 <img
@@ -280,9 +286,10 @@ export default function EscolaParceira() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 px-3 py-2 font-['Inter']">
-                  <p className="text-sm font-semibold tracking-wide text-white md:text-[15px]">
-                    {card.title}
-                  </p>
+                  <div className={`inline-flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur-xl ${index === 0 ? 'border-cyan-300/70 bg-[rgba(8,47,73,0.78)] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.22)]' : 'border-white/15 bg-[rgba(15,23,42,0.78)] text-white/90 shadow-[0_10px_30px_rgba(0,0,0,0.24)]'}`}>
+                    <card.icon className="h-[18px] w-[18px]" strokeWidth={2.1} />
+                  </div>
+                  <span className="sr-only">{card.title}</span>
                 </div>
               </article>
             ))}
