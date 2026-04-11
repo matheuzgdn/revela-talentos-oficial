@@ -1,14 +1,26 @@
 ﻿import { useState, useEffect, useMemo, useRef } from "react";
 import MainLandingCarousel from "../components/hub/MainLandingCarousel";
+import { base44 } from "@/api/base44Client";
 import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos";
 import { Link } from "react-router-dom";
 import { 
   Sparkles, Award, LineChart, Users, Rocket, 
-  ChevronDown, ChevronUp, Play, ArrowRight,
+  ChevronDown, ChevronUp, ArrowRight,
   Star, Globe, BookOpen, Shield, Zap, Calendar, User, Eye, MapPin, Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 // FAQs adaptadas para os Pais de Atletas
 const faqs = [
@@ -200,9 +212,72 @@ const opportunitiesData = [
 
 const accentText = { cyan: 'text-[#00f3ff]' };
 const accentGradient = { cyan: 'from-[#00f3ff] via-cyan-200 to-white' };
+const partnerSchoolEntityCandidates = [
+  "PartnerSchool",
+  "School",
+  "Escola",
+  "Institution",
+  "PartnerInstitution",
+  "SchoolUnit",
+  "LeadPage",
+];
+const schoolNameFieldCandidates = [
+  "school_name",
+  "name",
+  "title",
+  "display_name",
+  "institution_name",
+  "partner_name",
+  "school",
+  "full_name",
+];
 
 function isVideoMedia(value = '') {
   return /\.mp4($|\?)/i.test(value) || String(value).includes('/mp4/');
+}
+
+function normalizeSchoolName(value = "") {
+  return String(value).trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function isSchoolLikeName(value = "") {
+  return /(escola|col[eé]gio|instituto|academy|academia|school)/i.test(String(value));
+}
+
+function extractPartnerSchoolNames(records = [], entityName = "") {
+  return [...new Set(
+    (records || [])
+      .map((record) => {
+        for (const field of schoolNameFieldCandidates) {
+          const candidate = record?.[field];
+          if (typeof candidate !== "string") continue;
+
+          const trimmed = candidate.trim();
+          if (!trimmed) continue;
+
+          if (entityName === "LeadPage") {
+            if (!isSchoolLikeName(trimmed) || normalizeSchoolName(trimmed) === "escola parceira") {
+              continue;
+            }
+          }
+
+          return trimmed;
+        }
+        return null;
+      })
+      .filter(Boolean)
+  )].sort((left, right) => left.localeCompare(right, "pt-BR"));
+}
+
+function normalizeWhatsapp(value = "") {
+  return String(value).replace(/\D/g, "").slice(0, 11);
+}
+
+function formatWhatsapp(value = "") {
+  const digits = normalizeWhatsapp(value);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
 function FAQItem({ q, a }) {
@@ -227,6 +302,16 @@ function FAQItem({ q, a }) {
 
 export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
+  const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
+  const [isLoadingSchools, setIsLoadingSchools] = useState(false);
+  const [partnerSchools, setPartnerSchools] = useState([]);
+  const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
+  const [scheduleForm, setScheduleForm] = useState({
+    full_name: "",
+    phone: "",
+    email: "",
+    school: "",
+  });
   
   // Spotlight / Social Proof states
   const trackRef = useRef(null);
@@ -241,12 +326,100 @@ export default function EscolaParceira() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    if (!isSchedulingOpen || partnerSchools.length > 0 || isLoadingSchools) return;
+
+    const loadPartnerSchools = async () => {
+      setIsLoadingSchools(true);
+      try {
+        for (const entityName of partnerSchoolEntityCandidates) {
+          try {
+            const records = await base44.entities[entityName].list();
+            const names = extractPartnerSchoolNames(records, entityName);
+
+            if (names.length > 0) {
+              setPartnerSchools(names);
+              return;
+            }
+          } catch (error) {
+            // Continua para o próximo candidato disponível publicamente.
+          }
+        }
+      } finally {
+        setIsLoadingSchools(false);
+      }
+    };
+
+    loadPartnerSchools();
+  }, [isSchedulingOpen, partnerSchools.length, isLoadingSchools]);
+
   const scrollTrack = (direction) => {
     if (!trackRef.current) return;
     trackRef.current.scrollBy({
       left: direction * trackRef.current.clientWidth * 0.82,
       behavior: 'smooth',
     });
+  };
+
+  const handleScheduleFieldChange = (field, value) => {
+    setScheduleForm((current) => ({
+      ...current,
+      [field]: field === "phone" ? formatWhatsapp(value) : value,
+    }));
+  };
+
+  const resetScheduleForm = () => {
+    setScheduleForm({
+      full_name: "",
+      phone: "",
+      email: "",
+      school: "",
+    });
+  };
+
+  const handleScheduleSubmit = async (event) => {
+    event.preventDefault();
+
+    const fullName = scheduleForm.full_name.trim();
+    const email = scheduleForm.email.trim();
+    const school = scheduleForm.school.trim();
+    const phone = normalizeWhatsapp(scheduleForm.phone);
+
+    if (!fullName || !email || !school || phone.length < 10) {
+      toast.error("Preencha nome completo, WhatsApp, e-mail e escola parceira.");
+      return;
+    }
+
+    if (
+      partnerSchools.length > 0 &&
+      !partnerSchools.some((option) => normalizeSchoolName(option) === normalizeSchoolName(school))
+    ) {
+      toast.error("Selecione uma escola parceira válida da lista da Revela Talentos.");
+      return;
+    }
+
+    setIsSubmittingSchedule(true);
+    try {
+      await base44.entities.Lead.create({
+        full_name: fullName,
+        email,
+        phone,
+        lead_category: "revela_talentos",
+        source_page: "escola_parceira",
+        objectives: "Agendamento para a apresentação da Escola Parceira",
+        notes: `Escola parceira informada: ${school}. Interesse: acompanhar a apresentação da parceria e metodologia da Revela Talentos.`,
+        lgpd_consent: true,
+      });
+
+      toast.success("Agendamento recebido! Nossa equipe vai considerar sua escola parceira no contato.");
+      resetScheduleForm();
+      setIsSchedulingOpen(false);
+    } catch (error) {
+      console.error("Erro ao registrar agendamento da escola parceira:", error);
+      toast.error("Não foi possível registrar agora. Tente novamente em instantes.");
+    } finally {
+      setIsSubmittingSchedule(false);
+    }
   };
 
   return (
@@ -309,19 +482,24 @@ export default function EscolaParceira() {
             </div>
 
             <div className="mt-7 space-y-4 font-['Inter'] sm:mt-8 sm:space-y-5">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <a href="#" onClick={(e) => e.preventDefault()}>
-                  <Button className="h-12 w-full min-w-[168px] justify-center gap-3 rounded-none border-0 bg-white px-5 text-sm font-semibold text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90 sm:h-14 sm:w-auto sm:px-6 sm:text-base">
-                    <Play className="h-5 w-5 fill-current" />
-                    Assistir agora
-                  </Button>
-                </a>
-                <Link to="/vsl-escola-parceira">
-                  <Button className="h-12 w-full min-w-[168px] justify-center gap-3 rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-5 text-sm font-semibold text-white hover:bg-[rgba(30,41,59,0.92)] sm:h-14 sm:w-auto sm:px-6 sm:text-base">
-                    <span className="text-xl leading-none">+</span>
-                    Minha lista
-                  </Button>
-                </Link>
+              <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
+                <Button
+                  type="button"
+                  onClick={() => setIsSchedulingOpen(true)}
+                  className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border-0 bg-white px-5 py-3 text-sm font-semibold leading-tight text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90 sm:min-h-[56px] md:w-auto md:px-6 md:text-base"
+                >
+                  <Calendar className="h-5 w-5" />
+                  Agendar agora
+                </Button>
+                <Button
+                  asChild
+                  className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-5 py-3 text-sm font-semibold leading-tight text-white hover:bg-[rgba(30,41,59,0.92)] sm:min-h-[56px] md:w-auto md:max-w-[320px] md:px-6 md:text-base"
+                >
+                  <Link to="/vsl-escola-parceira">
+                    <ArrowRight className="h-4 w-4" />
+                    Não poderei estar presente no dia
+                  </Link>
+                </Button>
               </div>
 
               <div className="flex max-w-full items-center gap-3 rounded-[20px] border border-cyan-400/18 bg-[linear-gradient(135deg,rgba(15,23,42,0.88),rgba(8,47,73,0.52))] px-3.5 py-3.5 shadow-[0_24px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:max-w-[460px] sm:gap-4 sm:rounded-[22px] sm:px-4 sm:py-4">
@@ -422,6 +600,117 @@ export default function EscolaParceira() {
           }
         `}</style>
       </section>
+
+      <Dialog open={isSchedulingOpen} onOpenChange={setIsSchedulingOpen}>
+        <DialogContent className="max-h-[92vh] overflow-y-auto border border-cyan-400/20 bg-[#050811] p-0 text-white sm:max-w-2xl">
+          <div className="bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_38%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent)] p-6 sm:p-7">
+            <DialogHeader className="space-y-3 text-left">
+              <Badge className="w-fit border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-300">
+                Agendamento da Live
+              </Badge>
+              <DialogTitle className="text-2xl font-black tracking-tight text-white sm:text-[2rem]">
+                Garanta sua presença com os dados da sua escola parceira
+              </DialogTitle>
+              <DialogDescription className="max-w-xl text-sm leading-6 text-white/70 sm:text-[15px]">
+                Preencha nome completo, WhatsApp, e-mail e identifique a escola parceira. Se a lista pública do banco estiver disponível no navegador, você poderá selecionar a escola diretamente.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form className="mt-6 space-y-4" onSubmit={handleScheduleSubmit}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="school-partner-full-name" className="text-white/86">
+                    Nome completo
+                  </Label>
+                  <Input
+                    id="school-partner-full-name"
+                    value={scheduleForm.full_name}
+                    onChange={(event) => handleScheduleFieldChange("full_name", event.target.value)}
+                    placeholder="Seu nome completo"
+                    autoComplete="name"
+                    className="h-12 border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="school-partner-phone" className="text-white/86">
+                    WhatsApp
+                  </Label>
+                  <Input
+                    id="school-partner-phone"
+                    value={scheduleForm.phone}
+                    onChange={(event) => handleScheduleFieldChange("phone", event.target.value)}
+                    placeholder="(11) 99999-9999"
+                    autoComplete="tel"
+                    inputMode="numeric"
+                    className="h-12 border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="school-partner-email" className="text-white/86">
+                    E-mail
+                  </Label>
+                  <Input
+                    id="school-partner-email"
+                    type="email"
+                    value={scheduleForm.email}
+                    onChange={(event) => handleScheduleFieldChange("email", event.target.value)}
+                    placeholder="voce@exemplo.com"
+                    autoComplete="email"
+                    className="h-12 border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+                  />
+                </div>
+
+                <div className="space-y-2 sm:col-span-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <Label htmlFor="school-partner-school" className="text-white/86">
+                      Escola parceira
+                    </Label>
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-cyan-300/75">
+                      {isLoadingSchools ? "Sincronizando escolas" : partnerSchools.length > 0 ? `${partnerSchools.length} escolas carregadas` : "Identificação manual liberada"}
+                    </span>
+                  </div>
+                  <Input
+                    id="school-partner-school"
+                    list={partnerSchools.length > 0 ? "partner-schools-list" : undefined}
+                    value={scheduleForm.school}
+                    onChange={(event) => handleScheduleFieldChange("school", event.target.value)}
+                    placeholder={partnerSchools.length > 0 ? "Selecione ou digite o nome da escola" : "Digite o nome da escola parceira"}
+                    autoComplete="organization"
+                    className="h-12 border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+                  />
+                  {partnerSchools.length > 0 && (
+                    <datalist id="partner-schools-list">
+                      {partnerSchools.map((school) => (
+                        <option key={school} value={school} />
+                      ))}
+                    </datalist>
+                  )}
+                  <p className="text-xs leading-5 text-white/50">
+                    {partnerSchools.length > 0
+                      ? "Para manter a identificação alinhada ao banco da Revela Talentos, escolha uma escola válida da lista."
+                      : "Se a lista pública das escolas não estiver acessível neste momento, ainda registraremos o nome informado para validação interna."}
+                  </p>
+                </div>
+              </div>
+
+              <DialogFooter className="gap-3 border-t border-white/10 pt-5 sm:justify-between sm:space-x-0">
+                <p className="text-xs leading-5 text-white/45">
+                  Ao enviar, a sua solicitação entra na base de leads da Revela Talentos para confirmação da apresentação.
+                </p>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingSchedule}
+                  className="h-12 min-w-[180px] rounded-none border-0 bg-white px-6 text-sm font-semibold text-black hover:bg-white/90"
+                >
+                  {isSubmittingSchedule ? "Enviando..." : "Confirmar agendamento"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* 1. SOCIAL PROOF MARQUEE */}
       <MainLandingCarousel 
