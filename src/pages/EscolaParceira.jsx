@@ -2,81 +2,81 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import MainLandingCarousel from "../components/hub/MainLandingCarousel";
 import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos";
 import { Link } from "react-router-dom";
-import {
-  Sparkles, Award, LineChart, Users, Rocket,
+import { 
+  Sparkles, Award, LineChart, Users, Rocket, 
   ChevronDown, ChevronUp, Play, ArrowRight,
-  Star, Globe, BookOpen, Shield, Zap, Calendar, User } from
-"lucide-react";
+  Star, Globe, BookOpen, Shield, Zap, Calendar, User
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 // FAQs adaptadas para os Pais de Atletas
 const faqs = [
-{
-  q: "O que é a nova parceria da escola com a Revela Talentos?",
-  a: "É uma união inovadora onde a escola passa a contar com a metodologia de desenvolvimento humano, esportivo e socioemocional da EC10 Talentos, potencializando o aprendizado e a descoberta das vocações do seu filho dentro e fora das salas de aula."
-},
-{
-  q: "Eu preciso pagar algo a mais por isso?",
-  a: "Não. Como a instituição do seu filho tornou-se uma Escola Parceira, os acessos básicos às ferramentas educativas e à jornada da Revela Talentos já estão inclusos e estruturados pelo colégio."
-},
-{
-  q: "Como será a Live de Lançamento com o Eric Cena?",
-  a: "No dia 20/04, Eric Cena, nosso fundador, fará uma apresentação especial explicando todos os pilares da metodologia, os benefícios diretos para sua família e as novas oportunidades que seu filho(a) terá na escola."
-},
-{
-  q: "Posso acessar a plataforma para acompanhar meu filho?",
-  a: "Com certeza! A plataforma estimula a conexão família-escola, permitindo que os pais acompanhem de perto o engajamento esportivo, as métricas de saúde e o desenvolvimento socioemocional."
-}];
-
+  {
+    q: "O que é a nova parceria da escola com a Revela Talentos?",
+    a: "É uma união inovadora onde a escola passa a contar com a metodologia de desenvolvimento humano, esportivo e socioemocional da EC10 Talentos, potencializando o aprendizado e a descoberta das vocações do seu filho dentro e fora das salas de aula."
+  },
+  {
+    q: "Eu preciso pagar algo a mais por isso?",
+    a: "Não. Como a instituição do seu filho tornou-se uma Escola Parceira, os acessos básicos às ferramentas educativas e à jornada da Revela Talentos já estão inclusos e estruturados pelo colégio."
+  },
+  {
+    q: "Como será a Live de Lançamento com o Eric Cena?",
+    a: "No dia 20/04, Eric Cena, nosso fundador, fará uma apresentação especial explicando todos os pilares da metodologia, os benefícios diretos para sua família e as novas oportunidades que seu filho terá na escola."
+  },
+  {
+    q: "Posso acessar a plataforma para acompanhar meu filho?",
+    a: "Com certeza! A plataforma estimula a conexão família-escola, permitindo que os pais acompanhem de perto o engajamento esportivo, as métricas de saúde e o desenvolvimento socioemocional."
+  }
+];
 
 // benefits constant removed as it's now handled by BeneficiosRevelaTalentos component
 
 
 const steps = [
-{
-  num: "01",
-  icon: Calendar,
-  title: "Live de Lançamento — Dia 20/04",
-  desc: "Marque na sua agenda e assista ao evento oficial com Eric Cena. Descubra os detalhes impactantes dessa transformação no ensino."
-},
-{
-  num: "02",
-  icon: User,
-  title: "Recepção dos Acessos",
-  desc: "A escola fará a orientação e distribuição das credenciais de acesso para que os estudantes configurem seu perfil na EC10."
-},
-{
-  num: "03",
-  icon: Shield,
-  title: "Acompanhe e Celebre",
-  desc: "Veja a evolução através dos novos treinos, mentorias em vídeo, e capacitações presentes no aplicativo."
-}];
-
+  {
+    num: "01",
+    icon: Calendar,
+    title: "Live de Lançamento — Dia 20/04",
+    desc: "Marque na sua agenda e assista ao evento oficial com Eric Cena. Descubra os detalhes impactantes dessa transformação no ensino."
+  },
+  {
+    num: "02",
+    icon: User,
+    title: "Recepção dos Acessos",
+    desc: "A escola fará a orientação e distribuição das credenciais de acesso para que os estudantes configurem seu perfil na EC10."
+  },
+  {
+    num: "03",
+    icon: Shield,
+    title: "Acompanhe e Celebre",
+    desc: "Veja a evolução através dos novos treinos, mentorias em vídeo, e capacitações presentes no aplicativo."
+  }
+];
 
 const testimonials = [
-{
-  name: "Mãe do Matheus (14 anos)",
-  school: "Escola Parceira",
-  text: "Meu filho mudou radicalmente de postura em casa e nos estudos. A mentalidade que ele adotou agora é de um verdadeiro atleta nota 10!",
-  rating: 5,
-  avatar: "M"
-},
-{
-  name: "Pai da Sofia (12 anos)",
-  school: "Escola Parceira",
-  text: "Assistir as explicações sobre a metodologia me deu imensa segurança. Ter essa excelência junto ao colégio é um projeto brilhante.",
-  rating: 5,
-  avatar: "P"
-},
-{
-  name: "Mãe do Lucas (15 anos)",
-  school: "Escola Parceira",
-  text: "Saber que a escola forma meu filho não somente como aluno, mas prepara o caráter humano pro mundo real, nos dá uma paz tremenda.",
-  rating: 5,
-  avatar: "M"
-}];
-
+  {
+    name: "Mãe do Matheus (14 anos)",
+    school: "Escola Parceira",
+    text: "Meu filho mudou radicalmente de postura em casa e nos estudos. A mentalidade que ele adotou agora é de um verdadeiro atleta nota 10!",
+    rating: 5,
+    avatar: "M"
+  },
+  {
+    name: "Pai da Sofia (12 anos)",
+    school: "Escola Parceira",
+    text: "Assistir as explicações sobre a metodologia me deu imensa segurança. Ter essa excelência junto ao colégio é um projeto brilhante.",
+    rating: 5,
+    avatar: "P"
+  },
+  {
+    name: "Mãe do Lucas (15 anos)",
+    school: "Escola Parceira",
+    text: "Saber que a escola forma meu filho não somente como aluno, mas prepara o caráter humano pro mundo real, nos dá uma paz tremenda.",
+    rating: 5,
+    avatar: "M"
+  }
+];
 
 // === DADOS E FUNÇÕES DE PROVAS SOCIAIS INJETADOS ===
 const athleteSpotlights = {
@@ -86,24 +86,24 @@ const athleteSpotlights = {
     description: 'Atletas e alunos que já vêm sendo forjados por nossa metodologia desde a base até o exterior.',
     accent: 'cyan',
     items: [
-    ['Theo e Luccas', 'America Mineiro', 'https://static.wixstatic.com/media/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg/v1/fill/w_600,h_437,al_c,q_80,enc_auto/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg'],
-    ['Destaque Cruzeiro', 'Cruzeiro', 'https://static.wixstatic.com/media/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg/v1/fill/w_448,h_600,al_c,lg_1,q_80,enc_auto/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg'],
-    ['Arthur', 'Inter de Limeira', 'https://video.wixstatic.com/video/933cdd_6c1ddd2b23494c7db12be6d59cad2ceb/480p/mp4/file.mp4'],
-    ['Cristofer', 'SC Braga', 'https://static.wixstatic.com/media/933cdd_bd442822567b47b89fba73ff96de5ef9~mv2.jpg'],
-    ['Eduardo', 'Estoril', 'https://video.wixstatic.com/video/933cdd_c5ddcbf7072b4f6aa12e3dc225532342/720p/mp4/file.mp4'],
-    ['Juan', 'Atletico de Madrid', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg']]
-
+      ['Theo e Luccas', 'America Mineiro', 'https://static.wixstatic.com/media/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg/v1/fill/w_600,h_437,al_c,q_80,enc_auto/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg'],
+      ['Destaque Cruzeiro', 'Cruzeiro', 'https://static.wixstatic.com/media/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg/v1/fill/w_448,h_600,al_c,lg_1,q_80,enc_auto/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg'],
+      ['Arthur', 'Inter de Limeira', 'https://video.wixstatic.com/video/933cdd_6c1ddd2b23494c7db12be6d59cad2ceb/480p/mp4/file.mp4'],
+      ['Cristofer', 'SC Braga', 'https://static.wixstatic.com/media/933cdd_bd442822567b47b89fba73ff96de5ef9~mv2.jpg'],
+      ['Eduardo', 'Estoril', 'https://video.wixstatic.com/video/933cdd_c5ddcbf7072b4f6aa12e3dc225532342/720p/mp4/file.mp4'],
+      ['Juan', 'Atletico de Madrid', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg'],
+    ],
   }
 };
 
 const marqueeCards = [
-['GETAFE CF', 'Espanha', 'https://static.wixstatic.com/media/933cdd_205438f6941b4a4ab93e71747b9d3d8e~mv2.png'],
-['NOVOHORIZONTINO', 'Brasil', 'https://static.wixstatic.com/media/933cdd_1bd05dce59264c96aaf31a31e0a59341~mv2.png'],
-['ATLETICO', 'Espanha', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg'],
-['SC BRAGA', 'Portugal', 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg'],
-['ROYAL CITY', 'Índia', 'https://static.wixstatic.com/media/933cdd_a60fbc26f42f402c9674ca2f869bbafe~mv2.jpeg'],
-['AMERICA', 'Brasil', 'https://static.wixstatic.com/media/933cdd_14ccc273b64f4cabbe2e143c50b26878~mv2.png']];
-
+  ['GETAFE CF', 'Espanha', 'https://static.wixstatic.com/media/933cdd_205438f6941b4a4ab93e71747b9d3d8e~mv2.png'],
+  ['NOVOHORIZONTINO', 'Brasil', 'https://static.wixstatic.com/media/933cdd_1bd05dce59264c96aaf31a31e0a59341~mv2.png'],
+  ['ATLETICO', 'Espanha', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg'],
+  ['SC BRAGA', 'Portugal', 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg'],
+  ['ROYAL CITY', 'Índia', 'https://static.wixstatic.com/media/933cdd_a60fbc26f42f402c9674ca2f869bbafe~mv2.jpeg'],
+  ['AMERICA', 'Brasil', 'https://static.wixstatic.com/media/933cdd_14ccc273b64f4cabbe2e143c50b26878~mv2.png'],
+];
 
 const statsData = {
   statOneValue: '150+',
@@ -115,7 +115,7 @@ const statsData = {
   statTwoTitle: 'PAÍSES',
   statTwoCaption: 'ATIVOS AGORA',
   statTwoVideo: 'https://video.wixstatic.com/video/933cdd_eb14b07c4db843ac878f02fed62bb4c6/720p/mp4/file.mp4',
-  countries: ['Espanha', 'Portugal', 'Polônia', 'Eslováquia', 'EUA']
+  countries: ['Espanha', 'Portugal', 'Polônia', 'Eslováquia', 'EUA'],
 };
 
 const accentText = { cyan: 'text-[#00f3ff]' };
@@ -131,23 +131,23 @@ function FAQItem({ q, a }) {
     <div className={`border border-white/10 rounded-xl overflow-hidden transition-all duration-300 ${open ? 'bg-white/5' : 'bg-white/[0.02]'}`}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-6 text-left gap-4">
-        
+        className="w-full flex items-center justify-between p-6 text-left gap-4"
+      >
         <span className="text-white font-medium text-lg">{q}</span>
         {open ? <ChevronUp className="w-5 h-5 text-cyan-400 flex-shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />}
       </button>
-      {open &&
-      <div className="px-6 pb-6 text-gray-300 leading-relaxed">
+      {open && (
+        <div className="px-6 pb-6 text-gray-300 leading-relaxed">
           {a}
         </div>
-      }
-    </div>);
-
+      )}
+    </div>
+  );
 }
 
 export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
-
+  
   // Spotlight / Social Proof states
   const trackRef = useRef(null);
   const variant = 'default';
@@ -165,7 +165,7 @@ export default function EscolaParceira() {
     if (!trackRef.current) return;
     trackRef.current.scrollBy({
       left: direction * trackRef.current.clientWidth * 0.82,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   };
 
@@ -188,87 +188,92 @@ export default function EscolaParceira() {
         </div>
       </header>
 
-      {/* HERO — VIDEO BACKGROUND */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
+      {/* HERO — VIDEO BACKGROUND (Netflix Style) */}
+      <section className="relative min-h-[110vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <video
             src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
             autoPlay muted loop playsInline controls={false}
-            className="absolute inset-0 w-full h-full object-cover transform scale-[1.03] opacity-60"
-            style={{ pointerEvents: 'none' }} />
-          
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 md:from-black/95 via-black/40 to-black/80" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-transparent to-transparent" />
+            className="absolute inset-0 w-full h-full object-cover animate-cinematic-zoom"
+            style={{ pointerEvents: 'none' }}
+          />
+          {/* Subtle Overlays for readability and Netflix feel */}
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-black/80 md:from-black/90 md:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-transparent to-black/60" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <Badge className="bg-red-500/10 text-red-500 border border-red-500/30 px-4 py-1.5 text-sm font-bold rounded-full animate-pulse flex inline-flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 w-full">
+          <div className="max-w-4xl space-y-8">
+            <Badge className="bg-red-600/20 text-red-500 border border-red-600/30 px-5 py-2 text-sm font-black rounded-full animate-pulse flex inline-flex items-center gap-2 tracking-widest uppercase">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-[0_0_12px_rgba(220,38,38,1)]"></span>
               Lançamento Oficial | Dia 20/04
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-              A Educação do Século <span className="text-white">XXI</span>{" "}
-              <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
-                Chegou Na Escola do Seu Filho(a)
-              </span>
-            </h1>
-            <p className="text-gray-300 text-xl leading-relaxed tracking-wide">
-              Prepare-se para o encontro que vai transformar a rotina, a disciplina e o foco do jovem de casa. Reserve a sua presença na <strong>Live de Lançamento</strong> com a metodologia da Revela Talentos.
-            </p>
+
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-8xl font-black leading-[0.9] tracking-tighter uppercase italic">
+                A EDUCAÇÃO DO SÉCULO XXI<br />
+                <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
+                  CHEGOU NA ESCOLA DO SEU FILHO
+                </span>
+              </h1>
+              
+              <p className="text-gray-200 text-lg md:text-2xl leading-relaxed tracking-wide max-w-3xl font-medium drop-shadow-lg">
+                O encontro que vai transformar a rotina, a disciplina e o foco do jovem de casa. Reserve sua presença na <strong className="text-white">Live de Lançamento</strong> com a metodologia exclusiva da Revela Talentos.
+              </p>
+            </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 pt-4 pb-4">
-              <a href="#" onClick={(e) => e.preventDefault()} className="w-full sm:w-auto">
-                <Button className="h-14 px-8 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold text-lg rounded-xl shadow-xl shadow-cyan-500/30 transition-all duration-300 hover:scale-105 w-full border-0">
-                  <Calendar className="mr-2 w-5 h-5" /> Colocar na Agenda
+            <div className="flex flex-col sm:flex-row gap-5 pt-8">
+              <a href="#" onClick={(e) => e.preventDefault()} className="group">
+                <Button className="h-16 px-10 bg-white text-black hover:bg-white/90 font-black text-xl rounded-xl shadow-2xl transition-all duration-300 hover:scale-105 w-full border-0 flex items-center justify-center gap-3">
+                  <Calendar className="w-6 h-6" /> COLOCAR NA AGENDA
                 </Button>
               </a>
-              <Link to="/vsl-escola-parceira" className="w-full sm:w-auto">
-                <Button variant="outline" className="bg-background text-slate-800 px-8 py-2 text-lg font-bold rounded-xl inline-flex items-center justify-center gap-2 whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow-sm h-14 border-white/20 hover:bg-white/5 hover:text-white transition-all duration-300 w-full border">
-                  Não poderei participar no dia
+              <Link to="/vsl-escola-parceira">
+                <Button variant="outline" className="h-16 px-10 border-white/20 bg-black/40 text-white backdrop-blur-xl hover:bg-white/10 font-black text-xl rounded-xl transition-all duration-300 hover:scale-105 w-full border-2 flex items-center justify-center gap-3">
+                  NÃO PODEREI PARTICIPAR
                 </Button>
               </Link>
             </div>
 
-            <div className="flex items-center gap-4 pt-6 border-t border-white/10">
-              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-cyan-500/40 shadow-lg shadow-cyan-500/20">
-                <img src="https://static.wixstatic.com/media/933cdd_7baddddb15fc4bb0ad2e2455589ba598~mv2.jpg/v1/fill/w_300,h_300,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Eric%20Cena.jpg" alt="Eric Cena" className="w-full h-full object-cover" />
+            <div className="flex items-center gap-5 pt-12 border-t border-white/10">
+              <div className="relative">
+                <div className="absolute inset-0 bg-cyan-500 rounded-full blur-md opacity-20 animate-pulse"></div>
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white/20 shadow-xl">
+                  <img src="https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg" alt="Eric Cena" className="w-full h-full object-cover" />
+                </div>
               </div>
               <div>
-                <p className="text-white font-bold text-lg leading-none">Com Eric Cena</p>
-                <p className={`${accentClass} text-sm mt-1`}>Fundador da Revela Talentos</p>
+                <p className="text-white font-black text-xl uppercase tracking-tighter leading-none">Eric Cena</p>
+                <p className={`${accentClass} text-xs font-mono uppercase tracking-[0.3em] mt-1`}>Fundador Revela Talentos</p>
               </div>
             </div>
           </div>
-
-          <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 group backdrop-blur-md bg-black/60 p-2">
-            <h3 className="absolute z-10 top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4 pb-8 text-center text-sm text-gray-300 font-semibold pointer-events-none">
-              Vídeo Promocional do Lançamento
-            </h3>
-            <div className="w-full h-full rounded-xl overflow-hidden relative">
-              <iframe
-                src="https://www.youtube.com/embed/9xGNPAYuRb4?autoplay=0&rel=0&modestbranding=1"
-                className="absolute inset-0 w-full h-full border-none"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title="Mensagem sobre a Live" />
-              
-            </div>
-          </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-          <ChevronDown className="w-8 h-8 text-white/40" />
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer">
+          <ChevronDown className="w-10 h-10 text-white/30 hover:text-white/60 transition-colors" />
         </div>
+
+        <style>{`
+          @keyframes cinematic-zoom {
+            0% { transform: scale(1.05); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1.05); }
+          }
+          .animate-cinematic-zoom {
+            animation: cinematic-zoom 30s ease-in-out infinite;
+          }
+        `}</style>
       </section>
 
       {/* 1. SOCIAL PROOF MARQUEE */}
-      <MainLandingCarousel
-        eyebrow="/ Nossa Estrutura Global"
-        title="CONEXÕES EUROPEIAS E NACIONAIS"
-        description="A metodologia que será integrada à escola já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo." />
-      
+      <MainLandingCarousel 
+        eyebrow="/ Nossa Estrutura Global" 
+        title="CONEXÕES EUROPEIAS E NACIONAIS" 
+        description="A metodologia que será integrada à escola já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo."
+      />
 
       {/* DESAFIO DOS PAIS */}
       <section className="py-24 relative">
@@ -277,7 +282,7 @@ export default function EscolaParceira() {
             O Cenário Atual
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Seu Filho(a) Está Pronto para{" "}
+            Seu Filho Está Pronto para{" "}
             <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>
               os Desafios Reais?
             </span>
@@ -285,15 +290,15 @@ export default function EscolaParceira() {
           <p className="text-gray-400 text-lg mb-12">No mundo exigente de hoje, estudar é metade do processo. A outra é forjar uma mente inabalável para esportes e pra vida.</p>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-            "Como dar confiança para ele acreditar nos próprios talentos além das telas e celulares?",
-            "Como motivá-lo a manter dedicação aos estudos alinhada com seus sonhos e paixões e esporte?",
-            "O que as grandes academias treinam na mente dos atletas de base e que pode ser trazido à escola?"].
-            map((q, i) =>
-            <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-left hover:border-cyan-500/30 transition-all duration-300 hover:bg-white/[0.06]">
+              "Como dar confiança para ele acreditar nos próprios talentos além das telas e celulares?",
+              "Como motivá-lo a manter dedicação aos estudos alinhada com seus sonhos e paixões e esporte?",
+              "O que as grandes academias treinam na mente dos atletas de base e que pode ser trazido à escola?"
+            ].map((q, i) => (
+              <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 text-left hover:border-cyan-500/30 transition-all duration-300 hover:bg-white/[0.06]">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 flex items-center justify-center text-sm font-bold mb-4">{i + 1}</div>
                 <p className="text-gray-300 leading-relaxed">{q}</p>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </section>
@@ -347,11 +352,11 @@ export default function EscolaParceira() {
                   {statsData.statTwoTitle}
                 </div>
                 <div className="mt-5 flex flex-wrap gap-2">
-                  {statsData.countries.map((country) =>
-                  <span key={country} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur sm:text-[11px]">
+                  {statsData.countries.map((country) => (
+                    <span key={country} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur sm:text-[11px]">
                       {country}
                     </span>
-                  )}
+                  ))}
                 </div>
               </div>
             </article>
@@ -377,8 +382,8 @@ export default function EscolaParceira() {
           <div className="relative">
             <div className="hidden md:block absolute top-12 left-1/2 -translate-x-1/2 w-[2px] h-[calc(100%-96px)] bg-gradient-to-b from-cyan-500/50 to-transparent" />
             <div className="space-y-8">
-              {steps.map((step, i) =>
-              <div key={i} className={`flex flex-col md:flex-row gap-8 items-center ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
+              {steps.map((step, i) => (
+                <div key={i} className={`flex flex-col md:flex-row gap-8 items-center ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
                   <div className="flex-1 bg-white/[0.03] border border-white/10 rounded-2xl p-8 hover:border-cyan-500/30 hover:bg-white/[0.06] transition-all duration-300 z-10 relative">
                     <div className="flex items-center gap-4 mb-4">
                       <span className="text-5xl font-black text-white/10">{step.num}</span>
@@ -394,7 +399,7 @@ export default function EscolaParceira() {
                   </div>
                   <div className="flex-1 hidden md:block" />
                 </div>
-              )}
+              ))}
             </div>
           </div>
         </div>
@@ -416,15 +421,15 @@ export default function EscolaParceira() {
               <button
                 type="button"
                 onClick={() => scrollTrack(-1)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/20 hover:bg-white/10 sm:h-11 sm:w-11">
-                
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/20 hover:bg-white/10 sm:h-11 sm:w-11"
+              >
                 <span className="text-lg leading-none">&lsaquo;</span>
               </button>
               <button
                 type="button"
                 onClick={() => scrollTrack(1)}
-                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/20 hover:bg-white/10 sm:h-11 sm:w-11 ${accentClass}`}>
-                
+                className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/20 hover:bg-white/10 sm:h-11 sm:w-11 ${accentClass}`}
+              >
                 <span className="text-lg leading-none">&rsaquo;</span>
               </button>
             </div>
@@ -437,18 +442,18 @@ export default function EscolaParceira() {
             <div
               ref={trackRef}
               className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pl-1 pr-1 scroll-smooth sm:gap-5 md:px-6"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              
-              {spotlight.items.map(([name, club, image], index) =>
-              <article
-                key={`${name}-${club}-${index}`}
-                className="group relative aspect-[4/5] w-[82vw] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-[1.7rem] border border-white/10 bg-black/40 shadow-[0_25px_90px_rgba(0,0,0,0.35)] sm:w-[290px] sm:rounded-[2rem] md:w-[300px]">
-                
-                  {isVideoMedia(image) ?
-                <video src={image} controls playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /> :
-
-                <img src={image} alt={`${name} - ${club}`} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                }
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {spotlight.items.map(([name, club, image], index) => (
+                <article
+                  key={`${name}-${club}-${index}`}
+                  className="group relative aspect-[4/5] w-[82vw] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-[1.7rem] border border-white/10 bg-black/40 shadow-[0_25px_90px_rgba(0,0,0,0.35)] sm:w-[290px] sm:rounded-[2rem] md:w-[300px]"
+                >
+                  {isVideoMedia(image) ? (
+                    <video src={image} controls playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ) : (
+                    <img src={image} alt={`${name} - ${club}`} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  )}
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10" />
                   <div className="pointer-events-none relative z-10 flex h-full flex-col justify-between p-4 sm:p-5 md:p-6">
                     <div className="flex justify-between gap-4">
@@ -465,7 +470,7 @@ export default function EscolaParceira() {
                     </div>
                   </div>
                 </article>
-              )}
+              ))}
             </div>
           </div>
         </div>
@@ -484,12 +489,12 @@ export default function EscolaParceira() {
             <p className="text-gray-400">Famílias que já vivenciam a metodologia de inteligência e disciplina.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) =>
-            <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 hover:border-yellow-500/20 hover:bg-white/[0.06] transition-all duration-300">
+            {testimonials.map((t, i) => (
+              <div key={i} className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 hover:border-yellow-500/20 hover:bg-white/[0.06] transition-all duration-300">
                 <div className="flex gap-1 mb-6">
-                  {Array(t.rating).fill(0).map((_, j) =>
-                <Star key={j} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                )}
+                  {Array(t.rating).fill(0).map((_, j) => (
+                    <Star key={j} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  ))}
                 </div>
                 <p className="text-gray-300 leading-relaxed mb-6 text-lg italic">"{t.text}"</p>
                 <div className="flex items-center gap-4 border-t border-white/10 pt-6">
@@ -502,7 +507,7 @@ export default function EscolaParceira() {
                   </div>
                 </div>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </section>
@@ -558,6 +563,6 @@ export default function EscolaParceira() {
           </div>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 }
