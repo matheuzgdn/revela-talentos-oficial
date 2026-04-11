@@ -315,6 +315,7 @@ export default function EscolaParceira() {
   
   // Spotlight / Social Proof states
   const trackRef = useRef(null);
+  const signupHighlightTimeoutRef = useRef(null);
   const variant = 'default';
   const spotlight = useMemo(() => athleteSpotlights[variant] || athleteSpotlights.default, [variant]);
   const accentClass = accentText[spotlight.accent] || accentText.cyan;
@@ -324,6 +325,14 @@ export default function EscolaParceira() {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (signupHighlightTimeoutRef.current) {
+        window.clearTimeout(signupHighlightTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -359,6 +368,28 @@ export default function EscolaParceira() {
       left: direction * trackRef.current.clientWidth * 0.82,
       behavior: 'smooth',
     });
+  };
+
+  const scrollToSignupCta = () => {
+    const target = document.getElementById('inscricao-revela');
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: window.innerWidth < 640 ? 'center' : 'start',
+    });
+
+    target.classList.remove('signup-spotlight');
+    void target.offsetWidth;
+    target.classList.add('signup-spotlight');
+
+    if (signupHighlightTimeoutRef.current) {
+      window.clearTimeout(signupHighlightTimeoutRef.current);
+    }
+
+    signupHighlightTimeoutRef.current = window.setTimeout(() => {
+      target.classList.remove('signup-spotlight');
+    }, 1800);
   };
 
   const handleScheduleFieldChange = (field, value) => {
@@ -495,7 +526,16 @@ export default function EscolaParceira() {
               </p>
             </div>
 
-            <div className="mt-2 space-y-4 font-['Inter'] sm:mt-8 sm:space-y-5">
+            <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
+              <div className="rounded-[1.35rem] border border-cyan-400/14 bg-[linear-gradient(135deg,rgba(8,47,73,0.22),rgba(15,23,42,0.54))] px-4 py-3.5 shadow-[0_18px_42px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:max-w-[520px] sm:px-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[11px]">
+                  Oportunidade exclusiva
+                </p>
+                <p className="mt-1 text-sm leading-6 text-white/78 sm:text-[15px]">
+                  Para atletas no Revela Talentos. Inscreva-se agora e avance para os CTAs abaixo.
+                </p>
+              </div>
+
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button
                   type="button"
@@ -585,6 +625,24 @@ export default function EscolaParceira() {
           }
           .opportunities-carousel-mask {
             overflow: hidden;
+          }
+          .signup-spotlight {
+            animation: signup-spotlight 1.8s ease;
+            box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.18), 0 0 0 10px rgba(34, 211, 238, 0.04), 0 30px 90px rgba(8, 145, 178, 0.2);
+          }
+          @keyframes signup-spotlight {
+            0% {
+              transform: translateY(0);
+              box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+            }
+            35% {
+              transform: translateY(-4px);
+              box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.22), 0 0 0 12px rgba(34, 211, 238, 0.08), 0 34px 94px rgba(8, 145, 178, 0.24);
+            }
+            100% {
+              transform: translateY(0);
+              box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+            }
           }
           .opportunities-carousel-track {
             animation: opportunities-marquee 34s linear infinite;
@@ -732,6 +790,7 @@ export default function EscolaParceira() {
         eyebrow="/ Nossa Estrutura Global" 
         title="CONEXÕES EUROPEIAS E NACIONAIS" 
         description="A metodologia que será integrada à escola já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo."
+        onCardClick={scrollToSignupCta}
       />
 
       {/* DESAFIO DOS PAIS */}
@@ -843,15 +902,21 @@ export default function EscolaParceira() {
           </div>
 
           <div className="relative opportunities-carousel-mask">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-[#07111f] to-transparent sm:w-20" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-[#07111f] to-transparent sm:w-20" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-r from-[#02040a] via-[#02040a]/98 via-45% to-transparent sm:w-28">
+              <div className="absolute inset-y-3 left-0 w-8 rounded-r-full bg-black/55 blur-2xl sm:w-12" />
+            </div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-16 bg-gradient-to-l from-[#02040a] via-[#02040a]/98 via-45% to-transparent sm:w-28">
+              <div className="absolute inset-y-3 right-0 w-8 rounded-l-full bg-black/55 blur-2xl sm:w-12" />
+            </div>
 
             <div className="opportunities-carousel-track flex w-max gap-4 sm:gap-6">
               {[...opportunitiesData, ...opportunitiesData].map((opportunity, index) => (
-                <article
+                <button
                   key={`${opportunity.title}-${opportunity.location}-${index}`}
+                  type="button"
+                  onClick={scrollToSignupCta}
                   aria-hidden={index >= opportunitiesData.length}
-                  className={`group relative w-[220px] shrink-0 overflow-hidden rounded-[1.35rem] border bg-[rgba(5,10,18,0.92)] p-3.5 shadow-[0_20px_60px_rgba(0,0,0,0.32)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 sm:w-[250px] sm:rounded-[1.55rem] sm:p-4 ${index % opportunitiesData.length === 0 ? 'border-cyan-400/35' : 'border-white/10 hover:border-cyan-400/25'}`}
+                  className={`group relative w-[220px] shrink-0 overflow-hidden rounded-[1.35rem] border bg-[rgba(5,10,18,0.92)] p-3.5 text-left shadow-[0_20px_60px_rgba(0,0,0,0.32)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 sm:w-[250px] sm:rounded-[1.55rem] sm:p-4 ${index % opportunitiesData.length === 0 ? 'border-cyan-400/35' : 'border-white/10 hover:border-cyan-400/25'}`}
                 >
                   <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.06),transparent_42%)] opacity-70 pointer-events-none" />
                   <div className="absolute -right-3 top-1 text-[4.3rem] leading-none opacity-[0.12] saturate-150 pointer-events-none select-none">
@@ -896,17 +961,17 @@ export default function EscolaParceira() {
                       {opportunity.teaser}
                     </p>
 
-                    <a href="#" onClick={(e) => e.preventDefault()} className="mt-4 block sm:mt-5">
+                    <div className="mt-4 block sm:mt-5">
                       <div className="flex items-center justify-between rounded-2xl border border-cyan-400/20 bg-[rgba(8,47,73,0.26)] px-3.5 py-2.5 text-[13px] font-semibold text-cyan-100 transition-all duration-300 group-hover:border-cyan-300/35 group-hover:bg-[rgba(8,47,73,0.34)] sm:px-4 sm:py-3 sm:text-sm">
                         <span className="inline-flex items-center gap-2.5 sm:gap-3">
                           <Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                          Ver oportunidade
+                          Inscreva-se agora
                         </span>
                         <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </div>
-                    </a>
+                    </div>
                   </div>
-                </article>
+                </button>
               ))}
             </div>
           </div>
@@ -1005,12 +1070,9 @@ export default function EscolaParceira() {
                   )}
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10" />
                   <div className="pointer-events-none relative z-10 flex h-full flex-col justify-between p-4 sm:p-5 md:p-6">
-                    <div className="flex justify-between gap-4">
-                      <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/80 backdrop-blur sm:text-[10px]">
-                        EC10
-                      </span>
+                    <div className="flex justify-end gap-4">
                       <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.18em] text-white/70 sm:text-[10px]">
-                        Evolução
+                        Em destaque
                       </span>
                     </div>
                     <div>
@@ -1078,11 +1140,13 @@ export default function EscolaParceira() {
           <p className="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-gray-300 sm:mb-10 sm:text-xl">
             Nós te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenção nas mensagens oficiais enviadas pela escola e não perca!
           </p>
-          <a href="#" onClick={(e) => e.preventDefault()}>
-            <Button className="h-14 w-full rounded-xl border-0 bg-gradient-to-r from-red-600 to-red-500 px-6 text-base font-bold text-white shadow-2xl shadow-red-500/30 transition-all duration-300 hover:-translate-y-1 hover:from-red-500 hover:to-red-400 sm:h-16 sm:w-auto sm:px-12 sm:text-xl">
+          <Button
+            type="button"
+            onClick={scrollToSignupCta}
+            className="h-14 w-full rounded-xl border-0 bg-gradient-to-r from-red-600 to-red-500 px-6 text-base font-bold text-white shadow-2xl shadow-red-500/30 transition-all duration-300 hover:-translate-y-1 hover:from-red-500 hover:to-red-400 sm:h-16 sm:w-auto sm:px-12 sm:text-xl"
+          >
               <Calendar className="mr-3 w-6 h-6" /> Agendar Lembrete na Live
-            </Button>
-          </a>
+          </Button>
         </div>
       </section>
 
