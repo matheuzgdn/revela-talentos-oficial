@@ -57,21 +57,21 @@ const steps = [
 const testimonials = [
   {
     name: "Mãe do Matheus (14 anos)",
-    school: "Escola Parceira",
+    school: "Colégio Horizonte Azul",
     text: "Meu filho mudou radicalmente de postura em casa e nos estudos. A mentalidade que ele adotou agora é de um verdadeiro atleta nota 10!",
     rating: 5,
     avatar: "M"
   },
   {
     name: "Pai da Sofia (12 anos)",
-    school: "Escola Parceira",
+    school: "Instituto Nova Geração",
     text: "Assistir às explicações sobre a metodologia me deu imensa segurança. Ter essa excelência junto ao colégio é um projeto brilhante.",
     rating: 5,
     avatar: "P"
   },
   {
     name: "Mãe do Lucas (15 anos)",
-    school: "Escola Parceira",
+    school: "Colégio Atlas do Saber",
     text: "Saber que a escola forma meu filho não somente como aluno, mas prepara o caráter humano pro mundo real, nos dá uma paz tremenda.",
     rating: 5,
     avatar: "M"
