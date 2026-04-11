@@ -447,7 +447,7 @@ export default function EscolaParceira() {
           <video
             src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
             autoPlay muted loop playsInline controls={false}
-            className="absolute inset-0 w-full h-full object-cover object-[58%_24%] animate-cinematic-zoom opacity-55 sm:object-center"
+            className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
           <div className="absolute inset-0 bg-black/30" />
@@ -458,8 +458,25 @@ export default function EscolaParceira() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
-        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-32 sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
+        <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1400px] flex-col justify-between px-4 pb-6 pt-24 sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="max-w-3xl">
+            <div className="relative mb-6 overflow-hidden rounded-[24px] border border-cyan-400/18 bg-black shadow-[0_24px_60px_rgba(0,243,255,0.14)] sm:hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.18),transparent_48%)]" />
+              <video
+                src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls={false}
+                className="aspect-[16/10] w-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+              <div className="absolute left-4 top-4 rounded-full border border-cyan-400/20 bg-black/45 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-300">
+                Preview da live
+              </div>
+            </div>
+
             <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:gap-4">
               <img
                 src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png"
