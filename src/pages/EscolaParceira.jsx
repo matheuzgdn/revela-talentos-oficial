@@ -145,6 +145,8 @@ const opportunitiesData = [
   {
     title: 'Avaliação Técnica Premium',
     location: 'São Paulo, Brasil',
+    flag: '🇧🇷',
+    country: 'Brasil',
     market: 'Base Nacional',
     format: 'Presencial',
     summary: 'Janela aberta para atletas em desenvolvimento com foco em performance, disciplina e leitura de jogo.',
@@ -153,6 +155,8 @@ const opportunitiesData = [
   {
     title: 'Imersão de Alta Performance',
     location: 'Belo Horizonte, Brasil',
+    flag: '🇧🇷',
+    country: 'Brasil',
     market: 'Desenvolvimento',
     format: 'Presencial',
     summary: 'Experiência intensiva com observação técnica, rotina orientada e trilha de evolução acompanhada pela plataforma.',
@@ -161,6 +165,8 @@ const opportunitiesData = [
   {
     title: 'Janela Internacional Portugal',
     location: 'Braga, Portugal',
+    flag: '🇵🇹',
+    country: 'Portugal',
     market: 'Europa',
     format: 'Híbrido',
     summary: 'Oportunidade para atletas que buscam preparação estratégica para processos de avaliação e adaptação ao futebol europeu.',
@@ -169,6 +175,8 @@ const opportunitiesData = [
   {
     title: 'Camp de Observação Espanha',
     location: 'Madrid, Espanha',
+    flag: '🇪🇸',
+    country: 'Espanha',
     market: 'Europa',
     format: 'Híbrido',
     summary: 'Programa com curadoria Revela Talentos para atletas com ambição competitiva e potencial de projeção internacional.',
@@ -177,6 +185,8 @@ const opportunitiesData = [
   {
     title: 'Programa de Exposição Polônia',
     location: 'Varsóvia, Polônia',
+    flag: '🇵🇱',
+    country: 'Polônia',
     market: 'Europa',
     format: 'Online + Presencial',
     summary: 'Rota de preparação para atletas que querem acessar oportunidades em mercados emergentes do futebol europeu.',
@@ -185,6 +195,8 @@ const opportunitiesData = [
   {
     title: 'Rota de Entrada Eslováquia',
     location: 'Bratislava, Eslováquia',
+    flag: '🇸🇰',
+    country: 'Eslováquia',
     market: 'Europa',
     format: 'Online + Presencial',
     summary: 'Trilha de acompanhamento para famílias que desejam entender requisitos, timing e nível competitivo da oportunidade.',
@@ -381,6 +393,20 @@ export default function EscolaParceira() {
           .hero-icon-row::-webkit-scrollbar {
             display: none;
           }
+          @keyframes opportunities-marquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(calc(-50% - 0.75rem), 0, 0); }
+          }
+          .opportunities-carousel-mask {
+            overflow: hidden;
+          }
+          .opportunities-carousel-track {
+            animation: opportunities-marquee 34s linear infinite;
+            will-change: transform;
+          }
+          .opportunities-carousel-mask:hover .opportunities-carousel-track {
+            animation-play-state: paused;
+          }
           .escola-parceira-hero::after {
             content: '';
             position: absolute;
@@ -508,66 +534,91 @@ export default function EscolaParceira() {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {opportunitiesData.map((opportunity, index) => (
-              <article
-                key={`${opportunity.title}-${opportunity.location}`}
-                className={`group relative overflow-hidden rounded-[1.8rem] border bg-[rgba(5,10,18,0.86)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${index === 0 ? 'border-cyan-400/35' : 'border-white/10 hover:border-cyan-400/25'}`}
-              >
-                <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.06),transparent_42%)] opacity-70 pointer-events-none" />
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-300">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />
-                      Aberta
-                    </span>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/65">
-                      {opportunity.market}
-                    </span>
+          <div className="relative opportunities-carousel-mask">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-[#07111f] to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-[#07111f] to-transparent" />
+
+            <div className="opportunities-carousel-track flex w-max gap-6">
+              {[...opportunitiesData, ...opportunitiesData].map((opportunity, index) => (
+                <article
+                  key={`${opportunity.title}-${opportunity.location}-${index}`}
+                  aria-hidden={index >= opportunitiesData.length}
+                  className={`group relative w-[330px] shrink-0 overflow-hidden rounded-[1.8rem] border bg-[rgba(5,10,18,0.9)] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${index % opportunitiesData.length === 0 ? 'border-cyan-400/35' : 'border-white/10 hover:border-cyan-400/25'}`}
+                >
+                  <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.06),transparent_42%)] opacity-70 pointer-events-none" />
+                  <div className="absolute -right-4 top-2 text-[5.5rem] leading-none opacity-[0.14] saturate-150 pointer-events-none select-none">
+                    {opportunity.flag}
                   </div>
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400/0 via-cyan-300/70 to-cyan-400/0 opacity-80" />
 
-                  <h3 className="mt-6 text-2xl font-black leading-tight text-white">
-                    {opportunity.title}
-                  </h3>
-
-                  <div className="mt-4 flex flex-wrap gap-3 text-sm text-white/70">
-                    <span className="inline-flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-cyan-300" />
-                      {opportunity.location}
-                    </span>
-                    <span className="inline-flex items-center gap-2">
-                      <Globe className="h-4 w-4 text-cyan-300" />
-                      {opportunity.format}
-                    </span>
-                  </div>
-
-                  <p className="mt-5 text-[15px] leading-7 text-gray-300">
-                    {opportunity.summary}
-                  </p>
-
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {opportunity.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70"
-                      >
-                        {tag}
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-300">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />
+                        Aberta
                       </span>
-                    ))}
-                  </div>
-
-                  <a href="#" onClick={(e) => e.preventDefault()} className="mt-7 block">
-                    <div className="flex items-center justify-between rounded-2xl border border-cyan-400/20 bg-[rgba(8,47,73,0.26)] px-4 py-3 text-sm font-semibold text-cyan-100 transition-all duration-300 group-hover:border-cyan-300/35 group-hover:bg-[rgba(8,47,73,0.34)]">
-                      <span className="inline-flex items-center gap-3">
-                        <Lock className="h-4 w-4" />
-                        Assine a plataforma para ver mais
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/65">
+                        {opportunity.market}
                       </span>
-                      <ArrowRight className="h-4 w-4" />
                     </div>
-                  </a>
-                </div>
-              </article>
-            ))}
+
+                    <div className="mt-5 flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-[rgba(8,47,73,0.28)] text-[1.55rem] shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
+                        <span aria-hidden="true">{opportunity.flag}</span>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-cyan-200/75">
+                          {opportunity.country}
+                        </p>
+                        <p className="text-sm text-white/55">
+                          Plataforma Revela Talentos
+                        </p>
+                      </div>
+                    </div>
+
+                    <h3 className="mt-6 text-2xl font-black leading-tight text-white">
+                      {opportunity.title}
+                    </h3>
+
+                    <div className="mt-4 flex flex-wrap gap-3 text-sm text-white/70">
+                      <span className="inline-flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-cyan-300" />
+                        {opportunity.location}
+                      </span>
+                      <span className="inline-flex items-center gap-2">
+                        <Globe className="h-4 w-4 text-cyan-300" />
+                        {opportunity.format}
+                      </span>
+                    </div>
+
+                    <p className="mt-5 text-[15px] leading-7 text-gray-300">
+                      {opportunity.summary}
+                    </p>
+
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {opportunity.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-white/10 bg-black/25 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <a href="#" onClick={(e) => e.preventDefault()} className="mt-7 block">
+                      <div className="flex items-center justify-between rounded-2xl border border-cyan-400/20 bg-[rgba(8,47,73,0.26)] px-4 py-3 text-sm font-semibold text-cyan-100 transition-all duration-300 group-hover:border-cyan-300/35 group-hover:bg-[rgba(8,47,73,0.34)]">
+                        <span className="inline-flex items-center gap-3">
+                          <Lock className="h-4 w-4" />
+                          Assine a plataforma para ver mais
+                        </span>
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
