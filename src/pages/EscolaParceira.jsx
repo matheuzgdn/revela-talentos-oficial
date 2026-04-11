@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { 
   Sparkles, Award, LineChart, Users, Rocket, 
   ChevronDown, ChevronUp, ArrowRight,
-  Star, Globe, BookOpen, Shield, Zap, Calendar, User, Eye, MapPin, Lock
+  Star, BookOpen, Shield, Zap, Calendar, User, Eye, MapPin, Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -458,10 +458,10 @@ export default function EscolaParceira() {
               loop
               playsInline
               controls={false}
-              className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-76"
+              className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.92]"
               style={{ pointerEvents: 'none' }}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.18)_0%,rgba(2,6,23,0.28)_26%,rgba(3,7,18,0.54)_58%,rgba(4,5,7,0.96)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,6,23,0.06)_0%,rgba(2,6,23,0.12)_30%,rgba(3,7,18,0.28)_62%,rgba(4,5,7,0.84)_100%)]" />
           </div>
           <div className="absolute inset-0 bg-black/30" />
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50" />
@@ -470,17 +470,6 @@ export default function EscolaParceira() {
           <div className="absolute inset-y-0 left-0 w-full bg-gradient-to-r from-black/85 to-transparent md:w-[58%]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
           <div className="absolute inset-x-0 top-0 z-[1] h-[58svh] sm:hidden">
-            <div className="absolute right-4 top-5 flex items-center gap-2 rounded-full border border-white/12 bg-[rgba(15,23,42,0.84)] px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-white/90 shadow-[0_10px_25px_rgba(0,0,0,0.24)]">
-              <Globe className="h-3.5 w-3.5 text-cyan-300" />
-              PT
-            </div>
-
-            <img
-              src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png"
-              alt="Revela Talentos"
-              className="absolute left-1/2 top-[17%] h-44 w-auto -translate-x-1/2 opacity-50"
-            />
-
             <div className="relative z-10 absolute inset-x-0 bottom-0 px-4 pb-7">
               <div className="max-w-[340px] font-['Inter']">
                 <h1 className="text-[2.85rem] font-extrabold leading-[0.92] tracking-tight text-white">
