@@ -7,7 +7,7 @@ const REVELA_LOGO = 'https://static.wixstatic.com/media/933cdd_2a46d0206f1149cc8
 const EC10_LOGO = 'https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png';
 const VIDEO_BG = 'https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4';
 
-export default function CheckoutSuccess() {
+export default function CheckoutSuccess({ platformUrlOverride }) {
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
 
@@ -77,6 +77,11 @@ export default function CheckoutSuccess() {
 
               <div className="flex gap-4">
                 <button className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-bold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 shadow-[0_0_20px_rgba(234,179,8,0.3)]" onClick={() => {
+                    if (platformUrlOverride) {
+                      window.location.href = platformUrlOverride;
+                      return;
+                    }
+
                     const isBase44 = window.location.host.endsWith('base44.app');
                     if (user) {
                       window.location.href = '/RevelaTalentos';

@@ -78,6 +78,13 @@ const AuthenticatedApp = () => {
           </LayoutWrapper>
         </ProtectedRoute>
       } />
+      <Route path="/thanks1" element={
+        <ProtectedRoute isPublic={true}>
+          <LayoutWrapper currentPageName="checkout">
+            <CheckoutSuccess platformUrlOverride="https://revelatalentos.com/login?from_url=https%3A%2F%2Frevelatalentos.com%2F" />
+          </LayoutWrapper>
+        </ProtectedRoute>
+      } />
       <Route path="/checkout" element={<Navigate to="/thanks" replace />} />
       {Object.entries(Pages).map(([path, Page]) => {
         const isPublicPage = ['cases-sucesso-atletas', 'escola-parceira', 'vsl-escola-parceira'].includes(path);
