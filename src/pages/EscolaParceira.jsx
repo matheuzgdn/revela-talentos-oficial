@@ -627,8 +627,6 @@ export default function EscolaParceira() {
                 </div>
               </div>
 
-              <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
-
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold leading-tight text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
                   <Calendar className="h-5 w-5" />
@@ -906,6 +904,12 @@ export default function EscolaParceira() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <section className="relative bg-[#040507] px-4 py-6 sm:px-6 sm:py-10">
+        <div className="mx-auto max-w-[1400px]">
+          <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
+        </div>
+      </section>
 
       {/* 1. SOCIAL PROOF MARQUEE */}
       <MainLandingCarousel eyebrow="/ Nossa Estrutura Global" title="CONEXÕES EUROPEIAS E NACIONAIS" description="A metodologia que será integrada à escola já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo." onCardClick={scrollToSignupCta} />
