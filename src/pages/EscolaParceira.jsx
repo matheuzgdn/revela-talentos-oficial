@@ -129,7 +129,7 @@ const heroServiceCards = [
     title: 'Mentoria para os Pais',
     tag: 'Para os Pais',
     icon: Users,
-    image: 'https://video.wixstatic.com/video/933cdd_dda817e38175467796a8ba4ae14b52bc/1080p/mp4/file.mp4',
+    image: 'https://video.wixstatic.com/video/933cdd_0da06fefa3df4c7bab6f1a2d74824261/1080p/mp4/file.mp4',
     description: 'Prepare-se para ser o pilar estrategico na carreira do seu filho. Aprenda a tomar decisoes seguras, entender o mercado do futebol e assumir o papel de principal gestor da jornada esportiva dele. Transforme o sonho em um plano de carreira profissional.',
   },
   {
@@ -143,7 +143,7 @@ const heroServiceCards = [
     title: 'Seletiva Presencial',
     tag: 'Captacao',
     icon: Zap,
-    image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=800',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQac45BGNq3exmuKfbTi46FZvHP2kcxoL6e6g&s',
     description: 'Garanta sua vaga nas seletivas presenciais da EC10 Talentos. Estaremos em varios estados do Brasil com captadores de clubes parceiros e nosso staff completo para avaliar seu potencial.',
   },
 ];
