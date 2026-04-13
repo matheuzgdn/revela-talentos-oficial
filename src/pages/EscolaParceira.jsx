@@ -115,35 +115,35 @@ const heroServiceCards = [
     title: 'Seletiva Online',
     tag: 'Avaliacao',
     icon: Sparkles,
-    image: 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg',
+    image: 'https://video.wixstatic.com/video/933cdd_508da8c819d846178e59499261f1d9dc/1080p/mp4/file.mp4',
     description: 'Envie o video do seu filho para uma avaliacao tecnica. Caso aprovado, o atleta passara a ser agenciado por nossa empresa, com foco no encaminhamento para clubes parceiros em territorio nacional e internacional.',
   },
   {
     title: 'Mentoria Esportiva',
     tag: 'Exclusivo',
     icon: Award,
-    image: 'https://static.wixstatic.com/media/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg/v1/fill/w_600,h_437,al_c,q_80,enc_auto/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg',
+    image: 'https://static.wixstatic.com/media/933cdd_5a16fbb433bd42a9917cf902c77c69a3~mv2.jpg/v1/fill/w_270,h_600,al_c,lg_1,q_80,enc_auto/933cdd_5a16fbb433bd42a9917cf902c77c69a3~mv2.jpg',
     description: 'Transforme o talento do seu filho em desempenho de elite. Com minha mentoria, focamos no preparo mental e tecnico para enfrentar os desafios das categorias de base. O objetivo e um so: destaque absoluto e a transicao segura para o futebol profissional.',
   },
   {
     title: 'Mentoria para os Pais',
     tag: 'Para os Pais',
     icon: Users,
-    image: 'https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg',
+    image: 'https://video.wixstatic.com/video/933cdd_dda817e38175467796a8ba4ae14b52bc/1080p/mp4/file.mp4',
     description: 'Prepare-se para ser o pilar estrategico na carreira do seu filho. Aprenda a tomar decisoes seguras, entender o mercado do futebol e assumir o papel de principal gestor da jornada esportiva dele. Transforme o sonho em um plano de carreira profissional.',
   },
   {
     title: 'Intercambio Avaliativo Internacional',
     tag: 'Exterior',
     icon: Globe,
-    image: 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg',
+    image: 'https://video.wixstatic.com/video/933cdd_eb14b07c4db843ac878f02fed62bb4c6/720p/mp4/file.mp4',
     description: 'Leve o futebol do seu filho para o proximo nivel. Agende agora um intercambio avaliativo nos principais clubes europeus. Oferecemos suporte completo para que ele mostre seu potencial nos grandes centros do futebol mundial. As vagas sao limitadas.',
   },
   {
     title: 'Seletiva Presencial',
     tag: 'Captacao',
     icon: Zap,
-    image: 'https://static.wixstatic.com/media/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg/v1/fill/w_448,h_600,al_c,lg_1,q_80,enc_auto/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg',
+    image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=800',
     description: 'Garanta sua vaga nas seletivas presenciais da EC10 Talentos. Estaremos em varios estados do Brasil com captadores de clubes parceiros e nosso staff completo para avaliar seu potencial.',
   },
 ];
@@ -213,6 +213,7 @@ export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
   const [activeHeroService, setActiveHeroService] = useState(null);
+  const [isHeroCarouselPaused, setIsHeroCarouselPaused] = useState(false);
   const [partnerSchools, setPartnerSchools] = useState([]);
   const [isLoadingSchools, setIsLoadingSchools] = useState(false);
   const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
@@ -226,6 +227,7 @@ export default function EscolaParceira() {
   // Spotlight / Social Proof states
   const trackRef = useRef(null);
   const signupHighlightTimeoutRef = useRef(null);
+  const heroCarouselResumeTimeoutRef = useRef(null);
   const variant = 'default';
   const spotlight = useMemo(() => athleteSpotlights[variant] || athleteSpotlights.default, [variant]);
   const accentClass = accentText[spotlight.accent] || accentText.cyan;
@@ -241,6 +243,9 @@ export default function EscolaParceira() {
     return () => {
       if (signupHighlightTimeoutRef.current) {
         window.clearTimeout(signupHighlightTimeoutRef.current);
+      }
+      if (heroCarouselResumeTimeoutRef.current) {
+        window.clearTimeout(heroCarouselResumeTimeoutRef.current);
       }
     };
   }, []);
@@ -291,6 +296,27 @@ export default function EscolaParceira() {
 
   const openHeroService = (card) => {
     setActiveHeroService(card);
+  };
+
+  const pauseHeroCarousel = () => {
+    if (heroCarouselResumeTimeoutRef.current) {
+      window.clearTimeout(heroCarouselResumeTimeoutRef.current);
+    }
+    setIsHeroCarouselPaused(true);
+  };
+
+  const resumeHeroCarouselSoon = () => {
+    if (heroCarouselResumeTimeoutRef.current) {
+      window.clearTimeout(heroCarouselResumeTimeoutRef.current);
+    }
+    heroCarouselResumeTimeoutRef.current = window.setTimeout(() => {
+      setIsHeroCarouselPaused(false);
+    }, 1800);
+  };
+
+  const handleHeroCarouselInteraction = () => {
+    pauseHeroCarousel();
+    resumeHeroCarouselSoon();
   };
 
   const handleHeroServiceSchedule = () => {
@@ -404,24 +430,46 @@ export default function EscolaParceira() {
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
-              <div className="hero-service-mask relative -mx-1 overflow-hidden px-1 [--hero-gap:0.75rem] sm:mx-0 sm:px-0 sm:[--hero-gap:1.25rem]">
+              <div
+                className="hero-service-mask relative -mx-1 overflow-x-auto overflow-y-visible px-1 [--hero-gap:0.75rem] sm:mx-0 sm:px-0 sm:[--hero-gap:1.25rem]"
+                onTouchStart={pauseHeroCarousel}
+                onTouchEnd={resumeHeroCarouselSoon}
+                onTouchCancel={resumeHeroCarouselSoon}
+                onScroll={handleHeroCarouselInteraction}
+              >
                 <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-8 bg-[linear-gradient(90deg,#040507_0%,rgba(4,5,7,0.78)_48%,transparent_100%)] sm:w-16" />
                 <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-8 bg-[linear-gradient(270deg,#040507_0%,rgba(4,5,7,0.78)_48%,transparent_100%)] sm:w-16" />
-                <div className="hero-service-track flex w-max gap-[var(--hero-gap)] pb-2">
+                <div
+                  className="hero-service-track flex w-max gap-[var(--hero-gap)] pb-2"
+                  style={{ animationPlayState: activeHeroService || isHeroCarouselPaused ? 'paused' : 'running' }}
+                >
                 {heroServiceCarouselCards.map((card, index) => (
                   <article
                     key={`${card.title}-${index}`}
-                    className="group relative aspect-square w-[255px] shrink-0 overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 sm:w-[320px]"
+                    className="group relative aspect-square w-[255px] shrink-0 snap-start overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 sm:w-[320px]"
                   >
-                    <img
-                      src={card.image}
-                      alt={card.title}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                    {isVideoMedia(card.image) ? (
+                      <video
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                      >
+                        <source src={card.image} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    )}
                     <div className="absolute inset-0 rounded-[2rem] border border-white/8" />
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.03)_0%,rgba(0,0,0,0.12)_32%,rgba(0,0,0,0.72)_100%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02)_0%,rgba(0,0,0,0.08)_26%,rgba(0,0,0,0.84)_100%)]" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_30%)]" />
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0.01)_18%,transparent_36%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.01)_16%,transparent_34%)]" />
+                    <div className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(180deg,transparent_0%,rgba(4,7,12,0.16)_22%,rgba(4,7,12,0.88)_100%)]" />
 
                     <div className="relative z-10 h-full p-4 sm:p-5">
                       <div className="flex items-start justify-between gap-3">
@@ -430,16 +478,14 @@ export default function EscolaParceira() {
                         </span>
                       </div>
 
-                      <div className="absolute inset-x-3 bottom-3 overflow-hidden rounded-[1.65rem] border border-white/28 bg-[linear-gradient(180deg,rgba(18,27,41,0.28),rgba(6,10,18,0.62))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.22),0_0_30px_rgba(34,211,238,0.09)] backdrop-blur-[34px] sm:inset-x-4 sm:bottom-4 sm:p-5">
-                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.03)_28%,transparent_52%,rgba(34,211,238,0.08)_100%)]" />
-                        <div className="pointer-events-none absolute -left-10 top-0 h-16 w-32 rotate-[18deg] bg-white/10 blur-2xl" />
-                        <h3 className="max-w-[12ch] text-[1.12rem] font-black uppercase leading-[0.96] tracking-tight text-white sm:text-[1.3rem]">
+                      <div className="absolute inset-x-4 bottom-4 sm:inset-x-5 sm:bottom-5">
+                        <h3 className="max-w-[12ch] text-[1.12rem] font-black uppercase leading-[0.96] tracking-tight text-white [text-shadow:0_6px_20px_rgba(0,0,0,0.9),0_14px_36px_rgba(0,0,0,0.86)] sm:text-[1.3rem]">
                           {card.title}
                         </h3>
                         <button
                           type="button"
                           onClick={() => openHeroService(card)}
-                          className="relative z-10 mt-4 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.24em] text-cyan-300 transition-colors duration-300 hover:text-white"
+                          className="relative z-10 mt-4 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.24em] text-cyan-300 [text-shadow:0_6px_16px_rgba(0,0,0,0.85)] transition-colors duration-300 hover:text-white"
                         >
                           Saber mais
                           <span className="text-base leading-none">+</span>
@@ -486,6 +532,16 @@ export default function EscolaParceira() {
           @keyframes hero-services-marquee {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(calc(-50% - (var(--hero-gap) / 2)), 0, 0); }
+          }
+          .hero-service-mask {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x;
+            scroll-snap-type: x proximity;
+          }
+          .hero-service-mask::-webkit-scrollbar {
+            display: none;
           }
           .hero-service-track {
             animation: hero-services-marquee 38s linear infinite;
@@ -545,11 +601,23 @@ export default function EscolaParceira() {
           {activeHeroService && (
             <div className="relative">
               <div className="absolute inset-0">
-                <img
-                  src={activeHeroService.image}
-                  alt={activeHeroService.title}
-                  className="h-full w-full object-cover opacity-30"
-                />
+                {isVideoMedia(activeHeroService.image) ? (
+                  <video
+                    className="h-full w-full object-cover opacity-30"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  >
+                    <source src={activeHeroService.image} type="video/mp4" />
+                  </video>
+                ) : (
+                  <img
+                    src={activeHeroService.image}
+                    alt={activeHeroService.title}
+                    className="h-full w-full object-cover opacity-30"
+                  />
+                )}
                 <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(4,7,12,0.96)_12%,rgba(4,7,12,0.82)_48%,rgba(4,7,12,0.92)_100%)]" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.22),transparent_34%)]" />
               </div>
