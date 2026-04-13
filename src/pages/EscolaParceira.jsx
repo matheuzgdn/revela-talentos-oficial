@@ -220,7 +220,7 @@ function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
           <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>INSCRIÇÃO GRATUITA</span>
         </h3>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/76 sm:text-base">
-          Nós te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenção nas mensagens oficiais enviadas pela escola e não perca.
+          Evento on-line gratuito onde vamos revelar o segredo para chegar no futebol profissional e como seu filho pode se tornar um melhor atleta através da Revela Talentos.
         </p>
         <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em] text-cyan-300 sm:text-xs">
           Inscrição gratuita para famílias das escolas parceiras
