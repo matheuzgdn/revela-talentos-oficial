@@ -209,6 +209,95 @@ function FAQItem({ q, a }) {
   );
 }
 
+function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
+  const family = testimonials[2];
+
+  return (
+    <div className="overflow-hidden rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,12,20,0.92),rgba(4,7,12,0.98))] shadow-[0_30px_90px_rgba(0,0,0,0.38)]">
+      <div className="border-b border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))] px-4 py-4 sm:px-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 text-sm font-black text-white">
+            {family.avatar}
+          </div>
+          <div>
+            <p className="text-sm font-bold text-white sm:text-base">{family.name}</p>
+            <p className="text-xs text-white/45 sm:text-sm">{family.school}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.18),transparent_34%),linear-gradient(180deg,rgba(9,18,33,0.98),rgba(5,10,18,1))] px-5 py-7 text-center sm:px-8 sm:py-9">
+        <Badge className="border border-red-500/25 bg-red-500/14 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-red-300">
+          Dia 20 de Abril
+        </Badge>
+        <h3 className="mt-5 text-[2rem] font-black leading-[0.95] text-white sm:text-[2.6rem]">
+          Sua Presença é <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>Fundamental!</span>
+        </h3>
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/76 sm:text-base">
+          Nós te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenção nas mensagens oficiais enviadas pela escola e não perca.
+        </p>
+        <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em] text-cyan-300 sm:text-xs">
+          Inscrição gratuita para famílias das escolas parceiras
+        </p>
+        <Button
+          type="button"
+          onClick={onPrimaryClick}
+          className="mt-6 h-12 w-full rounded-xl border-0 bg-gradient-to-r from-red-600 to-red-500 px-6 text-sm font-bold text-white shadow-[0_20px_40px_rgba(239,68,68,0.28)] hover:from-red-500 hover:to-red-400 sm:h-14 sm:text-base"
+        >
+          <Calendar className="mr-2.5 h-4 w-4 sm:h-5 sm:w-5" />
+          Agendar Lembrete na Live
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function StatsSection({ accentClass }) {
+  return (
+    <section className="relative z-10 px-4 py-16 sm:px-6 sm:py-20">
+      <div className="container mx-auto">
+        <div className="mb-12 text-center">
+          <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>/ Nossa Força</span>
+          <h2 className="text-[1.9rem] font-bold text-white sm:text-3xl md:text-4xl">NÚMEROS QUE COMPROVAM</h2>
+        </div>
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2">
+          <article className="relative flex h-[260px] flex-col justify-end overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0a0a0a] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[390px] sm:rounded-[2rem] sm:p-6 md:h-[470px] md:p-10">
+            <img src={statsData.statOneImage} alt="Atletas" className="absolute inset-0 h-full w-full object-cover opacity-50" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-[#040507]/60 to-transparent" />
+            <div className="relative z-10">
+              <div className="mb-2 text-[2.35rem] font-black tracking-tighter text-white sm:text-6xl md:text-7xl">{statsData.statOneValue.replace('+', '')}<span className={accentClass}>+</span></div>
+              <div className="font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-gray-300 sm:text-sm sm:tracking-[0.3em] md:text-base">{statsData.statOneLabel}</div>
+              <p className="mt-4 max-w-sm text-[12px] leading-relaxed text-gray-300 sm:mt-5 sm:text-sm">{statsData.statOneText}</p>
+            </div>
+          </article>
+
+          <article className="relative flex h-[260px] flex-col justify-end overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0a0a0a] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[390px] sm:rounded-[2rem] sm:p-6 md:h-[470px] md:p-10">
+            <video autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover opacity-55">
+              <source src={statsData.statTwoVideo} type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#040507]/90 via-[#040507]/40 to-transparent" />
+            <div className="relative z-10">
+              <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-gray-300 sm:text-sm sm:tracking-[0.3em] md:text-base">{statsData.statTwoEyebrow}</div>
+              <div className="flex items-end gap-3">
+                <div className="text-[2.6rem] font-black tracking-tight text-white sm:text-6xl md:text-7xl">{statsData.statTwoValue}</div>
+                <div className="pb-1 font-mono text-[11px] font-bold uppercase tracking-[0.28em] text-white/70 sm:text-xs">{statsData.statTwoCaption}</div>
+              </div>
+              <div className={`mt-2 text-2xl font-black uppercase tracking-tight sm:text-3xl ${accentClass}`}>{statsData.statTwoTitle}</div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {statsData.countries.map((country) => (
+                  <span key={country} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur sm:text-[11px]">
+                    {country}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
@@ -497,6 +586,8 @@ export default function EscolaParceira() {
                 </div>
               </div>
 
+              <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
+
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border-0 bg-white px-5 py-3 text-sm font-semibold leading-tight text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90 sm:min-h-[56px] md:w-auto md:px-6 md:text-base">
                   <Calendar className="h-5 w-5" />
@@ -505,7 +596,7 @@ export default function EscolaParceira() {
                 <Button asChild className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-5 py-3 text-sm font-semibold leading-tight text-white hover:bg-[rgba(30,41,59,0.92)] sm:min-h-[56px] md:w-auto md:max-w-[320px] md:px-6 md:text-base">
                   <Link to="/vsl-escola-parceira">
                     <ArrowRight className="h-4 w-4" />
-                    NÃ£o poderei estar presente no dia
+                    Não poderei participar nessa data, mas gostaria de saber.
                   </Link>
                 </Button>
               </div>
@@ -714,113 +805,8 @@ export default function EscolaParceira() {
       {/* 1. SOCIAL PROOF MARQUEE */}
       <MainLandingCarousel eyebrow="/ Nossa Estrutura Global" title="CONEXÃ•ES EUROPEIAS E NACIONAIS" description="A metodologia que serÃ¡ integrada Ã  escola jÃ¡ levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelÃªncia do mundo." onCardClick={scrollToSignupCta} />
 
-      {/* DESAFIO DOS PAIS */}
-      <section className="relative py-16 sm:py-24">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-          <Badge className="bg-white/5 text-gray-400 border border-white/10 px-4 py-1.5 text-sm rounded-full mb-6">O CenÃ¡rio Atual</Badge>
-          <h2 className="mb-6 text-[2rem] font-bold sm:text-4xl md:text-5xl">Seu Filho EstÃ¡ Pronto para <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>os Desafios Reais?</span></h2>
-          <p className="mb-10 text-base text-gray-400 sm:mb-12 sm:text-lg">No mundo exigente de hoje, estudar Ã© metade do processo. A outra Ã© forjar uma mente inabalÃ¡vel para esportes e pra vida.</p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              "Como dar confianÃ§a para ele acreditar nos prÃ³prios talentos alÃ©m das telas e celulares?",
-              "Como motivÃ¡-lo a manter dedicaÃ§Ã£o aos estudos alinhada com seus sonhos, paixÃµes e esporte?",
-              "O que as grandes academias treinam na mente dos atletas de base e que pode ser trazido Ã  escola?"
-            ].map((q, i) => (
-              <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-left transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/[0.06] sm:p-6">
-                <div className="w-8 h-8 rounded-full bg-gradient_to-r from-blue-600 to-cyan-500 flex items-center justify-center text-sm font-bold mb-4">{i + 1}</div>
-                <p className="text-gray-300 leading-relaxed">{q}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* BENEFÃCIOS REVELA TALENTOS */}
       <BeneficiosRevelaTalentos />
-
-      {/* 2. SOCIAL PROOF STATS */}
-      <section className="relative z-10 px-4 py-16 sm:px-6 sm:py-20">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>/ Nossa ForÃ§a</span>
-            <h2 className="text-[1.9rem] font-bold text-white sm:text-3xl md:text-4xl">NÃšMEROS QUE COMPROVAM</h2>
-          </div>
-          <div className="grid max-w-6xl mx-auto grid-cols-1 gap-8 lg:grid-cols-2">
-            {/* Stat One */}
-            <article className="relative flex h-[260px] flex-col justify-end overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0a0a0a] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[390px] sm:rounded-[2rem] sm:p-6 md:h-[470px] md:p-10">
-              <img src={statsData.statOneImage} alt="Atletas" className="absolute inset-0 h-full w-full object_cover opacity-50" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-[#040507]/60 to-transparent" />
-              <div className="relative z-10">
-                <div className="mb-2 text-[2.35rem] font-black tracking-tighter text-white sm:text-6xl md:text-7xl">{statsData.statOneValue.replace('+', '')}<span className={accentClass}>+</span></div>
-                <div className="font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-gray-300 sm:text-sm sm:tracking-[0.3em] md:text-base">{statsData.statOneLabel}</div>
-                <p className="mt-4 max-w-sm text-[12px] leading-relaxed text-gray-300 sm:mt-5 sm:text-sm">{statsData.statOneText}</p>
-              </div>
-            </article>
-            {/* Stat Two */}
-            <article className="relative flex h-[260px] flex-col justify-end overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0a0a0a] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[390px] sm:rounded-[2rem] sm:p-6 md:h-[470px] md:p-10">
-              <video autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover opacity-55"><source src={statsData.statTwoVideo} type="video/mp4" /></video>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#040507]/90 via-[#040507]/40 to-transparent" />
-              <div className="relative z-10">
-                <div className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-gray-300 sm:text-sm sm:tracking-[0.3em] md:text-base">{statsData.statTwoEyebrow}</div>
-                <div className="flex items-end gap-3">
-                  <div className="text-[2.6rem] font-black tracking-tight text-white sm:text-6xl md:text-7xl">{statsData.statTwoValue}</div>
-                  <div className="pb-1 font-mono text-[11px] font-bold uppercase tracking-[0.28em] text-white/70 sm:text-xs">{statsData.statTwoCaption}</div>
-                </div>
-                <div className={`mt-2 text-2xl font-black uppercase tracking-tight sm:text-3xl ${accentClass}`}>{statsData.statTwoTitle}</div>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {statsData.countries.map((country) => (<span key={country} className="rounded-full border border-white/10 bg-black/35 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/80 backdrop-blur sm:text-[11px]">{country}</span>))}
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* OPORTUNIDADES ABERTAS */}
-      <section className="relative overflow-hidden border-y border-white/5 bg-[linear-gradient(180deg,#040507_0%,#07111f_48%,#040507_100%)] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.14),transparent_26%),radial-gradient(circle_at_80%_30%,rgba(37,99,235,0.12),transparent_22%)] pointer-events-none" />
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="max-w-3xl mb-10 sm:mb-12">
-            <Badge className="bg-cyan-500/10 text-cyan-300 border border-cyan-400/20 px-4 py-1.5 text-sm rounded-full mb-6">Oportunidades Abertas</Badge>
-            <h2 className="text-[2rem] font-bold text-white sm:text-4xl md:text-5xl">Oportunidades Dentro da <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>Revela Talentos</span></h2>
-            <p className="mt-4 text-base leading-7 text-gray-300 sm:mt-5 sm:text-lg sm:leading-8">ConheÃ§a algumas oportunidades em destaque para atletas das escolas parceiras, com rotas abertas no Brasil e em mercados estratÃ©gicos da Europa.</p>
-          </div>
-          <div className="relative opportunities-carousel-mask">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-r from-[#02040a] via-[#02040a]/98 via-45% to-transparent sm:w-28"><div className="absolute inset-y-3 left-0 w-8 rounded-r-full bg-black/55 blur-2xl sm:w-12" /></div>
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-16 bg-gradient-to-l from-[#02040a] via-[#02040a]/98 via-45% to-transparent sm:w-28"><div className="absolute inset-y-3 right-0 w-8 rounded-l-full bg-black/55 blur-2xl sm:w-12" /></div>
-            <div className="opportunities-carousel-track flex w-max gap-4 sm:gap-6">
-              {[...opportunitiesData, ...opportunitiesData].map((opportunity, index) => (
-                <button key={`${opportunity.title}-${opportunity.location}-${index}`} type="button" onClick={scrollToSignupCta} aria-hidden={index >= opportunitiesData.length} className={`group relative w-[220px] shrink-0 overflow-hidden rounded-[1.35rem] border bg-[rgba(5,10,18,0.92)] p-3.5 text-left shadow-[0_20px_60px_rgba(0,0,0,0.32)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 sm:w-[250px] sm:rounded-[1.55rem] sm:p-4 ${index % opportunitiesData.length === 0 ? 'border-cyan-400/35' : 'border-white/10 hover:border-cyan-400/25'}`}>
-                  <div className="absolute inset-0 bg-[linear-gradient(145deg,rgba(255,255,255,0.06),transparent_42%)] opacity-70 pointer-events-none" />
-                  <div className="absolute -right-3 top-1 text-[4.3rem] leading-none opacity-[0.12] saturate-150 pointer-events-none select-none">{opportunity.flag}</div>
-                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400/0 via-cyan-300/70 to-cyan-400/0 opacity-80" />
-                  <div className="relative z-10">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300 sm:px-3 sm:text-[11px] sm:tracking-[0.22em]"><span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />Aberta</span>
-                    </div>
-                    <div className="mt-3 flex items-center gap-3 sm:mt-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-[rgba(8,47,73,0.28)] text-[1.2rem] shadow-[0_10px_30px_rgba(0,0,0,0.2)] sm:h-11 sm:w-11 sm:text-[1.35rem]"><span aria-hidden="true">{opportunity.flag}</span></div>
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-200/75 sm:text-[11px] sm:tracking-[0.24em]">{opportunity.market}</p>
-                        <p className="text-xs text-white/55">Plataforma Revela Talentos</p>
-                      </div>
-                    </div>
-                    <h3 className="mt-4 text-[1.4rem] font-black leading-[1.05] text-white sm:mt-5 sm:text-[1.65rem]">{opportunity.title}</h3>
-                    <div className="mt-2.5 flex flex-wrap gap-3 text-[12px] text_white/70 sm:mt-3 sm:text-[13px]"><span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-cyan-300" />{opportunity.location}</span></div>
-                    <p className="mt-3 text-[13px] leading-5 text-gray-300 sm:mt-4 sm:text-sm sm:leading-6">{opportunity.teaser}</p>
-                    <div className="mt-4 block sm:mt-5">
-                      <div className="flex items-center justify-between rounded-2xl border border-cyan-400/20 bg-[rgba(8,47,73,0.26)] px-3.5 py-2.5 text-[13px] font-semibold text-cyan-100 transition-all duration-300 group-hover:border-cyan-300/35 group-hover:bg-[rgba(8,47,73,0.34)] sm:px-4 sm:py-3 sm:text-sm">
-                        <span className="inline-flex items-center gap-2.5 sm:gap-3"><Lock className="h-3.5 w-3.5 sm:h-4 sm:w-4" />Inscreva-se agora</span>
-                        <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      </div>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* CRONOGRAMA */}
       <section id="como-funciona" className="relative bg-gradient-to-b from-[#040507] to-gray-950 px-4 py-16 sm:px-6 sm:py-24">
@@ -915,20 +901,6 @@ export default function EscolaParceira() {
         </div>
       </section>
 
-      {/* CTA INVITATION */}
-      <section className="relative overflow-hidden py-16 sm:py-24">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/40 via-cyan-900/30 to-black/60" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,229,255,0.1)_0%,_transparent_70%)]" />
-        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6">
-          <Badge className="bg-red-500/20 text-red-500 border border-red-500/30 px-4 py-1.5 text-sm font-bold rounded-full mb-6">Dia 20 de Abril</Badge>
-          <h2 className="mb-6 text-[2rem] font-bold sm:text-4xl md:text-6xl">Sua PresenÃ§a Ã© <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>Fundamental!</span></h2>
-          <p className="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-gray-300 sm:mb-10 sm:text-xl">NÃ³s te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenÃ§Ã£o nas mensagens oficiais enviadas pela escola e nÃ£o perca!</p>
-          <Button type="button" onClick={scrollToSignupCta} className="h-14 w-full rounded-xl border-0 bg-gradient-to-r from-red-600 to-red-500 px-6 text-base font-bold text-white shadow-2xl shadow-red-500/30 transition-all duration-300 hover:-translate-y-1 hover:from-red-500 hover:to-red-400 sm:h-16 sm:w-auto sm:px-12 sm:text-xl">
-            <Calendar className="mr-3 w-6 h-6" /> Agendar Lembrete na Live
-          </Button>
-        </div>
-      </section>
-
       {/* FAQ */}
       <section className="border-t border-white/5 bg-gray-950 py-16 sm:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
@@ -939,6 +911,8 @@ export default function EscolaParceira() {
           <div className="space-y-4">{faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}</div>
         </div>
       </section>
+
+      <StatsSection accentClass={accentClass} />
 
       {/* FOOTER */}
       <footer className="border-t border-white/10 bg-[#040507] py-10 sm:py-12">

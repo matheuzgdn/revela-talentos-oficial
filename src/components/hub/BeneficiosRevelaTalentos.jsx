@@ -6,20 +6,20 @@ const servicesSection = {
   outlinedWord: 'REVELA TALENTOS',
   services: [
     {
-      title: 'Mentoria Coletiva',
-      highlight: 'Exclusivo',
-      text: 'Encontros coletivos com orientação avançada para fortalecer a mentalidade do atleta, aumentar a confiança e direcionar a tomada de decisão dentro do futebol adolescente.',
+      title: 'Nutricionista',
+      highlight: 'Performance',
+      text: 'Orientação nutricional para sustentar energia, recuperação e constância na rotina do atleta, com foco em crescimento saudável e melhor desempenho dentro e fora de campo.',
       media:
-        'https://static.wixstatic.com/media/933cdd_5a16fbb433bd42a9917cf902c77c69a3~mv2.jpg/v1/fill/w_270,h_600,al_c,lg_1,q_80,enc_auto/933cdd_5a16fbb433bd42a9917cf902c77c69a3~mv2.jpg',
+        'https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=1200&auto=format&fit=crop',
       isVideo: false,
     },
     {
-      title: 'SELETIVA ONLINE',
+      title: 'Mentoria Técnica Individual',
       highlight: 'Exclusivo',
-      text: 'Envio online de vídeo e informações do atleta para análise da nossa equipe, facilitando a avaliação e o direcionamento para oportunidades reais sem precisar viajar.',
+      text: 'Acompanhamento individual para leitura técnica, correção de detalhes e evolução orientada, com a referência visual do Phidelis no podcast.',
       media:
-        'https://video.wixstatic.com/video/933cdd_508da8c819d846178e59499261f1d9dc/1080p/mp4/file.mp4',
-      isVideo: true,
+        'https://static.wixstatic.com/media/933cdd_0e4324a6ccca449ab360fc24e56720c5~mv2.png/v1/fill/w_369,h_381,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/933cdd_0e4324a6ccca449ab360fc24e56720c5~mv2.png',
+      isVideo: false,
     },
     {
       title: 'Marketing Esportivo',
