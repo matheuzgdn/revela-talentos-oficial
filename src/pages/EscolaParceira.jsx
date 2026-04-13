@@ -42,7 +42,7 @@ const faqs = [
 
 const steps = [
   { num: "01", icon: Calendar, title: "Live de Lançamento - Dia 20/04", desc: "Marque na sua agenda e assista ao evento oficial com Eric Cena. Descubra os detalhes impactantes dessa transformação no ensino." },
-  { num: "02", icon: User, title: "Recepção dos Acessos", desc: "A escola fará a orientação e distribuição das credenciais de acesso para que os estudantes configurem seu perfil na EC10." },
+  { num: "02", icon: User, title: "Recepção dos Acessos", desc: "A escola fará a orientação e distribuição das credenciais de acesso para que os atletas configurem seu perfil na EC10." },
   { num: "03", icon: Shield, title: "Acompanhe e Celebre", desc: "Veja a evolução através dos novos treinos, mentorias em vídeo e capacitações presentes no aplicativo." }
 ];
 
