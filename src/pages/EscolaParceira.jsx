@@ -148,6 +148,8 @@ const heroServiceCards = [
   },
 ];
 
+const heroServiceCarouselCards = [...heroServiceCards, ...heroServiceCards];
+
 const opportunitiesData = [
   { title: 'AvaliaÃ§Ã£o Premium', location: 'SÃ£o Paulo, Brasil', flag: 'ðŸ‡§ðŸ‡·', country: 'Brasil', market: 'Base Nacional', format: 'Presencial', teaser: 'Vagas limitadas para escolas parceiras.' },
   { title: 'Alta Performance', location: 'Belo Horizonte, Brasil', flag: 'ðŸ‡§ðŸ‡·', country: 'Brasil', market: 'Desenvolvimento', format: 'Presencial', teaser: 'Ambiente ideal para acelerar evoluÃ§Ã£o.' },
@@ -402,11 +404,14 @@ export default function EscolaParceira() {
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
-              <div className="hero-service-row -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 sm:gap-5 sm:px-0">
-                {heroServiceCards.map((card) => (
+              <div className="hero-service-mask relative -mx-1 overflow-hidden px-1 [--hero-gap:0.75rem] sm:mx-0 sm:px-0 sm:[--hero-gap:1.25rem]">
+                <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-8 bg-[linear-gradient(90deg,#040507_0%,rgba(4,5,7,0.78)_48%,transparent_100%)] sm:w-16" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-8 bg-[linear-gradient(270deg,#040507_0%,rgba(4,5,7,0.78)_48%,transparent_100%)] sm:w-16" />
+                <div className="hero-service-track flex w-max gap-[var(--hero-gap)] pb-2">
+                {heroServiceCarouselCards.map((card, index) => (
                   <article
-                    key={card.title}
-                    className="group relative h-[420px] min-w-[255px] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.4)] transition-all duration-300 hover:-translate-y-1 sm:h-[520px] sm:min-w-[318px] sm:max-w-[356px]"
+                    key={`${card.title}-${index}`}
+                    className="group relative h-[420px] min-w-[255px] max-w-[300px] shrink-0 overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 sm:h-[520px] sm:min-w-[318px] sm:max-w-[356px]"
                   >
                     <img
                       src={card.image}
@@ -425,8 +430,9 @@ export default function EscolaParceira() {
                         </span>
                       </div>
 
-                      <div className="absolute inset-x-3 bottom-3 overflow-hidden rounded-[1.65rem] border border-white/22 bg-[linear-gradient(180deg,rgba(13,20,32,0.46),rgba(6,10,18,0.78))] p-4 shadow-[0_22px_60px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.15)] backdrop-blur-[28px] sm:inset-x-4 sm:bottom-4 sm:p-5">
-                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,transparent_42%,rgba(34,211,238,0.06)_100%)]" />
+                      <div className="absolute inset-x-3 bottom-3 overflow-hidden rounded-[1.65rem] border border-white/28 bg-[linear-gradient(180deg,rgba(18,27,41,0.28),rgba(6,10,18,0.62))] p-4 shadow-[0_28px_80px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.22),0_0_30px_rgba(34,211,238,0.09)] backdrop-blur-[34px] sm:inset-x-4 sm:bottom-4 sm:p-5">
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,rgba(255,255,255,0.03)_28%,transparent_52%,rgba(34,211,238,0.08)_100%)]" />
+                        <div className="pointer-events-none absolute -left-10 top-0 h-16 w-32 rotate-[18deg] bg-white/10 blur-2xl" />
                         <h3 className="max-w-[12ch] text-[1.12rem] font-black uppercase leading-[0.96] tracking-tight text-white sm:text-[1.3rem]">
                           {card.title}
                         </h3>
@@ -442,6 +448,7 @@ export default function EscolaParceira() {
                     </div>
                   </article>
                 ))}
+                </div>
               </div>
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
@@ -476,12 +483,17 @@ export default function EscolaParceira() {
           .animate-cinematic-zoom {
             animation: cinematic-zoom 26s ease-in-out infinite;
           }
-          .hero-service-row {
-            scrollbar-width: none;
-            -ms-overflow-style: none;
+          @keyframes hero-services-marquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(calc(-50% - (var(--hero-gap) / 2)), 0, 0); }
           }
-          .hero-service-row::-webkit-scrollbar {
-            display: none;
+          .hero-service-track {
+            animation: hero-services-marquee 38s linear infinite;
+            will-change: transform;
+          }
+          .hero-service-mask:hover .hero-service-track,
+          .hero-service-mask:focus-within .hero-service-track {
+            animation-play-state: paused;
           }
           @keyframes opportunities-marquee {
             0% { transform: translate3d(0, 0, 0); }
@@ -521,7 +533,10 @@ export default function EscolaParceira() {
           @media (min-width: 640px) {
             .escola-parceira-hero::after { content: ''; position: absolute; inset: auto 0 0; height: 160px; background: linear-gradient(180deg, transparent 0%, rgba(4,5,7,0.98) 100%); z-index: 2; pointer-events: none; display: block; }
           }
-          @media (max-width: 639px) { .opportunities-carousel-track { animation-duration: 28s; } }
+          @media (max-width: 639px) {
+            .hero-service-track { animation-duration: 32s; }
+            .opportunities-carousel-track { animation-duration: 28s; }
+          }
         `}</style>
       </section>
 
