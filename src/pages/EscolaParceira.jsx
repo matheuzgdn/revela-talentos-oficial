@@ -416,16 +416,10 @@ export default function EscolaParceira() {
                         </span>
                       </div>
 
-                      <div className="absolute inset-x-3 bottom-3 rounded-[1.65rem] border border-white/16 bg-[linear-gradient(180deg,rgba(11,17,27,0.78),rgba(7,12,20,0.88))] p-4 shadow-[0_22px_60px_rgba(0,0,0,0.34)] backdrop-blur-[18px] sm:inset-x-4 sm:bottom-4 sm:p-5">
-                        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full border border-cyan-400/24 bg-cyan-500/10 text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.12)]">
-                          <card.icon className="h-4 w-4" strokeWidth={2.1} />
-                        </div>
+                      <div className="absolute inset-x-3 bottom-3 rounded-[1.65rem] border border-white/16 bg-[linear-gradient(180deg,rgba(11,17,27,0.7),rgba(7,12,20,0.86))] p-4 shadow-[0_22px_60px_rgba(0,0,0,0.34)] backdrop-blur-[18px] sm:inset-x-4 sm:bottom-4 sm:p-5">
                         <h3 className="max-w-[12ch] text-[1.12rem] font-black uppercase leading-[0.96] tracking-tight text-white sm:text-[1.3rem]">
                           {card.title}
                         </h3>
-                        <p className="mt-3 text-[12px] leading-[1.48rem] text-white/86 sm:text-[13px] sm:leading-[1.62rem]">
-                          {card.description}
-                        </p>
                         <div className="mt-4 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.24em] text-cyan-300">
                           Saber mais
                           <span className="text-base leading-none">+</span>
