@@ -209,7 +209,6 @@ function FAQItem({ q, a }) {
 
 export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
-  const [showOpportunityHero, setShowOpportunityHero] = useState(false);
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
   const [partnerSchools, setPartnerSchools] = useState([]);
   const [isLoadingSchools, setIsLoadingSchools] = useState(false);
@@ -276,7 +275,6 @@ export default function EscolaParceira() {
     const target = document.getElementById('inscricao-revela');
     if (!target) return;
     target.scrollIntoView({ behavior: 'smooth', block: window.innerWidth < 640 ? 'center' : 'start' });
-    setShowOpportunityHero(true);
     target.classList.remove('signup-spotlight');
     void target.offsetWidth;
     target.classList.add('signup-spotlight');
@@ -380,13 +378,13 @@ export default function EscolaParceira() {
         </div>
 
         <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-[43svh] sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
-          <div className="max-w-3xl">
+          <div className="w-full">
             <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:gap-4">
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Escolas Parceiras</span>
             </div>
 
-            <div className="space-y-5 font-['Inter']">
+            <div className="max-w-3xl space-y-5 font-['Inter']">
               <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
               <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
                 Para os pais de atletas das nossas escolas parceiras, este Ã© o momento de entender como a Revela Talentos pode fortalecer disciplina, confianÃ§a e visÃ£o de futuro no dia a dia dos seus filhos. Em uma apresentaÃ§Ã£o com linguagem clara e impacto cinematogrÃ¡fico, vocÃª vai conhecer a metodologia, os benefÃ­cios da parceria e como essa jornada apoia o desenvolvimento esportivo, escolar e humano de cada aluno.
@@ -394,43 +392,22 @@ export default function EscolaParceira() {
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
-              <div className="hero-host-card flex max-w-full items-center gap-3 rounded-[20px] border border-cyan-400/18 bg-[linear-gradient(135deg,rgba(15,23,42,0.88),rgba(8,47,73,0.52))] px-3.5 py-3.5 shadow-[0_24px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:max-w-[460px] sm:gap-4 sm:rounded-[22px] sm:px-4 sm:py-4">
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 rounded-full bg-cyan-400/25 blur-md" />
-                  <img
-                    src="https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg"
-                    alt="Eric Cena"
-                    className="relative h-12 w-12 rounded-full border border-white/20 object-cover sm:h-14 sm:w-14"
-                  />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[10px] sm:tracking-[0.28em]">
-                    ApresentaÃ§Ã£o Especial
-                  </p>
-                  <p className="mt-1 text-base font-bold tracking-tight text-white sm:text-lg">
-                    Eric Cena
-                  </p>
-                  <p className="text-xs text-white/68 sm:text-sm">
-                    Fundador da Revela Talentos e responsÃ¡vel pela live de lanÃ§amento.
-                  </p>
-                </div>
-              </div>
-
-              <div className="hero-service-row flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pr-2 sm:gap-4">
+              <div className="hero-service-row -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 sm:gap-5 sm:px-0">
                 {heroServiceCards.map((card) => (
                   <button
                     key={card.title}
                     type="button"
                     onClick={scrollToSignupCta}
-                    className="group relative h-[410px] min-w-[250px] max-w-[292px] shrink-0 snap-start overflow-hidden rounded-[1.9rem] border border-white/10 bg-[#040507] text-left shadow-[0_28px_80px_rgba(0,0,0,0.34)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/25 sm:h-[470px] sm:min-w-[282px] sm:max-w-[322px]"
+                    className="group relative h-[420px] min-w-[255px] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.4)] transition-all duration-300 hover:-translate-y-1 sm:h-[520px] sm:min-w-[318px] sm:max-w-[356px]"
                   >
                     <img
                       src={card.image}
                       alt={card.title}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.06)_0%,rgba(0,0,0,0.14)_34%,rgba(0,0,0,0.78)_100%)]" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.12),transparent_32%)]" />
+                    <div className="absolute inset-0 rounded-[2rem] border border-white/8" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.03)_0%,rgba(0,0,0,0.12)_32%,rgba(0,0,0,0.72)_100%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_30%)]" />
 
                     <div className="relative z-10 h-full p-4 sm:p-5">
                       <div className="flex items-start justify-between gap-3">
@@ -439,14 +416,14 @@ export default function EscolaParceira() {
                         </span>
                       </div>
 
-                      <div className="absolute inset-x-3 bottom-3 rounded-[1.55rem] border border-white/14 bg-[linear-gradient(180deg,rgba(8,11,18,0.94),rgba(6,9,15,0.9))] p-4 shadow-[0_18px_44px_rgba(0,0,0,0.3)] backdrop-blur-xl sm:inset-x-4 sm:bottom-4 sm:p-5">
-                        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-500/10 text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.12)]">
+                      <div className="absolute inset-x-3 bottom-3 rounded-[1.65rem] border border-white/16 bg-[linear-gradient(180deg,rgba(11,17,27,0.78),rgba(7,12,20,0.88))] p-4 shadow-[0_22px_60px_rgba(0,0,0,0.34)] backdrop-blur-[18px] sm:inset-x-4 sm:bottom-4 sm:p-5">
+                        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full border border-cyan-400/24 bg-cyan-500/10 text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.12)]">
                           <card.icon className="h-4 w-4" strokeWidth={2.1} />
                         </div>
-                        <h3 className="max-w-[11ch] text-[1.05rem] font-black uppercase leading-[0.95] tracking-tight text-white sm:text-[1.15rem]">
+                        <h3 className="max-w-[12ch] text-[1.12rem] font-black uppercase leading-[0.96] tracking-tight text-white sm:text-[1.3rem]">
                           {card.title}
                         </h3>
-                        <p className="mt-3 text-[12px] leading-[1.45rem] text-white/82 sm:text-[13px] sm:leading-[1.55rem]">
+                        <p className="mt-3 text-[12px] leading-[1.48rem] text-white/86 sm:text-[13px] sm:leading-[1.62rem]">
                           {card.description}
                         </p>
                         <div className="mt-4 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.24em] text-cyan-300">
@@ -458,12 +435,6 @@ export default function EscolaParceira() {
                   </button>
                 ))}
               </div>
-              {showOpportunityHero && (
-                <div className="rounded-[1.35rem] border border-cyan-400/14 bg-[linear-gradient(135deg,rgba(8,47,73,0.22),rgba(15,23,42,0.54))] px-4 py-3.5 shadow-[0_18px_42px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:max-w-[520px] sm:px-5">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[11px]">Oportunidade exclusiva</p>
-                  <p className="mt-1 text-sm leading-6 text-white/78 sm:text-[15px]">Para atletas no Revela Talentos. Inscreva-se agora e avance para os CTAs abaixo.</p>
-                </div>
-              )}
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border-0 bg-white px-5 py-3 text-sm font-semibold leading-tight text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90 sm:min-h-[56px] md:w-auto md:px-6 md:text-base">
