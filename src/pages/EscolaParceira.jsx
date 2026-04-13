@@ -506,8 +506,6 @@ export default function EscolaParceira() {
 
         <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-[43svh] sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="w-full">
-            <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
-            
             <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] mt-8 sm:mb-6 sm:gap-4 sm:mt-0">
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Escolas Parceiras</span>
@@ -620,6 +618,8 @@ export default function EscolaParceira() {
                 ))}
                 </div>
               </div>
+
+              <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold leading-tight text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
