@@ -67,6 +67,7 @@ function LayoutInner({ children, currentPageName }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
+  const isLandingPage = ['escola-parceira', 'vsl-escola-parceira', 'cases-sucesso-atletas'].includes(currentPageName);
 
 
   const loadUser = useCallback(async () => {
@@ -184,7 +185,7 @@ function LayoutInner({ children, currentPageName }) {
 
       <div className="min-h-screen flex w-full bg-black">
         {/* Desktop Sidebar */}
-        {user && <div
+        {user && !isLandingPage && <div
           className={`hidden md:block fixed left-0 top-0 h-full z-50 transition-all duration-300 ease-in-out ${sidebarExpanded ? 'w-64' : 'w-20'}`}
           onMouseEnter={() => setSidebarExpanded(true)}
           onMouseLeave={() => setSidebarExpanded(false)}>
@@ -285,7 +286,7 @@ function LayoutInner({ children, currentPageName }) {
         </div>}
 
         {/* Mobile Header */}
-        {user && <header className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 bg-gradient-to-b from-black via-black/95 to-black/80 backdrop-blur-xl border-b border-cyan-500/20">
+        {user && !isLandingPage && <header className="md:hidden fixed top-0 left-0 right-0 h-14 z-40 bg-gradient-to-b from-black via-black/95 to-black/80 backdrop-blur-xl border-b border-cyan-500/20">
           <div className="flex items-center justify-end h-full px-4">
             {hasLiveContent && (
               <div className="absolute left-4 flex items-center gap-2 bg-red-600/20 border border-red-500 rounded-full px-3 py-1">
@@ -408,8 +409,8 @@ function LayoutInner({ children, currentPageName }) {
         }
 
         {/* Main content */}
-        <main className={`flex-1 overflow-auto bg-black transition-all duration-300 ${user ? (sidebarExpanded ? 'md:ml-64' : 'md:ml-20') : ''}`}>
-          <div className={user ? 'pt-16 md:pt-0' : ''}>
+        <main className={`flex-1 overflow-auto bg-black transition-all duration-300 ${user && !isLandingPage ? (sidebarExpanded ? 'md:ml-64' : 'md:ml-20') : ''}`}>
+          <div className={user && !isLandingPage ? 'pt-16 md:pt-0' : ''}>
             {children}
           </div>
         </main>

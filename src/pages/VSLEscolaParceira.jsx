@@ -66,7 +66,10 @@ export default function VSLEscolaParceira() {
     <div className="relative min-h-screen overflow-hidden bg-[#040507] font-sans text-white">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,243,255,0.08),transparent_34%),radial-gradient(circle_at_bottom,rgba(37,99,235,0.12),transparent_38%)]" />
 
-      <header className="absolute left-0 right-0 top-0 z-50">
+      <header 
+        className="absolute left-0 right-0 top-0 z-50"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 sm:px-6">
           <Link to="/escola-parceira" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-white">
             <ArrowLeft className="h-5 w-5" /> Voltar

@@ -80,7 +80,7 @@ const AuthenticatedApp = () => {
       } />
       <Route path="/checkout" element={<Navigate to="/thanks" replace />} />
       {Object.entries(Pages).map(([path, Page]) => {
-        const isPublicPage = ['escola-parceira', 'vsl-escola-parceira'].includes(path);
+        const isPublicPage = ['cases-sucesso-atletas', 'escola-parceira', 'vsl-escola-parceira'].includes(path);
         return (
           <Route
             key={path}
