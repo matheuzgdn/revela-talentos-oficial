@@ -518,10 +518,7 @@ export default function EscolaParceira() {
               </p>
               <div className="pt-2">
                 <h2 className="text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
-                  BENEFÍCIOS
-                  <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
-                    REVELA TALENTOS
-                  </span>
+                  Outros Benefícios
                 </h2>
               </div>
             </div>

@@ -2,8 +2,8 @@ import React from 'react';
 
 const servicesSection = {
   eyebrow: '/ Vantagens Exclusivas',
-  title: 'BENEFÍCIOS',
-  outlinedWord: 'REVELA TALENTOS',
+  title: 'OUTROS',
+  outlinedWord: 'BENEFÍCIOS',
   services: [
     {
       title: 'Nutricionista',
