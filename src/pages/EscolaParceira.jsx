@@ -210,6 +210,7 @@ function FAQItem({ q, a }) {
 export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
+  const [activeHeroService, setActiveHeroService] = useState(null);
   const [partnerSchools, setPartnerSchools] = useState([]);
   const [isLoadingSchools, setIsLoadingSchools] = useState(false);
   const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
@@ -284,6 +285,15 @@ export default function EscolaParceira() {
     signupHighlightTimeoutRef.current = window.setTimeout(() => {
       target.classList.remove('signup-spotlight');
     }, 1800);
+  };
+
+  const openHeroService = (card) => {
+    setActiveHeroService(card);
+  };
+
+  const handleHeroServiceSchedule = () => {
+    setActiveHeroService(null);
+    setIsSchedulingOpen(true);
   };
 
   const handleScheduleFieldChange = (field, value) => {
@@ -394,10 +404,8 @@ export default function EscolaParceira() {
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
               <div className="hero-service-row -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 sm:gap-5 sm:px-0">
                 {heroServiceCards.map((card) => (
-                  <button
+                  <article
                     key={card.title}
-                    type="button"
-                    onClick={scrollToSignupCta}
                     className="group relative h-[420px] min-w-[255px] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.4)] transition-all duration-300 hover:-translate-y-1 sm:h-[520px] sm:min-w-[318px] sm:max-w-[356px]"
                   >
                     <img
@@ -408,6 +416,7 @@ export default function EscolaParceira() {
                     <div className="absolute inset-0 rounded-[2rem] border border-white/8" />
                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.03)_0%,rgba(0,0,0,0.12)_32%,rgba(0,0,0,0.72)_100%)]" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_30%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.05)_0%,rgba(255,255,255,0.01)_18%,transparent_36%)]" />
 
                     <div className="relative z-10 h-full p-4 sm:p-5">
                       <div className="flex items-start justify-between gap-3">
@@ -416,17 +425,22 @@ export default function EscolaParceira() {
                         </span>
                       </div>
 
-                      <div className="absolute inset-x-3 bottom-3 rounded-[1.65rem] border border-white/16 bg-[linear-gradient(180deg,rgba(11,17,27,0.7),rgba(7,12,20,0.86))] p-4 shadow-[0_22px_60px_rgba(0,0,0,0.34)] backdrop-blur-[18px] sm:inset-x-4 sm:bottom-4 sm:p-5">
+                      <div className="absolute inset-x-3 bottom-3 overflow-hidden rounded-[1.65rem] border border-white/22 bg-[linear-gradient(180deg,rgba(13,20,32,0.46),rgba(6,10,18,0.78))] p-4 shadow-[0_22px_60px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.15)] backdrop-blur-[28px] sm:inset-x-4 sm:bottom-4 sm:p-5">
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,transparent_42%,rgba(34,211,238,0.06)_100%)]" />
                         <h3 className="max-w-[12ch] text-[1.12rem] font-black uppercase leading-[0.96] tracking-tight text-white sm:text-[1.3rem]">
                           {card.title}
                         </h3>
-                        <div className="mt-4 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.24em] text-cyan-300">
+                        <button
+                          type="button"
+                          onClick={() => openHeroService(card)}
+                          className="relative z-10 mt-4 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.24em] text-cyan-300 transition-colors duration-300 hover:text-white"
+                        >
                           Saber mais
                           <span className="text-base leading-none">+</span>
-                        </div>
+                        </button>
                       </div>
                     </div>
-                  </button>
+                  </article>
                 ))}
               </div>
 
@@ -510,6 +524,63 @@ export default function EscolaParceira() {
           @media (max-width: 639px) { .opportunities-carousel-track { animation-duration: 28s; } }
         `}</style>
       </section>
+
+      <Dialog open={!!activeHeroService} onOpenChange={(open) => !open && setActiveHeroService(null)}>
+        <DialogContent className="overflow-hidden border border-cyan-400/20 bg-[#050811] p-0 text-white sm:max-w-3xl">
+          {activeHeroService && (
+            <div className="relative">
+              <div className="absolute inset-0">
+                <img
+                  src={activeHeroService.image}
+                  alt={activeHeroService.title}
+                  className="h-full w-full object-cover opacity-30"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(4,7,12,0.96)_12%,rgba(4,7,12,0.82)_48%,rgba(4,7,12,0.92)_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.22),transparent_34%)]" />
+              </div>
+
+              <div className="relative z-10 p-6 sm:p-8">
+                <DialogHeader className="space-y-4 text-left">
+                  <Badge className="w-fit border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-300">
+                    {activeHeroService.tag}
+                  </Badge>
+                  <DialogTitle className="max-w-[14ch] text-3xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-[2.6rem]">
+                    {activeHeroService.title}
+                  </DialogTitle>
+                  <DialogDescription className="max-w-2xl text-sm leading-7 text-white/[0.76] sm:text-[15px]">
+                    {activeHeroService.description}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="mt-6 rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(13,20,32,0.38),rgba(5,10,18,0.74))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[24px] sm:p-6">
+                  <div className="flex flex-col gap-3 text-sm text-white/[0.72] sm:flex-row sm:items-center sm:justify-between">
+                    <p className="max-w-xl leading-6">
+                      Veja os detalhes da oportunidade e, se fizer sentido para sua familia, siga para o agendamento com a Revela Talentos.
+                    </p>
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <Button
+                        type="button"
+                        onClick={handleHeroServiceSchedule}
+                        className="h-12 rounded-none border-0 bg-white px-6 text-sm font-semibold text-black hover:bg-white/90"
+                      >
+                        Agendar agora
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setActiveHeroService(null)}
+                        className="h-12 rounded-none border-white/[0.18] bg-transparent px-6 text-sm font-semibold text-white hover:bg-white/[0.08]"
+                      >
+                        Fechar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isSchedulingOpen} onOpenChange={setIsSchedulingOpen}>
         <DialogContent className="max-h-[92vh] overflow-y-auto border border-cyan-400/20 bg-[#050811] p-0 text-white sm:max-w-2xl">
