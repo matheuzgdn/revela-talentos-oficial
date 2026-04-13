@@ -228,21 +228,11 @@ function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
         <Button
           type="button"
           onClick={onPrimaryClick}
-          className="hero-cta-alert mt-6 h-12 w-full rounded-[1.15rem] border border-red-300/20 px-6 pr-14 text-sm font-bold text-white sm:h-14 sm:text-base"
+          className="hero-cta-alert mt-6 h-12 w-full rounded-[1.15rem] border border-red-300/20 px-6 text-sm font-bold text-white sm:h-14 sm:text-base"
         >
           <Calendar className="mr-2.5 h-4 w-4 sm:h-5 sm:w-5" />
           Agendar Lembrete na Live
         </Button>
-
-        <a
-          href="https://wa.me/351960071218"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Falar no WhatsApp"
-          className="absolute bottom-4 right-4 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.96),rgba(22,163,74,0.92))] text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_20px_rgba(34,197,94,0.38),0_18px_34px_rgba(20,83,45,0.28)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.18),0_0_26px_rgba(74,222,128,0.46),0_24px_42px_rgba(20,83,45,0.34)] sm:bottom-5 sm:right-5 sm:h-14 sm:w-14"
-        >
-          <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-        </a>
       </div>
     </div>
   );
@@ -458,6 +448,16 @@ export default function EscolaParceira() {
     <div className="bg-[#040507] min-h-screen text-white overflow-x-hidden">
       {/* Background Effect globally */}
       <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(0,243,255,0.08),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_30%)]" />
+
+      <a
+        href="https://wa.me/351960071218"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Falar no WhatsApp"
+        className="fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 items-center justify-center rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6 sm:h-16 sm:w-16"
+      >
+        <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" />
+      </a>
 
       {/* STICKY HEADER */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'}`}>
