@@ -628,14 +628,18 @@ export default function EscolaParceira() {
               </div>
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
-                <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold leading-tight text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
+                <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
                   <Calendar className="h-5 w-5" />
-                  Agendar agora
+                  Quero me inscrever agora
                 </Button>
-                <Button asChild className="hero-cta-secondary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-5 py-3 text-sm font-semibold leading-tight text-white sm:min-h-[58px] md:w-auto md:max-w-[360px] md:px-6 md:text-base">
+                <Button asChild className="hero-cta-secondary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-5 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.03em] text-white sm:min-h-[58px] md:w-auto md:max-w-[560px] md:px-6 md:text-base">
                   <Link to="/vsl-escola-parceira">
                     <ArrowRight className="h-4 w-4" />
+                    <span className="hero-cta-secondary-copy">{"N\u00E3o poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos"}</span>
+                    <span>Não poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos</span>
+                    <span className="hidden">
                     Não poderei participar nessa data, mas gostaria de saber.
+                    </span>
                   </Link>
                 </Button>
               </div>
@@ -661,11 +665,17 @@ export default function EscolaParceira() {
           }
           @keyframes neon-pulse-cyan {
             0%, 100% {
-              box-shadow: 0 0 0 1px rgba(103,232,249,0.18), 0 0 14px rgba(34,211,238,0.22), 0 18px 34px rgba(8,145,178,0.2);
+              box-shadow: 0 0 0 1px rgba(125,244,255,0.28), 0 0 18px rgba(34,211,238,0.28), 0 0 42px rgba(34,211,238,0.22), 0 18px 38px rgba(8,145,178,0.24);
             }
             50% {
-              box-shadow: 0 0 0 1px rgba(165,243,252,0.34), 0 0 26px rgba(34,211,238,0.42), 0 22px 46px rgba(14,116,144,0.32);
+              box-shadow: 0 0 0 1px rgba(207,250,254,0.42), 0 0 30px rgba(34,211,238,0.48), 0 0 72px rgba(34,211,238,0.34), 0 24px 52px rgba(14,116,144,0.34);
             }
+          }
+          @keyframes hero-cta-primary-sheen {
+            0% { transform: translateX(-140%) skewX(-18deg); opacity: 0; }
+            18% { opacity: 0.82; }
+            38% { transform: translateX(180%) skewX(-18deg); opacity: 0; }
+            100% { transform: translateX(180%) skewX(-18deg); opacity: 0; }
           }
           @keyframes neon-pulse-blue {
             0%, 100% {
@@ -692,8 +702,22 @@ export default function EscolaParceira() {
             }
           }
           .hero-cta-primary {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
             background: linear-gradient(135deg, rgba(11,238,255,0.98) 0%, rgba(29,78,216,0.96) 100%);
-            animation: neon-pulse-cyan 2.7s ease-in-out infinite;
+            animation: neon-pulse-cyan 2.15s ease-in-out infinite;
+          }
+          .hero-cta-primary::after {
+            content: '';
+            position: absolute;
+            inset: -10% auto -10% -30%;
+            width: 40%;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.72) 48%, rgba(255,255,255,0) 100%);
+            filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            animation: hero-cta-primary-sheen 3.4s ease-in-out infinite;
           }
           .hero-cta-primary:hover {
             background: linear-gradient(135deg, rgba(57,243,255,1) 0%, rgba(37,99,235,1) 100%);
@@ -702,6 +726,9 @@ export default function EscolaParceira() {
           .hero-cta-secondary {
             background: linear-gradient(135deg, rgba(15,23,42,0.96) 0%, rgba(30,64,175,0.9) 54%, rgba(37,99,235,0.95) 100%);
             animation: neon-pulse-blue 2.9s ease-in-out infinite;
+          }
+          .hero-cta-secondary a > span:not(.hero-cta-secondary-copy) {
+            display: none;
           }
           .hero-cta-secondary:hover {
             background: linear-gradient(135deg, rgba(15,23,42,1) 0%, rgba(37,99,235,0.96) 55%, rgba(56,189,248,0.92) 100%);
