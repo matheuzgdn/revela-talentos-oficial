@@ -514,7 +514,7 @@ export default function EscolaParceira() {
             <div className="max-w-3xl space-y-5 font-['Inter']">
               <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
               <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
-                Para os pais de atletas das nossas escolas parceiras, este é o momento de entender como a Revela Talentos pode fortalecer disciplina, confiança e visão de futuro no dia a dia dos seus filhos. Em uma apresentação com linguagem clara e impacto cinematográfico, você vai conhecer a metodologia, os benefícios da parceria e como essa jornada apoia o desenvolvimento esportivo, escolar e humano de cada aluno.
+                Plataforma especializada em educação esportiva e conectar atletas talentosos em clubes do mundo inteiro.
               </p>
             </div>
 
