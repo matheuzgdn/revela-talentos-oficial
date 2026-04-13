@@ -21,7 +21,7 @@ export default function CheckoutSuccess({ platformUrlOverride }) {
     orderId: "RT-" + Math.floor(Math.random() * 1000000),
     date: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }),
     plan: "Plano",
-    status: "Acesso Liberado",
+    status: "Acesso Pendente",
     amount: "R$ 297,00"
   };
 
@@ -61,7 +61,7 @@ export default function CheckoutSuccess({ platformUrlOverride }) {
             
             {/* Left side: Success Message */}
             <div className="space-y-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 mb-4 animate-[pulse_2s_infinite]">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 mb-4 animate-[pulse_2s_infinite]">
                 <CheckCircle className="w-10 h-10" />
               </div>
               
@@ -70,9 +70,9 @@ export default function CheckoutSuccess({ platformUrlOverride }) {
                   Sua jornada de <br/>
                   <span className="text-yellow-400">Elite</span> começa agora.
                 </h1>
-                <p className="text-gray-400 text-lg">
+                <div className="text-gray-400 text-lg space-y-3"><p>Boleto gerado com sucesso.</p><p>Realize o pagamento dentro do prazo para garantir sua participação. Após a compensação bancária, que pode levar de 1 a 3 dias úteis, todos os dados de acesso serão enviados para o e-mail cadastrado.</p><p>Dê o próximo passo rumo à sua carreira no futebol.</p><span className="hidden">
                   Pagamento confirmado com sucesso. Você acaba de dar o primeiro passo para transformar sua carreira no futebol.
-                </p>
+                </span></div>
               </div>
 
               <div className="flex gap-4">
@@ -129,7 +129,7 @@ export default function CheckoutSuccess({ platformUrlOverride }) {
                   </div>
                   <div>
                     <p className="text-gray-500 text-sm mb-1 flex items-center gap-1"><CheckCircle className="w-4 h-4"/> Status</p>
-                    <p className="text-green-400 font-medium">{clientInfo.status}</p>
+                    <p className="text-yellow-400 font-medium">{clientInfo.status}</p>
                   </div>
                   <div>
                     <p className="text-gray-500 text-sm mb-1 flex items-center gap-1"><Calendar className="w-4 h-4"/> Data</p>
