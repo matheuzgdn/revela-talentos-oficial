@@ -216,8 +216,8 @@ function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
         <Badge className="border border-red-500/25 bg-red-500/14 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-red-300">
           Dia 20 de Abril
         </Badge>
-        <h3 className="mt-5 text-[2rem] font-black leading-[0.95] text-white sm:text-[2.6rem]">
-          Sua Presença é <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>Fundamental!</span>
+        <h3 className="mt-5 text-[2.2rem] font-black leading-[0.95] text-white sm:text-[3rem]">
+          <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>INSCRIÇÃO GRATUITA</span>
         </h3>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/76 sm:text-base">
           Nós te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenção nas mensagens oficiais enviadas pela escola e não perca.
