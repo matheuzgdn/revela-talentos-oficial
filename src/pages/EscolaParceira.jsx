@@ -477,7 +477,7 @@ export default function EscolaParceira() {
         </div>
       </header>
 
-      {/* HERO â€” Netflix title-page layout */}
+      {/* HERO — Netflix title-page layout */}
       <section className="relative min-h-0 overflow-hidden escola-parceira-hero bg-black sm:min-h-[100vh]">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <video
@@ -506,7 +506,9 @@ export default function EscolaParceira() {
 
         <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-[43svh] sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="w-full">
-            <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:gap-4">
+            <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
+            
+            <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] mt-8 sm:mb-6 sm:gap-4 sm:mt-0">
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Escolas Parceiras</span>
             </div>
@@ -519,8 +521,47 @@ export default function EscolaParceira() {
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
+              <div className="grid gap-4 sm:hidden">
+                {heroServiceCards.map((card) => (
+                  <article
+                    key={card.title}
+                    className="group relative min-h-[330px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#040507] text-left shadow-[0_30px_90px_rgba(0,0,0,0.38),0_0_30px_rgba(14,165,233,0.08)]"
+                  >
+                    {isVideoMedia(card.image) ? (
+                      <video
+                        className="absolute inset-0 h-full w-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                      >
+                        <source src={card.image} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <img
+                        src={card.image}
+                        alt={card.title}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.06)_0%,rgba(0,0,0,0.12)_24%,rgba(0,0,0,0.92)_100%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_32%)]" />
+                    <div className="absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(180deg,transparent_0%,rgba(4,7,12,0.26)_24%,rgba(4,7,12,0.96)_100%)]" />
+
+                    <div className="relative z-10 flex h-full flex-col justify-end p-5">
+                      <h3 className="max-w-[12ch] text-[1.35rem] font-black uppercase leading-[0.95] tracking-tight text-white [text-shadow:0_6px_20px_rgba(0,0,0,0.9),0_14px_36px_rgba(0,0,0,0.86)]">
+                        {card.title}
+                      </h3>
+                      <p className="mt-3 text-[12px] leading-5 text-white/78 [text-shadow:0_5px_16px_rgba(0,0,0,0.82)]">
+                        {card.description}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
               <div
-                className="hero-service-mask relative -mx-1 overflow-x-auto overflow-y-visible px-1 [--hero-gap:0.75rem] sm:mx-0 sm:px-0 sm:[--hero-gap:1.25rem]"
+                className="hero-service-mask relative -mx-1 hidden overflow-x-auto overflow-y-visible px-1 [--hero-gap:0.75rem] sm:mx-0 sm:block sm:px-0 sm:[--hero-gap:1.25rem]"
                 onTouchStart={pauseHeroCarousel}
                 onTouchEnd={resumeHeroCarouselSoon}
                 onTouchCancel={resumeHeroCarouselSoon}
@@ -579,8 +620,6 @@ export default function EscolaParceira() {
                 ))}
                 </div>
               </div>
-
-              <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold leading-tight text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
