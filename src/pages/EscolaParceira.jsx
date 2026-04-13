@@ -242,7 +242,7 @@ function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
         <Button
           type="button"
           onClick={onPrimaryClick}
-          className="mt-6 h-12 w-full rounded-xl border-0 bg-gradient-to-r from-red-600 to-red-500 px-6 text-sm font-bold text-white shadow-[0_20px_40px_rgba(239,68,68,0.28)] hover:from-red-500 hover:to-red-400 sm:h-14 sm:text-base"
+          className="hero-cta-alert mt-6 h-12 w-full rounded-[1.15rem] border border-red-300/20 px-6 text-sm font-bold text-white sm:h-14 sm:text-base"
         >
           <Calendar className="mr-2.5 h-4 w-4 sm:h-5 sm:w-5" />
           Agendar Lembrete na Live
@@ -636,6 +636,22 @@ export default function EscolaParceira() {
               box-shadow: 0 0 0 1px rgba(147,197,253,0.28), 0 0 28px rgba(59,130,246,0.34), 0 24px 48px rgba(30,64,175,0.3);
             }
           }
+          @keyframes neon-pulse-red {
+            0%, 100% {
+              box-shadow: 0 0 0 1px rgba(252,165,165,0.14), 0 0 16px rgba(239,68,68,0.22), 0 18px 34px rgba(153,27,27,0.24);
+            }
+            50% {
+              box-shadow: 0 0 0 1px rgba(254,202,202,0.24), 0 0 28px rgba(248,113,113,0.34), 0 24px 48px rgba(185,28,28,0.32);
+            }
+          }
+          @keyframes neon-pulse-violet {
+            0%, 100% {
+              box-shadow: 0 0 0 1px rgba(196,181,253,0.14), 0 0 14px rgba(139,92,246,0.22), 0 18px 34px rgba(76,29,149,0.24);
+            }
+            50% {
+              box-shadow: 0 0 0 1px rgba(221,214,254,0.26), 0 0 28px rgba(167,139,250,0.36), 0 24px 48px rgba(91,33,182,0.32);
+            }
+          }
           .hero-cta-primary {
             background: linear-gradient(135deg, rgba(11,238,255,0.98) 0%, rgba(29,78,216,0.96) 100%);
             animation: neon-pulse-cyan 2.7s ease-in-out infinite;
@@ -650,6 +666,22 @@ export default function EscolaParceira() {
           }
           .hero-cta-secondary:hover {
             background: linear-gradient(135deg, rgba(15,23,42,1) 0%, rgba(37,99,235,0.96) 55%, rgba(56,189,248,0.92) 100%);
+            transform: translateY(-1px);
+          }
+          .hero-cta-alert {
+            background: linear-gradient(135deg, rgba(220,38,38,0.96) 0%, rgba(248,113,113,0.94) 100%);
+            animation: neon-pulse-red 2.8s ease-in-out infinite;
+          }
+          .hero-cta-alert:hover {
+            background: linear-gradient(135deg, rgba(239,68,68,1) 0%, rgba(251,113,133,0.96) 100%);
+            transform: translateY(-1px);
+          }
+          .hero-cta-submit {
+            background: linear-gradient(135deg, rgba(79,70,229,0.96) 0%, rgba(14,165,233,0.92) 100%);
+            animation: neon-pulse-violet 2.9s ease-in-out infinite;
+          }
+          .hero-cta-submit:hover {
+            background: linear-gradient(135deg, rgba(99,102,241,1) 0%, rgba(56,189,248,0.94) 100%);
             transform: translateY(-1px);
           }
           @keyframes hero-services-marquee {
@@ -767,7 +799,7 @@ export default function EscolaParceira() {
                       <Button
                         type="button"
                         onClick={handleHeroServiceSchedule}
-                        className="h-12 rounded-none border-0 bg-white px-6 text-sm font-semibold text-black hover:bg-white/90"
+                        className="hero-cta-primary h-12 rounded-[1.05rem] border border-cyan-200/35 px-6 text-sm font-semibold text-white"
                       >
                         Agendar agora
                       </Button>
@@ -775,7 +807,7 @@ export default function EscolaParceira() {
                         type="button"
                         variant="outline"
                         onClick={() => setActiveHeroService(null)}
-                        className="h-12 rounded-none border-white/[0.18] bg-transparent px-6 text-sm font-semibold text-white hover:bg-white/[0.08]"
+                        className="hero-cta-secondary h-12 rounded-[1.05rem] border border-blue-300/25 px-6 text-sm font-semibold text-white"
                       >
                         Fechar
                       </Button>
@@ -827,7 +859,7 @@ export default function EscolaParceira() {
               </div>
               <DialogFooter className="gap-3 border-t border-white/10 pt-5 sm:justify-between sm:space-x-0">
                 <p className="text-xs leading-5 text-white/45">Ao enviar, a sua solicitação entra na base de leads da Revela Talentos para confirmação da apresentação.</p>
-                <Button type="submit" disabled={isSubmittingSchedule} className="h-12 min-w-[180px] rounded-none border-0 bg-white px-6 text-sm font-semibold text-black hover:bg-white/90">{isSubmittingSchedule ? "Enviando..." : "Confirmar agendamento"}</Button>
+                <Button type="submit" disabled={isSubmittingSchedule} className="hero-cta-submit h-12 min-w-[180px] rounded-[1.05rem] border border-violet-300/20 px-6 text-sm font-semibold text-white">{isSubmittingSchedule ? "Enviando..." : "Confirmar agendamento"}</Button>
               </DialogFooter>
             </form>
           </div>
