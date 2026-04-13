@@ -516,6 +516,14 @@ export default function EscolaParceira() {
               <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
                 Plataforma especializada em educação esportiva e conectar atletas talentosos em clubes do mundo inteiro.
               </p>
+              <div className="pt-2">
+                <h2 className="text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
+                  BENEFÍCIOS
+                  <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
+                    REVELA TALENTOS
+                  </span>
+                </h2>
+              </div>
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
