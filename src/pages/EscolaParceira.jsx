@@ -120,14 +120,14 @@ const heroServiceCards = [
   },
   {
     title: 'Mentoria Esportiva',
-    tag: 'Alta Performance',
+    tag: 'Exclusivo',
     icon: Award,
     image: 'https://static.wixstatic.com/media/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg/v1/fill/w_600,h_437,al_c,q_80,enc_auto/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg',
     description: 'Transforme o talento do seu filho em desempenho de elite. Com minha mentoria, focamos no preparo mental e tecnico para enfrentar os desafios das categorias de base. O objetivo e um so: destaque absoluto e a transicao segura para o futebol profissional.',
   },
   {
     title: 'Mentoria para os Pais',
-    tag: 'Estrategia Familiar',
+    tag: 'Para os Pais',
     icon: Users,
     image: 'https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg',
     description: 'Prepare-se para ser o pilar estrategico na carreira do seu filho. Aprenda a tomar decisoes seguras, entender o mercado do futebol e assumir o papel de principal gestor da jornada esportiva dele. Transforme o sonho em um plano de carreira profissional.',
@@ -141,7 +141,7 @@ const heroServiceCards = [
   },
   {
     title: 'Seletiva Presencial',
-    tag: 'Captacao ao Vivo',
+    tag: 'Captacao',
     icon: Zap,
     image: 'https://static.wixstatic.com/media/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg/v1/fill/w_448,h_600,al_c,lg_1,q_80,enc_auto/933cdd_55eca19f9cf84b5da7f567431ebed772~mv2.jpg',
     description: 'Garanta sua vaga nas seletivas presenciais da EC10 Talentos. Estaremos em varios estados do Brasil com captadores de clubes parceiros e nosso staff completo para avaliar seu potencial.',
@@ -417,39 +417,36 @@ export default function EscolaParceira() {
               </div>
 
               <div className="hero-service-row flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pr-2 sm:gap-4">
-                {heroServiceCards.map((card, index) => (
+                {heroServiceCards.map((card) => (
                   <button
                     key={card.title}
                     type="button"
                     onClick={scrollToSignupCta}
-                    className="group relative h-[400px] min-w-[260px] max-w-[300px] shrink-0 snap-start overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#040507] text-left shadow-[0_28px_80px_rgba(0,0,0,0.34)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/25 sm:h-[460px] sm:min-w-[290px] sm:max-w-[330px]"
+                    className="group relative h-[410px] min-w-[250px] max-w-[292px] shrink-0 snap-start overflow-hidden rounded-[1.9rem] border border-white/10 bg-[#040507] text-left shadow-[0_28px_80px_rgba(0,0,0,0.34)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/25 sm:h-[470px] sm:min-w-[282px] sm:max-w-[322px]"
                   >
                     <img
                       src={card.image}
                       alt={card.title}
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.26)_38%,rgba(0,0,0,0.82)_100%)]" />
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.14),transparent_34%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.06)_0%,rgba(0,0,0,0.14)_34%,rgba(0,0,0,0.78)_100%)]" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.12),transparent_32%)]" />
 
-                    <div className="relative z-10 flex h-full flex-col justify-between p-4 sm:p-5">
+                    <div className="relative z-10 h-full p-4 sm:p-5">
                       <div className="flex items-start justify-between gap-3">
                         <span className="inline-flex items-center rounded-full border border-cyan-300/35 bg-[rgba(2,10,18,0.72)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-cyan-300 backdrop-blur-md">
                           {card.tag}
                         </span>
-                        <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/35">
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
                       </div>
 
-                      <div className="rounded-[1.5rem] border border-white/12 bg-[linear-gradient(180deg,rgba(7,12,20,0.92),rgba(6,9,15,0.86))] p-4 shadow-[0_18px_44px_rgba(0,0,0,0.28)] backdrop-blur-xl">
-                        <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.12)]">
-                          <card.icon className="h-4.5 w-4.5" strokeWidth={2.1} />
+                      <div className="absolute inset-x-3 bottom-3 rounded-[1.55rem] border border-white/14 bg-[linear-gradient(180deg,rgba(8,11,18,0.94),rgba(6,9,15,0.9))] p-4 shadow-[0_18px_44px_rgba(0,0,0,0.3)] backdrop-blur-xl sm:inset-x-4 sm:bottom-4 sm:p-5">
+                        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-500/10 text-cyan-200 shadow-[0_0_18px_rgba(34,211,238,0.12)]">
+                          <card.icon className="h-4 w-4" strokeWidth={2.1} />
                         </div>
-                        <h3 className="text-[1.55rem] font-black uppercase leading-[0.95] tracking-tight text-white sm:text-[1.7rem]">
+                        <h3 className="max-w-[11ch] text-[1.05rem] font-black uppercase leading-[0.95] tracking-tight text-white sm:text-[1.15rem]">
                           {card.title}
                         </h3>
-                        <p className="mt-3 min-h-[132px] text-[12px] leading-[1.2rem] text-white/74 sm:min-h-[156px] sm:text-[13px] sm:leading-[1.35rem]">
+                        <p className="mt-3 text-[12px] leading-[1.45rem] text-white/82 sm:text-[13px] sm:leading-[1.55rem]">
                           {card.description}
                         </p>
                         <div className="mt-4 inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.24em] text-cyan-300">
