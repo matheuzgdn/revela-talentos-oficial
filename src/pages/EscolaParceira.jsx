@@ -411,7 +411,7 @@ export default function EscolaParceira() {
                 {heroServiceCarouselCards.map((card, index) => (
                   <article
                     key={`${card.title}-${index}`}
-                    className="group relative h-[420px] min-w-[255px] max-w-[300px] shrink-0 overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 sm:h-[520px] sm:min-w-[318px] sm:max-w-[356px]"
+                    className="group relative aspect-square w-[255px] shrink-0 overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 sm:w-[320px]"
                   >
                     <img
                       src={card.image}
