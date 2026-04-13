@@ -561,12 +561,6 @@ export default function EscolaParceira() {
                     <div className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(180deg,transparent_0%,rgba(4,7,12,0.16)_22%,rgba(4,7,12,0.88)_100%)]" />
 
                     <div className="relative z-10 h-full p-4 sm:p-5">
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="inline-flex items-center rounded-full border border-cyan-300/35 bg-[rgba(2,10,18,0.72)] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-cyan-300 backdrop-blur-md">
-                          {card.tag}
-                        </span>
-                      </div>
-
                       <div className="absolute inset-x-4 bottom-4 sm:inset-x-5 sm:bottom-5">
                         <h3 className="max-w-[12ch] text-[1.12rem] font-black uppercase leading-[0.96] tracking-tight text-white [text-shadow:0_6px_20px_rgba(0,0,0,0.9),0_14px_36px_rgba(0,0,0,0.86)] sm:text-[1.3rem]">
                           {card.title}
