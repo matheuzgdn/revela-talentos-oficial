@@ -4,9 +4,9 @@ import { base44 } from "@/api/base44Client";
 import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos";
 import { Link } from "react-router-dom";
 import {
-  Sparkles, Award, LineChart, Users, Rocket,
+  Sparkles, Award, Users,
   ChevronDown, ChevronUp, ArrowRight,
-  Star, Globe, BookOpen, Shield, Zap, Calendar, User, Eye, MapPin, Lock
+  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -109,14 +109,6 @@ const statsData = {
   statTwoVideo: 'https://video.wixstatic.com/video/933cdd_eb14b07c4db843ac878f02fed62bb4c6/720p/mp4/file.mp4',
   countries: ['Espanha', 'Portugal', 'PolÃ´nia', 'EslovÃ¡quia', 'EUA'],
 };
-
-const heroPreviewCards = [
-  { title: 'Disciplina', icon: Shield },
-  { title: 'Performance', icon: Award },
-  { title: 'VisÃ£o', icon: Eye },
-  { title: 'EstratÃ©gia', icon: LineChart },
-  { title: 'Futuro', icon: Rocket },
-];
 
 const heroServiceCards = [
   {
@@ -424,22 +416,6 @@ export default function EscolaParceira() {
                 </div>
               </div>
 
-              <div className="hero-icon-row hero-feature-chips flex flex-nowrap gap-2 overflow-x-auto pb-2 pr-2 font-['Inter'] sm:gap-3">
-                {heroPreviewCards.map((card, index) => (
-                  <div
-                    key={card.title}
-                    className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-2 backdrop-blur-xl sm:gap-2.5 sm:px-3.5 sm:py-2.5 ${index === 0 ? 'border-cyan-300/70 bg-[rgba(8,47,73,0.72)] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)]' : 'border-white/12 bg-[rgba(15,23,42,0.62)] text-white/88 shadow-[0_10px_30px_rgba(0,0,0,0.2)]'}`}
-                  >
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full sm:h-9 sm:w-9 ${index === 0 ? 'bg-cyan-400/14' : 'bg-white/8'}`}>
-                      <card.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.1} />
-                    </div>
-                    <span className="whitespace-nowrap text-xs font-semibold tracking-wide sm:text-[13px]">
-                      {card.title}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
               <div className="hero-service-row flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pr-2 sm:gap-4">
                 {heroServiceCards.map((card, index) => (
                   <button
@@ -523,13 +499,6 @@ export default function EscolaParceira() {
           }
           .animate-cinematic-zoom {
             animation: cinematic-zoom 26s ease-in-out infinite;
-          }
-          .hero-icon-row {
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-          }
-          .hero-icon-row::-webkit-scrollbar {
-            display: none;
           }
           .hero-service-row {
             scrollbar-width: none;
