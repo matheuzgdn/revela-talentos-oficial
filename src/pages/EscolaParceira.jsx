@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useMemo, useRef } from "react";
 import MainLandingCarousel from "../components/hub/MainLandingCarousel";
 import { base44 } from "@/api/base44Client";
 import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos";
@@ -25,57 +25,57 @@ import { toast } from "sonner";
 // FAQs adaptadas para os Pais de Atletas
 const faqs = [
   {
-    q: "O que é a nova parceria da escola com a Revela Talentos?",
-    a: "É uma união inovadora onde a escola passa a contar com a metodologia de desenvolvimento humano, esportivo e socioemocional da EC10 Talentos, potencializando o aprendizado e a descoberta das vocações do seu filho dentro e fora das salas de aula."
+    q: "O que Ã© a nova parceria da escola com a Revela Talentos?",
+    a: "Ã‰ uma uniÃ£o inovadora onde a escola passa a contar com a metodologia de desenvolvimento humano, esportivo e socioemocional da EC10 Talentos, potencializando o aprendizado e a descoberta das vocaÃ§Ãµes do seu filho dentro e fora das salas de aula."
   },
   {
-    q: "Como será a Live de Lançamento com o Eric Cena?",
-    a: "No dia 20/04, Eric Cena, nosso fundador, fará uma apresentação especial explicando todos os pilares da metodologia, os benefícios diretos para sua família e as novas oportunidades que seu filho terá na escola."
+    q: "Como serÃ¡ a Live de LanÃ§amento com o Eric Cena?",
+    a: "No dia 20/04, Eric Cena, nosso fundador, farÃ¡ uma apresentaÃ§Ã£o especial explicando todos os pilares da metodologia, os benefÃ­cios diretos para sua famÃ­lia e as novas oportunidades que seu filho terÃ¡ na escola."
   },
   {
     q: "Posso acessar a plataforma para acompanhar meu filho?",
-    a: "Com certeza! A plataforma estimula a conexão família-escola, permitindo que os pais acompanhem de perto o engajamento esportivo, as métricas de saúde e o desenvolvimento socioemocional."
+    a: "Com certeza! A plataforma estimula a conexÃ£o famÃ­lia-escola, permitindo que os pais acompanhem de perto o engajamento esportivo, as mÃ©tricas de saÃºde e o desenvolvimento socioemocional."
   }
 ];
 
 // benefits constant removed as it's now handled by BeneficiosRevelaTalentos component
 
 const steps = [
-  { num: "01", icon: Calendar, title: "Live de Lançamento - Dia 20/04", desc: "Marque na sua agenda e assista ao evento oficial com Eric Cena. Descubra os detalhes impactantes dessa transformação no ensino." },
-  { num: "02", icon: User, title: "Recepção dos Acessos", desc: "A escola fará a orientação e distribuição das credenciais de acesso para que os estudantes configurem seu perfil na EC10." },
-  { num: "03", icon: Shield, title: "Acompanhe e Celebre", desc: "Veja a evolução através dos novos treinos, mentorias em vídeo e capacitações presentes no aplicativo." }
+  { num: "01", icon: Calendar, title: "Live de LanÃ§amento - Dia 20/04", desc: "Marque na sua agenda e assista ao evento oficial com Eric Cena. Descubra os detalhes impactantes dessa transformaÃ§Ã£o no ensino." },
+  { num: "02", icon: User, title: "RecepÃ§Ã£o dos Acessos", desc: "A escola farÃ¡ a orientaÃ§Ã£o e distribuiÃ§Ã£o das credenciais de acesso para que os estudantes configurem seu perfil na EC10." },
+  { num: "03", icon: Shield, title: "Acompanhe e Celebre", desc: "Veja a evoluÃ§Ã£o atravÃ©s dos novos treinos, mentorias em vÃ­deo e capacitaÃ§Ãµes presentes no aplicativo." }
 ];
 
 const testimonials = [
   {
-    name: "Mãe do Matheus (14 anos)",
-    school: "Colégio Horizonte Azul",
-    text: "Meu filho mudou radicalmente de postura em casa e nos estudos. A mentalidade que ele adotou agora é de um verdadeiro atleta nota 10!",
+    name: "MÃ£e do Matheus (14 anos)",
+    school: "ColÃ©gio Horizonte Azul",
+    text: "Meu filho mudou radicalmente de postura em casa e nos estudos. A mentalidade que ele adotou agora Ã© de um verdadeiro atleta nota 10!",
     rating: 5,
     avatar: "M"
   },
   {
     name: "Pai da Sofia (12 anos)",
-    school: "Instituto Nova Geração",
-    text: "Assistir às explicações sobre a metodologia me deu imensa segurança. Ter essa excelência junto ao colégio é um projeto brilhante.",
+    school: "Instituto Nova GeraÃ§Ã£o",
+    text: "Assistir Ã s explicaÃ§Ãµes sobre a metodologia me deu imensa seguranÃ§a. Ter essa excelÃªncia junto ao colÃ©gio Ã© um projeto brilhante.",
     rating: 5,
     avatar: "P"
   },
   {
-    name: "Mãe do Lucas (15 anos)",
-    school: "Colégio Atlas do Saber",
-    text: "Saber que a escola forma meu filho não somente como aluno, mas prepara o caráter humano pro mundo real, nos dá uma paz tremenda.",
+    name: "MÃ£e do Lucas (15 anos)",
+    school: "ColÃ©gio Atlas do Saber",
+    text: "Saber que a escola forma meu filho nÃ£o somente como aluno, mas prepara o carÃ¡ter humano pro mundo real, nos dÃ¡ uma paz tremenda.",
     rating: 5,
     avatar: "M"
   }
 ];
 
-// === DADOS E FUNÇÕES DE PROVAS SOCIAIS INJETADOS ===
+// === DADOS E FUNÃ‡Ã•ES DE PROVAS SOCIAIS INJETADOS ===
 const athleteSpotlights = {
   default: {
     eyebrow: '/ Atletas Revelados',
     highlight: 'DESENVOLVIMENTO',
-    description: 'Atletas e alunos que já vêm sendo forjados por nossa metodologia desde a base até o exterior.',
+    description: 'Atletas e alunos que jÃ¡ vÃªm sendo forjados por nossa metodologia desde a base atÃ© o exterior.',
     accent: 'cyan',
     items: [
       ['Theo e Luccas', 'America Mineiro', 'https://static.wixstatic.com/media/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg/v1/fill/w_600,h_437,al_c,q_80,enc_auto/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg'],
@@ -93,38 +93,66 @@ const marqueeCards = [
   ['NOVOHORIZONTINO', 'Brasil', 'https://static.wixstatic.com/media/933cdd_1bd05dce59264c96aaf31a31e0a59341~mv2.png'],
   ['ATLETICO', 'Espanha', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg'],
   ['SC BRAGA', 'Portugal', 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg'],
-  ['ROYAL CITY', 'Índia', 'https://static.wixstatic.com/media/933cdd_a60fbc26f42f402c9674ca2f869bbafe~mv2.jpeg'],
+  ['ROYAL CITY', 'Ãndia', 'https://static.wixstatic.com/media/933cdd_a60fbc26f42f402c9674ca2f869bbafe~mv2.jpeg'],
   ['AMERICA', 'Brasil', 'https://static.wixstatic.com/media/933cdd_14ccc273b64f4cabbe2e143c50b26878~mv2.png'],
 ];
 
 const statsData = {
   statOneValue: '150+',
   statOneLabel: 'ATLETAS AGENCIADOS / REVELADOS',
-  statOneText: 'Jovens em preparação para oportunidades reais no Brasil e no exterior.',
+  statOneText: 'Jovens em preparaÃ§Ã£o para oportunidades reais no Brasil e no exterior.',
   statOneImage: 'https://static.wixstatic.com/media/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg/v1/fill/w_450,h_600,al_c,q_80,enc_auto/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg',
   statTwoEyebrow: 'MERCADO INTERNACIONAL',
   statTwoValue: '+14',
-  statTwoTitle: 'PAÍSES',
+  statTwoTitle: 'PAÃSES',
   statTwoCaption: 'ATIVOS AGORA',
   statTwoVideo: 'https://video.wixstatic.com/video/933cdd_eb14b07c4db843ac878f02fed62bb4c6/720p/mp4/file.mp4',
-  countries: ['Espanha', 'Portugal', 'Polônia', 'Eslováquia', 'EUA'],
+  countries: ['Espanha', 'Portugal', 'PolÃ´nia', 'EslovÃ¡quia', 'EUA'],
 };
 
 const heroPreviewCards = [
   { title: 'Disciplina', icon: Shield },
   { title: 'Performance', icon: Award },
-  { title: 'Visão', icon: Eye },
-  { title: 'Estratégia', icon: LineChart },
+  { title: 'VisÃ£o', icon: Eye },
+  { title: 'EstratÃ©gia', icon: LineChart },
   { title: 'Futuro', icon: Rocket },
 ];
 
+const heroServiceCards = [
+  {
+    title: 'Seletiva Online',
+    icon: Sparkles,
+    description: 'Envie o vÃ­deo do seu filho para uma avaliaÃ§Ã£o tÃ©cnica. Caso aprovado, o atleta passarÃ¡ a ser agenciado por nossa empresa, com foco no encaminhamento para clubes parceiros em territÃ³rio nacional e internacional.',
+  },
+  {
+    title: 'Mentoria Esportiva',
+    icon: Award,
+    description: 'Transforme o talento do seu filho em desempenho de elite. Com minha mentoria, focamos no preparo mental e tÃ©cnico para enfrentar os desafios das categorias de base. O objetivo Ã© um sÃ³: destaque absoluto e a transiÃ§Ã£o segura para o futebol profissional.',
+  },
+  {
+    title: 'Mentoria para os Pais',
+    icon: Users,
+    description: 'Prepare-se para ser o pilar estratÃ©gico na carreira do seu filho. Aprenda a tomar decisÃµes seguras, entender o mercado do futebol e assumir o papel de principal gestor da jornada esportiva dele. Transforme o sonho em um plano de carreira profissional.',
+  },
+  {
+    title: 'IntercÃ¢mbio Internacional',
+    icon: Globe,
+    description: 'Leve o futebol do seu filho para o prÃ³ximo nÃ­vel. Agende agora um intercÃ¢mbio avaliativo nos principais clubes europeus. Oferecemos suporte completo para que ele mostre seu potencial nos grandes centros do futebol mundial. As vagas sÃ£o limitadas.',
+  },
+  {
+    title: 'Seletiva Presencial',
+    icon: Zap,
+    description: 'Garanta sua vaga nas seletivas presenciais da EC10 Talentos. Estaremos em vÃ¡rios estados do Brasil com captadores de clubes parceiros e nosso staff completo para avaliar seu potencial.',
+  },
+];
+
 const opportunitiesData = [
-  { title: 'Avaliação Premium', location: 'São Paulo, Brasil', flag: '🇧🇷', country: 'Brasil', market: 'Base Nacional', format: 'Presencial', teaser: 'Vagas limitadas para escolas parceiras.' },
-  { title: 'Alta Performance', location: 'Belo Horizonte, Brasil', flag: '🇧🇷', country: 'Brasil', market: 'Desenvolvimento', format: 'Presencial', teaser: 'Ambiente ideal para acelerar evolução.' },
-  { title: 'Janela Portugal', location: 'Braga, Portugal', flag: '🇵🇹', country: 'Portugal', market: 'Europa', format: 'Híbrido', teaser: 'Uma rota aberta para o mercado europeu.' },
-  { title: 'Camp Espanha', location: 'Madrid, Espanha', flag: '🇪🇸', country: 'Espanha', market: 'Europa', format: 'Híbrido', teaser: 'Curadoria especial para atletas promissores.' },
-  { title: 'Exposição Polônia', location: 'Varsóvia, Polônia', flag: '🇵🇱', country: 'Polônia', market: 'Europa', format: 'Online + Presencial', teaser: 'Uma vitrine estratégica em crescimento.' },
-  { title: 'Entrada Eslováquia', location: 'Bratislava, Eslováquia', flag: '🇸🇰', country: 'Eslováquia', market: 'Europa', format: 'Online + Presencial', teaser: 'Descubra uma porta de entrada competitiva.' },
+  { title: 'AvaliaÃ§Ã£o Premium', location: 'SÃ£o Paulo, Brasil', flag: 'ðŸ‡§ðŸ‡·', country: 'Brasil', market: 'Base Nacional', format: 'Presencial', teaser: 'Vagas limitadas para escolas parceiras.' },
+  { title: 'Alta Performance', location: 'Belo Horizonte, Brasil', flag: 'ðŸ‡§ðŸ‡·', country: 'Brasil', market: 'Desenvolvimento', format: 'Presencial', teaser: 'Ambiente ideal para acelerar evoluÃ§Ã£o.' },
+  { title: 'Janela Portugal', location: 'Braga, Portugal', flag: 'ðŸ‡µðŸ‡¹', country: 'Portugal', market: 'Europa', format: 'HÃ­brido', teaser: 'Uma rota aberta para o mercado europeu.' },
+  { title: 'Camp Espanha', location: 'Madrid, Espanha', flag: 'ðŸ‡ªðŸ‡¸', country: 'Espanha', market: 'Europa', format: 'HÃ­brido', teaser: 'Curadoria especial para atletas promissores.' },
+  { title: 'ExposiÃ§Ã£o PolÃ´nia', location: 'VarsÃ³via, PolÃ´nia', flag: 'ðŸ‡µðŸ‡±', country: 'PolÃ´nia', market: 'Europa', format: 'Online + Presencial', teaser: 'Uma vitrine estratÃ©gica em crescimento.' },
+  { title: 'Entrada EslovÃ¡quia', location: 'Bratislava, EslovÃ¡quia', flag: 'ðŸ‡¸ðŸ‡°', country: 'EslovÃ¡quia', market: 'Europa', format: 'Online + Presencial', teaser: 'Descubra uma porta de entrada competitiva.' },
 ];
 
 const accentText = { cyan: 'text-[#00f3ff]' };
@@ -134,7 +162,7 @@ const schoolNameFieldCandidates = ["school_name", "name", "title", "display_name
 
 function isVideoMedia(value = '') { return /\.mp4($|\?)/i.test(value) || String(value).includes('/mp4/'); }
 function normalizeSchoolName(value = "") { return String(value).trim().replace(/\s+/g, " ").toLowerCase(); }
-function isSchoolLikeName(value = "") { return /(escola|col[eé]gio|instituto|academy|academia|school)/i.test(String(value)); }
+function isSchoolLikeName(value = "") { return /(escola|col[eÃ©]gio|instituto|academy|academia|school)/i.test(String(value)); }
 function extractPartnerSchoolNames(records = [], entityName = "") {
   return [...new Set(
     (records || [])
@@ -177,15 +205,19 @@ function FAQItem({ q, a }) {
   );
 }
 
-function EscolaParceira() {
-  // UI state
+export default function EscolaParceira() {
   const [scrolled, setScrolled] = useState(false);
+  const [showOpportunityHero, setShowOpportunityHero] = useState(false);
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
   const [partnerSchools, setPartnerSchools] = useState([]);
   const [isLoadingSchools, setIsLoadingSchools] = useState(false);
-  const [showOpportunityHero, setShowOpportunityHero] = useState(false);
   const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
-  const [scheduleForm, setScheduleForm] = useState({ full_name: "", phone: "", email: "", school: "" });
+  const [scheduleForm, setScheduleForm] = useState({
+    full_name: "",
+    phone: "",
+    email: "",
+    school: "",
+  });
 
   // Spotlight / Social Proof states
   const trackRef = useRef(null);
@@ -223,7 +255,7 @@ function EscolaParceira() {
               return;
             }
           } catch (error) {
-            // Continua para o próximo candidato disponível publicamente.
+            // Continua para o prÃ³ximo candidato disponÃ­vel publicamente.
           }
         }
       } finally {
@@ -273,7 +305,7 @@ function EscolaParceira() {
       return;
     }
     if (partnerSchools.length > 0 && !partnerSchools.some((option) => normalizeSchoolName(option) === normalizeSchoolName(school))) {
-      toast.error("Selecione uma escola parceira válida da lista da Revela Talentos.");
+      toast.error("Selecione uma escola parceira vÃ¡lida da lista da Revela Talentos.");
       return;
     }
     setIsSubmittingSchedule(true);
@@ -284,8 +316,8 @@ function EscolaParceira() {
         phone,
         lead_category: "revela_talentos",
         source_page: "escola_parceira",
-        objectives: "Agendamento para a apresentação da Escola Parceira",
-        notes: `Escola parceira informada: ${school}. Interesse: acompanhar a apresentação da parceria e metodologia da Revela Talentos.`,
+        objectives: "Agendamento para a apresentaÃ§Ã£o da Escola Parceira",
+        notes: `Escola parceira informada: ${school}. Interesse: acompanhar a apresentaÃ§Ã£o da parceria e metodologia da Revela Talentos.`,
         lgpd_consent: true,
       });
       toast.success("Agendamento recebido! Nossa equipe vai considerar sua escola parceira no contato.");
@@ -293,7 +325,7 @@ function EscolaParceira() {
       setIsSchedulingOpen(false);
     } catch (error) {
       console.error("Erro ao registrar agendamento da escola parceira:", error);
-      toast.error("Não foi possível registrar agora. Tente novamente em instantes.");
+      toast.error("NÃ£o foi possÃ­vel registrar agora. Tente novamente em instantes.");
     } finally {
       setIsSubmittingSchedule(false);
     }
@@ -318,7 +350,7 @@ function EscolaParceira() {
         </div>
       </header>
 
-      {/* HERO — Netflix title-page layout */}
+      {/* HERO â€” Netflix title-page layout */}
       <section className="relative min-h-0 overflow-hidden escola-parceira-hero bg-black sm:min-h-[100vh]">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <video
@@ -355,11 +387,72 @@ function EscolaParceira() {
             <div className="space-y-5 font-['Inter']">
               <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
               <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
-                Para os pais de atletas das nossas escolas parceiras, este é o momento de entender como a Revela Talentos pode fortalecer disciplina, confiança e visão de futuro no dia a dia dos seus filhos. Em uma apresentação com linguagem clara e impacto cinematográfico, você vai conhecer a metodologia, os benefícios da parceria e como essa jornada apoia o desenvolvimento esportivo, escolar e humano de cada aluno.
+                Para os pais de atletas das nossas escolas parceiras, este Ã© o momento de entender como a Revela Talentos pode fortalecer disciplina, confianÃ§a e visÃ£o de futuro no dia a dia dos seus filhos. Em uma apresentaÃ§Ã£o com linguagem clara e impacto cinematogrÃ¡fico, vocÃª vai conhecer a metodologia, os benefÃ­cios da parceria e como essa jornada apoia o desenvolvimento esportivo, escolar e humano de cada aluno.
               </p>
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
+              <div className="hero-host-card flex max-w-full items-center gap-3 rounded-[20px] border border-cyan-400/18 bg-[linear-gradient(135deg,rgba(15,23,42,0.88),rgba(8,47,73,0.52))] px-3.5 py-3.5 shadow-[0_24px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:max-w-[460px] sm:gap-4 sm:rounded-[22px] sm:px-4 sm:py-4">
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 rounded-full bg-cyan-400/25 blur-md" />
+                  <img
+                    src="https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg"
+                    alt="Eric Cena"
+                    className="relative h-12 w-12 rounded-full border border-white/20 object-cover sm:h-14 sm:w-14"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[10px] sm:tracking-[0.28em]">
+                    ApresentaÃ§Ã£o Especial
+                  </p>
+                  <p className="mt-1 text-base font-bold tracking-tight text-white sm:text-lg">
+                    Eric Cena
+                  </p>
+                  <p className="text-xs text-white/68 sm:text-sm">
+                    Fundador da Revela Talentos e responsÃ¡vel pela live de lanÃ§amento.
+                  </p>
+                </div>
+              </div>
+
+              <div className="hero-icon-row hero-feature-chips flex flex-nowrap gap-2 overflow-x-auto pb-2 pr-2 font-['Inter'] sm:gap-3">
+                {heroPreviewCards.map((card, index) => (
+                  <div
+                    key={card.title}
+                    className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-2 backdrop-blur-xl sm:gap-2.5 sm:px-3.5 sm:py-2.5 ${index === 0 ? 'border-cyan-300/70 bg-[rgba(8,47,73,0.72)] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)]' : 'border-white/12 bg-[rgba(15,23,42,0.62)] text-white/88 shadow-[0_10px_30px_rgba(0,0,0,0.2)]'}`}
+                  >
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-full sm:h-9 sm:w-9 ${index === 0 ? 'bg-cyan-400/14' : 'bg-white/8'}`}>
+                      <card.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.1} />
+                    </div>
+                    <span className="whitespace-nowrap text-xs font-semibold tracking-wide sm:text-[13px]">
+                      {card.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="hero-service-row flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 pr-2 sm:gap-4">
+                {heroServiceCards.map((card, index) => (
+                  <article
+                    key={card.title}
+                    className="min-w-[280px] max-w-[320px] shrink-0 snap-start rounded-[1.45rem] border border-white/12 bg-[linear-gradient(145deg,rgba(7,17,31,0.92),rgba(6,11,22,0.84))] p-4 shadow-[0_24px_70px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:min-w-[310px] sm:p-5"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-500/10 text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.12)]">
+                        <card.icon className="h-5 w-5" strokeWidth={2.1} />
+                      </div>
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/35">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <h3 className="mt-4 text-[1rem] font-black uppercase leading-tight tracking-[0.05em] text-white sm:text-[1.05rem]">
+                      {card.title}
+                    </h3>
+                    <p className="mt-3 text-[13px] leading-6 text-white/74 sm:text-sm">
+                      {card.description}
+                    </p>
+                  </article>
+                ))}
+              </div>
               {showOpportunityHero && (
                 <div className="rounded-[1.35rem] border border-cyan-400/14 bg-[linear-gradient(135deg,rgba(8,47,73,0.22),rgba(15,23,42,0.54))] px-4 py-3.5 shadow-[0_18px_42px_rgba(0,0,0,0.22)] backdrop-blur-xl sm:max-w-[520px] sm:px-5">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[11px]">Oportunidade exclusiva</p>
@@ -375,33 +468,11 @@ function EscolaParceira() {
                 <Button asChild className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-5 py-3 text-sm font-semibold leading-tight text-white hover:bg-[rgba(30,41,59,0.92)] sm:min-h-[56px] md:w-auto md:max-w-[320px] md:px-6 md:text-base">
                   <Link to="/vsl-escola-parceira">
                     <ArrowRight className="h-4 w-4" />
-                    Não poderei estar presente no dia
+                    NÃ£o poderei estar presente no dia
                   </Link>
                 </Button>
               </div>
 
-              <div className="flex max-w-full items-center gap-3 rounded-[20px] border border-cyan-400/18 bg-[linear-gradient(135deg,rgba(15,23,42,0.88),rgba(8,47,73,0.52))] px-3.5 py-3.5 shadow-[0_24px_60px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:max-w-[460px] sm:gap-4 sm:rounded-[22px] sm:px-4 sm:py-4">
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 rounded-full bg-cyan-400/25 blur-md" />
-                  <img src="https://static.wixstatic.com/media/933cdd_1aef7b3f8c0742f787ce8be9ff553bb4~mv2.jpeg" alt="Eric Cena" className="relative h-12 w-12 rounded-full border border-white/20 object-cover sm:h-14 sm:w-14" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-cyan-300/80 sm:text-[10px] sm:tracking-[0.28em]">Apresentação Especial</p>
-                  <p className="mt-1 text-base font-bold tracking-tight text_white sm:text-lg">Eric Cena</p>
-                  <p className="text-xs text-white/68 sm:text-sm">Fundador da Revela Talentos e responsável pela live de lançamento.</p>
-                </div>
-              </div>
-
-              <div className="hero-icon-row flex flex-nowrap gap-2 overflow-x-auto pb-2 pr-2 font-['Inter'] sm:gap-3">
-                {heroPreviewCards.map((card, index) => (
-                  <div key={card.title} className={`flex shrink-0 items-center gap-2 rounded_full border px-3 py-2 backdrop-blur-xl sm:gap-2.5 sm:px-3.5 sm:py-2.5 ${index === 0 ? 'border-cyan-300/70 bg-[rgba(8,47,73,0.72)] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.18)]' : 'border-white/12 bg-[rgba(15,23,42,0.62)] text-white/88 shadow-[0_10px_30px_rgba(0,0,0,0.2)]'}`}>
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full sm:h-9 sm:w-9 ${index === 0 ? 'bg-cyan-400/14' : 'bg-white/8'}`}>
-                      <card.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2.1} />
-                    </div>
-                    <span className="whitespace-nowrap text-xs font-semibold tracking-wide sm:text-[13px]">{card.title}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -412,17 +483,64 @@ function EscolaParceira() {
 
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-          @keyframes cinematic-zoom { 0% { transform: scale(1.05); } 50% { transform: scale(1.11); } 100% { transform: scale(1.05); } }
-          .animate-cinematic-zoom { animation: cinematic-zoom 26s ease-in-out infinite; }
-          .hero-icon-row { scrollbar-width: none; -ms-overflow-style: none; }
-          .hero-icon-row::-webkit-scrollbar { display: none; }
-          @keyframes opportunities-marquee { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(calc(-50% - 0.75rem), 0, 0); } }
-          .opportunities-carousel-mask { overflow: hidden; }
-          .signup-spotlight { animation: signup-spotlight 1.8s ease; box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.18), 0 0 0 10px rgba(34, 211, 238, 0.04), 0 30px 90px rgba(8, 145, 178, 0.2); }
-          @keyframes signup-spotlight { 0% { transform: translateY(0); box-shadow: 0 0 0 rgba(34, 211, 238, 0); } 35% { transform: translateY(-4px); box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.22), 0 0 0 12px rgba(34, 211, 238, 0.08), 0 34px 94px rgba(8, 145, 178, 0.24); } 100% { transform: translateY(0); box-shadow: 0 0 0 rgba(34, 211, 238, 0); } }
-          .opportunities-carousel-track { animation: opportunities-marquee 34s linear infinite; will-change: transform; }
-          .opportunities-carousel-mask:hover .opportunities-carousel-track { animation-play-state: paused; }
-          .escola-parceira-hero::after { display: none; }
+
+          @keyframes cinematic-zoom {
+            0% { transform: scale(1.05); }
+            50% { transform: scale(1.11); }
+            100% { transform: scale(1.05); }
+          }
+          .animate-cinematic-zoom {
+            animation: cinematic-zoom 26s ease-in-out infinite;
+          }
+          .hero-icon-row {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          .hero-icon-row::-webkit-scrollbar {
+            display: none;
+          }
+          .hero-service-row {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          .hero-service-row::-webkit-scrollbar {
+            display: none;
+          }
+          @keyframes opportunities-marquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(calc(-50% - 0.75rem), 0, 0); }
+          }
+          .opportunities-carousel-mask {
+            overflow: hidden;
+          }
+          .signup-spotlight {
+            animation: signup-spotlight 1.8s ease;
+            box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.18), 0 0 0 10px rgba(34, 211, 238, 0.04), 0 30px 90px rgba(8, 145, 178, 0.2);
+          }
+          @keyframes signup-spotlight {
+            0% {
+              transform: translateY(0);
+              box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+            }
+            35% {
+              transform: translateY(-4px);
+              box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.22), 0 0 0 12px rgba(34, 211, 238, 0.08), 0 34px 94px rgba(8, 145, 178, 0.24);
+            }
+            100% {
+              transform: translateY(0);
+              box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+            }
+          }
+          .opportunities-carousel-track {
+            animation: opportunities-marquee 34s linear infinite;
+            will-change: transform;
+          }
+          .opportunities-carousel-mask:hover .opportunities-carousel-track {
+            animation-play-state: paused;
+          }
+          .escola-parceira-hero::after {
+            display: none;
+          }
           @media (min-width: 640px) {
             .escola-parceira-hero::after { content: ''; position: absolute; inset: auto 0 0; height: 160px; background: linear-gradient(180deg, transparent 0%, rgba(4,5,7,0.98) 100%); z-index: 2; pointer-events: none; display: block; }
           }
@@ -435,8 +553,8 @@ function EscolaParceira() {
           <div className="bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_38%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent)] p-6 sm:p-7">
             <DialogHeader className="space-y-3 text-left">
               <Badge className="w-fit border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-300">Agendamento da Live</Badge>
-              <DialogTitle className="text-2xl font-black tracking-tight text-white sm:text-[2rem]">Garanta sua presença com os dados da sua escola parceira</DialogTitle>
-              <DialogDescription className="max-w-xl text-sm leading-6 text-white/70 sm:text-[15px]">Preencha nome completo, WhatsApp, e-mail e identifique a escola parceira. Se a lista pública do banco estiver disponível no navegador, você poderá selecionar a escola diretamente.</DialogDescription>
+              <DialogTitle className="text-2xl font-black tracking-tight text-white sm:text-[2rem]">Garanta sua presenÃ§a com os dados da sua escola parceira</DialogTitle>
+              <DialogDescription className="max-w-xl text-sm leading-6 text-white/70 sm:text-[15px]">Preencha nome completo, WhatsApp, e-mail e identifique a escola parceira. Se a lista pÃºblica do banco estiver disponÃ­vel no navegador, vocÃª poderÃ¡ selecionar a escola diretamente.</DialogDescription>
             </DialogHeader>
 
             <form className="mt-6 space-y-4" onSubmit={handleScheduleSubmit}>
@@ -456,7 +574,7 @@ function EscolaParceira() {
                 <div className="space-y-2 sm:col-span-2">
                   <div className="flex items-center justify_between gap-3">
                     <Label htmlFor="school-partner-school" className="text-white/86">Escola parceira</Label>
-                    <span className="text-[11px] uppercase tracking-[0.18em] text-cyan-300/75">{isLoadingSchools ? "Sincronizando escolas" : partnerSchools.length > 0 ? `${partnerSchools.length} escolas carregadas` : "Identificação manual liberada"}</span>
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-cyan-300/75">{isLoadingSchools ? "Sincronizando escolas" : partnerSchools.length > 0 ? `${partnerSchools.length} escolas carregadas` : "IdentificaÃ§Ã£o manual liberada"}</span>
                   </div>
                   <Input id="school-partner-school" list={partnerSchools.length > 0 ? "partner-schools-list" : undefined} value={scheduleForm.school} onChange={(e) => handleScheduleFieldChange("school", e.target.value)} placeholder={partnerSchools.length > 0 ? "Selecione ou digite o nome da escola" : "Digite o nome da escola parceira"} autoComplete="organization" className="h-12 border-white/12 bg-white/[0.04] text-white placeholder:text-white/35" />
                   {partnerSchools.length > 0 && (
@@ -464,11 +582,11 @@ function EscolaParceira() {
                       {partnerSchools.map((school) => (<option key={school} value={school} />))}
                     </datalist>
                   )}
-                  <p className="text-xs leading-5 text-white/50">{partnerSchools.length > 0 ? "Para manter a identificação alinhada ao banco da Revela Talentos, escolha uma escola válida da lista." : "Se a lista pública das escolas não estiver acessível neste momento, ainda registraremos o nome informado para validação interna."}</p>
+                  <p className="text-xs leading-5 text-white/50">{partnerSchools.length > 0 ? "Para manter a identificaÃ§Ã£o alinhada ao banco da Revela Talentos, escolha uma escola vÃ¡lida da lista." : "Se a lista pÃºblica das escolas nÃ£o estiver acessÃ­vel neste momento, ainda registraremos o nome informado para validaÃ§Ã£o interna."}</p>
                 </div>
               </div>
               <DialogFooter className="gap-3 border-t border-white/10 pt-5 sm:justify-between sm:space-x-0">
-                <p className="text-xs leading-5 text-white/45">Ao enviar, a sua solicitação entra na base de leads da Revela Talentos para confirmação da apresentação.</p>
+                <p className="text-xs leading-5 text-white/45">Ao enviar, a sua solicitaÃ§Ã£o entra na base de leads da Revela Talentos para confirmaÃ§Ã£o da apresentaÃ§Ã£o.</p>
                 <Button type="submit" disabled={isSubmittingSchedule} className="h-12 min-w-[180px] rounded-none border-0 bg-white px-6 text-sm font-semibold text-black hover:bg-white/90">{isSubmittingSchedule ? "Enviando..." : "Confirmar agendamento"}</Button>
               </DialogFooter>
             </form>
@@ -477,19 +595,19 @@ function EscolaParceira() {
       </Dialog>
 
       {/* 1. SOCIAL PROOF MARQUEE */}
-      <MainLandingCarousel eyebrow="/ Nossa Estrutura Global" title="CONEXÕES EUROPEIAS E NACIONAIS" description="A metodologia que será integrada à escola já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo." onCardClick={scrollToSignupCta} />
+      <MainLandingCarousel eyebrow="/ Nossa Estrutura Global" title="CONEXÃ•ES EUROPEIAS E NACIONAIS" description="A metodologia que serÃ¡ integrada Ã  escola jÃ¡ levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelÃªncia do mundo." onCardClick={scrollToSignupCta} />
 
       {/* DESAFIO DOS PAIS */}
       <section className="relative py-16 sm:py-24">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
-          <Badge className="bg-white/5 text-gray-400 border border-white/10 px-4 py-1.5 text-sm rounded-full mb-6">O Cenário Atual</Badge>
-          <h2 className="mb-6 text-[2rem] font-bold sm:text-4xl md:text-5xl">Seu Filho Está Pronto para <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>os Desafios Reais?</span></h2>
-          <p className="mb-10 text-base text-gray-400 sm:mb-12 sm:text-lg">No mundo exigente de hoje, estudar é metade do processo. A outra é forjar uma mente inabalável para esportes e pra vida.</p>
+          <Badge className="bg-white/5 text-gray-400 border border-white/10 px-4 py-1.5 text-sm rounded-full mb-6">O CenÃ¡rio Atual</Badge>
+          <h2 className="mb-6 text-[2rem] font-bold sm:text-4xl md:text-5xl">Seu Filho EstÃ¡ Pronto para <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>os Desafios Reais?</span></h2>
+          <p className="mb-10 text-base text-gray-400 sm:mb-12 sm:text-lg">No mundo exigente de hoje, estudar Ã© metade do processo. A outra Ã© forjar uma mente inabalÃ¡vel para esportes e pra vida.</p>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              "Como dar confiança para ele acreditar nos próprios talentos além das telas e celulares?",
-              "Como motivá-lo a manter dedicação aos estudos alinhada com seus sonhos, paixões e esporte?",
-              "O que as grandes academias treinam na mente dos atletas de base e que pode ser trazido à escola?"
+              "Como dar confianÃ§a para ele acreditar nos prÃ³prios talentos alÃ©m das telas e celulares?",
+              "Como motivÃ¡-lo a manter dedicaÃ§Ã£o aos estudos alinhada com seus sonhos, paixÃµes e esporte?",
+              "O que as grandes academias treinam na mente dos atletas de base e que pode ser trazido Ã  escola?"
             ].map((q, i) => (
               <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-left transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/[0.06] sm:p-6">
                 <div className="w-8 h-8 rounded-full bg-gradient_to-r from-blue-600 to-cyan-500 flex items-center justify-center text-sm font-bold mb-4">{i + 1}</div>
@@ -500,15 +618,15 @@ function EscolaParceira() {
         </div>
       </section>
 
-      {/* BENEFÍCIOS REVELA TALENTOS */}
+      {/* BENEFÃCIOS REVELA TALENTOS */}
       <BeneficiosRevelaTalentos />
 
       {/* 2. SOCIAL PROOF STATS */}
       <section className="relative z-10 px-4 py-16 sm:px-6 sm:py-20">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>/ Nossa Força</span>
-            <h2 className="text-[1.9rem] font-bold text-white sm:text-3xl md:text-4xl">NÚMEROS QUE COMPROVAM</h2>
+            <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>/ Nossa ForÃ§a</span>
+            <h2 className="text-[1.9rem] font-bold text-white sm:text-3xl md:text-4xl">NÃšMEROS QUE COMPROVAM</h2>
           </div>
           <div className="grid max-w-6xl mx-auto grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Stat One */}
@@ -548,7 +666,7 @@ function EscolaParceira() {
           <div className="max-w-3xl mb-10 sm:mb-12">
             <Badge className="bg-cyan-500/10 text-cyan-300 border border-cyan-400/20 px-4 py-1.5 text-sm rounded-full mb-6">Oportunidades Abertas</Badge>
             <h2 className="text-[2rem] font-bold text-white sm:text-4xl md:text-5xl">Oportunidades Dentro da <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>Revela Talentos</span></h2>
-            <p className="mt-4 text-base leading-7 text-gray-300 sm:mt-5 sm:text-lg sm:leading-8">Conheça algumas oportunidades em destaque para atletas das escolas parceiras, com rotas abertas no Brasil e em mercados estratégicos da Europa.</p>
+            <p className="mt-4 text-base leading-7 text-gray-300 sm:mt-5 sm:text-lg sm:leading-8">ConheÃ§a algumas oportunidades em destaque para atletas das escolas parceiras, com rotas abertas no Brasil e em mercados estratÃ©gicos da Europa.</p>
           </div>
           <div className="relative opportunities-carousel-mask">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-16 bg-gradient-to-r from-[#02040a] via-[#02040a]/98 via-45% to-transparent sm:w-28"><div className="absolute inset-y-3 left-0 w-8 rounded-r-full bg-black/55 blur-2xl sm:w-12" /></div>
@@ -592,8 +710,8 @@ function EscolaParceira() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-4 py-1.5 text-sm rounded-full mb-6 relative z-10">Passos a Seguir</Badge>
-            <h2 className="relative z-10 mb-4 text-[2rem] font-bold sm:text-4xl md:text-5xl">Tudo Começa no Dia <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>20 de Abril</span></h2>
-            <p className="relative z-10 text-base text-gray-400 sm:text-xl">Como vai funcionar esta trajetória inesquecível para pais e alunos nas próximas etapas.</p>
+            <h2 className="relative z-10 mb-4 text-[2rem] font-bold sm:text-4xl md:text-5xl">Tudo ComeÃ§a no Dia <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>20 de Abril</span></h2>
+            <p className="relative z-10 text-base text-gray-400 sm:text-xl">Como vai funcionar esta trajetÃ³ria inesquecÃ­vel para pais e alunos nas prÃ³ximas etapas.</p>
           </div>
           <div className="relative">
             <div className="hidden md:block absolute top-12 left-1/2 -translate-x-1/2 w-[2px] h-[calc(100%-96px)] bg-gradient-to-b from-cyan-500/50 to-transparent" />
@@ -655,12 +773,12 @@ function EscolaParceira() {
         </div>
       </section>
 
-      {/* DEPOIMENTOS FAMÍLIA */}
+      {/* DEPOIMENTOS FAMÃLIA */}
       <section className="bg-[#040507] py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="mb-4 text-[2rem] font-bold sm:text-4xl md:text-5xl">O Que Dizem os Pais <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Experientes</span></h2>
-            <p className="text-gray-400">Famílias que já vivenciam a metodologia de inteligência e disciplina.</p>
+            <p className="text-gray-400">FamÃ­lias que jÃ¡ vivenciam a metodologia de inteligÃªncia e disciplina.</p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((t, i) => (
@@ -686,8 +804,8 @@ function EscolaParceira() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(0,229,255,0.1)_0%,_transparent_70%)]" />
         <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6">
           <Badge className="bg-red-500/20 text-red-500 border border-red-500/30 px-4 py-1.5 text-sm font-bold rounded-full mb-6">Dia 20 de Abril</Badge>
-          <h2 className="mb-6 text-[2rem] font-bold sm:text-4xl md:text-6xl">Sua Presença é <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>Fundamental!</span></h2>
-          <p className="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-gray-300 sm:mb-10 sm:text-xl">Nós te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenção nas mensagens oficiais enviadas pela escola e não perca!</p>
+          <h2 className="mb-6 text-[2rem] font-bold sm:text-4xl md:text-6xl">Sua PresenÃ§a Ã© <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>Fundamental!</span></h2>
+          <p className="mx-auto mb-8 max-w-2xl text-base leading-relaxed text-gray-300 sm:mb-10 sm:text-xl">NÃ³s te esperamos nesta live reveladora onde Eric Cena mergulha nos projetos pensados para o seu filho. Preste atenÃ§Ã£o nas mensagens oficiais enviadas pela escola e nÃ£o perca!</p>
           <Button type="button" onClick={scrollToSignupCta} className="h-14 w-full rounded-xl border-0 bg-gradient-to-r from-red-600 to-red-500 px-6 text-base font-bold text-white shadow-2xl shadow-red-500/30 transition-all duration-300 hover:-translate-y-1 hover:from-red-500 hover:to-red-400 sm:h-16 sm:w-auto sm:px-12 sm:text-xl">
             <Calendar className="mr-3 w-6 h-6" /> Agendar Lembrete na Live
           </Button>
@@ -699,7 +817,7 @@ function EscolaParceira() {
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Perguntas Comuns</h2>
-            <p className="text-gray-400">O que você precisa saber antes do lançamento de 20/04.</p>
+            <p className="text-gray-400">O que vocÃª precisa saber antes do lanÃ§amento de 20/04.</p>
           </div>
           <div className="space-y-4">{faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}</div>
         </div>
@@ -709,7 +827,7 @@ function EscolaParceira() {
       <footer className="border-t border-white/10 bg-[#040507] py-10 sm:py-12">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 sm:px-6 md:flex-row">
           <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto opacity-80" />
-          <p className="text-gray-600 text-sm text-center">© {new Date().getFullYear()} Revela Talentos & Escola Parceira. Todos os direitos reservados.</p>
+          <p className="text-gray-600 text-sm text-center">Â© {new Date().getFullYear()} Revela Talentos & Escola Parceira. Todos os direitos reservados.</p>
           <div className="flex gap-6 text-gray-600 text-sm">
             <a href="#" className="hover:text-white transition-colors">Termos</a>
             <a href="#" className="hover:text-white transition-colors">Instagram</a>
@@ -719,5 +837,3 @@ function EscolaParceira() {
     </div>
   );
 }
-
-export default EscolaParceira;
