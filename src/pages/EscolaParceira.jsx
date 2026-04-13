@@ -589,11 +589,11 @@ export default function EscolaParceira() {
               <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
-                <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border-0 bg-white px-5 py-3 text-sm font-semibold leading-tight text-black shadow-[0_12px_35px_rgba(59,130,246,0.18)] hover:bg-white/90 sm:min-h-[56px] md:w-auto md:px-6 md:text-base">
+                <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold leading-tight text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
                   <Calendar className="h-5 w-5" />
                   Agendar agora
                 </Button>
-                <Button asChild className="h-auto min-h-[48px] w-full justify-center gap-3 whitespace-normal rounded-none border border-cyan-400/20 bg-[rgba(15,23,42,0.78)] px-5 py-3 text-sm font-semibold leading-tight text-white hover:bg-[rgba(30,41,59,0.92)] sm:min-h-[56px] md:w-auto md:max-w-[320px] md:px-6 md:text-base">
+                <Button asChild className="hero-cta-secondary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-5 py-3 text-sm font-semibold leading-tight text-white sm:min-h-[58px] md:w-auto md:max-w-[360px] md:px-6 md:text-base">
                   <Link to="/vsl-escola-parceira">
                     <ArrowRight className="h-4 w-4" />
                     Não poderei participar nessa data, mas gostaria de saber.
@@ -619,6 +619,38 @@ export default function EscolaParceira() {
           }
           .animate-cinematic-zoom {
             animation: cinematic-zoom 26s ease-in-out infinite;
+          }
+          @keyframes neon-pulse-cyan {
+            0%, 100% {
+              box-shadow: 0 0 0 1px rgba(103,232,249,0.18), 0 0 14px rgba(34,211,238,0.22), 0 18px 34px rgba(8,145,178,0.2);
+            }
+            50% {
+              box-shadow: 0 0 0 1px rgba(165,243,252,0.34), 0 0 26px rgba(34,211,238,0.42), 0 22px 46px rgba(14,116,144,0.32);
+            }
+          }
+          @keyframes neon-pulse-blue {
+            0%, 100% {
+              box-shadow: 0 0 0 1px rgba(147,197,253,0.14), 0 0 14px rgba(59,130,246,0.18), 0 18px 34px rgba(30,64,175,0.22);
+            }
+            50% {
+              box-shadow: 0 0 0 1px rgba(147,197,253,0.28), 0 0 28px rgba(59,130,246,0.34), 0 24px 48px rgba(30,64,175,0.3);
+            }
+          }
+          .hero-cta-primary {
+            background: linear-gradient(135deg, rgba(11,238,255,0.98) 0%, rgba(29,78,216,0.96) 100%);
+            animation: neon-pulse-cyan 2.7s ease-in-out infinite;
+          }
+          .hero-cta-primary:hover {
+            background: linear-gradient(135deg, rgba(57,243,255,1) 0%, rgba(37,99,235,1) 100%);
+            transform: translateY(-1px);
+          }
+          .hero-cta-secondary {
+            background: linear-gradient(135deg, rgba(15,23,42,0.96) 0%, rgba(30,64,175,0.9) 54%, rgba(37,99,235,0.95) 100%);
+            animation: neon-pulse-blue 2.9s ease-in-out infinite;
+          }
+          .hero-cta-secondary:hover {
+            background: linear-gradient(135deg, rgba(15,23,42,1) 0%, rgba(37,99,235,0.96) 55%, rgba(56,189,248,0.92) 100%);
+            transform: translateY(-1px);
           }
           @keyframes hero-services-marquee {
             0% { transform: translate3d(0, 0, 0); }
