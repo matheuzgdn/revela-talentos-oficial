@@ -635,7 +635,7 @@ export default function EscolaParceira() {
                 <Button asChild className="hero-cta-secondary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-5 py-3 text-sm font-medium normal-case leading-snug text-white sm:min-h-[58px] md:w-auto md:max-w-[560px] md:px-6 md:text-base">
                   <Link to="/vsl-escola-parceira">
                     <ArrowRight className="h-4 w-4" />
-                    <span className="hero-cta-secondary-copy">{"N\u00E3o poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos"}</span>
+                    <span className="hero-cta-secondary-copy">{"N\u00E3o poderei estar presente no evento online, mas queria ter acesso ao conte\u00FAdo para saber mais detalhes."}</span>
                     <span>Não poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos</span>
                     <span className="hidden">
                     Não poderei participar nessa data, mas gostaria de saber.
@@ -727,7 +727,7 @@ export default function EscolaParceira() {
             background: linear-gradient(135deg, rgba(15,23,42,0.96) 0%, rgba(30,64,175,0.9) 54%, rgba(37,99,235,0.95) 100%);
             animation: neon-pulse-blue 2.9s ease-in-out infinite;
           }
-          .hero-cta-secondary > span:not(.hero-cta-secondary-copy) {
+          .hero-cta-secondary span:not(.hero-cta-secondary-copy) {
             display: none;
           }
           .hero-cta-secondary:hover {
