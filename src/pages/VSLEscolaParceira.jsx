@@ -86,9 +86,14 @@ export default function VSLEscolaParceira() {
           <h1 className="text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
             Mesmo sem estar presente no dia, voce ainda pode <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">usufruir dos servicos da Revela Talentos</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-400 sm:text-lg">
-            Assista ao video e entenda como a metodologia, os beneficios da parceria e os proximos passos dessa jornada podem apoiar o desenvolvimento do seu filho mesmo apos a apresentacao ao vivo.
-          </p>
+          <div className="mx-auto mt-4 max-w-2xl space-y-3 text-base leading-7 text-gray-400 sm:text-lg">
+            <p>
+              Veja o video completo e descubra a Revela Talentos! Mais do que conectar seu filho a grandes clubes do Brasil e do mundo, nos preparamos o atleta no aspecto fisico, mental e tecnico. Com o nosso suporte e mentoria, voce aprendera a gerir a carreira do seu filho com excelencia, caminhando juntos rumo ao profissionalismo.
+            </p>
+            <p>
+              Ele participara de uma seletiva, tanto online quanto presencial, onde faremos a conexao direta com os maiores clubes parceiros da nossa empresa ao redor do mundo.
+            </p>
+          </div>
         </div>
 
         <div className="relative w-full max-w-[390px]">
