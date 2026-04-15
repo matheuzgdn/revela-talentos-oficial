@@ -432,15 +432,10 @@ export default function Evento() {
             className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-x-0 top-0 h-[42svh] overflow-hidden sm:hidden">
-            <video
-              src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-              autoPlay muted loop playsInline controls={false}
-              className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.96]"
-              style={{ pointerEvents: 'none' }}
-            />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.14),transparent_42%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.78)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
+          <div className="absolute inset-x-0 top-0 h-[25svh] overflow-hidden sm:hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.18),transparent_42%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,7,18,0.92)_0%,rgba(3,7,18,0.58)_48%,rgba(4,5,7,0.18)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.72)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
           </div>
           <div className="absolute inset-0 hidden bg-black/30 sm:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50 sm:block" />
@@ -450,15 +445,15 @@ export default function Evento() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
-        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-[43svh] sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
+        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-24 sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="w-full">
-            <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] mt-8 sm:mb-6 sm:gap-4 sm:mt-0">
+            <div className="mb-5 mt-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:mt-0 sm:gap-4">
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Plataforma Oficial</span>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,420px)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,1.04fr)_minmax(360px,440px)] xl:gap-10">
-              <div className="max-w-3xl space-y-5 font-['Inter'] lg:pt-4 xl:pt-5">
+              <div className="order-2 max-w-3xl space-y-5 font-['Inter'] lg:order-1 lg:pt-4 xl:pt-5">
                 <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
                 <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
                   A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
@@ -553,26 +548,45 @@ export default function Evento() {
                 </div>
               </div>
 
-              <div className="w-full max-w-[460px] lg:justify-self-end">
-                <div className="group relative overflow-hidden rounded-[2rem] border border-white/12 bg-[#05070b]/80 shadow-[0_24px_90px_rgba(0,0,0,0.55),0_0_40px_rgba(14,165,233,0.14)] backdrop-blur-sm">
+              <div className="order-1 w-full max-w-[460px] lg:order-2 lg:justify-self-end">
+                <div className="group relative mx-auto max-w-[350px] overflow-hidden rounded-[2rem] border border-white/12 bg-[#05070b]/80 shadow-[0_24px_90px_rgba(0,0,0,0.55),0_0_40px_rgba(14,165,233,0.14)] backdrop-blur-sm sm:mx-0 sm:max-w-[460px]">
                   <div className="absolute inset-[1px] rounded-[calc(2rem-1px)] border border-white/6" />
+                  <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 py-3 sm:hidden">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-2.5 py-1.5 backdrop-blur-md">
+                      <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-5 w-5 rounded-full object-contain" />
+                      <span className="text-[11px] font-semibold tracking-[0.08em] text-white">revela talentos</span>
+                    </div>
+                    <div className="rounded-full border border-white/10 bg-black/35 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-200/90 backdrop-blur-md">
+                      Post oficial
+                    </div>
+                  </div>
                   <video
                     ref={heroVideoRef}
                     autoPlay
                     loop
                     muted={isHeroVideoMuted}
                     playsInline
-                    className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
+                    className="aspect-[4/5] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
                   >
                     <source src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4" type="video/mp4" />
                   </video>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.2),transparent_32%)]" />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,15,0.06)_0%,rgba(4,8,15,0.16)_38%,rgba(4,8,15,0.56)_100%)]" />
                   <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.16)_28%,rgba(4,5,7,0.82)_100%)]" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-4 sm:hidden">
+                    <div className="rounded-[1.35rem] border border-white/10 bg-black/38 p-3 backdrop-blur-md">
+                      <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-200/90">
+                        Plataforma em vídeo
+                      </div>
+                      <div className="mt-2 text-lg font-black uppercase leading-[0.92] tracking-tight text-white">
+                        Revela Talentos
+                      </div>
+                    </div>
+                  </div>
                   <button
                     type="button"
                     onClick={toggleHeroVideoAudio}
-                    className="absolute bottom-4 right-4 z-10 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:bottom-5 sm:right-5"
+                    className="absolute bottom-24 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:bottom-5 sm:right-5"
                   >
                     {isHeroVideoMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     <span>{isHeroVideoMuted ? 'Ativar áudio' : 'Áudio ativo'}</span>
