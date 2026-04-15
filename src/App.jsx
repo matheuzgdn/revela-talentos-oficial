@@ -87,7 +87,7 @@ const AuthenticatedApp = () => {
       } />
       <Route path="/checkout" element={<Navigate to="/thanks" replace />} />
       {Object.entries(Pages).map(([path, Page]) => {
-        const isPublicPage = ['cases-sucesso-atletas', 'escola-parceira', 'vsl-escola-parceira'].includes(path);
+        const isPublicPage = ['cases-sucesso-atletas', 'escola-parceira', 'vsl-escola-parceira', 'evento', 'vsl-evento'].includes(path);
         return (
           <Route
             key={path}
@@ -134,7 +134,7 @@ const BrowserThemeManager = () => {
   useEffect(() => {
     if (typeof document === 'undefined') return;
 
-    const isEscolaFlow = ['/escola-parceira', '/vsl-escola-parceira'].includes(location.pathname);
+    const isEscolaFlow = ['/escola-parceira', '/vsl-escola-parceira', '/evento', '/vsl-evento'].includes(location.pathname);
     const themeColor = isEscolaFlow ? '#07111f' : '#040507';
     const background = isEscolaFlow
       ? 'linear-gradient(180deg, #040507 0%, #07111f 100%)'

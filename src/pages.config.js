@@ -68,6 +68,8 @@ import SeletivaOnline from './pages/SeletivaOnline';
 import ZonaMembros from './pages/ZonaMembros';
 import EscolaParceira from './pages/EscolaParceira';
 import VSLEscolaParceira from './pages/VSLEscolaParceira';
+import Evento from './pages/Evento';
+import VSLEvento from './pages/VSLEvento';
 import __Layout from './Layout.jsx';
 
 
@@ -93,6 +95,8 @@ export const PAGES = {
     "ZonaMembros": ZonaMembros,
     "escola-parceira": EscolaParceira,
     "vsl-escola-parceira": VSLEscolaParceira,
+    "evento": Evento,
+    "vsl-evento": VSLEvento,
 }
 
 export const pagesConfig = {

@@ -1,0 +1,204 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, ChevronDown, ChevronUp, Play, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+
+const videoUrl = 'https://video.wixstatic.com/video/933cdd_0331ab67517b44d0af21dd72e8b0cb59/1080p/mp4/file.mp4';
+const posterUrl = 'https://static.wixstatic.com/media/933cdd_7baddddb15fc4bb0ad2e2455589ba598~mv2.jpg/v1/fill/w_1200,h_675,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Eric%20Cena.jpg';
+const enrollmentUrl = 'https://www.ec10talentos.com/_paylink/AZ1-ne5r';
+
+export default function VSLEvento() {
+  const [isFocusedPlayback, setIsFocusedPlayback] = useState(false);
+  const [isStoryMessageVisible, setIsStoryMessageVisible] = useState(true);
+  const [shouldAutoCollapseMessage, setShouldAutoCollapseMessage] = useState(true);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const hasSeenStoryMessage = window.sessionStorage.getItem('vsl_evento_story_message_seen') === 'true';
+    if (hasSeenStoryMessage) {
+      setIsStoryMessageVisible(false);
+      setShouldAutoCollapseMessage(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = !isFocusedPlayback;
+    video.loop = !isFocusedPlayback;
+    video.controls = isFocusedPlayback;
+
+    if (isFocusedPlayback) {
+      video.currentTime = 0;
+    }
+
+    video.play().catch(() => {});
+  }, [isFocusedPlayback]);
+
+  useEffect(() => {
+    if (!isStoryMessageVisible || !shouldAutoCollapseMessage) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setIsStoryMessageVisible(false);
+      setShouldAutoCollapseMessage(false);
+
+      if (typeof window !== 'undefined') {
+        window.sessionStorage.setItem('vsl_evento_story_message_seen', 'true');
+      }
+    }, 4200);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isStoryMessageVisible, shouldAutoCollapseMessage]);
+
+  const handleActivatePlayback = () => {
+    setIsFocusedPlayback(true);
+  };
+
+  const handleToggleStoryMessage = () => {
+    setIsStoryMessageVisible((current) => !current);
+  };
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#040507] font-sans text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,243,255,0.08),transparent_34%),radial-gradient(circle_at_bottom,rgba(37,99,235,0.12),transparent_38%)]" />
+
+      <header 
+        className="absolute left-0 right-0 top-0 z-50"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6 sm:px-6">
+          <Link to="/evento" className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-white">
+            <ArrowLeft className="h-5 w-5" /> Voltar
+          </Link>
+          <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto opacity-80" />
+        </div>
+      </header>
+
+      <main className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-24 sm:px-6">
+        <div className="mb-8 max-w-3xl text-center">
+          <Badge className="mb-5 border border-cyan-500/20 bg-cyan-500/10 px-4 py-1 text-sm font-bold uppercase tracking-[0.22em] text-cyan-300">
+            Replay em story
+          </Badge>
+          <h1 className="text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
+            Mesmo sem estar presente no dia, voce ainda pode <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">usufruir dos servicos da Revela Talentos</span>
+          </h1>
+          <div className="mx-auto mt-4 max-w-2xl space-y-3 text-base leading-7 text-gray-400 sm:text-lg">
+            <p>
+              Veja o video completo e descubra a Revela Talentos! Mais do que conectar seu filho a grandes clubes do Brasil e do mundo, nos preparamos o atleta no aspecto fisico, mental e tecnico. Com o nosso suporte e mentoria, voce aprendera a gerir a carreira do seu filho com excelencia, caminhando juntos rumo ao profissionalismo.
+            </p>
+            <p>
+              Ele participara de uma seletiva, tanto online quanto presencial, onde faremos a conexao direta com os maiores clubes parceiros da nossa empresa ao redor do mundo.
+            </p>
+          </div>
+        </div>
+
+        <div className="relative w-full max-w-[390px]">
+          <div className="pointer-events-none absolute inset-[-10%] rounded-[40px] bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.24),transparent_58%)] blur-3xl" />
+
+          <div className="relative overflow-hidden rounded-[32px] border border-cyan-400/20 bg-black shadow-[0_40px_120px_rgba(0,243,255,0.18)]">
+            <div className="absolute inset-x-0 top-0 z-20 flex items-center justify-between p-4">
+              <div className="flex gap-1.5">
+                <span className="h-1.5 w-14 rounded-full bg-white" />
+                <span className="h-1.5 w-8 rounded-full bg-white/30" />
+                <span className="h-1.5 w-8 rounded-full bg-white/20" />
+              </div>
+              <Badge className="border border-white/10 bg-black/40 text-[10px] uppercase tracking-[0.18em] text-white/80">
+                Story oficial
+              </Badge>
+            </div>
+
+            <div className="relative aspect-[9/16] bg-black">
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                poster={posterUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.15)_0%,rgba(0,0,0,0.45)_62%,rgba(0,0,0,0.88)_100%)]" />
+
+              <div className="absolute bottom-0 left-0 right-0 z-20 p-5 sm:p-6">
+                <div className={`overflow-hidden transition-all duration-500 ease-out ${isStoryMessageVisible ? 'mb-5 max-h-72 opacity-100' : 'mb-0 max-h-0 opacity-0'}`}>
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <Badge className="border border-cyan-400/25 bg-cyan-500/12 text-[10px] uppercase tracking-[0.22em] text-cyan-300">
+                        Eric Cena
+                      </Badge>
+                      <button
+                        type="button"
+                        onClick={handleToggleStoryMessage}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-black/35 text-white/70 transition-colors hover:bg-black/55 hover:text-white"
+                        aria-label="Recolher mensagem"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <h2 className="max-w-[15ch] text-3xl font-black uppercase leading-[0.95] text-white">
+                      Revela Talentos
+                    </h2>
+                    <p className="max-w-[28ch] text-sm leading-6 text-white/80">
+                      Mesmo sem participar ao vivo, aqui voce entende os servicos, a metodologia, as mentorias e os proximos passos para viver a experiencia Revela Talentos de forma completa.
+                    </p>
+                  </div>
+                </div>
+
+                {!isStoryMessageVisible && (
+                  <button
+                    type="button"
+                    onClick={handleToggleStoryMessage}
+                    className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/45 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80 transition-colors hover:bg-black/60 hover:text-white"
+                  >
+                    <ChevronUp className="h-3.5 w-3.5" />
+                    Mostrar mensagem
+                  </button>
+                )}
+
+                <div className="mt-5 flex flex-col gap-3">
+                  {isFocusedPlayback ? (
+                    <Button
+                      asChild
+                      className="h-12 w-full justify-center gap-3 rounded-full border-0 bg-gradient-to-r from-cyan-500 to-blue-600 font-semibold text-white shadow-[0_16px_40px_rgba(14,165,233,0.35)] hover:from-cyan-400 hover:to-blue-500"
+                    >
+                      <a href={enrollmentUrl}>
+                        Fazer parte agora
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={handleActivatePlayback}
+                      className="h-12 w-full justify-center gap-3 rounded-full border-0 bg-white font-semibold text-black hover:bg-white/90"
+                    >
+                      <Play className="h-4 w-4 fill-current" />
+                      Assistir e entender melhor
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-2 text-center text-sm text-gray-400">
+          <Shield className="h-4 w-4 text-cyan-500" /> Site oficial e seguro - Revela Talentos
+        </div>
+
+        <div className="mt-8">
+          <Button asChild className="bg-white text-black hover:bg-white/90">
+            <Link to="/evento">Voltar para o evento</Link>
+          </Button>
+        </div>
+      </main>
+    </div>
+  );
+}
