@@ -435,7 +435,7 @@ export default function Evento() {
             className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-x-0 top-0 h-[54svh] overflow-hidden sm:hidden">
+          <div className="absolute inset-x-0 top-0 h-[62svh] overflow-hidden sm:hidden">
             <video
               ref={mobileHeroVideoRef}
               src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4"
@@ -446,9 +446,7 @@ export default function Evento() {
               controls={false}
               className="h-full w-full object-cover object-top animate-cinematic-zoom opacity-[0.97]"
             />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.2),transparent_40%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,17,40,0.3)_0%,rgba(6,17,40,0.14)_36%,rgba(4,5,7,0.2)_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(180deg,transparent_0%,rgba(4,8,15,0.3)_22%,rgba(4,5,7,0.95)_100%)] shadow-[0_30px_64px_rgba(0,0,0,0.78)]" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,transparent_0%,rgba(4,8,15,0.16)_18%,rgba(4,5,7,0.96)_100%)] shadow-[0_34px_74px_rgba(0,0,0,0.82)]" />
           </div>
           <div className="absolute inset-0 hidden bg-black/30 sm:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50 sm:block" />
@@ -458,13 +456,20 @@ export default function Evento() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
-        <div className={`relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 ${isMobileViewport ? (isMobileHeroLocked ? 'min-h-[100svh] pt-[48svh]' : 'pt-[48svh]') : 'pt-[43svh]'} sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14`}>
+        <div className={`relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 ${isMobileViewport ? (isMobileHeroLocked ? 'min-h-[100svh] pt-[58svh]' : 'pt-[48svh]') : 'pt-[43svh]'} sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14`}>
           <div className="relative w-full">
+            {isMobileViewport && isMobileHeroLocked && (
+              <div className="pointer-events-none absolute inset-x-0 top-[45svh] z-20 sm:hidden">
+                <h1 className="max-w-[12rem] text-[2.65rem] font-extrabold uppercase leading-[0.9] tracking-tight text-white [text-shadow:0_8px_24px_rgba(0,0,0,0.9),0_18px_40px_rgba(0,0,0,0.78)]">
+                  REVELA TALENTOS
+                </h1>
+              </div>
+            )}
             {isMobileViewport && isHeroVideoMuted && (
               <button
                 type="button"
                 onClick={toggleHeroVideoAudio}
-                className="absolute right-0 top-[39svh] z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:hidden"
+                className="absolute right-0 top-[47svh] z-30 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:hidden"
               >
                 <VolumeX className="h-4 w-4" />
                 <span>Ativar áudio</span>
@@ -477,9 +482,9 @@ export default function Evento() {
 
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,420px)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,1.04fr)_minmax(360px,440px)] xl:gap-10">
               <div className="order-2 max-w-3xl space-y-5 font-['Inter'] lg:order-1 lg:pt-4 xl:pt-5">
-                <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
+                <h1 className={`${isMobileViewport && isMobileHeroLocked ? 'hidden sm:block' : 'block'} max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]`}>REVELA TALENTOS</h1>
                 {isMobileViewport && isMobileHeroLocked ? (
-                  <p className="max-w-[18rem] text-[1rem] leading-7 text-white/84 sm:hidden">
+                  <p className="max-w-[18rem] pt-2 text-[1rem] leading-7 text-white/84 sm:hidden">
                     Assista ao vídeo de 2 min para receber todos os benefícios.
                   </p>
                 ) : (
