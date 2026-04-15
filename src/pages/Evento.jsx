@@ -29,22 +29,16 @@ const faqs = [
     a: "A Revela Talentos une preparação física, mental e técnica com direcionamento estratégico de carreira, mentorias e conexão real com oportunidades em clubes do Brasil e do exterior."
   },
   {
-    q: "Como vai funcionar o evento com o Eric Cena?",
-    a: "No dia 20/04, Eric Cena apresenta os pilares da metodologia, explica como a Revela Talentos acelera o desenvolvimento do atleta e mostra os próximos passos para quem quiser entrar de forma mais séria nessa jornada."
+    q: "Como funciona a plataforma da Revela Talentos?",
+    a: "A plataforma reúne metodologia, mentorias, seletivas, conteúdos estratégicos e direcionamento prático para pais e atletas que querem acelerar a evolução com mais clareza e profissionalismo."
   },
   {
-    q: "Depois do evento eu consigo acompanhar e aplicar tudo isso?",
-    a: "Sim. A proposta é que pais e atletas entendam melhor o processo, recebam direcionamento prático e saibam como usar a plataforma, as mentorias e as seletivas para evoluir com mais clareza."
+    q: "O que acontece depois que eu entro na plataforma?",
+    a: "Você passa a ter acesso ao ecossistema da Revela Talentos para entender o processo, aplicar a metodologia, usar os conteúdos e avançar com mais preparo nas próximas etapas da jornada esportiva."
   }
 ];
 
 // benefits constant removed as it's now handled by BeneficiosRevelaTalentos component
-
-const steps = [
-  { num: "01", icon: Calendar, title: "Evento Online - Dia 20/04", desc: "Participe da apresentação oficial com Eric Cena e entenda como a Revela Talentos estrutura o desenvolvimento completo do atleta." },
-  { num: "02", icon: User, title: "Receba os Próximos Passos", desc: "Após o evento, você entende como funcionam os acessos, as mentorias, as seletivas e o melhor caminho para avançar dentro da plataforma." },
-  { num: "03", icon: Shield, title: "Entre na Jornada", desc: "Com a orientação certa, o atleta passa a evoluir com mais preparo, mais visibilidade e uma estratégia sólida rumo ao profissionalismo." }
-];
 
 const testimonials = [
   {
@@ -188,16 +182,16 @@ function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
     <div className="overflow-hidden rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,12,20,0.92),rgba(4,7,12,0.98))] shadow-[0_30px_90px_rgba(0,0,0,0.38)]">
       <div className="relative bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.18),transparent_34%),linear-gradient(180deg,rgba(9,18,33,0.98),rgba(5,10,18,1))] px-5 py-7 text-center sm:px-8 sm:py-9">
         <Badge className="border border-red-500/25 bg-red-500/14 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-red-300">
-          Dia 20 de Abril
+          Plataforma oficial
         </Badge>
         <h3 className="mt-5 text-[2.2rem] font-black leading-[0.95] text-white sm:text-[3rem]">
-          <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>INSCRIÇÃO GRATUITA</span>
+          <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>ACESSO À PLATAFORMA</span>
         </h3>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/76 sm:text-base">
-          Evento on-line gratuito onde vamos revelar o segredo para chegar no futebol profissional e como seu filho pode se tornar um melhor atleta através da Revela Talentos.
+          Entre para a plataforma da Revela Talentos e tenha acesso a metodologia, mentorias, conteúdos estratégicos e seletivas que ajudam pais e atletas a caminhar com mais preparo rumo ao profissionalismo.
         </p>
         <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em] text-cyan-300 sm:text-xs">
-          Inscrição gratuita para pais e atletas
+          Conteúdo, mentoria e direção para pais e atletas
         </p>
         <Button
           type="button"
@@ -205,7 +199,7 @@ function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
           className="hero-cta-alert mt-6 h-12 w-full rounded-[1.15rem] border border-red-300/20 px-6 text-sm font-bold text-white sm:h-14 sm:text-base"
         >
           <Calendar className="mr-2.5 h-4 w-4 sm:h-5 sm:w-5" />
-          Agendar Lembrete na Live
+          Quero acessar agora
         </Button>
       </div>
     </div>
@@ -371,11 +365,11 @@ export default function Evento() {
         phone,
         lead_category: "revela_talentos",
         source_page: "evento",
-        objectives: "Agendamento para o evento Revela Talentos",
-        notes: "Interesse em acompanhar o evento e conhecer melhor a metodologia, as mentorias e as seletivas da Revela Talentos.",
+        objectives: "Solicitação de acesso à plataforma Revela Talentos",
+        notes: "Interesse em conhecer a plataforma, a metodologia, as mentorias e as seletivas da Revela Talentos.",
         lgpd_consent: true,
       });
-      toast.success("Inscrição recebida! Nossa equipe fará o contato com os próximos passos.");
+      toast.success("Solicitação recebida! Nossa equipe fará o contato com os próximos passos.");
       resetScheduleForm();
       setIsSchedulingOpen(false);
     } catch (error) {
@@ -413,7 +407,7 @@ export default function Evento() {
           </Link>
           <a href="#como-funciona">
             <Button className="h-10 whitespace-nowrap rounded-lg border-0 bg-gradient-to-r from-blue-600 to-cyan-500 px-4 text-sm font-semibold text-white shadow-lg shadow-cyan-500/20 hover:from-blue-500 hover:to-cyan-400 sm:h-auto sm:px-6 sm:text-base">
-              Sobre a Live
+              Sobre a Plataforma
             </Button>
           </a>
         </div>
@@ -450,13 +444,13 @@ export default function Evento() {
           <div className="w-full">
             <div className="mb-5 flex flex-wrap items-center gap-3 font-['Inter'] mt-8 sm:mb-6 sm:gap-4 sm:mt-0">
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
-              <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Evento Oficial</span>
+              <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Plataforma Oficial</span>
             </div>
 
             <div className="max-w-3xl space-y-5 font-['Inter']">
               <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
               <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
-                Uma experiência criada para pais e atletas que querem entender como a Revela Talentos prepara, orienta e conecta talentos a oportunidades reais no Brasil e no exterior.
+                A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
               </p>
               <div className="pt-2">
                 <h2 className="text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
@@ -577,7 +571,7 @@ export default function Evento() {
                 <Button asChild className="hero-cta-secondary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-5 py-3 text-sm font-medium normal-case leading-snug text-white sm:min-h-[58px] md:w-auto md:max-w-[560px] md:px-6 md:text-base">
                   <Link to="/vsl-evento">
                     <ArrowRight className="h-4 w-4" />
-                    <span className="hero-cta-secondary-copy">{"N\u00E3o poderei estar presente no evento online, mas queria ter acesso ao conte\u00FAdo para saber mais detalhes."}</span>
+                    <span>Ainda não vou entrar agora, mas quero ver todos os detalhes da plataforma.</span>
                     <span>Não poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos</span>
                     <span className="hidden">
                     Não poderei participar nessa data, mas gostaria de saber.
@@ -669,7 +663,7 @@ export default function Evento() {
             background: linear-gradient(135deg, rgba(15,23,42,0.96) 0%, rgba(30,64,175,0.9) 54%, rgba(37,99,235,0.95) 100%);
             animation: neon-pulse-blue 2.9s ease-in-out infinite;
           }
-          .hero-cta-secondary span:not(.hero-cta-secondary-copy) {
+          .hero-cta-secondary span + span {
             display: none;
           }
           .hero-cta-secondary:hover {
@@ -801,7 +795,7 @@ export default function Evento() {
                 <div className="mt-6 rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(13,20,32,0.38),rgba(5,10,18,0.74))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[24px] sm:p-6">
                   <div className="flex flex-col gap-3 text-sm text-white/[0.72] sm:flex-row sm:items-center sm:justify-between">
                     <p className="max-w-xl leading-6">
-                      Veja os detalhes da oportunidade e, se fizer sentido para sua familia, siga para o agendamento com a Revela Talentos.
+                      Veja os detalhes do serviço e, se fizer sentido para sua família, siga para solicitar seu acesso à plataforma Revela Talentos.
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row">
                       <Button
@@ -809,7 +803,7 @@ export default function Evento() {
                         onClick={handleHeroServiceSchedule}
                         className="hero-cta-primary h-12 rounded-[1.05rem] border border-cyan-200/35 px-6 text-sm font-semibold text-white"
                       >
-                        Agendar agora
+                        Quero acessar agora
                       </Button>
                       <Button
                         type="button"
@@ -832,9 +826,9 @@ export default function Evento() {
         <DialogContent className="max-h-[92vh] overflow-y-auto border border-cyan-400/20 bg-[#050811] p-0 text-white sm:max-w-2xl">
           <div className="bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_38%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent)] p-6 sm:p-7">
             <DialogHeader className="space-y-3 text-left">
-              <Badge className="w-fit border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-300">Agendamento da Live</Badge>
-              <DialogTitle className="text-2xl font-black tracking-tight text-white sm:text-[2rem]">Garanta sua presença no evento Revela Talentos</DialogTitle>
-              <DialogDescription className="max-w-xl text-sm leading-6 text-white/70 sm:text-[15px]">Preencha nome completo, WhatsApp e e-mail para receber sua confirmação e os próximos passos do evento.</DialogDescription>
+              <Badge className="w-fit border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-300">Solicitação de acesso</Badge>
+              <DialogTitle className="text-2xl font-black tracking-tight text-white sm:text-[2rem]">Garanta seu acesso à plataforma Revela Talentos</DialogTitle>
+              <DialogDescription className="max-w-xl text-sm leading-6 text-white/70 sm:text-[15px]">Preencha nome completo, WhatsApp e e-mail para receber o contato da nossa equipe com os próximos passos para entrar na plataforma.</DialogDescription>
             </DialogHeader>
 
             <form className="mt-6 space-y-4" onSubmit={handleScheduleSubmit}>
@@ -853,8 +847,8 @@ export default function Evento() {
                 </div>
               </div>
               <DialogFooter className="gap-3 border-t border-white/10 pt-5 sm:justify-between sm:space-x-0">
-                <p className="text-xs leading-5 text-white/45">Ao enviar, seus dados entram na base da Revela Talentos para confirmação da sua inscrição no evento.</p>
-                <Button type="submit" disabled={isSubmittingSchedule} className="hero-cta-submit h-12 min-w-[180px] rounded-[1.05rem] border border-violet-300/20 px-6 text-sm font-semibold text-white">{isSubmittingSchedule ? "Enviando..." : "Confirmar agendamento"}</Button>
+                <p className="text-xs leading-5 text-white/45">Ao enviar, seus dados entram na base da Revela Talentos para que nossa equipe apresente a plataforma e os próximos passos do seu acesso.</p>
+                <Button type="submit" disabled={isSubmittingSchedule} className="hero-cta-submit h-12 min-w-[180px] rounded-[1.05rem] border border-violet-300/20 px-6 text-sm font-semibold text-white">{isSubmittingSchedule ? "Enviando..." : "Solicitar acesso"}</Button>
               </DialogFooter>
             </form>
           </div>
@@ -872,38 +866,6 @@ export default function Evento() {
 
       {/* BENEFÍCIOS REVELA TALENTOS */}
       <BeneficiosRevelaTalentos />
-
-      {/* CRONOGRAMA */}
-      <section id="como-funciona" className="relative bg-gradient-to-b from-[#040507] to-gray-950 px-4 py-16 sm:px-6 sm:py-24">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-4 py-1.5 text-sm rounded-full mb-6 relative z-10">Passos a Seguir</Badge>
-            <h2 className="relative z-10 mb-4 text-[2rem] font-bold sm:text-4xl md:text-5xl">Tudo Começa no Dia <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>20 de Abril</span></h2>
-            <p className="relative z-10 text-base text-gray-400 sm:text-xl">Como vai funcionar esta trajetória inesquecível para pais e alunos nas próximas etapas.</p>
-          </div>
-          <div className="relative">
-            <div className="hidden md:block absolute top-12 left-1/2 -translate-x-1/2 w-[2px] h-[calc(100%-96px)] bg-gradient-to-b from-cyan-500/50 to-transparent" />
-            <div className="space-y-8">
-              {steps.map((step, i) => (
-                <div key={i} className={`flex flex-col md:flex-row gap-8 items-center ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
-                  <div className="relative z-10 flex-1 rounded-2xl border border-white/10 bg_white/[0.03] p-5 transition-all duration-300 hover:border-cyan-500/30 hover:bg_white/[0.06] sm:p-8">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="text-4xl font-black text-white/10 sm:text-5xl">{step.num}</span>
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
-                        <step.icon className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
-                    <p className="text-gray-400 leading-relaxed">{step.desc}</p>
-                  </div>
-                  <div className="hidden md:flex w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 items-center justify-center text-xl font-black text-white shadow-lg shadow-cyan-500/30 flex-shrink-0 z-10">{i + 1}</div>
-                  <div className="flex-1 hidden md:block" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* 3. SOCIAL PROOF GALLERY (Spotlights) */}
       <section className="relative border-y border-white/5 bg-gray-950 px-4 py-16 md:px-8 sm:py-24">
@@ -971,7 +933,7 @@ export default function Evento() {
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Perguntas Comuns</h2>
-            <p className="text-gray-400">O que você precisa saber antes do lançamento de 20/04.</p>
+            <p className="text-gray-400">O que você precisa saber antes de entrar na plataforma Revela Talentos.</p>
           </div>
           <div className="space-y-4">{faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}</div>
         </div>

@@ -81,10 +81,10 @@ export default function VSLEvento() {
       <main className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-24 sm:px-6">
         <div className="mb-8 max-w-3xl text-center">
           <Badge className="mb-5 border border-cyan-500/20 bg-cyan-500/10 px-4 py-1 text-sm font-bold uppercase tracking-[0.22em] text-cyan-300">
-            Replay em story
+            Detalhes da plataforma
           </Badge>
           <h1 className="text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
-            Mesmo sem estar presente no dia, voce ainda pode <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">usufruir dos servicos da Revela Talentos</span>
+            Antes de entrar, entenda como a <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">plataforma Revela Talentos</span> pode acelerar essa jornada
           </h1>
           <div className="mx-auto mt-4 max-w-2xl space-y-3 text-base leading-7 text-gray-400 sm:text-lg">
             <p>
@@ -147,7 +147,7 @@ export default function VSLEvento() {
                       Revela Talentos
                     </h2>
                     <p className="max-w-[28ch] text-sm leading-6 text-white/80">
-                      Mesmo sem participar ao vivo, aqui voce entende os servicos, a metodologia, as mentorias e os proximos passos para viver a experiencia Revela Talentos de forma completa.
+                      Aqui voce entende a metodologia, as mentorias, as seletivas e como a plataforma Revela Talentos pode direcionar pais e atletas com mais clareza.
                     </p>
                   </div>
                 </div>
@@ -195,7 +195,7 @@ export default function VSLEvento() {
 
         <div className="mt-8">
           <Button asChild className="bg-white text-black hover:bg-white/90">
-            <Link to="/evento">Voltar para o evento</Link>
+            <Link to="/evento">Voltar para a oferta</Link>
           </Button>
         </div>
       </main>
