@@ -291,7 +291,7 @@ export default function Evento() {
   };
 
   const scrollToSignupCta = () => {
-    const target = document.getElementById('inscricao-revela');
+    const target = Array.from(document.querySelectorAll('[data-signup-target="true"]')).find((element) => element.offsetParent !== null);
     if (!target) return;
     target.scrollIntoView({ behavior: 'smooth', block: window.innerWidth < 640 ? 'center' : 'start' });
     target.classList.remove('signup-spotlight');
@@ -471,6 +471,86 @@ export default function Evento() {
                     </span>
                   </h2>
                 </div>
+
+                <div id="inscricao-revela-desktop" data-signup-target="true" className="relative mt-5 hidden space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 lg:block">
+                  <div
+                    className="hero-service-mask relative overflow-x-auto overflow-y-visible [--hero-gap:0.9rem] xl:[--hero-gap:1rem]"
+                    onTouchStart={pauseHeroCarousel}
+                    onTouchEnd={resumeHeroCarouselSoon}
+                    onTouchCancel={resumeHeroCarouselSoon}
+                    onScroll={handleHeroCarouselInteraction}
+                  >
+                    <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-14 bg-[linear-gradient(90deg,#040507_0%,rgba(4,5,7,0.78)_48%,transparent_100%)]" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-14 bg-[linear-gradient(270deg,#040507_0%,rgba(4,5,7,0.78)_48%,transparent_100%)]" />
+                    <div
+                      className="hero-service-track flex w-max gap-[var(--hero-gap)] pb-2"
+                      style={{ animationPlayState: activeHeroService || isHeroCarouselPaused ? 'paused' : 'running' }}
+                    >
+                    {heroServiceCarouselCards.map((card, index) => (
+                      <article
+                        key={`desktop-${card.title}-${index}`}
+                        className="group relative aspect-square w-[230px] shrink-0 snap-start overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 xl:w-[248px] 2xl:w-[268px]"
+                      >
+                        {isVideoMedia(card.image) ? (
+                          <video
+                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                          >
+                            <source src={card.image} type="video/mp4" />
+                          </video>
+                        ) : (
+                          <img
+                            src={card.image}
+                            alt={card.title}
+                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                        )}
+                        <div className="absolute inset-0 rounded-[2rem] border border-white/8" />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.02)_0%,rgba(0,0,0,0.08)_26%,rgba(0,0,0,0.84)_100%)]" />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_30%)]" />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0.01)_16%,transparent_34%)]" />
+                        <div className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(180deg,transparent_0%,rgba(4,7,12,0.16)_22%,rgba(4,7,12,0.88)_100%)]" />
+
+                        <div className="relative z-10 h-full p-4">
+                          <div className="absolute inset-x-4 bottom-4">
+                            <h3 className="max-w-[12ch] text-[1.02rem] font-black uppercase leading-[0.96] tracking-tight text-white [text-shadow:0_6px_20px_rgba(0,0,0,0.9),0_14px_36px_rgba(0,0,0,0.86)] xl:text-[1.14rem]">
+                              {card.title}
+                            </h3>
+                            <button
+                              type="button"
+                              onClick={() => openHeroService(card)}
+                              className="relative z-10 mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-cyan-300 [text-shadow:0_6px_16px_rgba(0,0,0,0.85)] transition-colors duration-300 hover:text-white"
+                            >
+                              Saber mais
+                              <span className="text-base leading-none">+</span>
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-stretch gap-3 pt-1">
+                    <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[56px] justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-6 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white">
+                      <Calendar className="h-5 w-5" />
+                      Quero me inscrever agora
+                    </Button>
+                    <Button asChild className="hero-cta-secondary h-auto min-h-[56px] max-w-[420px] justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-6 py-3 text-sm font-medium normal-case leading-snug text-white">
+                      <Link to="/vsl-evento">
+                        <ArrowRight className="h-4 w-4" />
+                        <span>Ainda não vou entrar agora, mas quero ver todos os detalhes da plataforma.</span>
+                        <span>Não poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos</span>
+                        <span className="hidden">
+                        Não poderei participar nessa data, mas gostaria de saber.
+                        </span>
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
               </div>
 
               <div className="w-full max-w-[460px] lg:justify-self-end">
@@ -501,7 +581,7 @@ export default function Evento() {
               </div>
             </div>
 
-            <div id="inscricao-revela" className="relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-5 sm:space-y-5 lg:mt-3">
+            <div id="inscricao-revela" data-signup-target="true" className="relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-5 sm:space-y-5 lg:hidden">
               <div className="grid gap-4 sm:hidden">
                 {heroServiceCards.map((card) => (
                   <article
