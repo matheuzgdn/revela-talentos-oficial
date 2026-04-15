@@ -177,35 +177,6 @@ function FAQItem({ q, a }) {
   );
 }
 
-function ReminderInvitationCard({ accentGlow, onPrimaryClick }) {
-  return (
-    <div className="overflow-hidden rounded-[1.8rem] border border-white/12 bg-[linear-gradient(180deg,rgba(8,12,20,0.92),rgba(4,7,12,0.98))] shadow-[0_30px_90px_rgba(0,0,0,0.38)]">
-      <div className="relative bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.18),transparent_34%),linear-gradient(180deg,rgba(9,18,33,0.98),rgba(5,10,18,1))] px-5 py-7 text-center sm:px-8 sm:py-9">
-        <Badge className="border border-red-500/25 bg-red-500/14 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-red-300">
-          Plataforma oficial
-        </Badge>
-        <h3 className="mt-5 text-[2.2rem] font-black leading-[0.95] text-white sm:text-[3rem]">
-          <span className={`bg-gradient-to-r ${accentGlow} bg-clip-text text-transparent`}>ACESSO À PLATAFORMA</span>
-        </h3>
-        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/76 sm:text-base">
-          Entre para a plataforma da Revela Talentos e tenha acesso a metodologia, mentorias, conteúdos estratégicos e seletivas que ajudam pais e atletas a caminhar com mais preparo rumo ao profissionalismo.
-        </p>
-        <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em] text-cyan-300 sm:text-xs">
-          Conteúdo, mentoria e direção para pais e atletas
-        </p>
-        <Button
-          type="button"
-          onClick={onPrimaryClick}
-          className="hero-cta-alert mt-6 h-12 w-full rounded-[1.15rem] border border-red-300/20 px-6 text-sm font-bold text-white sm:h-14 sm:text-base"
-        >
-          <Calendar className="mr-2.5 h-4 w-4 sm:h-5 sm:w-5" />
-          Quero acessar agora
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 function StatsSection({ accentClass }) {
   return (
     <section className="relative z-10 px-4 py-16 sm:px-6 sm:py-20">
@@ -854,12 +825,6 @@ export default function Evento() {
           </div>
         </DialogContent>
       </Dialog>
-
-      <section className="relative bg-[#040507] px-4 py-6 sm:px-6 sm:py-10">
-        <div className="mx-auto max-w-[1400px]">
-          <ReminderInvitationCard accentGlow={accentGlow} onPrimaryClick={() => setIsSchedulingOpen(true)} />
-        </div>
-      </section>
 
       {/* 1. SOCIAL PROOF MARQUEE */}
       <MainLandingCarousel eyebrow="/ Nossa Estrutura Global" title="CONEXÕES EUROPEIAS E NACIONAIS" description="A metodologia da Revela Talentos já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo." onCardClick={scrollToSignupCta} />
