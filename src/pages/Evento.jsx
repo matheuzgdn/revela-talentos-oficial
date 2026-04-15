@@ -240,7 +240,8 @@ export default function Evento() {
   const trackRef = useRef(null);
   const signupHighlightTimeoutRef = useRef(null);
   const heroCarouselResumeTimeoutRef = useRef(null);
-  const heroVideoRef = useRef(null);
+  const desktopHeroVideoRef = useRef(null);
+  const mobileHeroVideoRef = useRef(null);
   const variant = 'default';
   const spotlight = useMemo(() => athleteSpotlights[variant] || athleteSpotlights.default, [variant]);
   const accentClass = accentText[spotlight.accent] || accentText.cyan;
@@ -309,11 +310,13 @@ export default function Evento() {
   };
 
   const toggleHeroVideoAudio = () => {
-    const video = heroVideoRef.current;
+    const video = [mobileHeroVideoRef.current, desktopHeroVideoRef.current].find((element) => element && element.offsetParent !== null)
+      || mobileHeroVideoRef.current
+      || desktopHeroVideoRef.current;
     if (!video || !isHeroVideoMuted) return;
     setIsHeroVideoMuted(false);
     video.muted = false;
-    video.volume = 1;
+    video.volume = 0.82;
     const playPromise = video.play();
     if (playPromise?.catch) {
       playPromise.catch(() => {});
@@ -407,10 +410,30 @@ export default function Evento() {
             className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-x-0 top-0 h-[25svh] overflow-hidden sm:hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.18),transparent_42%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,7,18,0.92)_0%,rgba(3,7,18,0.58)_48%,rgba(4,5,7,0.18)_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.72)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
+          <div className="absolute inset-x-0 top-0 h-[40svh] overflow-hidden sm:hidden">
+            <video
+              ref={mobileHeroVideoRef}
+              src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4"
+              autoPlay
+              loop
+              muted={isHeroVideoMuted}
+              playsInline
+              controls={false}
+              className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.97]"
+            />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.2),transparent_40%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,17,40,0.3)_0%,rgba(6,17,40,0.14)_36%,rgba(4,5,7,0.2)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(180deg,transparent_0%,rgba(4,8,15,0.34)_26%,rgba(4,5,7,0.92)_100%)] shadow-[0_28px_58px_rgba(0,0,0,0.72)]" />
+            {isHeroVideoMuted && (
+              <button
+                type="button"
+                onClick={toggleHeroVideoAudio}
+                className="absolute bottom-5 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100"
+              >
+                <VolumeX className="h-4 w-4" />
+                <span>Ativar áudio</span>
+              </button>
+            )}
           </div>
           <div className="absolute inset-0 hidden bg-black/30 sm:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50 sm:block" />
@@ -420,7 +443,7 @@ export default function Evento() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
-        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-24 sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
+        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-[37svh] sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
           <div className="w-full">
             <div className="mb-5 mt-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:mt-0 sm:gap-4">
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
@@ -523,11 +546,11 @@ export default function Evento() {
                 </div>
               </div>
 
-              <div className="order-1 w-full max-w-[460px] lg:order-2 lg:justify-self-end">
+              <div className="order-1 hidden w-full max-w-[460px] sm:block lg:order-2 lg:justify-self-end">
                 <div className="group relative mx-auto max-w-[360px] overflow-hidden rounded-[1.8rem] border border-white/12 bg-[#05070b]/80 shadow-[0_34px_96px_rgba(0,0,0,0.55),0_0_30px_rgba(14,165,233,0.12)] backdrop-blur-sm sm:mx-0 sm:max-w-[460px] sm:rounded-[2rem]">
                   <div className="absolute inset-[1px] rounded-[calc(1.8rem-1px)] border border-white/6 sm:rounded-[calc(2rem-1px)]" />
                   <video
-                    ref={heroVideoRef}
+                    ref={desktopHeroVideoRef}
                     autoPlay
                     loop
                     muted={isHeroVideoMuted}
