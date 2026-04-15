@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import {
   Sparkles, Award, Users,
   ChevronDown, ChevronUp, ArrowRight,
-  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, MessageCircle, Volume2, VolumeX
+  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, MessageCircle, VolumeX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -263,28 +263,6 @@ export default function Evento() {
     };
   }, []);
 
-  useEffect(() => {
-    const activateHeroVideoAudio = () => {
-      const video = heroVideoRef.current;
-      if (!video) return;
-      video.muted = false;
-      video.volume = 1;
-      const playPromise = video.play();
-      if (playPromise?.catch) {
-        playPromise.catch(() => {});
-      }
-      setIsHeroVideoMuted(false);
-    };
-
-    window.addEventListener('pointerdown', activateHeroVideoAudio, { once: true });
-    window.addEventListener('keydown', activateHeroVideoAudio, { once: true });
-
-    return () => {
-      window.removeEventListener('pointerdown', activateHeroVideoAudio);
-      window.removeEventListener('keydown', activateHeroVideoAudio);
-    };
-  }, []);
-
   const scrollTrack = (direction) => {
     if (!trackRef.current) return;
     trackRef.current.scrollBy({ left: direction * trackRef.current.clientWidth * 0.82, behavior: 'smooth' });
@@ -331,17 +309,14 @@ export default function Evento() {
   };
 
   const toggleHeroVideoAudio = () => {
-    const nextMuted = !isHeroVideoMuted;
     const video = heroVideoRef.current;
-    setIsHeroVideoMuted(nextMuted);
-    if (!video) return;
-    video.muted = nextMuted;
-    if (!nextMuted) {
-      video.volume = 1;
-      const playPromise = video.play();
-      if (playPromise?.catch) {
-        playPromise.catch(() => {});
-      }
+    if (!video || !isHeroVideoMuted) return;
+    setIsHeroVideoMuted(false);
+    video.muted = false;
+    video.volume = 1;
+    const playPromise = video.play();
+    if (playPromise?.catch) {
+      playPromise.catch(() => {});
     }
   };
 
@@ -549,48 +524,31 @@ export default function Evento() {
               </div>
 
               <div className="order-1 w-full max-w-[460px] lg:order-2 lg:justify-self-end">
-                <div className="group relative mx-auto max-w-[350px] overflow-hidden rounded-[2rem] border border-white/12 bg-[#05070b]/80 shadow-[0_24px_90px_rgba(0,0,0,0.55),0_0_40px_rgba(14,165,233,0.14)] backdrop-blur-sm sm:mx-0 sm:max-w-[460px]">
-                  <div className="absolute inset-[1px] rounded-[calc(2rem-1px)] border border-white/6" />
-                  <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 py-3 sm:hidden">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-2.5 py-1.5 backdrop-blur-md">
-                      <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-5 w-5 rounded-full object-contain" />
-                      <span className="text-[11px] font-semibold tracking-[0.08em] text-white">revela talentos</span>
-                    </div>
-                    <div className="rounded-full border border-white/10 bg-black/35 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-200/90 backdrop-blur-md">
-                      Post oficial
-                    </div>
-                  </div>
+                <div className="group relative mx-auto max-w-[360px] overflow-hidden rounded-[1.8rem] border border-white/12 bg-[#05070b]/80 shadow-[0_34px_96px_rgba(0,0,0,0.55),0_0_30px_rgba(14,165,233,0.12)] backdrop-blur-sm sm:mx-0 sm:max-w-[460px] sm:rounded-[2rem]">
+                  <div className="absolute inset-[1px] rounded-[calc(1.8rem-1px)] border border-white/6 sm:rounded-[calc(2rem-1px)]" />
                   <video
                     ref={heroVideoRef}
                     autoPlay
                     loop
                     muted={isHeroVideoMuted}
                     playsInline
-                    className="aspect-[4/5] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
+                    className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
                   >
                     <source src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4" type="video/mp4" />
                   </video>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.2),transparent_32%)]" />
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,15,0.06)_0%,rgba(4,8,15,0.16)_38%,rgba(4,8,15,0.56)_100%)]" />
-                  <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.16)_28%,rgba(4,5,7,0.82)_100%)]" />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-4 sm:hidden">
-                    <div className="rounded-[1.35rem] border border-white/10 bg-black/38 p-3 backdrop-blur-md">
-                      <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-200/90">
-                        Plataforma em vídeo
-                      </div>
-                      <div className="mt-2 text-lg font-black uppercase leading-[0.92] tracking-tight text-white">
-                        Revela Talentos
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={toggleHeroVideoAudio}
-                    className="absolute bottom-24 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:bottom-5 sm:right-5"
-                  >
-                    {isHeroVideoMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                    <span>{isHeroVideoMuted ? 'Ativar áudio' : 'Áudio ativo'}</span>
-                  </button>
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,15,0.04)_0%,rgba(4,8,15,0.1)_42%,rgba(4,8,15,0.42)_100%)]" />
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.12)_26%,rgba(4,5,7,0.72)_100%)] shadow-[0_24px_48px_rgba(0,0,0,0.5)]" />
+                  {isHeroVideoMuted && (
+                    <button
+                      type="button"
+                      onClick={toggleHeroVideoAudio}
+                      className="absolute bottom-4 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:bottom-5 sm:right-5"
+                    >
+                      <VolumeX className="h-4 w-4" />
+                      <span>Ativar áudio</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
