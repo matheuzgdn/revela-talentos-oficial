@@ -418,19 +418,40 @@ export default function Evento() {
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Plataforma Oficial</span>
             </div>
 
-            <div className="max-w-3xl space-y-5 font-['Inter']">
-              <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
-              <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
-                A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
-              </p>
-              <div className="pt-2">
-                <h2 className="text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
-                  BENEFÍCIOS
-                  <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
-                    REVELA TALENTOS
-                  </span>
-                </h2>
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(360px,460px)] lg:items-end lg:gap-10 xl:gap-12">
+              <div className="max-w-3xl space-y-5 font-['Inter']">
+                <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
+                <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
+                  A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
+                </p>
               </div>
+
+              <div className="w-full max-w-[460px] lg:justify-self-end">
+                <div className="group relative overflow-hidden rounded-[2rem] border border-white/12 bg-[#05070b]/80 shadow-[0_24px_90px_rgba(0,0,0,0.55),0_0_40px_rgba(14,165,233,0.14)] backdrop-blur-sm">
+                  <div className="absolute inset-[1px] rounded-[calc(2rem-1px)] border border-white/6" />
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/5]"
+                  >
+                    <source src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.2),transparent_32%)]" />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,15,0.06)_0%,rgba(4,8,15,0.16)_38%,rgba(4,8,15,0.56)_100%)]" />
+                  <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.16)_28%,rgba(4,5,7,0.82)_100%)]" />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-5 sm:pt-6">
+              <h2 className="text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
+                BENEFÍCIOS
+                <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
+                  REVELA TALENTOS
+                </span>
+              </h2>
             </div>
 
             <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
