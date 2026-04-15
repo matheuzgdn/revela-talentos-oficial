@@ -418,8 +418,8 @@ export default function Evento() {
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Plataforma Oficial</span>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(360px,460px)] lg:items-end lg:gap-10 xl:gap-12">
-              <div className="max-w-3xl space-y-5 font-['Inter']">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.06fr)_minmax(340px,420px)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,1.02fr)_minmax(360px,440px)] xl:gap-10">
+              <div className="max-w-3xl space-y-5 font-['Inter'] lg:pt-4 xl:pt-6">
                 <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
                 <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
                   A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
@@ -434,7 +434,7 @@ export default function Evento() {
                     loop
                     muted
                     playsInline
-                    className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/5]"
+                    className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
                   >
                     <source src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4" type="video/mp4" />
                   </video>
@@ -445,8 +445,8 @@ export default function Evento() {
               </div>
             </div>
 
-            <div className="pt-5 sm:pt-6">
-              <h2 className="text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
+            <div className="pt-5 sm:pt-6 lg:pt-7">
+              <h2 className="max-w-[18rem] text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
                 BENEFÍCIOS
                 <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
                   REVELA TALENTOS
@@ -454,7 +454,7 @@ export default function Evento() {
               </h2>
             </div>
 
-            <div id="inscricao-revela" className="relative mt-2 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-8 sm:space-y-5">
+            <div id="inscricao-revela" className="relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-6 sm:space-y-5 lg:mt-5">
               <div className="grid gap-4 sm:hidden">
                 {heroServiceCards.map((card) => (
                   <article
@@ -495,7 +495,7 @@ export default function Evento() {
               </div>
 
               <div
-                className="hero-service-mask relative -mx-1 hidden overflow-x-auto overflow-y-visible px-1 [--hero-gap:0.75rem] sm:mx-0 sm:block sm:px-0 sm:[--hero-gap:1.25rem]"
+                className="hero-service-mask relative -mx-1 hidden overflow-x-auto overflow-y-visible px-1 [--hero-gap:0.75rem] sm:mx-0 sm:block sm:px-0 sm:[--hero-gap:1.05rem] xl:[--hero-gap:1.25rem]"
                 onTouchStart={pauseHeroCarousel}
                 onTouchEnd={resumeHeroCarouselSoon}
                 onTouchCancel={resumeHeroCarouselSoon}
@@ -510,7 +510,7 @@ export default function Evento() {
                 {heroServiceCarouselCards.map((card, index) => (
                   <article
                     key={`${card.title}-${index}`}
-                    className="group relative aspect-square w-[255px] shrink-0 snap-start overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 sm:w-[320px]"
+                    className="group relative aspect-square w-[255px] shrink-0 snap-start overflow-hidden rounded-[2rem] bg-[#040507] text-left shadow-[0_32px_90px_rgba(0,0,0,0.42),0_0_30px_rgba(14,165,233,0.08)] transition-all duration-300 hover:-translate-y-1 sm:w-[292px] xl:w-[320px]"
                   >
                     {isVideoMedia(card.image) ? (
                       <video
