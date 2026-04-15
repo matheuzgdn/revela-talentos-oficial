@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import {
   Sparkles, Award, Users,
   ChevronDown, ChevronUp, ArrowRight,
-  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, MessageCircle
+  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, MessageCircle, Volume2, VolumeX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -228,6 +228,7 @@ export default function Evento() {
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
   const [activeHeroService, setActiveHeroService] = useState(null);
   const [isHeroCarouselPaused, setIsHeroCarouselPaused] = useState(false);
+  const [isHeroVideoMuted, setIsHeroVideoMuted] = useState(true);
   const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
   const [scheduleForm, setScheduleForm] = useState({
     full_name: "",
@@ -239,6 +240,7 @@ export default function Evento() {
   const trackRef = useRef(null);
   const signupHighlightTimeoutRef = useRef(null);
   const heroCarouselResumeTimeoutRef = useRef(null);
+  const heroVideoRef = useRef(null);
   const variant = 'default';
   const spotlight = useMemo(() => athleteSpotlights[variant] || athleteSpotlights.default, [variant]);
   const accentClass = accentText[spotlight.accent] || accentText.cyan;
@@ -258,6 +260,28 @@ export default function Evento() {
       if (heroCarouselResumeTimeoutRef.current) {
         window.clearTimeout(heroCarouselResumeTimeoutRef.current);
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    const activateHeroVideoAudio = () => {
+      const video = heroVideoRef.current;
+      if (!video) return;
+      video.muted = false;
+      video.volume = 1;
+      const playPromise = video.play();
+      if (playPromise?.catch) {
+        playPromise.catch(() => {});
+      }
+      setIsHeroVideoMuted(false);
+    };
+
+    window.addEventListener('pointerdown', activateHeroVideoAudio, { once: true });
+    window.addEventListener('keydown', activateHeroVideoAudio, { once: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', activateHeroVideoAudio);
+      window.removeEventListener('keydown', activateHeroVideoAudio);
     };
   }, []);
 
@@ -304,6 +328,21 @@ export default function Evento() {
   const handleHeroCarouselInteraction = () => {
     pauseHeroCarousel();
     resumeHeroCarouselSoon();
+  };
+
+  const toggleHeroVideoAudio = () => {
+    const nextMuted = !isHeroVideoMuted;
+    const video = heroVideoRef.current;
+    setIsHeroVideoMuted(nextMuted);
+    if (!video) return;
+    video.muted = nextMuted;
+    if (!nextMuted) {
+      video.volume = 1;
+      const playPromise = video.play();
+      if (playPromise?.catch) {
+        playPromise.catch(() => {});
+      }
+    }
   };
 
   const handleHeroServiceSchedule = () => {
@@ -418,21 +457,30 @@ export default function Evento() {
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Plataforma Oficial</span>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.06fr)_minmax(340px,420px)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,1.02fr)_minmax(360px,440px)] xl:gap-10">
-              <div className="max-w-3xl space-y-5 font-['Inter'] lg:pt-4 xl:pt-6">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,420px)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,1.04fr)_minmax(360px,440px)] xl:gap-10">
+              <div className="max-w-3xl space-y-5 font-['Inter'] lg:pt-4 xl:pt-5">
                 <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
                 <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
                   A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
                 </p>
+                <div className="pt-2 sm:pt-3">
+                  <h2 className="max-w-[18rem] text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
+                    BENEFÍCIOS
+                    <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
+                      REVELA TALENTOS
+                    </span>
+                  </h2>
+                </div>
               </div>
 
               <div className="w-full max-w-[460px] lg:justify-self-end">
                 <div className="group relative overflow-hidden rounded-[2rem] border border-white/12 bg-[#05070b]/80 shadow-[0_24px_90px_rgba(0,0,0,0.55),0_0_40px_rgba(14,165,233,0.14)] backdrop-blur-sm">
                   <div className="absolute inset-[1px] rounded-[calc(2rem-1px)] border border-white/6" />
                   <video
+                    ref={heroVideoRef}
                     autoPlay
                     loop
-                    muted
+                    muted={isHeroVideoMuted}
                     playsInline
                     className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
                   >
@@ -441,20 +489,19 @@ export default function Evento() {
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.2),transparent_32%)]" />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,15,0.06)_0%,rgba(4,8,15,0.16)_38%,rgba(4,8,15,0.56)_100%)]" />
                   <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.16)_28%,rgba(4,5,7,0.82)_100%)]" />
+                  <button
+                    type="button"
+                    onClick={toggleHeroVideoAudio}
+                    className="absolute bottom-4 right-4 z-10 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:bottom-5 sm:right-5"
+                  >
+                    {isHeroVideoMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                    <span>{isHeroVideoMuted ? 'Ativar áudio' : 'Áudio ativo'}</span>
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div className="pt-5 sm:pt-6 lg:pt-7">
-              <h2 className="max-w-[18rem] text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
-                BENEFÍCIOS
-                <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
-                  REVELA TALENTOS
-                </span>
-              </h2>
-            </div>
-
-            <div id="inscricao-revela" className="relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-6 sm:space-y-5 lg:mt-5">
+            <div id="inscricao-revela" className="relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-5 sm:space-y-5 lg:mt-3">
               <div className="grid gap-4 sm:hidden">
                 {heroServiceCards.map((card) => (
                   <article
