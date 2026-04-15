@@ -224,6 +224,8 @@ function StatsSection({ accentClass }) {
 }
 
 export default function Evento() {
+  const [isMobileViewport, setIsMobileViewport] = useState(() => typeof window !== "undefined" ? window.innerWidth < 640 : false);
+  const [isMobileHeroLocked, setIsMobileHeroLocked] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
   const [activeHeroService, setActiveHeroService] = useState(null);
@@ -254,6 +256,13 @@ export default function Evento() {
   }, []);
 
   useEffect(() => {
+    const updateViewport = () => setIsMobileViewport(window.innerWidth < 640);
+    updateViewport();
+    window.addEventListener('resize', updateViewport);
+    return () => window.removeEventListener('resize', updateViewport);
+  }, []);
+
+  useEffect(() => {
     return () => {
       if (signupHighlightTimeoutRef.current) {
         window.clearTimeout(signupHighlightTimeoutRef.current);
@@ -263,6 +272,18 @@ export default function Evento() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobileViewport || !isMobileHeroLocked) return undefined;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [isMobileViewport, isMobileHeroLocked]);
 
   const scrollTrack = (direction) => {
     if (!trackRef.current) return;
@@ -323,6 +344,10 @@ export default function Evento() {
     }
   };
 
+  const handleMobileHeroComplete = () => {
+    setIsMobileHeroLocked(false);
+  };
+
   const handleHeroServiceSchedule = () => {
     setActiveHeroService(null);
     setIsSchedulingOpen(true);
@@ -378,7 +403,7 @@ export default function Evento() {
         target="_blank"
         rel="noreferrer"
         aria-label="Falar no WhatsApp"
-        className="fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 items-center justify-center rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6 sm:h-16 sm:w-16"
+        className={`fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 items-center justify-center rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:inline-flex' : ''}`}
         style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
         <MessageCircle className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -386,7 +411,7 @@ export default function Evento() {
 
       {/* STICKY HEADER */}
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/90 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'} ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:block' : ''}`}
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
         <div className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
@@ -410,30 +435,20 @@ export default function Evento() {
             className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-x-0 top-0 h-[40svh] overflow-hidden sm:hidden">
+          <div className="absolute inset-x-0 top-0 h-[54svh] overflow-hidden sm:hidden">
             <video
               ref={mobileHeroVideoRef}
               src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4"
               autoPlay
-              loop
+              onEnded={handleMobileHeroComplete}
               muted={isHeroVideoMuted}
               playsInline
               controls={false}
-              className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.97]"
+              className="h-full w-full object-cover object-top animate-cinematic-zoom opacity-[0.97]"
             />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.2),transparent_40%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,17,40,0.3)_0%,rgba(6,17,40,0.14)_36%,rgba(4,5,7,0.2)_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-28 bg-[linear-gradient(180deg,transparent_0%,rgba(4,8,15,0.34)_26%,rgba(4,5,7,0.92)_100%)] shadow-[0_28px_58px_rgba(0,0,0,0.72)]" />
-            {isHeroVideoMuted && (
-              <button
-                type="button"
-                onClick={toggleHeroVideoAudio}
-                className="absolute bottom-5 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100"
-              >
-                <VolumeX className="h-4 w-4" />
-                <span>Ativar áudio</span>
-              </button>
-            )}
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(180deg,transparent_0%,rgba(4,8,15,0.3)_22%,rgba(4,5,7,0.95)_100%)] shadow-[0_30px_64px_rgba(0,0,0,0.78)]" />
           </div>
           <div className="absolute inset-0 hidden bg-black/30 sm:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50 sm:block" />
@@ -443,9 +458,19 @@ export default function Evento() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
-        <div className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 pt-[37svh] sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14">
-          <div className="w-full">
-            <div className="mb-5 mt-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:mt-0 sm:gap-4">
+        <div className={`relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 ${isMobileViewport ? (isMobileHeroLocked ? 'min-h-[100svh] pt-[48svh]' : 'pt-[48svh]') : 'pt-[43svh]'} sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14`}>
+          <div className="relative w-full">
+            {isMobileViewport && isHeroVideoMuted && (
+              <button
+                type="button"
+                onClick={toggleHeroVideoAudio}
+                className="absolute right-0 top-[39svh] z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:hidden"
+              >
+                <VolumeX className="h-4 w-4" />
+                <span>Ativar áudio</span>
+              </button>
+            )}
+            <div className={`mb-5 mt-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:mt-0 sm:gap-4 ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:flex' : ''}`}>
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Plataforma Oficial</span>
             </div>
@@ -453,10 +478,16 @@ export default function Evento() {
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,420px)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,1.04fr)_minmax(360px,440px)] xl:gap-10">
               <div className="order-2 max-w-3xl space-y-5 font-['Inter'] lg:order-1 lg:pt-4 xl:pt-5">
                 <h1 className="max-w-3xl text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-tight text-white sm:text-[3.15rem] md:text-5xl lg:text-[3.45rem]">REVELA TALENTOS</h1>
-                <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
-                  A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
-                </p>
-                <div className="pt-2 sm:pt-3">
+                {isMobileViewport && isMobileHeroLocked ? (
+                  <p className="max-w-[18rem] text-[1rem] leading-7 text-white/84 sm:hidden">
+                    Assista ao vídeo de 2 min para receber todos os benefícios.
+                  </p>
+                ) : (
+                  <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
+                    A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
+                  </p>
+                )}
+                <div className={`pt-2 sm:pt-3 ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:block' : ''}`}>
                   <h2 className="max-w-[18rem] text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
                     BENEFÍCIOS
                     <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
@@ -576,7 +607,7 @@ export default function Evento() {
               </div>
             </div>
 
-            <div id="inscricao-revela" data-signup-target="true" className="relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-5 sm:space-y-5 lg:hidden">
+            <div id="inscricao-revela" data-signup-target="true" className={`relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-5 sm:space-y-5 lg:hidden ${isMobileViewport && isMobileHeroLocked ? 'hidden' : ''}`}>
               <div className="grid gap-4 sm:hidden">
                 {heroServiceCards.map((card) => (
                   <article
