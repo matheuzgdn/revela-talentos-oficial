@@ -5,7 +5,7 @@ import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos
 import { Link } from "react-router-dom";
 import {
   Sparkles, Award, Users,
-  ChevronDown, ChevronUp, ArrowRight,
+  ChevronDown, ChevronUp,
   Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, VolumeX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -153,7 +153,11 @@ const opportunitiesData = [
   { title: 'Entrada Eslováquia', location: 'Bratislava, Eslováquia', flag: '🇸🇰', country: 'Eslováquia', market: 'Europa', format: 'Online + Presencial', teaser: 'Descubra uma porta de entrada competitiva.' },
 ];
 
-const supportContacts = ['+55 31 8233-1411', '+351 914 945 252'];
+const supportContacts = [
+  { display: '+55 31 8233-1411', phone: '553182331411' },
+  { display: '+351 914 945 252', phone: '351914945252' },
+];
+const whatsappPlanMessage = encodeURIComponent('Quero saber mais sobre o plano de carreira');
 
 const accentText = { cyan: 'text-[#00f3ff]' };
 const accentGradient = { cyan: 'from-[#00f3ff] via-cyan-200 to-white' };
@@ -417,18 +421,15 @@ export default function Evento() {
       <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(0,243,255,0.08),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent_30%)]" />
 
       <a
-        href="https://www.ec10talentos.com/_paylink/AZ1-ne5r"
+        href={`https://wa.me/${supportContacts[supportContactIndex].phone}?text=${whatsappPlanMessage}`}
         target="_blank"
         rel="noreferrer"
-        aria-label={`Quero acessar agora - contato ${supportContacts[supportContactIndex]}`}
-        className="fixed bottom-4 right-4 z-[60] inline-flex items-center gap-3 rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] px-4 py-3 text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6"
+        aria-label="Falar no WhatsApp sobre o plano de carreira"
+        className="fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 items-center justify-center rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6 sm:h-16 sm:w-16"
         style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
         <WhatsAppIcon className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
-        <span className="flex flex-col leading-none">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/80">Contato</span>
-          <span className="mt-1 text-[12px] font-bold tracking-[0.03em] text-white sm:text-[13px]">{supportContacts[supportContactIndex]}</span>
-        </span>
+        <span className="sr-only">WhatsApp</span>
       </a>
 
       {/* STICKY HEADER */}
@@ -593,19 +594,11 @@ export default function Evento() {
                   </div>
 
                   <div className="flex flex-wrap items-stretch gap-3 pt-1">
-                    <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[56px] justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-6 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white">
-                      <Calendar className="h-5 w-5" />
-                      Quero me inscrever agora
-                    </Button>
-                    <Button asChild className="hero-cta-secondary h-auto min-h-[56px] max-w-[420px] justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-6 py-3 text-sm font-medium normal-case leading-snug text-white">
-                      <Link to="/vsl-evento">
-                        <ArrowRight className="h-4 w-4" />
-                        <span>Ainda não vou entrar agora, mas quero ver todos os detalhes da plataforma.</span>
-                        <span>Não poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos</span>
-                        <span className="hidden">
-                        Não poderei participar nessa data, mas gostaria de saber.
-                        </span>
-                      </Link>
+                    <Button asChild className="hero-cta-primary h-auto min-h-[56px] justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-6 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white">
+                      <a href="https://www.ec10talentos.com/_paylink/AZ1-ne5r" target="_blank" rel="noreferrer">
+                        <Calendar className="h-5 w-5" />
+                        Quero participar
+                      </a>
                     </Button>
                   </div>
                 </div>
@@ -743,19 +736,11 @@ export default function Evento() {
               </div>
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
-                <Button type="button" onClick={() => setIsSchedulingOpen(true)} className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
-                  <Calendar className="h-5 w-5" />
-                  Quero me inscrever agora
-                </Button>
-                <Button asChild className="hero-cta-secondary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-blue-300/25 px-5 py-3 text-sm font-medium normal-case leading-snug text-white sm:min-h-[58px] md:w-auto md:max-w-[560px] md:px-6 md:text-base">
-                  <Link to="/vsl-evento">
-                    <ArrowRight className="h-4 w-4" />
-                    <span>Ainda não vou entrar agora, mas quero ver todos os detalhes da plataforma.</span>
-                    <span>Não poderei estar nessa data, mas gostaria de saber mais sobre a Revela Talentos</span>
-                    <span className="hidden">
-                    Não poderei participar nessa data, mas gostaria de saber.
-                    </span>
-                  </Link>
+                <Button asChild className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
+                  <a href="https://www.ec10talentos.com/_paylink/AZ1-ne5r" target="_blank" rel="noreferrer">
+                    <Calendar className="h-5 w-5" />
+                    Quero participar
+                  </a>
                 </Button>
               </div>
 
