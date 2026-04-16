@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import {
   Sparkles, Award, Users,
   ChevronDown, ChevronUp,
-  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, VolumeX
+  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, VolumeX, Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -168,14 +168,6 @@ function formatWhatsapp(value = "") {
   if (digits.length <= 2) return digits;
   if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-}
-
-function WhatsAppIcon({ className = "" }) {
-  return (
-    <svg viewBox="0 0 448 512" aria-hidden="true" className={className} fill="currentColor">
-      <path d="M380.9 97.1C339-8.7 252.2-10.3 197.7 8C143.2 26.3 104.4 67.8 86 122.3c-18.3 54.5-16.8 141.3 89.1 183.2c29.3 11.6 61 17.3 92.6 17.3c26.8 0 53.5-4.1 79.3-12.4l76.7 20l-20-76.7c38.8-25.8 65.4-65.4 77.8-111.8c18.3-54.5 16.8-141.3-89.1-183.2zM224 438.4c-43.5 0-86.1-11.5-123.3-33.3L32 480l20.1-67.6C27.9 374.3 14.4 331.7 14.4 288C14.4 169.1 109.1 74.4 228 74.4c57.8 0 112.2 22.5 153.1 63.3c40.9 40.9 63.3 95.3 63.3 153.1c0 118.9-94.7 213.6-213.6 213.6zm101.5-138.2c-5.6-2.8-33.2-16.4-38.4-18.3c-5.1-1.9-8.9-2.8-12.6 2.8c-3.7 5.6-14.5 18.3-17.8 22c-3.3 3.7-6.5 4.2-12.1 1.4c-33-16.5-54.7-29.5-76.5-67.1c-5.8-10 5.8-9.3 16.5-31c1.9-3.7.9-7-0.5-9.8c-1.4-2.8-12.6-30.4-17.3-41.6c-4.5-10.8-9.2-9.4-12.6-9.6c-3.3-.2-7-.2-10.7-.2c-3.7 0-9.8 1.4-14.9 7c-5.1 5.6-19.6 19.2-19.6 46.9c0 27.7 20.1 54.4 22.9 58.1c2.8 3.7 39.5 60.3 95.7 84.5c35.5 15.3 49.4 16.6 67.2 14c10.9-1.6 33.2-13.5 37.9-26.6c4.7-13.1 4.7-24.3 3.3-26.6c-1.4-2.3-5.1-3.7-10.7-6.5z" />
-    </svg>
-  );
 }
 
 function FAQItem({ q, a }) {
@@ -428,7 +420,7 @@ export default function Evento() {
         className="fixed bottom-4 right-4 z-[60] inline-flex h-14 w-14 items-center justify-center rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6 sm:h-16 sm:w-16"
         style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
-        <WhatsAppIcon className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
+        <Phone className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
         <span className="sr-only">WhatsApp</span>
       </a>
 
