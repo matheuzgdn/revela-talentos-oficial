@@ -528,20 +528,17 @@ export default function Evento() {
             {isMobileHeroVideoMuted && (
               <>
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <div className="pointer-events-auto relative overflow-hidden rounded-[1.6rem] border border-white/12 bg-black/28 px-4 py-4 shadow-[0_20px_48px_rgba(0,0,0,0.36)] backdrop-blur-xl">
+                <div className="pointer-events-auto relative overflow-hidden rounded-[1.6rem] border border-white/12 bg-black/30 px-4 py-4 shadow-[0_20px_48px_rgba(0,0,0,0.36)] backdrop-blur-xl">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_58%)]" />
                   <button
                     type="button"
                     onClick={toggleMobileHeroVideoAudio}
-                    className="relative flex min-w-[220px] items-center justify-center gap-3 rounded-[1.1rem] border border-cyan-200/30 bg-[linear-gradient(135deg,rgba(9,15,26,0.88),rgba(14,35,67,0.78))] px-5 py-4 text-white shadow-[0_0_0_1px_rgba(125,244,255,0.08),0_0_20px_rgba(34,211,238,0.14)] transition-all duration-300 active:scale-[0.98]"
+                    className="relative flex items-center gap-3 rounded-[1.2rem] border border-cyan-200/30 bg-[linear-gradient(135deg,rgba(9,15,26,0.8),rgba(14,35,67,0.72))] px-5 py-4 text-white shadow-[0_0_0_1px_rgba(125,244,255,0.08),0_0_20px_rgba(34,211,238,0.14)] transition-all duration-300 active:scale-[0.98]"
                   >
                     <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-cyan-300/25 bg-cyan-400/12 text-cyan-200">
                       <Volume2 className="h-5 w-5" />
                     </span>
-                    <span className="text-left">
-                      <span className="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-cyan-200/78">Som do video</span>
-                      <span className="mt-1 block text-[0.98rem] font-semibold tracking-[0.01em] text-white">Toque para ativar o audio</span>
-                    </span>
+                    <span className="text-[0.98rem] font-semibold tracking-[0.01em] text-white">Toque para ativar o som</span>
                   </button>
                 </div>
               </div>
