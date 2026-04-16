@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import {
   Sparkles, Award, Users,
   ChevronDown, ChevronUp,
-  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, VolumeX, Phone
+  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, Volume2, VolumeX, Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -495,12 +495,14 @@ export default function Evento() {
                 ref={mobileHeroVideoRef}
                 src={mobileHeroVideoSource}
                 autoPlay
+                preload="auto"
                 onEnded={isMobileHeroLocked ? handleMobileHeroComplete : undefined}
                 muted={isMobileHeroVideoMuted}
                 loop={!isMobileHeroLocked}
                 playsInline
                 controls={false}
-                className={`h-full w-full object-cover object-center animate-cinematic-zoom ${isMobileHeroLocked ? 'opacity-[0.99]' : 'opacity-[0.96]'}`}
+                disablePictureInPicture
+                className={`h-full w-full object-cover object-center ${isMobileHeroLocked ? 'opacity-[0.99]' : 'opacity-[0.96]'}`}
               />
               {isMobileHeroLocked ? (
                 <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.08)_18%,rgba(4,5,7,0.97)_100%)] shadow-[0_34px_74px_rgba(0,0,0,0.82)]" />
@@ -524,14 +526,34 @@ export default function Evento() {
         {isMobileViewport && (
           <div className={`absolute inset-x-4 top-0 z-20 sm:hidden ${mobileHeroVideoHeightClass}`}>
             {isMobileHeroVideoMuted && (
+              <>
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <div className="pointer-events-auto relative overflow-hidden rounded-[1.6rem] border border-white/12 bg-black/28 px-4 py-4 shadow-[0_20px_48px_rgba(0,0,0,0.36)] backdrop-blur-xl">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_58%)]" />
+                  <button
+                    type="button"
+                    onClick={toggleMobileHeroVideoAudio}
+                    className="relative flex min-w-[220px] items-center justify-center gap-3 rounded-[1.1rem] border border-cyan-200/30 bg-[linear-gradient(135deg,rgba(9,15,26,0.88),rgba(14,35,67,0.78))] px-5 py-4 text-white shadow-[0_0_0_1px_rgba(125,244,255,0.08),0_0_20px_rgba(34,211,238,0.14)] transition-all duration-300 active:scale-[0.98]"
+                  >
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-cyan-300/25 bg-cyan-400/12 text-cyan-200">
+                      <Volume2 className="h-5 w-5" />
+                    </span>
+                    <span className="text-left">
+                      <span className="block text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-cyan-200/78">Som do video</span>
+                      <span className="mt-1 block text-[0.98rem] font-semibold tracking-[0.01em] text-white">Toque para ativar o audio</span>
+                    </span>
+                  </button>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={toggleMobileHeroVideoAudio}
-                className="pointer-events-auto absolute right-0 top-4 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100"
+                className="hidden pointer-events-auto absolute right-0 top-4 items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100"
               >
                 <VolumeX className="h-4 w-4" />
                 <span>Ativar áudio</span>
               </button>
+              </>
             )}
             {isMobileHeroLocked && (
               <div className="pointer-events-none absolute inset-x-0 bottom-6">
@@ -654,8 +676,10 @@ export default function Evento() {
                     ref={desktopHeroVideoRef}
                     autoPlay
                     loop
+                    preload="metadata"
                     muted={isDesktopHeroVideoMuted}
                     playsInline
+                    disablePictureInPicture
                     className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
                   >
                     <source src={MOBILE_HERO_INTRO_VIDEO} type="video/mp4" />
