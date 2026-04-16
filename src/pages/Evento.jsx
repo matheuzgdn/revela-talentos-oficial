@@ -413,7 +413,7 @@ export default function Evento() {
         target="_blank"
         rel="noreferrer"
         aria-label={`Quero acessar agora - contato ${supportContacts[supportContactIndex]}`}
-        className={`fixed bottom-4 right-4 z-[60] inline-flex items-center gap-3 rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] px-4 py-3 text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6 ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:inline-flex' : ''}`}
+        className="fixed bottom-4 right-4 z-[60] inline-flex items-center gap-3 rounded-full border border-emerald-300/30 bg-[linear-gradient(135deg,rgba(34,197,94,0.98),rgba(22,163,74,0.94))] px-4 py-3 text-white shadow-[0_0_0_1px_rgba(187,247,208,0.12),0_0_22px_rgba(34,197,94,0.42),0_22px_40px_rgba(20,83,45,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_1px_rgba(220,252,231,0.2),0_0_28px_rgba(74,222,128,0.5),0_26px_44px_rgba(20,83,45,0.36)] sm:bottom-6 sm:right-6"
         style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       >
         <MessageCircle className="h-6 w-6 shrink-0 sm:h-7 sm:w-7" />
@@ -470,25 +470,30 @@ export default function Evento() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(37,99,235,0.16),transparent_28%),radial-gradient(circle_at_78%_25%,rgba(14,165,233,0.14),transparent_22%)]" />
         </div>
 
-        <div className={`relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 ${isMobileViewport ? (isMobileHeroLocked ? 'min-h-[100svh] pt-[73svh]' : 'pt-[48svh]') : 'pt-[43svh]'} sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14`}>
-          <div className="relative w-full">
-            {isMobileViewport && isMobileHeroLocked && (
-              <div className="pointer-events-none absolute inset-x-0 top-[61svh] z-20 sm:hidden">
-                <h1 className="max-w-[12rem] text-[2.7rem] font-extrabold uppercase leading-[0.9] tracking-tight text-white [text-shadow:0_8px_24px_rgba(0,0,0,0.9),0_18px_40px_rgba(0,0,0,0.78)]">
-                  REVELA TALENTOS
-                </h1>
-              </div>
-            )}
-            {isMobileViewport && isHeroVideoMuted && (
+        {isMobileViewport && (
+          <div className="absolute inset-x-4 top-0 z-20 h-[78svh] sm:hidden">
+            {isHeroVideoMuted && (
               <button
                 type="button"
                 onClick={toggleHeroVideoAudio}
-                className="absolute right-0 top-[67svh] z-30 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:hidden"
+                className="pointer-events-auto absolute right-0 top-4 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100"
               >
                 <VolumeX className="h-4 w-4" />
                 <span>Ativar áudio</span>
               </button>
             )}
+            {isMobileHeroLocked && (
+              <div className="pointer-events-none absolute inset-x-0 bottom-6">
+                <h1 className="max-w-[12rem] text-[2.7rem] font-extrabold uppercase leading-[0.9] tracking-tight text-white [text-shadow:0_8px_24px_rgba(0,0,0,0.9),0_18px_40px_rgba(0,0,0,0.78)]">
+                  REVELA TALENTOS
+                </h1>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className={`relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 ${isMobileViewport ? (isMobileHeroLocked ? 'min-h-[100svh] pt-[73svh]' : 'pt-[48svh]') : 'pt-[43svh]'} sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14`}>
+          <div className="relative w-full">
             <div className={`mb-5 mt-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:mt-0 sm:gap-4 ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:flex' : ''}`}>
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
               <span className="border-l border-cyan-400/30 pl-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300/90 sm:pl-4 sm:text-base sm:tracking-[0.28em] md:text-lg">Plataforma Oficial</span>
