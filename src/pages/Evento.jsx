@@ -397,6 +397,12 @@ export default function Evento() {
   };
 
   const handleMobileHeroComplete = () => {
+    const video = mobileHeroVideoRef.current;
+    if (video) {
+      video.muted = true;
+      video.volume = 0;
+    }
+    setIsMobileHeroVideoMuted(true);
     setIsMobileHeroLocked(false);
   };
 
@@ -525,7 +531,7 @@ export default function Evento() {
 
         {isMobileViewport && (
           <div className={`absolute inset-x-4 top-0 z-20 sm:hidden ${mobileHeroVideoHeightClass}`}>
-            {isMobileHeroVideoMuted && (
+            {isMobileHeroLocked && isMobileHeroVideoMuted && (
               <>
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <div className="pointer-events-auto relative overflow-hidden rounded-[1.6rem] border border-white/12 bg-black/30 px-4 py-4 shadow-[0_20px_48px_rgba(0,0,0,0.36)] backdrop-blur-xl">
