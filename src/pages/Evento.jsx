@@ -450,19 +450,37 @@ export default function Evento() {
             className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
-          <div className="absolute inset-x-0 top-0 h-[78svh] overflow-hidden sm:hidden">
-            <video
-              ref={mobileHeroVideoRef}
-              src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4"
-              autoPlay
-              onEnded={handleMobileHeroComplete}
-              muted={isHeroVideoMuted}
-              playsInline
-              controls={false}
-              className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.99]"
-            />
-            <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.08)_18%,rgba(4,5,7,0.97)_100%)] shadow-[0_34px_74px_rgba(0,0,0,0.82)]" />
-          </div>
+          {isMobileViewport && isMobileHeroLocked ? (
+            <div className="absolute inset-x-0 top-0 h-[78svh] overflow-hidden sm:hidden">
+              <video
+                ref={mobileHeroVideoRef}
+                src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4"
+                autoPlay
+                onEnded={handleMobileHeroComplete}
+                muted={isHeroVideoMuted}
+                playsInline
+                controls={false}
+                className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.99]"
+              />
+              <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.08)_18%,rgba(4,5,7,0.97)_100%)] shadow-[0_34px_74px_rgba(0,0,0,0.82)]" />
+            </div>
+          ) : (
+            <div className="absolute inset-x-0 top-0 h-[41svh] overflow-hidden sm:hidden">
+              <video
+                src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls={false}
+                className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.96]"
+                style={{ pointerEvents: 'none' }}
+              />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.14),transparent_42%)]" />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,20,46,0.3)_0%,rgba(7,20,46,0.16)_48%,transparent_100%)]" />
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.78)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
+            </div>
+          )}
           <div className="absolute inset-0 hidden bg-black/30 sm:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-r from-black/90 via-black/45 to-black/70 md:from-black/88 md:via-black/30 md:to-black/50 sm:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-t from-black via-black/25 to-transparent sm:block" />
@@ -493,7 +511,7 @@ export default function Evento() {
           </div>
         )}
 
-        <div className={`relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 ${isMobileViewport ? (isMobileHeroLocked ? 'min-h-[100svh] pt-[73svh]' : 'pt-[48svh]') : 'pt-[43svh]'} sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14`}>
+        <div className={`relative z-10 mx-auto flex w-full max-w-[1400px] flex-col justify-start px-4 pb-6 ${isMobileViewport ? (isMobileHeroLocked ? 'min-h-[100svh] pt-[73svh]' : 'pt-[36svh]') : 'pt-[43svh]'} sm:min-h-[100svh] sm:justify-between sm:px-6 sm:pb-8 sm:pt-28 md:px-10 md:pt-32 lg:px-14`}>
           <div className="relative w-full">
             <div className={`mb-5 mt-5 flex flex-wrap items-center gap-3 font-['Inter'] sm:mb-6 sm:mt-0 sm:gap-4 ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:flex' : ''}`}>
               <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto sm:h-9 md:h-11" />
