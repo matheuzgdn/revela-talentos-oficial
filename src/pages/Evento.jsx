@@ -158,6 +158,8 @@ const supportContacts = [
   { display: '+351 914 945 252', phone: '351914945252' },
 ];
 const whatsappPlanMessage = encodeURIComponent('Quero saber mais sobre o plano de carreira');
+const MOBILE_HERO_INTRO_VIDEO = "https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4";
+const MOBILE_HERO_BACKGROUND_VIDEO = "https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4";
 
 const accentText = { cyan: 'text-[#00f3ff]' };
 const accentGradient = { cyan: 'from-[#00f3ff] via-cyan-200 to-white' };
@@ -237,7 +239,8 @@ export default function Evento() {
   const [isSchedulingOpen, setIsSchedulingOpen] = useState(false);
   const [activeHeroService, setActiveHeroService] = useState(null);
   const [isHeroCarouselPaused, setIsHeroCarouselPaused] = useState(false);
-  const [isHeroVideoMuted, setIsHeroVideoMuted] = useState(true);
+  const [isMobileHeroVideoMuted, setIsMobileHeroVideoMuted] = useState(true);
+  const [isDesktopHeroVideoMuted, setIsDesktopHeroVideoMuted] = useState(true);
   const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
   const [scheduleForm, setScheduleForm] = useState({
     full_name: "",
@@ -255,6 +258,8 @@ export default function Evento() {
   const spotlight = useMemo(() => athleteSpotlights[variant] || athleteSpotlights.default, [variant]);
   const accentClass = accentText[spotlight.accent] || accentText.cyan;
   const accentGlow = accentGradient[spotlight.accent] || accentGradient.cyan;
+  const mobileHeroVideoSource = isMobileHeroLocked ? MOBILE_HERO_INTRO_VIDEO : MOBILE_HERO_BACKGROUND_VIDEO;
+  const mobileHeroVideoHeightClass = isMobileHeroLocked ? 'h-[78svh]' : 'h-[41svh]';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -298,6 +303,32 @@ export default function Evento() {
     }, 3000);
     return () => window.clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    const video = mobileHeroVideoRef.current;
+    if (!video || !isMobileViewport) return;
+    video.muted = isMobileHeroVideoMuted;
+    if (!isMobileHeroVideoMuted) {
+      video.volume = 0.82;
+    }
+    const playPromise = video.play();
+    if (playPromise?.catch) {
+      playPromise.catch(() => {});
+    }
+  }, [isMobileViewport, isMobileHeroLocked, isMobileHeroVideoMuted]);
+
+  useEffect(() => {
+    const video = desktopHeroVideoRef.current;
+    if (!video || isMobileViewport) return;
+    video.muted = isDesktopHeroVideoMuted;
+    if (!isDesktopHeroVideoMuted) {
+      video.volume = 0.82;
+    }
+    const playPromise = video.play();
+    if (playPromise?.catch) {
+      playPromise.catch(() => {});
+    }
+  }, [isDesktopHeroVideoMuted, isMobileViewport]);
 
   const scrollTrack = (direction) => {
     if (!trackRef.current) return;
@@ -344,18 +375,25 @@ export default function Evento() {
     resumeHeroCarouselSoon();
   };
 
-  const toggleHeroVideoAudio = () => {
-    const video = [mobileHeroVideoRef.current, desktopHeroVideoRef.current].find((element) => element && element.offsetParent !== null)
-      || mobileHeroVideoRef.current
-      || desktopHeroVideoRef.current;
-    if (!video || !isHeroVideoMuted) return;
-    setIsHeroVideoMuted(false);
+  const enableHeroVideoAudio = (video, setMutedState) => {
+    if (!video) return;
+    setMutedState(false);
     video.muted = false;
     video.volume = 0.82;
     const playPromise = video.play();
     if (playPromise?.catch) {
       playPromise.catch(() => {});
     }
+  };
+
+  const toggleMobileHeroVideoAudio = () => {
+    if (!isMobileHeroVideoMuted) return;
+    enableHeroVideoAudio(mobileHeroVideoRef.current, setIsMobileHeroVideoMuted);
+  };
+
+  const toggleDesktopHeroVideoAudio = () => {
+    if (!isDesktopHeroVideoMuted) return;
+    enableHeroVideoAudio(desktopHeroVideoRef.current, setIsDesktopHeroVideoMuted);
   };
 
   const handleMobileHeroComplete = () => {
@@ -445,40 +483,34 @@ export default function Evento() {
       <section className="relative min-h-0 overflow-hidden escola-parceira-hero bg-black sm:min-h-[100vh]">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <video
-            src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
+            src={MOBILE_HERO_BACKGROUND_VIDEO}
             autoPlay muted loop playsInline controls={false}
             className="absolute inset-0 hidden h-full w-full object-cover object-center animate-cinematic-zoom opacity-55 sm:block"
             style={{ pointerEvents: 'none' }}
           />
-          {isMobileViewport && isMobileHeroLocked ? (
-            <div className="absolute inset-x-0 top-0 h-[78svh] overflow-hidden sm:hidden">
+          {isMobileViewport && (
+            <div className={`absolute inset-x-0 top-0 overflow-hidden sm:hidden ${mobileHeroVideoHeightClass}`}>
               <video
+                key={isMobileHeroLocked ? 'mobile-hero-intro' : 'mobile-hero-background'}
                 ref={mobileHeroVideoRef}
-                src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4"
+                src={mobileHeroVideoSource}
                 autoPlay
-                onEnded={handleMobileHeroComplete}
-                muted={isHeroVideoMuted}
+                onEnded={isMobileHeroLocked ? handleMobileHeroComplete : undefined}
+                muted={isMobileHeroVideoMuted}
+                loop={!isMobileHeroLocked}
                 playsInline
                 controls={false}
-                className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.99]"
+                className={`h-full w-full object-cover object-center animate-cinematic-zoom ${isMobileHeroLocked ? 'opacity-[0.99]' : 'opacity-[0.96]'}`}
               />
-              <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.08)_18%,rgba(4,5,7,0.97)_100%)] shadow-[0_34px_74px_rgba(0,0,0,0.82)]" />
-            </div>
-          ) : (
-            <div className="absolute inset-x-0 top-0 h-[41svh] overflow-hidden sm:hidden">
-              <video
-                src="https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls={false}
-                className="h-full w-full object-cover object-center animate-cinematic-zoom opacity-[0.96]"
-                style={{ pointerEvents: 'none' }}
-              />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.14),transparent_42%)]" />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,20,46,0.3)_0%,rgba(7,20,46,0.16)_48%,transparent_100%)]" />
-              <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.78)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
+              {isMobileHeroLocked ? (
+                <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.08)_18%,rgba(4,5,7,0.97)_100%)] shadow-[0_34px_74px_rgba(0,0,0,0.82)]" />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.14),transparent_42%)]" />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,20,46,0.3)_0%,rgba(7,20,46,0.16)_48%,transparent_100%)]" />
+                  <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent_0%,rgba(0,0,0,0.78)_62%,#040507_100%)] shadow-[0_26px_48px_rgba(0,0,0,0.62)]" />
+                </>
+              )}
             </div>
           )}
           <div className="absolute inset-0 hidden bg-black/30 sm:block" />
@@ -490,11 +522,11 @@ export default function Evento() {
         </div>
 
         {isMobileViewport && (
-          <div className="absolute inset-x-4 top-0 z-20 h-[78svh] sm:hidden">
-            {isHeroVideoMuted && (
+          <div className={`absolute inset-x-4 top-0 z-20 sm:hidden ${mobileHeroVideoHeightClass}`}>
+            {isMobileHeroVideoMuted && (
               <button
                 type="button"
-                onClick={toggleHeroVideoAudio}
+                onClick={toggleMobileHeroVideoAudio}
                 className="pointer-events-auto absolute right-0 top-4 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100"
               >
                 <VolumeX className="h-4 w-4" />
@@ -614,6 +646,7 @@ export default function Evento() {
                 </div>
               </div>
 
+              {!isMobileViewport && (
               <div className="order-1 hidden w-full max-w-[460px] sm:block lg:order-2 lg:justify-self-end">
                 <div className="group relative mx-auto max-w-[360px] overflow-hidden rounded-[1.8rem] border border-white/12 bg-[#05070b]/80 shadow-[0_34px_96px_rgba(0,0,0,0.55),0_0_30px_rgba(14,165,233,0.12)] backdrop-blur-sm sm:mx-0 sm:max-w-[460px] sm:rounded-[2rem]">
                   <div className="absolute inset-[1px] rounded-[calc(1.8rem-1px)] border border-white/6 sm:rounded-[calc(2rem-1px)]" />
@@ -621,19 +654,19 @@ export default function Evento() {
                     ref={desktopHeroVideoRef}
                     autoPlay
                     loop
-                    muted={isHeroVideoMuted}
+                    muted={isDesktopHeroVideoMuted}
                     playsInline
                     className="aspect-[16/10] w-full object-cover object-center sm:aspect-[15/9] lg:aspect-[4/4.55] xl:aspect-[4/4.7]"
                   >
-                    <source src="https://video.wixstatic.com/video/933cdd_d28be744cb8c4029b910896cf742e724/1080p/mp4/file.mp4" type="video/mp4" />
+                    <source src={MOBILE_HERO_INTRO_VIDEO} type="video/mp4" />
                   </video>
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.2),transparent_32%)]" />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,8,15,0.04)_0%,rgba(4,8,15,0.1)_42%,rgba(4,8,15,0.42)_100%)]" />
                   <div className="absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(180deg,transparent_0%,rgba(4,5,7,0.12)_26%,rgba(4,5,7,0.72)_100%)] shadow-[0_24px_48px_rgba(0,0,0,0.5)]" />
-                  {isHeroVideoMuted && (
+                  {isDesktopHeroVideoMuted && (
                     <button
                       type="button"
-                      onClick={toggleHeroVideoAudio}
+                      onClick={toggleDesktopHeroVideoAudio}
                       className="absolute bottom-4 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:bottom-5 sm:right-5"
                     >
                       <VolumeX className="h-4 w-4" />
@@ -642,6 +675,7 @@ export default function Evento() {
                   )}
                 </div>
               </div>
+              )}
             </div>
 
             <div id="inscricao-revela" data-signup-target="true" className={`relative mt-3 space-y-4 rounded-[1.75rem] font-['Inter'] transition-[box-shadow,transform] duration-500 sm:mt-5 sm:space-y-5 lg:hidden ${isMobileViewport && isMobileHeroLocked ? 'hidden' : ''}`}>
