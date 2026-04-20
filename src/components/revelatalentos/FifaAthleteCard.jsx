@@ -4,6 +4,9 @@ import { Star } from "lucide-react";
 
 export default function FifaAthleteCard({ story, index }) {
   const gradient = 'from-[#FFD700] via-[#FFA500] to-[#FF6B00]';
+  const title = story.title || story.athlete_name || 'Atleta em destaque';
+  const imageUrl = story.thumbnail_url || story.photo_url || story.media_url;
+  const description = story.description || story.bio;
 
   return (
     <motion.div
@@ -43,8 +46,8 @@ export default function FifaAthleteCard({ story, index }) {
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90" />
             
             <img
-              src={story.thumbnail_url || story.media_url}
-              alt={story.title}
+              src={imageUrl}
+              alt={title}
               className="w-full h-full object-cover filter contrast-125 brightness-110"
             />
 
@@ -57,13 +60,13 @@ export default function FifaAthleteCard({ story, index }) {
             <div className="relative">
               {/* Name */}
               <h3 className="text-white font-black text-base uppercase tracking-tight leading-tight line-clamp-1 mb-1">
-                {story.title}
+                {title}
               </h3>
               
               {/* Description */}
-              {story.description && (
+              {description && (
                 <p className="text-gray-400 text-[10px] leading-snug line-clamp-2 mb-2">
-                  {story.description}
+                  {description}
                 </p>
               )}
 

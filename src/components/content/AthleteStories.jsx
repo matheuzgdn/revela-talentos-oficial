@@ -58,7 +58,10 @@ export default function AthleteStories({ stories }) {
         </button>
 
         <div ref={scrollRef} className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-3 px-3 md:mx-0 md:px-0">
-          {stories.map((story) => (
+          {stories.map((story) => {
+              const title = story.title || story.athlete_name || 'Destaque RT';
+              const thumbnail = story.thumbnail_url || story.photo_url || story.media_url;
+              return (
             <div
               key={story.id}
               onClick={() => setSelectedStory(story)}
@@ -66,8 +69,8 @@ export default function AthleteStories({ stories }) {
             >
               <div className="relative aspect-[9/16] rounded-xl overflow-hidden border-2 border-cyan-400 shadow-lg">
                 <img
-                  src={story.thumbnail_url || story.media_url}
-                  alt={story.title}
+                  src={thumbnail}
+                  alt={title}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -86,13 +89,14 @@ export default function AthleteStories({ stories }) {
                 </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
-                  <p className="text-white font-bold text-xs truncate">{story.title}</p>
+                  <p className="text-white font-bold text-xs truncate">{title}</p>
                 </div>
 
                 <div className="absolute inset-0 bg-cyan-400/0 group-hover/story:bg-cyan-400/10 transition-colors" />
               </div>
             </div>
-          ))}
+              );
+            })}
         </div>
       </div>
 
@@ -124,15 +128,15 @@ export default function AthleteStories({ stories }) {
             >
               {selectedStory.media_type === 'video' ? (
                 <video
-                  src={selectedStory.media_url}
+                  src={selectedStory.media_url || selectedStory.video_url}
                   controls
                   autoPlay
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <img
-                  src={selectedStory.media_url}
-                  alt={selectedStory.title}
+                  src={selectedStory.media_url || selectedStory.photo_url}
+                  alt={selectedStory.title || selectedStory.athlete_name}
                   className="w-full h-full object-cover"
                 />
               )}
@@ -144,9 +148,9 @@ export default function AthleteStories({ stories }) {
                     {getCategoryLabel(selectedStory.category)}
                   </span>
                 </div>
-                <h3 className="text-white font-bold text-xl mb-2">{selectedStory.title}</h3>
-                {selectedStory.description && (
-                  <p className="text-gray-200 text-sm mb-3">{selectedStory.description}</p>
+                <h3 className="text-white font-bold text-xl mb-2">{selectedStory.title || selectedStory.athlete_name}</h3>
+                {(selectedStory.description || selectedStory.bio) && (
+                  <p className="text-gray-200 text-sm mb-3">{selectedStory.description || selectedStory.bio}</p>
                 )}
                 {selectedStory.link_url && (
                   <a

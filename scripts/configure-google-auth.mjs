@@ -122,21 +122,24 @@ const main = async () => {
   const clientSecret = args['client-secret'] || process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_OAUTH_CLIENT_SECRET;
   const siteUrl = args['site-url'] || process.env.APP_SITE_URL || process.env.SITE_URL || null;
 
-  if (!clientId || !clientSecret) {
-    throw new Error('Provide --client-id and --client-secret (or env vars GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET).');
-  }
-
   const currentConfig = await request('/config/auth', { method: 'GET' });
   const productionRedirects = buildProductionRedirects(siteUrl);
   const payload = {
-    external_google_enabled: true,
-    external_google_client_id: clientId,
-    external_google_secret: clientSecret,
     uri_allow_list: mergeRedirects(currentConfig.uri_allow_list, productionRedirects),
   };
 
+  if ((clientId && !clientSecret) || (!clientId && clientSecret)) {
+    throw new Error('Provide both --client-id and --client-secret together when updating Google OAuth credentials.');
+  }
+
+  if (clientId && clientSecret) {
+    payload.external_google_enabled = true;
+    payload.external_google_client_id = clientId;
+    payload.external_google_secret = clientSecret;
+  }
+
   if (siteUrl) {
-    payload.site_url = siteUrl;
+    payload.site_url = normalizeSiteUrl(siteUrl);
   }
 
   const updatedConfig = await request('/config/auth', {
