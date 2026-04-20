@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+﻿import { appClient } from '@/api/backendClient';
 
 import React, { useState, useMemo, useEffect } from 'react';
 
@@ -50,15 +50,15 @@ const EventModal = ({ isOpen, onClose, onSave, leads, salesRepId, eventData }) =
       <DialogContent className="bg-gray-900 text-white border-gray-800">
         <DialogHeader><DialogTitle>{eventData ? "Editar" : "Novo"} Evento</DialogTitle></DialogHeader>
         <div className="space-y-4">
-          <Input placeholder="Título do evento" value={formData.title} onChange={e => setFormData(p => ({...p, title: e.target.value}))} className="bg-gray-800" />
+          <Input placeholder="TÃ­tulo do evento" value={formData.title} onChange={e => setFormData(p => ({...p, title: e.target.value}))} className="bg-gray-800" />
           <div className="grid grid-cols-2 gap-4">
             <Select value={formData.event_type} onValueChange={v => setFormData(p => ({...p, event_type: v}))}>
               <SelectTrigger className="bg-gray-800"><SelectValue/></SelectTrigger>
               <SelectContent>
-                <SelectItem value="reuniao">Reunião</SelectItem>
-                <SelectItem value="ligacao">Ligação</SelectItem>
-                <SelectItem value="avaliacao">Avaliação de Atleta</SelectItem>
-                <SelectItem value="proposta">Apresentação de Proposta</SelectItem>
+                <SelectItem value="reuniao">ReuniÃ£o</SelectItem>
+                <SelectItem value="ligacao">LigaÃ§Ã£o</SelectItem>
+                <SelectItem value="avaliacao">AvaliaÃ§Ã£o de Atleta</SelectItem>
+                <SelectItem value="proposta">ApresentaÃ§Ã£o de Proposta</SelectItem>
                 <SelectItem value="viagem">Viagem</SelectItem>
                 <SelectItem value="campeonato">Campeonato</SelectItem>
               </SelectContent>
@@ -72,11 +72,11 @@ const EventModal = ({ isOpen, onClose, onSave, leads, salesRepId, eventData }) =
             </Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><Label>Início</Label><Input type="datetime-local" value={formData.start_date} onChange={e => setFormData(p => ({...p, start_date: e.target.value}))} className="bg-gray-800"/></div>
+            <div><Label>InÃ­cio</Label><Input type="datetime-local" value={formData.start_date} onChange={e => setFormData(p => ({...p, start_date: e.target.value}))} className="bg-gray-800"/></div>
             <div><Label>Fim</Label><Input type="datetime-local" value={formData.end_date} onChange={e => setFormData(p => ({...p, end_date: e.target.value}))} className="bg-gray-800"/></div>
           </div>
           <Input placeholder="Local ou Link" value={formData.location} onChange={e => setFormData(p => ({...p, location: e.target.value}))} className="bg-gray-800" />
-          <Textarea placeholder="Descrição" value={formData.description} onChange={e => setFormData(p => ({...p, description: e.target.value}))} className="bg-gray-800"/>
+          <Textarea placeholder="DescriÃ§Ã£o" value={formData.description} onChange={e => setFormData(p => ({...p, description: e.target.value}))} className="bg-gray-800"/>
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
@@ -101,10 +101,10 @@ export default function CalendarTab({ events, leads, salesRepId, onRefresh }) {
   const handleSaveEvent = async (eventData) => {
     try {
       if (selectedEvent) {
-        await base44.entities.Event.update(selectedEvent.id, eventData);
+        await appClient.entities.Event.update(selectedEvent.id, eventData);
         toast.success("Evento atualizado!");
       } else {
-        await base44.entities.Event.create({ ...eventData, assigned_to_id: salesRepId });
+        await appClient.entities.Event.create({ ...eventData, assigned_to_id: salesRepId });
         toast.success("Evento criado!");
       }
       onRefresh();
@@ -121,7 +121,7 @@ export default function CalendarTab({ events, leads, salesRepId, onRefresh }) {
     return eachDayOfInterval({ start: startDate, end: endDate });
   }, [currentMonth]);
   
-  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'SÃ¡b'];
 
   return (
     <div className="p-4 bg-gray-800/50 rounded-lg">
@@ -156,4 +156,5 @@ export default function CalendarTab({ events, leads, salesRepId, onRefresh }) {
     </div>
   );
 }
+
 

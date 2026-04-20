@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
+import { appClient } from "@/api/backendClient";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,8 +52,8 @@ export default function AdminSchedulesTab() {
     setIsLoading(true);
     try {
       const [schedulesData, usersData] = await Promise.all([
-        base44.entities.GameSchedule.list("-game_date").catch(() => []),
-        User.list().catch(() => [])
+        appClient.entities.GameSchedule.list("-game_date").catch(() => []),
+        appClient.entities.User.list().catch(() => [])
       ]);
 
       // Garantir que sempre temos arrays, mesmo se a API falhar
@@ -73,10 +73,10 @@ export default function AdminSchedulesTab() {
     e.preventDefault();
     try {
       if (editingSchedule) {
-        await base44.entities.GameSchedule.update(editingSchedule.id, scheduleForm);
+        await appClient.entities.GameSchedule.update(editingSchedule.id, scheduleForm);
         toast.success("Jogo atualizado com sucesso!");
       } else {
-        await base44.entities.GameSchedule.create(scheduleForm);
+        await appClient.entities.GameSchedule.create(scheduleForm);
         toast.success("Jogo agendado com sucesso!");
       }
       
@@ -95,7 +95,7 @@ export default function AdminSchedulesTab() {
       user_id: schedule.user_id || "",
       opponent: schedule.opponent || "",
       game_date: schedule.game_date ? new Date(schedule.game_date).toISOString().slice(0, 16) : "",
-      venue: schedule.venue || "",
+      venue: schedule.venue || schedule.location || "",
       competition: schedule.competition || "",
       status: schedule.status || "scheduled",
       home_away: schedule.home_away || "home",
@@ -109,8 +109,8 @@ export default function AdminSchedulesTab() {
   const handleDelete = async (scheduleId) => {
     if (confirm("Tem certeza que deseja excluir este jogo?")) {
       try {
-        await base44.entities.GameSchedule.delete(scheduleId);
-        toast.success("Jogo excluído com sucesso!");
+        await appClient.entities.GameSchedule.delete(scheduleId);
+        toast.success("Jogo excluÃ­do com sucesso!");
         loadData();
       } catch (error) {
         console.error("Erro ao excluir jogo:", error);
@@ -139,13 +139,13 @@ export default function AdminSchedulesTab() {
     resetForm();
   };
 
-  // Filtrar schedules com verificação de segurança
+  // Filtrar schedules com verificaÃ§Ã£o de seguranÃ§a
   const filteredSchedules = Array.isArray(schedules) ? schedules.filter(schedule => {
     if (!schedule) return false;
     
     const matchesSearch = !searchTerm || 
       (schedule.opponent && schedule.opponent.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (schedule.venue && schedule.venue.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      ((schedule.venue || schedule.location) && (schedule.venue || schedule.location).toLowerCase().includes(searchTerm.toLowerCase())) ||
       (schedule.competition && schedule.competition.toLowerCase().includes(searchTerm.toLowerCase()));
     
     const matchesStatus = filterStatus === "all" || schedule.status === filterStatus;
@@ -162,7 +162,7 @@ export default function AdminSchedulesTab() {
     
     const statusLabels = {
       scheduled: "Agendado",
-      completed: "Concluído", 
+      completed: "ConcluÃ­do", 
       cancelled: "Cancelado"
     };
 
@@ -182,7 +182,7 @@ export default function AdminSchedulesTab() {
     
     const importanceLabels = {
       low: "Baixa",
-      medium: "Média",
+      medium: "MÃ©dia",
       high: "Alta"
     };
 
@@ -194,9 +194,9 @@ export default function AdminSchedulesTab() {
   };
 
   const getUserName = (userId) => {
-    if (!Array.isArray(users) || !userId) return "Usuário não encontrado";
+    if (!Array.isArray(users) || !userId) return "UsuÃ¡rio nÃ£o encontrado";
     const user = users.find(u => u && u.id === userId);
-    return user ? user.full_name || user.email || "Usuário sem nome" : "Usuário não encontrado";
+    return user ? user.full_name || user.email || "UsuÃ¡rio sem nome" : "UsuÃ¡rio nÃ£o encontrado";
   };
 
   if (isLoading) {
@@ -242,7 +242,7 @@ export default function AdminSchedulesTab() {
                       {Array.isArray(users) && users.map((user) => (
                         user && user.id && (
                           <SelectItem key={user.id} value={user.id}>
-                            {user.full_name || user.email || "Usuário sem nome"}
+                            {user.full_name || user.email || "UsuÃ¡rio sem nome"}
                           </SelectItem>
                         )
                       ))}
@@ -251,11 +251,11 @@ export default function AdminSchedulesTab() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-300 mb-1 block">Adversário</label>
+                  <label className="text-sm text-gray-300 mb-1 block">AdversÃ¡rio</label>
                   <Input
                     value={scheduleForm.opponent}
                     onChange={(e) => setScheduleForm({...scheduleForm, opponent: e.target.value})}
-                    placeholder="Nome do adversário"
+                    placeholder="Nome do adversÃ¡rio"
                     className="bg-gray-800 border-gray-600 text-white"
                     required
                   />
@@ -277,14 +277,14 @@ export default function AdminSchedulesTab() {
                   <Input
                     value={scheduleForm.venue}
                     onChange={(e) => setScheduleForm({...scheduleForm, venue: e.target.value})}
-                    placeholder="Estádio ou local do jogo"
+                    placeholder="EstÃ¡dio ou local do jogo"
                     className="bg-gray-800 border-gray-600 text-white"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-300 mb-1 block">Competição</label>
+                  <label className="text-sm text-gray-300 mb-1 block">CompetiÃ§Ã£o</label>
                   <Input
                     value={scheduleForm.competition}
                     onChange={(e) => setScheduleForm({...scheduleForm, competition: e.target.value})}
@@ -301,7 +301,7 @@ export default function AdminSchedulesTab() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="scheduled">Agendado</SelectItem>
-                      <SelectItem value="completed">Concluído</SelectItem>
+                      <SelectItem value="completed">ConcluÃ­do</SelectItem>
                       <SelectItem value="cancelled">Cancelado</SelectItem>
                     </SelectContent>
                   </Select>
@@ -321,14 +321,14 @@ export default function AdminSchedulesTab() {
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-300 mb-1 block">Importância</label>
+                  <label className="text-sm text-gray-300 mb-1 block">ImportÃ¢ncia</label>
                   <Select value={scheduleForm.importance} onValueChange={(value) => setScheduleForm({...scheduleForm, importance: value})}>
                     <SelectTrigger className="bg-gray-800 border-gray-600">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="low">Baixa</SelectItem>
-                      <SelectItem value="medium">Média</SelectItem>
+                      <SelectItem value="medium">MÃ©dia</SelectItem>
                       <SelectItem value="high">Alta</SelectItem>
                     </SelectContent>
                   </Select>
@@ -336,11 +336,11 @@ export default function AdminSchedulesTab() {
               </div>
 
               <div>
-                <label className="text-sm text-gray-300 mb-1 block">Notas de Preparação</label>
+                <label className="text-sm text-gray-300 mb-1 block">Notas de PreparaÃ§Ã£o</label>
                 <Input
                   value={scheduleForm.preparation_notes}
                   onChange={(e) => setScheduleForm({...scheduleForm, preparation_notes: e.target.value})}
-                  placeholder="Observações sobre a preparação para o jogo"
+                  placeholder="ObservaÃ§Ãµes sobre a preparaÃ§Ã£o para o jogo"
                   className="bg-gray-800 border-gray-600 text-white"
                 />
               </div>
@@ -363,7 +363,7 @@ export default function AdminSchedulesTab() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
-            placeholder="Buscar por adversário, local ou competição..."
+            placeholder="Buscar por adversÃ¡rio, local ou competiÃ§Ã£o..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="bg-gray-800 border-gray-700 text-white pl-10"
@@ -377,7 +377,7 @@ export default function AdminSchedulesTab() {
           <SelectContent>
             <SelectItem value="all">Todos os Status</SelectItem>
             <SelectItem value="scheduled">Agendado</SelectItem>
-            <SelectItem value="completed">Concluído</SelectItem>
+            <SelectItem value="completed">ConcluÃ­do</SelectItem>
             <SelectItem value="cancelled">Cancelado</SelectItem>
           </SelectContent>
         </Select>
@@ -397,7 +397,7 @@ export default function AdminSchedulesTab() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h4 className="text-lg font-semibold text-white">
-                      vs {schedule?.opponent || "Adversário desconhecido"}
+                      vs {schedule?.opponent || "AdversÃ¡rio desconhecido"}
                     </h4>
                     {getStatusBadge(schedule?.status)}
                     {getImportanceBadge(schedule?.importance)}
@@ -414,20 +414,20 @@ export default function AdminSchedulesTab() {
                       <span>
                         {schedule?.game_date ? 
                           new Date(schedule.game_date).toLocaleString('pt-BR') : 
-                          "Data não definida"
+                          "Data nÃ£o definida"
                         }
                       </span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4" />
-                      <span>{schedule?.venue || "Local não definido"}</span>
+                      <span>{schedule?.venue || schedule?.location || "Local nÃ£o definido"}</span>
                     </div>
                   </div>
 
                   {schedule?.competition && (
                     <p className="text-sm text-gray-500 mt-2">
-                      Competição: {schedule.competition}
+                      CompetiÃ§Ã£o: {schedule.competition}
                     </p>
                   )}
 
@@ -467,7 +467,7 @@ export default function AdminSchedulesTab() {
               <p className="text-gray-400 mb-4">
                 {searchTerm || filterStatus !== "all" 
                   ? "Nenhum jogo corresponde aos filtros aplicados."
-                  : "Ainda não há jogos agendados. Comece agendando o primeiro jogo."
+                  : "Ainda nÃ£o hÃ¡ jogos agendados. Comece agendando o primeiro jogo."
                 }
               </p>
               {(!searchTerm && filterStatus === "all") && (
@@ -483,5 +483,6 @@ export default function AdminSchedulesTab() {
     </div>
   );
 }
+
 
 

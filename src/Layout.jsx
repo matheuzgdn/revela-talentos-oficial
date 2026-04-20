@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
+import { redirectToPlatformLogin } from "@/lib/auth-routing";
 
 
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
@@ -57,6 +58,8 @@ const getNavigationItems = (user, t) => {
   return items;
 };
 
+const isAdminUser = (user) => user?.role === 'admin' || user?.is_revela_admin === true;
+
 function LayoutInner({ children, currentPageName }) {
   const { t, language } = useLanguage();
   const location = useLocation();
@@ -72,15 +75,15 @@ function LayoutInner({ children, currentPageName }) {
 
   const loadUser = useCallback(async () => {
     try {
-      let currentUser = await base44.auth.me();
+      let currentUser = await appClient.auth.me();
 
       // Auto-ativar acesso se e-mail estiver na whitelist
       if (currentUser && currentUser.has_zona_membros_access !== true) {
-        const wl = await base44.entities.AccessWhitelist.filter({ email: currentUser.email, is_active: true }, '-created_date', 1);
+        const wl = await appClient.entities.AccessWhitelist.filter({ email: currentUser.email, is_active: true }, '-created_date', 1);
         const allowed = Array.isArray(wl) && wl.length > 0 && (!wl[0].expires_at || new Date(wl[0].expires_at) > new Date());
         if (allowed) {
-          await base44.auth.updateMe({ has_zona_membros_access: true, onboarding_completed: true });
-          currentUser = await base44.auth.me();
+          await appClient.auth.updateMe({ has_zona_membros_access: true, onboarding_completed: true });
+          currentUser = await appClient.auth.me();
         }
       }
 
@@ -116,18 +119,11 @@ function LayoutInner({ children, currentPageName }) {
 
 
 
-  // Visitantes sem login: ZonaMembros exige login; demais páginas permanecem públicas
+  // Visitantes sem login: ZonaMembros exige login; demais pÃ¡ginas permanecem pÃºblicas
   useEffect(() => {
     if (isLoading || user) return;
     if (currentPageName === 'ZonaMembros') {
-      const nextPath = createPageUrl('ZonaMembros');
-      const isBase44 = window.location.host.endsWith('base44.app');
-      if (!isBase44) {
-        const base = `${window.location.protocol}//revelatalentos.base44.app`;
-        window.location.href = `${base}/login?from_url=${encodeURIComponent(base + nextPath)}`;
-      } else {
-        base44.auth.redirectToLogin(nextPath);
-      }
+      redirectToPlatformLogin(createPageUrl('ZonaMembros'));
       return;
     }
   }, [isLoading, user, currentPageName, navigate]);
@@ -137,7 +133,9 @@ function LayoutInner({ children, currentPageName }) {
     if (isLoading) return;
     if (currentPageName === 'BemVindo') {
       const target = user
-        ? (user.has_zona_membros_access ? 'ZonaMembros' : (user.has_plano_carreira_access ? 'PlanoCarreira' : 'RevelaTalentos'))
+        ? (isAdminUser(user)
+          ? 'RevelaTalentos'
+          : (user.has_zona_membros_access ? 'ZonaMembros' : (user.has_plano_carreira_access ? 'PlanoCarreira' : 'RevelaTalentos')))
         : 'RevelaTalentos';
       navigate(createPageUrl(target), { replace: true });
     }
@@ -146,7 +144,7 @@ function LayoutInner({ children, currentPageName }) {
 
 
   const handleLogout = () => {
-    base44.auth.logout();
+    appClient.auth.logout(window.location.origin);
   };
 
   const handleNavClick = (item) => {
@@ -154,14 +152,7 @@ function LayoutInner({ children, currentPageName }) {
   };
 
   const handleLoginClick = () => {
-    const nextPath = createPageUrl('ZonaMembros');
-    const isBase44 = window.location.host.endsWith('base44.app');
-    if (!isBase44) {
-      const base = `${window.location.protocol}//revelatalentos.base44.app`;
-      window.location.href = `${base}/login?from_url=${encodeURIComponent(base + nextPath)}`;
-      return;
-    }
-    base44.auth.redirectToLogin(nextPath);
+    redirectToPlatformLogin(createPageUrl('ZonaMembros'));
   };
 
   const navigationItemsToRender = getNavigationItems(user, t);
@@ -174,7 +165,7 @@ function LayoutInner({ children, currentPageName }) {
 
   }
 
-  // ZonaMembros tem seu proprio sidebar — nao aplicar o Layout.jsx
+  // ZonaMembros tem seu proprio sidebar â€” nao aplicar o Layout.jsx
   if (currentPageName === 'ZonaMembros') {
     return <>{children}</>;
   }
@@ -426,3 +417,4 @@ export default function Layout({ children, currentPageName }) {
     </LanguageProvider>
   );
 }
+

@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+﻿import { appClient } from '@/api/backendClient';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -27,11 +27,11 @@ export default function IndividualCRMDashboard({ salesRep, onBack, services, una
     setIsLoading(true);
     try {
       const [pipelinesData, leadsData, materialsData, eventsData, tasksData] = await Promise.all([
-        base44.entities.CRMPipeline.filter({ sales_rep_id: salesRep.id }),
-        base44.entities.CRMLead.filter({ sales_rep_id: salesRep.id }),
-        base44.entities.SalesMaterial.list(),
-        base44.entities.Event.filter({ $or: [{ target_users: [] }, { target_users: salesRep.id }] }),
-        base44.entities.CustomTask.filter({ assigned_user_id: salesRep.id })
+        appClient.entities.CRMPipeline.filter({ sales_rep_id: salesRep.id }),
+        appClient.entities.CRMLead.filter({ sales_rep_id: salesRep.id }),
+        appClient.entities.SalesMaterial.list(),
+        appClient.entities.Event.filter({ $or: [{ target_users: [] }, { target_users: salesRep.id }] }),
+        appClient.entities.CustomTask.filter({ assigned_user_id: salesRep.id })
       ]);
       setPipelines(pipelinesData || []);
       setLeads(leadsData || []);
@@ -73,8 +73,8 @@ export default function IndividualCRMDashboard({ salesRep, onBack, services, una
         <TabsList className="bg-gray-800">
           <TabsTrigger value="pipelines"><LayoutGrid className="w-4 h-4 mr-2" />Pipelines</TabsTrigger>
           <TabsTrigger value="ferramentas"><Briefcase className="w-4 h-4 mr-2" />Ferramentas</TabsTrigger>
-          <TabsTrigger value="calendario"><Calendar className="w-4 h-4 mr-2" />Calendário</TabsTrigger>
-          <TabsTrigger value="relatorios"><BarChart className="w-4 h-4 mr-2" />Relatórios</TabsTrigger>
+          <TabsTrigger value="calendario"><Calendar className="w-4 h-4 mr-2" />CalendÃ¡rio</TabsTrigger>
+          <TabsTrigger value="relatorios"><BarChart className="w-4 h-4 mr-2" />RelatÃ³rios</TabsTrigger>
         </TabsList>
         
         <TabsContent value="pipelines" className="mt-6">
@@ -100,4 +100,5 @@ export default function IndividualCRMDashboard({ salesRep, onBack, services, una
     </div>
   );
 }
+
 

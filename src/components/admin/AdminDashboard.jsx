@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+﻿import React, { useState, useEffect } from 'react';
+import { appClient } from '@/api/backendClient';
 import { motion } from 'framer-motion';
 import { Users, TrendingUp, Globe, Target, ArrowUp, ArrowDown, Activity } from 'lucide-react';
 import moment from 'moment';
@@ -19,21 +19,21 @@ export default function AdminDashboard() {
       setIsLoading(true);
       try {
         const [users, activities] = await Promise.all([
-          base44.entities.User.list(),
-          base44.entities.ActivityLog.list('-created_date', 20)
+          appClient.entities.User.list(),
+          appClient.entities.ActivityLog.list('-created_date', 20)
         ]);
 
         const totalUsers = users?.length || 0;
         const planoCarreira = (users || []).filter(u => u.has_plano_carreira_access).length;
         const revelaTalentos = (users || []).filter(u => u.has_revela_talentos_access && !u.has_plano_carreira_access).length;
 
-        // Calcular crescimento (mock - em produção seria baseado em dados históricos)
+        // Calcular crescimento (mock - em produÃ§Ã£o seria baseado em dados histÃ³ricos)
         const growth = 12.5;
 
         setStats({ totalUsers, planoCarreira, revelaTalentos, growth });
         setRecentActivities(activities || []);
       } catch (error) {
-        console.error("Erro ao carregar estatísticas:", error);
+        console.error("Erro ao carregar estatÃ­sticas:", error);
       }
       setIsLoading(false);
     };
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
       trendValue: 15.3
     },
     {
-      title: 'Taxa de Conversão',
+      title: 'Taxa de ConversÃ£o',
       value: stats.totalUsers > 0 ? ((stats.planoCarreira / stats.totalUsers) * 100).toFixed(1) + '%' : '0%',
       icon: Globe,
       gradient: 'from-purple-500 to-pink-600',
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
           <h1 className="text-4xl font-black mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             Dashboard EC10
           </h1>
-          <p className="text-gray-400">Visão geral da plataforma em tempo real</p>
+          <p className="text-gray-400">VisÃ£o geral da plataforma em tempo real</p>
         </div>
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
       </motion.div>

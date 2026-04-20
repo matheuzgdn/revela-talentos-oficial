@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+﻿import { appClient } from '@/api/backendClient';
 
 import React, { useState, useEffect, useCallback } from 'react';
 
@@ -35,7 +35,7 @@ export default function AdminCareerFeedTab() {
   const loadPosts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allPosts = await base44.entities.CareerPost.list('-created_date');
+      const allPosts = await appClient.entities.CareerPost.list('-created_date');
       setPosts(allPosts || []);
     } catch (error) {
       console.error('Erro ao carregar posts do feed:', error);
@@ -67,8 +67,8 @@ export default function AdminCareerFeedTab() {
   const handleDelete = async (postId) => {
     if (window.confirm("Tem certeza que deseja excluir este post?")) {
       try {
-        await base44.entities.CareerPost.delete(postId);
-        toast.success("Post excluído com sucesso!");
+        await appClient.entities.CareerPost.delete(postId);
+        toast.success("Post excluÃ­do com sucesso!");
         loadPosts();
       } catch (error) {
         toast.error("Falha ao excluir post.");
@@ -79,10 +79,10 @@ export default function AdminCareerFeedTab() {
   const handleSave = async () => {
     try {
       if (editingPost) {
-        await base44.entities.CareerPost.update(editingPost.id, formData);
+        await appClient.entities.CareerPost.update(editingPost.id, formData);
         toast.success("Post atualizado com sucesso!");
       } else {
-        await base44.entities.CareerPost.create(formData);
+        await appClient.entities.CareerPost.create(formData);
         toast.success("Post criado com sucesso!");
       }
       setShowModal(false);
@@ -131,7 +131,7 @@ export default function AdminCareerFeedTab() {
             </CardHeader>
             <CardContent className="flex-grow">
               <p className="text-sm text-gray-400 line-clamp-3">{post.content}</p>
-              {post.reference && <p className="text-xs text-sky-400 mt-2">Referência: {post.reference}</p>}
+              {post.reference && <p className="text-xs text-sky-400 mt-2">ReferÃªncia: {post.reference}</p>}
             </CardContent>
             <div className="flex gap-2 p-4 border-t border-gray-700">
               <Button variant="outline" size="sm" onClick={() => handleEdit(post)}><Edit className="w-3 h-3 mr-1"/> Editar</Button>
@@ -163,13 +163,13 @@ export default function AdminCareerFeedTab() {
                 ))}
               </SelectContent>
             </Select>
-            <Input placeholder="Título" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="bg-gray-800 border-gray-700"/>
-            <Textarea placeholder="Conteúdo Principal" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="bg-gray-800 border-gray-700 h-24"/>
+            <Input placeholder="TÃ­tulo" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="bg-gray-800 border-gray-700"/>
+            <Textarea placeholder="ConteÃºdo Principal" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="bg-gray-800 border-gray-700 h-24"/>
             <Input placeholder="URL da Imagem (opcional)" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} className="bg-gray-800 border-gray-700"/>
             {formData.post_type === 'devotional' && (
               <>
-                <Input placeholder="Referência (ex: João 3:16)" value={formData.reference} onChange={e => setFormData({...formData, reference: e.target.value})} className="bg-gray-800 border-gray-700"/>
-                <Textarea placeholder="Reflexão" value={formData.reflection} onChange={e => setFormData({...formData, reflection: e.target.value})} className="bg-gray-800 border-gray-700 h-20"/>
+                <Input placeholder="ReferÃªncia (ex: JoÃ£o 3:16)" value={formData.reference} onChange={e => setFormData({...formData, reference: e.target.value})} className="bg-gray-800 border-gray-700"/>
+                <Textarea placeholder="ReflexÃ£o" value={formData.reflection} onChange={e => setFormData({...formData, reflection: e.target.value})} className="bg-gray-800 border-gray-700 h-20"/>
               </>
             )}
             <div className="flex items-center gap-2">
@@ -186,4 +186,5 @@ export default function AdminCareerFeedTab() {
     </div>
   );
 }
+
 

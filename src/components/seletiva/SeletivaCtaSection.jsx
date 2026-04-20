@@ -1,11 +1,11 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy, ArrowRight, Video } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 
 export default function SeletivaCtaSection() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function SeletivaCtaSection() {
 
   const checkUser = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await appClient.auth.me();
       setUser(currentUser);
     } catch (error) {
       setUser(null);
@@ -27,8 +27,8 @@ export default function SeletivaCtaSection() {
   };
 
   const handleParticipateClick = () => {
-    // Sempre vai para a página SeletivaOnline
-    // A página em si vai lidar com a lógica de mostrar cadastro ou oportunidades
+    // Sempre vai para a pÃ¡gina SeletivaOnline
+    // A pÃ¡gina em si vai lidar com a lÃ³gica de mostrar cadastro ou oportunidades
     navigate(createPageUrl('SeletivaOnline'));
   };
 
@@ -56,8 +56,8 @@ export default function SeletivaCtaSection() {
           
           <p className="text-gray-300 max-w-3xl mx-auto text-lg md:text-xl mt-6 leading-relaxed">
             {hasCompletedProfile ?
-            'Explore as oportunidades disponíveis, candidate-se às seletivas e acompanhe o status das suas candidaturas.' :
-            'Esta é a sua chance de ser visto por nossa equipe de especialistas. Envie seus vídeos, preencha seus dados e dê o primeiro passo para uma carreira de sucesso.'
+            'Explore as oportunidades disponÃ­veis, candidate-se Ã s seletivas e acompanhe o status das suas candidaturas.' :
+            'Esta Ã© a sua chance de ser visto por nossa equipe de especialistas. Envie seus vÃ­deos, preencha seus dados e dÃª o primeiro passo para uma carreira de sucesso.'
             }
           </p>
           

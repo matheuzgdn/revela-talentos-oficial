@@ -28,3 +28,6 @@ dist-ssr
 *.sw?
 
 .env
+
+backend/data/runtime-db.json
+backend/storage/uploads/

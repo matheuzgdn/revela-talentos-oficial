@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect, useRef } from "react";
+import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, Send, Loader2, CheckCircle2, Calendar, Trophy, 
@@ -22,7 +22,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "has_club",
       type: "yesno",
-      question: `Oi ${userName}! 👋 Vamos começar nossa conversa semanal. Você está em algum clube atualmente?`,
+      question: `Oi ${userName}! ðŸ‘‹ Vamos comeÃ§ar nossa conversa semanal. VocÃª estÃ¡ em algum clube atualmente?`,
       icon: Trophy,
       color: "from-blue-500 to-cyan-500",
       field: "current_club_status"
@@ -30,7 +30,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "club_name",
       type: "text",
-      question: "Qual o nome do seu clube? ⚽",
+      question: "Qual o nome do seu clube? âš½",
       icon: Star,
       color: "from-purple-500 to-pink-500",
       field: "club_name",
@@ -39,7 +39,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "had_game",
       type: "yesno",
-      question: "Você jogou alguma partida oficial nesta semana? 🏆",
+      question: "VocÃª jogou alguma partida oficial nesta semana? ðŸ†",
       icon: Target,
       color: "from-green-500 to-emerald-500",
       field: "had_game"
@@ -47,7 +47,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "game_performance",
       type: "performance",
-      question: "Me conta sobre a partida! ⚡",
+      question: "Me conta sobre a partida! âš¡",
       icon: Zap,
       color: "from-orange-500 to-red-500",
       field: "game_stats",
@@ -56,7 +56,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "training",
       type: "number",
-      question: "Quantos treinos você fez esta semana? 💪",
+      question: "Quantos treinos vocÃª fez esta semana? ðŸ’ª",
       icon: Calendar,
       color: "from-yellow-500 to-orange-500",
       field: "training_sessions",
@@ -65,7 +65,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "training_quality",
       type: "rating",
-      question: "Como você avalia a qualidade dos seus treinos? 🎯",
+      question: "Como vocÃª avalia a qualidade dos seus treinos? ðŸŽ¯",
       icon: Star,
       color: "from-cyan-500 to-blue-500",
       field: "training_quality"
@@ -73,7 +73,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "life_status",
       type: "textarea",
-      question: "Como está sua vida no geral? Alimentação, sono, estudos? 📚",
+      question: "Como estÃ¡ sua vida no geral? AlimentaÃ§Ã£o, sono, estudos? ðŸ“š",
       icon: MessageCircle,
       color: "from-indigo-500 to-purple-500",
       field: "life_status",
@@ -82,7 +82,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "has_videos",
       type: "yesno",
-      question: "Você tem vídeos de jogos ou treinos para fazer upload? 🎥",
+      question: "VocÃª tem vÃ­deos de jogos ou treinos para fazer upload? ðŸŽ¥",
       icon: Upload,
       color: "from-pink-500 to-rose-500",
       field: "has_videos"
@@ -90,7 +90,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     {
       id: "notes",
       type: "textarea",
-      question: "Alguma observação adicional? Algo que queira compartilhar? 💭",
+      question: "Alguma observaÃ§Ã£o adicional? Algo que queira compartilhar? ðŸ’­",
       icon: MessageCircle,
       color: "from-gray-500 to-slate-500",
       field: "notes",
@@ -110,7 +110,7 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     const currentQuestion = questions[currentStep];
     setResponses(prev => ({ ...prev, [currentQuestion.id]: value }));
     
-    // Auto-avançar após pequeno delay
+    // Auto-avanÃ§ar apÃ³s pequeno delay
     setTimeout(() => {
       const nextStep = getNextStep(currentStep, { ...responses, [currentQuestion.id]: value });
       if (nextStep !== null) {
@@ -136,20 +136,20 @@ export default function WeeklyAssessmentChat({ isOpen, onClose, userId, userName
     
     try {
       // Processar respostas com IA para gerar feedback personalizado
-      const prompt = `Você é um analista de futebol. Baseado nas seguintes informações do atleta, gere um feedback motivacional e construtivo (máximo 100 palavras):
+      const prompt = `VocÃª Ã© um analista de futebol. Baseado nas seguintes informaÃ§Ãµes do atleta, gere um feedback motivacional e construtivo (mÃ¡ximo 100 palavras):
 
-Clube: ${finalResponses.has_club === 'sim' ? finalResponses.club_name || 'Sim' : 'Não está em clube'}
-Jogou partida: ${finalResponses.had_game === 'sim' ? 'Sim' : 'Não'}
+Clube: ${finalResponses.has_club === 'sim' ? finalResponses.club_name || 'Sim' : 'NÃ£o estÃ¡ em clube'}
+Jogou partida: ${finalResponses.had_game === 'sim' ? 'Sim' : 'NÃ£o'}
 ${finalResponses.game_performance ? `Performance: ${finalResponses.game_performance}` : ''}
 Treinos na semana: ${finalResponses.training}
 Qualidade dos treinos: ${finalResponses.training_quality}/5
-Vida geral: ${finalResponses.life_status || 'Não informado'}
-Tem vídeos: ${finalResponses.has_videos}
-Observações: ${finalResponses.notes || 'Nenhuma'}
+Vida geral: ${finalResponses.life_status || 'NÃ£o informado'}
+Tem vÃ­deos: ${finalResponses.has_videos}
+ObservaÃ§Ãµes: ${finalResponses.notes || 'Nenhuma'}
 
-Gere um feedback personalizado, motivacional e com dicas práticas.`;
+Gere um feedback personalizado, motivacional e com dicas prÃ¡ticas.`;
 
-      const aiResponse = await base44.integrations.Core.InvokeLLM({
+      const aiResponse = await appClient.integrations.Core.InvokeLLM({
         prompt,
         add_context_from_internet: false
       });
@@ -165,29 +165,29 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
         training_sessions: parseInt(finalResponses.training) || 0,
         self_rating: finalResponses.training_quality || 5,
         physical_condition: getPhysicalCondition(finalResponses.life_status),
-        notes: `Clube: ${finalResponses.has_club === 'sim' ? (finalResponses.club_name || 'Sim') : 'Não'}\n\nVida: ${finalResponses.life_status || 'Não informado'}\n\nObservações: ${finalResponses.notes || 'Nenhuma'}\n\nTem vídeos: ${finalResponses.has_videos}`,
+        notes: `Clube: ${finalResponses.has_club === 'sim' ? (finalResponses.club_name || 'Sim') : 'NÃ£o'}\n\nVida: ${finalResponses.life_status || 'NÃ£o informado'}\n\nObservaÃ§Ãµes: ${finalResponses.notes || 'Nenhuma'}\n\nTem vÃ­deos: ${finalResponses.has_videos}`,
         admin_feedback: aiResponse,
         points_earned: 50
       };
 
-      const newAssessment = await base44.entities.WeeklyAssessment.create(assessmentData);
+      const newAssessment = await appClient.entities.WeeklyAssessment.create(assessmentData);
 
-      // Atualizar dados do usuário com estatísticas acumuladas
-      const currentUser = await base44.auth.me();
+      // Atualizar dados do usuÃ¡rio com estatÃ­sticas acumuladas
+      const currentUser = await appClient.auth.me();
       
       // Buscar todos os assessments para calcular totais
-      const allAssessments = await base44.entities.WeeklyAssessment.filter({ user_id: userId });
+      const allAssessments = await appClient.entities.WeeklyAssessment.filter({ user_id: userId });
       const totalGamesPlayed = allAssessments.filter(a => a.had_game).length + (finalResponses.had_game === 'sim' ? 1 : 0);
       const totalGoalsScored = allAssessments.reduce((sum, a) => sum + (a.goals || 0), 0) + (finalResponses.game_performance?.goals || 0);
       
-      await base44.auth.updateMe({
+      await appClient.auth.updateMe({
         total_points: (currentUser.total_points || 0) + 50,
         last_weekly_assessment: new Date().toISOString(),
         // Atualizar clube se informado
         ...(finalResponses.has_club === 'sim' && finalResponses.club_name ? {
           current_club_name: finalResponses.club_name
         } : {}),
-        // Atualizar estatísticas gerais
+        // Atualizar estatÃ­sticas gerais
         career_stats: {
           total_games: totalGamesPlayed,
           total_goals: totalGoalsScored,
@@ -195,8 +195,8 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
         }
       });
 
-      // Criar notificação para admin
-      await base44.entities.AdminNotification.create({
+      // Criar notificaÃ§Ã£o para admin
+      await appClient.entities.AdminNotification.create({
         notification_type: "performance_pending",
         title: "Nova Assessoria Semanal",
         message: `${userName} completou a assessoria semanal`,
@@ -204,14 +204,14 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
         tab_name: "Assessoria"
       });
 
-      // Se tem vídeos, mostrar prompt de upload
+      // Se tem vÃ­deos, mostrar prompt de upload
       if (finalResponses.has_videos === 'sim') {
         setShowUploadPrompt(true);
-        toast.success("Assessoria concluída! +50 pontos", {
-          description: "Não esqueça de fazer upload dos seus vídeos!"
+        toast.success("Assessoria concluÃ­da! +50 pontos", {
+          description: "NÃ£o esqueÃ§a de fazer upload dos seus vÃ­deos!"
         });
       } else {
-        toast.success("Assessoria concluída! +50 pontos");
+        toast.success("Assessoria concluÃ­da! +50 pontos");
         setTimeout(() => {
           onComplete?.();
           onClose();
@@ -228,7 +228,7 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
   const getPhysicalCondition = (lifeStatus) => {
     if (!lifeStatus) return "regular";
     const lower = lifeStatus.toLowerCase();
-    if (lower.includes("ótim") || lower.includes("excelen") || lower.includes("muito bem")) return "excelente";
+    if (lower.includes("Ã³tim") || lower.includes("excelen") || lower.includes("muito bem")) return "excelente";
     if (lower.includes("bom") || lower.includes("bem")) return "boa";
     if (lower.includes("ruim") || lower.includes("mal") || lower.includes("cansad")) return "ruim";
     return "regular";
@@ -329,7 +329,7 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
                     </motion.div>
                   )}
 
-                  {/* Input (só no step atual) */}
+                  {/* Input (sÃ³ no step atual) */}
                   {idx === currentStep && !hasResponse && (
                     <QuestionInput
                       question={question}
@@ -363,7 +363,7 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
               className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-2xl p-4 text-center"
             >
               <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
-              <p className="text-white font-bold mb-2">Assessoria Concluída!</p>
+              <p className="text-white font-bold mb-2">Assessoria ConcluÃ­da!</p>
               <p className="text-gray-300 text-sm mb-4">+50 pontos adicionados</p>
               <Button
                 onClick={() => {
@@ -374,7 +374,7 @@ Gere um feedback personalizado, motivacional e com dicas práticas.`;
                 className="w-full bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-bold"
               >
                 <Upload className="w-4 h-4 mr-2" />
-                Fazer Upload de Vídeos
+                Fazer Upload de VÃ­deos
               </Button>
             </motion.div>
           )}
@@ -405,12 +405,12 @@ function QuestionInput({ question, onResponse, isProcessing }) {
           Sim
         </Button>
         <Button
-          onClick={() => onResponse("não")}
+          onClick={() => onResponse("nÃ£o")}
           disabled={isProcessing}
           className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-400"
         >
           <ThumbsDown className="w-4 h-4 mr-2" />
-          Não
+          NÃ£o
         </Button>
       </motion.div>
     );
@@ -530,10 +530,10 @@ function PerformanceInput({ onSubmit }) {
 
 function formatResponse(question, response) {
   if (question.type === "yesno") return response;
-  if (question.type === "rating") return `${response}/5 ⭐`;
+  if (question.type === "rating") return `${response}/5 â­`;
   if (question.type === "number") return response;
   if (question.type === "performance") {
-    return `${response.goals} gols, ${response.assists} assistências, ${response.minutes} min`;
+    return `${response.goals} gols, ${response.assists} assistÃªncias, ${response.minutes} min`;
   }
   return response || "Sem resposta";
 }

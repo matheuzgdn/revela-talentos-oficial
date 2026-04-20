@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Clock, Mail, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 import { useAuth } from '@/lib/AuthContext';
 
 const TEXTS = {
   pt: {
-    title: 'Aguardando Aprovação',
-    greeting: 'Olá,',
-    body: 'Sua conta foi criada com sucesso. Nossa equipe está revisando seu cadastro e em breve você terá acesso completo à plataforma.',
-    notifyTitle: 'Você será notificado',
+    title: 'Aguardando AprovaÃ§Ã£o',
+    greeting: 'OlÃ¡,',
+    body: 'Sua conta foi criada com sucesso. Nossa equipe estÃ¡ revisando seu cadastro e em breve vocÃª terÃ¡ acesso completo Ã  plataforma.',
+    notifyTitle: 'VocÃª serÃ¡ notificado',
     notifyDesc: 'Enviaremos um email assim que seu acesso for liberado',
     timeTitle: 'Tempo estimado',
-    timeDesc: 'A aprovação geralmente leva até 24 horas',
-    whatsapp: 'https://wa.me/351914945252?text=Olá!%20Criei%20uma%20conta%20e%20gostaria%20de%20saber%20sobre%20minha%20aprovação',
+    timeDesc: 'A aprovaÃ§Ã£o geralmente leva atÃ© 24 horas',
+    whatsapp: 'https://wa.me/351914945252?text=OlÃ¡!%20Criei%20uma%20conta%20e%20gostaria%20de%20saber%20sobre%20minha%20aprovaÃ§Ã£o',
     support: 'Falar com Suporte',
     logout: 'Sair da Conta',
   },
   es: {
-    title: 'Esperando Aprobación',
-    greeting: '¡Hola,',
-    body: 'Tu cuenta fue creada con éxito. Nuestro equipo está revisando tu registro y pronto tendrás acceso completo a la plataforma.',
-    notifyTitle: 'Serás notificado',
+    title: 'Esperando AprobaciÃ³n',
+    greeting: 'Â¡Hola,',
+    body: 'Tu cuenta fue creada con Ã©xito. Nuestro equipo estÃ¡ revisando tu registro y pronto tendrÃ¡s acceso completo a la plataforma.',
+    notifyTitle: 'SerÃ¡s notificado',
     notifyDesc: 'Te enviaremos un email en cuanto tu acceso sea habilitado',
     timeTitle: 'Tiempo estimado',
-    timeDesc: 'La aprobación generalmente tarda hasta 24 horas',
-    whatsapp: 'https://wa.me/351914945252?text=¡Hola!%20Creé%20una%20cuenta%20y%20quisiera%20saber%20sobre%20mi%20aprobación',
+    timeDesc: 'La aprobaciÃ³n generalmente tarda hasta 24 horas',
+    whatsapp: 'https://wa.me/351914945252?text=Â¡Hola!%20CreÃ©%20una%20cuenta%20y%20quisiera%20saber%20sobre%20mi%20aprobaciÃ³n',
     support: 'Hablar con Soporte',
-    logout: 'Cerrar Sesión',
+    logout: 'Cerrar SesiÃ³n',
   },
 };
 
@@ -36,12 +36,12 @@ export default function PendingApproval({ user }) {
   const t = TEXTS[lang];
   const { logout } = useAuth();
 
-  // Polling: verifica a cada 10s se o usuário foi aprovado
+  // Polling: verifica a cada 10s se o usuÃ¡rio foi aprovado
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const updatedUser = await base44.auth.me();
-        // Se o usuário foi aprovado OU a plataforma não está mais restrita, recarregar
+        const updatedUser = await appClient.auth.me();
+        // Se o usuÃ¡rio foi aprovado OU a plataforma nÃ£o estÃ¡ mais restrita, recarregar
         if (updatedUser?.is_approved) {
           window.location.reload();
         }
@@ -67,13 +67,13 @@ export default function PendingApproval({ user }) {
                 onClick={() => setLang('pt')}
                 className={`px-3 py-1.5 transition-colors ${lang === 'pt' ? 'bg-cyan-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
               >
-                🇧🇷 PT
+                ðŸ‡§ðŸ‡· PT
               </button>
               <button
                 onClick={() => setLang('es')}
                 className={`px-3 py-1.5 transition-colors ${lang === 'es' ? 'bg-cyan-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
               >
-                🇪🇸 ES
+                ðŸ‡ªðŸ‡¸ ES
               </button>
             </div>
           </div>

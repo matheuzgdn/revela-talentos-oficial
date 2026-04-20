@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { User as UserIcon } from 'lucide-react';
 import LoginModal from '@/components/auth/LoginModal';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 
 export default function GuestHeader() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -13,7 +13,7 @@ export default function GuestHeader() {
   const checkAccess = async () => {
     setIsLoading(true);
     try {
-      await base44.auth.me();
+      await appClient.auth.me();
       window.location.href = createPageUrl("Hub");
     } catch (error) {
       setShowLoginModal(true);
@@ -52,3 +52,4 @@ export default function GuestHeader() {
     </>
   );
 }
+

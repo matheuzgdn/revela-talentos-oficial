@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+﻿import React, { useState, useEffect } from 'react';
+import { appClient } from '@/api/backendClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -27,7 +27,7 @@ const adminTabsConfig = [
     name: 'Dashboard',
     icon: LayoutDashboard,
     component: AdminDashboard,
-    description: 'Visão geral da plataforma',
+    description: 'VisÃ£o geral da plataforma',
     requiredRole: 'admin',
     gradient: 'from-cyan-500 to-blue-600'
   },
@@ -36,7 +36,7 @@ const adminTabsConfig = [
     name: 'Atletas',
     icon: Users,
     component: AdminUsersTab,
-    description: 'Gestão de atletas e usuários',
+    description: 'GestÃ£o de atletas e usuÃ¡rios',
     requiredRole: 'admin',
     gradient: 'from-purple-500 to-pink-600'
   },
@@ -45,7 +45,7 @@ const adminTabsConfig = [
     name: 'Seletivas',
     icon: Target,
     component: AdminSeletivasTab,
-    description: 'Peneiras e avaliações',
+    description: 'Peneiras e avaliaÃ§Ãµes',
     requiredRole: 'revela_admin',
     gradient: 'from-green-500 to-emerald-600'
   },
@@ -54,7 +54,7 @@ const adminTabsConfig = [
     name: 'Destaques',
     icon: Star,
     component: AdminStoriesTab,
-    description: 'Atletas em evidência',
+    description: 'Atletas em evidÃªncia',
     requiredRole: 'revela_admin',
     gradient: 'from-yellow-500 to-orange-600'
   },
@@ -78,19 +78,19 @@ const adminTabsConfig = [
   },
   {
     id: 'services',
-    name: 'Serviços',
+    name: 'ServiÃ§os',
     icon: Zap,
     component: AdminServicesTab,
-    description: 'Serviços em destaque',
+    description: 'ServiÃ§os em destaque',
     requiredRole: 'admin',
     gradient: 'from-indigo-500 to-purple-600'
   },
   {
     id: 'content',
-    name: 'Conteúdo',
+    name: 'ConteÃºdo',
     icon: FileText,
     component: AdminContentTab,
-    description: 'Vídeos e materiais',
+    description: 'VÃ­deos e materiais',
     requiredRole: 'revela_admin',
     gradient: 'from-blue-500 to-cyan-600'
   },
@@ -99,7 +99,7 @@ const adminTabsConfig = [
     name: 'Lives',
     icon: Radio,
     component: AdminLivesTab,
-    description: 'Estúdio de transmissão ao vivo',
+    description: 'EstÃºdio de transmissÃ£o ao vivo',
     requiredRole: 'admin',
     gradient: 'from-red-500 to-pink-600'
   }
@@ -114,7 +114,7 @@ export default function AdminPage() {
   useEffect(() => {
     const checkAccess = async () => {
       try {
-        const user = await base44.auth.me();
+        const user = await appClient.auth.me();
 
         const isFullAdmin = user?.role === 'admin';
         const isRevelaAdmin = user?.is_revela_admin === true && user?.role !== 'admin';
@@ -198,7 +198,7 @@ export default function AdminPage() {
               <div>
                 <h1 className="text-lg font-black tracking-tight">EC10 Admin</h1>
                 <p className="text-xs text-gray-500">
-                  {isRevelaAdmin ? 'Revela Talentos' : 'Gestão Premium'}
+                  {isRevelaAdmin ? 'Revela Talentos' : 'GestÃ£o Premium'}
                 </p>
               </div>
             )}

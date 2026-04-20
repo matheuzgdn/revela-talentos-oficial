@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
+import { appClient } from "@/api/backendClient";
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, Heart, Eye, ChevronLeft, X, Star, Zap, Sparkles, Flame, Target, Dumbbell, Trophy } from "lucide-react";
+import { motion } from "framer-motion";
+import { Play, Heart, Eye, Star, Zap, Sparkles, Flame, Target, Dumbbell, Trophy } from "lucide-react";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
 import VideoAnalysisModal from "../components/athlete/VideoAnalysisModal";
-import { createPageUrl } from "@/utils";
-import { Link } from "react-router-dom";
 
 export default function AthleteVideos() {
   const { t } = useLanguage();
@@ -19,17 +17,17 @@ export default function AthleteVideos() {
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => setUser(null));
+    appClient.auth.me().then(setUser).catch(() => setUser(null));
   }, []);
 
   const { data: allVideos = [], isLoading } = useQuery({
     queryKey: ['athleteVideos', user?.id],
     queryFn: async () => {
       if (!user?.id) {
-        return base44.entities.AthleteVideo.filter({ status: "approved" }, "-created_date", 50);
+        return appClient.entities.AthleteVideo.filter({ status: "approved" }, "-created_date", 50);
       }
-      // Para o usuário logado, mostrar todos os seus vídeos
-      const myVideos = await base44.entities.AthleteVideo.filter({ athlete_id: user.id }, "-created_date", 50);
+      // Para o usuÃ¡rio logado, mostrar todos os seus vÃ­deos
+      const myVideos = await appClient.entities.AthleteVideo.filter({ athlete_id: user.id }, "-created_date", 50);
       return myVideos;
     },
     enabled: true

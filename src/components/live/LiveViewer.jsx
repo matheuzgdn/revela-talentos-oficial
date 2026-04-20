@@ -8,7 +8,6 @@ import {
     selectIsConnectedToRoom,
     selectRemotePeers,
     selectHMSMessages,
-    selectPeerCount,
 } from '@100mslive/react-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, VolumeX, Volume2, RefreshCw, Send, Eye } from 'lucide-react';

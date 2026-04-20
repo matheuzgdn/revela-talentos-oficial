@@ -1,6 +1,6 @@
-
+﻿
 import React, { useState, useMemo } from "react";
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ export default function AdminMessagesTab({ messages, users, onRefresh }) {
 
   const personas = [
     { id: "analyst_01", name: "Analista de Desempenho" },
-    { id: "physio_01", name: "Preparador Físico" },
+    { id: "physio_01", name: "Preparador FÃ­sico" },
     { id: "mentor_01", name: "Mentor de Carreira" },
     { id: "marketing_01", name: "Equipe de Marketing" },
   ];
@@ -73,7 +73,7 @@ export default function AdminMessagesTab({ messages, users, onRefresh }) {
 
     setIsSending(true);
     try {
-      await base44.entities.ChatMessage.create({
+      await appClient.entities.ChatMessage.create({
         sender_id: replyAs,
         receiver_id: selectedConversation.user.id,
         conversation_id: selectedConversation.id,
@@ -147,7 +147,7 @@ export default function AdminMessagesTab({ messages, users, onRefresh }) {
                       {convo.messages.length} mensagem{convo.messages.length > 1 ? 's' : ''}
                     </p>
                     <p className="text-gray-500 text-xs">
-                       Última msg: {convo.lastMessageTime.toLocaleString('pt-BR')}
+                       Ãšltima msg: {convo.lastMessageTime.toLocaleString('pt-BR')}
                     </p>
                   </div>
                 </div>
@@ -237,4 +237,5 @@ export default function AdminMessagesTab({ messages, users, onRefresh }) {
     </div>
   );
 }
+
 

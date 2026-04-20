@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+﻿import { appClient } from '@/api/backendClient';
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -50,7 +50,7 @@ const LeadCard = ({ lead, index, onSelectLead }) => {
                   {lead.internal_id && <p className="text-xs text-gray-500">ID: {lead.internal_id}</p>}
                   <p className="text-xs text-gray-400 truncate">
                     {lead.position && `${lead.position} `}
-                    {lead.current_club && `• ${lead.current_club}`}
+                    {lead.current_club && `â€¢ ${lead.current_club}`}
                   </p>
                   {age && <p className="text-xs text-gray-500">{age} anos</p>}
                 </div>
@@ -165,7 +165,7 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
     }
 
     try {
-      await base44.entities.CRMLead.update(draggableId, { current_stage: destination.droppableId });
+      await appClient.entities.CRMLead.update(draggableId, { current_stage: destination.droppableId });
       toast.success("Lead movido com sucesso!");
       onRefresh();
     } catch (error) {
@@ -191,8 +191,8 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
         sales_rep_id: salesRepId,
         value: 0
       };
-      await base44.entities.CRMLead.create(newLeadData);
-      toast.success(`${rawLead.full_name} atribuído com sucesso!`);
+      await appClient.entities.CRMLead.create(newLeadData);
+      toast.success(`${rawLead.full_name} atribuÃ­do com sucesso!`);
       onRefresh();
     } catch (error) {
       toast.error("Erro ao atribuir lead.");
@@ -205,7 +205,7 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
       return false;
     }
     try {
-        await base44.entities.CRMLead.create({
+        await appClient.entities.CRMLead.create({
             ...leadData,
             pipeline_id: activePipelineId,
             current_stage: pipelines.find(p => p.id === activePipelineId)?.stages[0] || 'Novo',
@@ -227,7 +227,7 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
         <TabsList className="bg-gray-900/50 mb-4">
           <TabsTrigger value="pipelines">Pipelines</TabsTrigger>
           <TabsTrigger value="unassigned_leads">
-            Leads Não Atribuídos <Badge className="ml-2">{unassignedLeads.length}</Badge>
+            Leads NÃ£o AtribuÃ­dos <Badge className="ml-2">{unassignedLeads.length}</Badge>
           </TabsTrigger>
         </TabsList>
         <TabsContent value="pipelines">
@@ -271,7 +271,7 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
                         ))}
                     </div>
                 </DragDropContext>
-            ) : <div className="text-center py-10 text-gray-400">Selecione ou crie um pipeline para começar.</div>}
+            ) : <div className="text-center py-10 text-gray-400">Selecione ou crie um pipeline para comeÃ§ar.</div>}
         </TabsContent>
         <TabsContent value="unassigned_leads">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -318,4 +318,5 @@ export default function PipelineView({ pipelines, leads, salesRepId, services, u
     </>
   );
 }
+
 

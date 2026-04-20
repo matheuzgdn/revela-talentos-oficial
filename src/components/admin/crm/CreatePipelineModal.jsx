@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+﻿import { appClient } from '@/api/backendClient';
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -35,7 +35,7 @@ export default function CreatePipelineModal({ isOpen, onClose, salesRepId, servi
     }
 
     try {
-      await base44.entities.CRMPipeline.create({
+      await appClient.entities.CRMPipeline.create({
         pipeline_name: pipelineName,
         service_category: serviceCategory,
         stages: stages.filter(s => s.trim() !== ''),
@@ -43,7 +43,7 @@ export default function CreatePipelineModal({ isOpen, onClose, salesRepId, servi
         is_active: true
       });
       toast.success("Pipeline criado com sucesso!");
-      onSuccess(); // Corrigido: Usando onSuccess que é passado como prop
+      onSuccess(); // Corrigido: Usando onSuccess que Ã© passado como prop
     } catch (error) {
       toast.error("Erro ao criar pipeline.");
     }
@@ -67,10 +67,10 @@ export default function CreatePipelineModal({ isOpen, onClose, salesRepId, servi
               />
             </div>
             <div>
-              <Label>Serviço Associado</Label>
+              <Label>ServiÃ§o Associado</Label>
               <Select value={serviceCategory} onValueChange={setServiceCategory}>
                 <SelectTrigger className="bg-gray-800 border-gray-700">
-                  <SelectValue placeholder="Selecione um serviço" />
+                  <SelectValue placeholder="Selecione um serviÃ§o" />
                 </SelectTrigger>
                 <SelectContent>
                   {services.map(service => (
@@ -111,3 +111,4 @@ export default function CreatePipelineModal({ isOpen, onClose, salesRepId, servi
     </Dialog>
   );
 }
+

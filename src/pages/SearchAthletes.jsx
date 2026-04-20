@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
+import { appClient } from "@/api/backendClient";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Search, User, Video, Filter, ChevronRight, Star, Eye, Trophy, Zap, Share2, Target, Shield, Users, Crosshair, Activity } from "lucide-react";
+import { Search, User, Video, Filter, ChevronRight, Eye, Trophy, Zap, Share2, Target, Shield, Users, Crosshair, Activity } from "lucide-react";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import MobileBottomNav from "../components/mobile/MobileBottomNav";
 import VideoUploadModal from "../components/mobile/VideoUploadModal";
 import { createPageUrl } from "@/utils";
@@ -21,12 +19,12 @@ export default function SearchAthletes() {
   const [showUploadModal, setShowUploadModal] = useState(false);
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => setUser(null));
+    appClient.auth.me().then(setUser).catch(() => setUser(null));
   }, []);
 
   const { data: videos = [], isLoading } = useQuery({
     queryKey: ['searchAthleteVideos'],
-    queryFn: () => base44.entities.AthleteVideo.filter({ status: "approved" }, "-created_date", 100),
+    queryFn: () => appClient.entities.AthleteVideo.filter({ status: "approved" }, "-created_date", 100),
   });
 
   const positions = [

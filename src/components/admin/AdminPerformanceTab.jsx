@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useMemo } from "react";
+import { appClient } from "@/api/backendClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,10 +30,10 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
     return users.find(user => user.id === userId);
   };
 
-  // Agrupar performances por usuário
+  // Agrupar performances por usuÃ¡rio
   const performancesByUser = useMemo(() => {
     const grouped = {};
-    base44.entities.PerformanceData.forEach(performance => {
+    (performanceData || []).forEach(performance => {
       const userId = performance.user_id;
       if (!grouped[userId]) {
         grouped[userId] = [];
@@ -41,7 +41,7 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
       grouped[userId].push(performance);
     });
     
-    // Ordenar performances de cada usuário por data
+    // Ordenar performances de cada usuÃ¡rio por data
     Object.keys(grouped).forEach(userId => {
       grouped[userId].sort((a, b) => new Date(b.game_date) - new Date(a.game_date));
     });
@@ -79,15 +79,15 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
         : { user_id: selectedUserId, ...editForm, status: 'completed' };
 
       if (!payload.game_date) {
-        toast.error("A data do jogo é obrigatória.");
+        toast.error("A data do jogo Ã© obrigatÃ³ria.");
         return;
       }
 
       if (editingPerformance) {
-        await base44.entities.PerformanceData.update(editingPerformance.id, payload);
+        await appClient.entities.PerformanceData.update(editingPerformance.id, payload);
         toast.success("Performance atualizada com sucesso!");
       } else {
-        await base44.entities.PerformanceData.create(payload);
+        await appClient.entities.PerformanceData.create(payload);
         toast.success("Performance adicionada com sucesso!");
       }
       resetForm();
@@ -115,7 +115,7 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
     return status === 'pending_analysis' ? (
       <Badge className="bg-yellow-600 text-white">Pendente</Badge>
     ) : (
-      <Badge className="bg-green-600 text-white">Concluído</Badge>
+      <Badge className="bg-green-600 text-white">ConcluÃ­do</Badge>
     );
   };
 
@@ -127,13 +127,13 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-white">Análise de Performance dos Atletas</h3>
+        <h3 className="text-lg font-semibold text-white">AnÃ¡lise de Performance dos Atletas</h3>
         <Button 
           onClick={() => { setShowAddForm(true); setEditingPerformance(null); }}
           className="bg-green-600 hover:bg-green-700"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Adicionar Análise Manual
+          Adicionar AnÃ¡lise Manual
         </Button>
       </div>
 
@@ -142,20 +142,20 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
         <Card className="bg-black border-green-400/50">
           <CardHeader>
             <CardTitle className="text-green-400">
-              {editingPerformance ? `Analisando: ${getUserById(editingPerformance.user_id)?.full_name}` : 'Nova Análise Manual'}
+              {editingPerformance ? `Analisando: ${getUserById(editingPerformance.user_id)?.full_name}` : 'Nova AnÃ¡lise Manual'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {editingPerformance?.associated_video_url && (
               <div className="p-4 bg-gray-900/50 rounded-lg">
-                <h4 className="text-sm font-semibold text-white mb-3">Diário do Atleta</h4>
+                <h4 className="text-sm font-semibold text-white mb-3">DiÃ¡rio do Atleta</h4>
                 <div className="space-y-3 text-sm">
                   <p><strong className="text-gray-400">Sentimento na Partida:</strong> <span className="text-gray-200 italic">"{editingPerformance.athlete_feeling || 'N/A'}"</span></p>
                   <p><strong className="text-gray-400">Resumo da Semana:</strong> <span className="text-gray-200 italic">"{editingPerformance.athlete_weekly_summary || 'N/A'}"</span></p>
                 </div>
                 <Button asChild size="sm" className="mt-3 bg-blue-600 hover:bg-blue-700">
                   <a href={editingPerformance.associated_video_url} target="_blank" rel="noopener noreferrer">
-                    <Video className="w-4 h-4 mr-2"/> Ver Vídeo da Partida
+                    <Video className="w-4 h-4 mr-2"/> Ver VÃ­deo da Partida
                   </a>
                 </Button>
               </div>
@@ -163,14 +163,14 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
             
             {!editingPerformance && (
               <div>
-                <label className="block text-white mb-2">Selecionar Usuário</label>
+                <label className="block text-white mb-2">Selecionar UsuÃ¡rio</label>
                 <select
                   value={selectedUserId}
                   onChange={(e) => setSelectedUserId(e.target.value)}
                   className="w-full bg-gray-800 border border-gray-600 text-white rounded-md px-3 py-2"
                   required
                 >
-                  <option value="">Selecione um usuário...</option>
+                  <option value="">Selecione um usuÃ¡rio...</option>
                   {users.map(user => (
                     <option key={user.id} value={user.id}>
                       {user.full_name} - {user.email}
@@ -182,12 +182,12 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-white mb-2">Adversário</label>
+                <label className="block text-white mb-2">AdversÃ¡rio</label>
                 <Input
                   value={editForm.opponent || ''}
                   onChange={(e) => setEditForm(prev => ({...prev, opponent: e.target.value}))}
                   className="bg-gray-800 border-gray-600 text-white"
-                  placeholder="Nome do time adversário"
+                  placeholder="Nome do time adversÃ¡rio"
                 />
               </div>
               <div>
@@ -218,7 +218,7 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
                 />
               </div>
               <div>
-                <label className="block text-white mb-2">Assistências</label>
+                <label className="block text-white mb-2">AssistÃªncias</label>
                 <Input
                   type="number"
                   value={editForm.assists || 0}
@@ -240,12 +240,12 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
               </div>
             </div>
             <div>
-              <label className="block text-white mb-2">Observações do Analista</label>
+              <label className="block text-white mb-2">ObservaÃ§Ãµes do Analista</label>
               <textarea
                 value={editForm.analyst_notes || ''}
                 onChange={(e) => setEditForm(prev => ({...prev, analyst_notes: e.target.value}))}
                 className="w-full bg-gray-800 border border-gray-600 text-white rounded-md px-3 py-2 h-24"
-                placeholder="Observações sobre a performance..."
+                placeholder="ObservaÃ§Ãµes sobre a performance..."
               />
             </div>
             <div className="flex gap-3">
@@ -350,7 +350,7 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
                           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
                             <TrendingUp className="w-5 h-5 text-blue-400 mx-auto mb-1" />
                             <p className="text-2xl font-bold text-white">{performance.assists || 0}</p>
-                            <p className="text-xs text-gray-400">Assistências</p>
+                            <p className="text-xs text-gray-400">AssistÃªncias</p>
                           </div>
                           <div className="bg-gray-900/50 rounded-lg p-3 text-center">
                             <Trophy className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
@@ -377,13 +377,14 @@ export default function AdminPerformanceTab({ performanceData, users, onRefresh 
         })}
       </div>
 
-      {base44.entities.PerformanceData.length === 0 && (
+      {performanceData.length === 0 && (
         <div className="text-center py-12 text-gray-500">
           <BarChart3 className="w-16 h-16 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-white mb-2">Nenhuma performance registrada</h3>
-          <p>Adicione dados de performance para começar as análises.</p>
+          <p>Adicione dados de performance para comeÃ§ar as anÃ¡lises.</p>
         </div>
       )}
     </div>
   );
 }
+

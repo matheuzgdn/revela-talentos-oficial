@@ -3,10 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Copy, Mail, UserPlus, Loader2, CheckCircle2, ChevronRight } from "lucide-react";
-import { base44 } from "@/api/base44Client";
-import { createPageUrl } from "@/utils";
+import { authorizeZonaMembrosEmail, buildZonaMembrosInviteMessage } from "@/lib/member-access";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,7 +16,6 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
   const [copied, setCopied] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Reset state when modal is opened/closed
   React.useEffect(() => {
     if (open) {
       setEmail("");
@@ -34,50 +31,24 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
       toast.error("Informe o e-mail do usuário");
       return;
     }
+
     setIsSending(true);
     try {
-      // 1. Criar o Usuário no Banco de Dados
-      // A pedido, não usaremos o 'inviteUser' para evitar e-mails automáticos da plataforma.
-      // O atleta entrará no link e fará seu próprio cadastro na aba "Criar Conta".
-      await base44.entities.User.create({
-        email: email.toLowerCase(),
-        password: Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8), // Dummy password
-        full_name: fullName || email.split('@')[0],
-        has_zona_membros_access: true,
-        onboarding_completed: true,
-        is_approved: true,
-        role: 'user',
-        language: 'pt',
-        achievements: '',
-        career_highlights: '',
-        profile_picture_url: '',
-        birth_date: '2000-01-01',
-        fifa_attributes: {},
-        career_stats: {},
-        jersey_number: '0',
-        height: 0,
-        player_cutout_url: '',
-        weight: 0,
-        current_club_crest_url: '',
-        nationality: '',
-        position: '',
-        current_club_name: ''
+      const normalizedEmail = await authorizeZonaMembrosEmail(email);
+      const msg = buildZonaMembrosInviteMessage({
+        email: normalizedEmail,
+        fullName,
       });
 
-      // 2. Format the message for the email body (Gmail do Admin)
-      const zonaLink = `${window.location.origin}/ZonaMembros`;
-      const msg = `Olá${fullName ? ' ' + fullName : ''}!\n\nExcelente notícia! Seu acesso exclusivo à Zona de Membros da EC10 Talentos foi liberado e o seu e-mail já foi autorizado no nosso sistema VIP.\n\nPara acessar a plataforma, siga os passos abaixo:\n\n1. Acesse o link: ${zonaLink}\n2. Na tela que abrir, clique em "Sign up" (Criar Conta / Inscrever-se).\n3. Cadastre-se utilizando este mesmo e-mail (${email}) para que o sistema reconheça a sua liberação automática, e crie a sua senha pessoal.\n\nDepois de criar a conta, é só aproveitar todo o conteúdo!\n\nUm abraço,\nEquipe EC10 Talentos`;
-
+      setEmail(normalizedEmail);
       setInviteMessage(msg);
-
-      // 3. Show success screen
       setIsSuccess(true);
-      toast.success('Usuário criado com sucesso e acesso liberado!');
-      onInvited?.();
 
+      toast.success("Acesso liberado com sucesso!");
+      onInvited?.();
     } catch (error) {
-      console.error("Failed to create user:", error);
-      toast.error("Falha ao criar usuário. Verifique se o e-mail já existe.");
+      console.error("Failed to authorize member access:", error);
+      toast.error(error.message || "Falha ao liberar acesso para este e-mail.");
     } finally {
       setIsSending(false);
     }
@@ -88,7 +59,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
     const body = encodeURIComponent(inviteMessage);
     const to = encodeURIComponent(email);
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
-    window.open(gmailUrl, '_blank');
+    window.open(gmailUrl, "_blank");
   };
 
   return (
@@ -132,7 +103,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  O sistema criará a conta do atleta instantaneamente com acesso à Zona de Membros. A própria plataforma fará a gestão da redefinição de segurança.
+                  O e-mail será autorizado para criar a própria conta na Zona de Membros. A conta passa a existir no fluxo oficial do Supabase quando a pessoa concluir o cadastro.
                 </p>
               </div>
 
@@ -142,7 +113,7 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
                 </Button>
                 <Button onClick={handleCreate} disabled={isSending} className="bg-cyan-600 hover:bg-cyan-500">
                   {isSending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <UserPlus className="w-4 h-4 mr-2" />}
-                  Cadastrar Atleta
+                  Liberar Acesso
                 </Button>
               </DialogFooter>
             </motion.div>
@@ -158,15 +129,15 @@ export default function CreateMemberUserModal({ open, onOpenChange, onInvited })
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-xl font-bold text-white">Usuário Criado!</h3>
+                <h3 className="text-xl font-bold text-white">Acesso Liberado!</h3>
                 <p className="text-sm text-gray-400">
-                  O atleta já está cadastrado no sistema. Agora, mande o e-mail para ele definir a própria senha.
+                  O e-mail foi autorizado. Agora, envie a mensagem abaixo para a pessoa criar a própria conta com esse mesmo endereço.
                 </p>
               </div>
 
               <div className="w-full bg-gray-900 rounded-xl p-4 space-y-3 text-left border border-gray-800">
                 <div>
-                  <span className="text-xs text-gray-500 uppercase font-bold">E-mail Cadastrado</span>
+                  <span className="text-xs text-gray-500 uppercase font-bold">E-mail autorizado</span>
                   <p className="text-white font-medium">{email}</p>
                 </div>
               </div>

@@ -1,6 +1,6 @@
-
+﻿
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,10 +18,10 @@ import AdminLiveTab from "./content/AdminLiveTab";
 
 const categories = [
   { value: 'mentoria', label: 'Mentoria' },
-  { value: 'treino_tatico', label: 'Treino Tático' },
-  { value: 'preparacao_fisica', label: 'Preparação Física' },
+  { value: 'treino_tatico', label: 'Treino TÃ¡tico' },
+  { value: 'preparacao_fisica', label: 'PreparaÃ§Ã£o FÃ­sica' },
   { value: 'psicologia', label: 'Psicologia' },
-  { value: 'nutricao', label: 'Nutrição' },
+  { value: 'nutricao', label: 'NutriÃ§Ã£o' },
   { value: 'live', label: 'Live Ao Vivo' },
   { value: 'planos', label: 'Planos' },
   { value: 'atletas', label: 'Nossos Atletas' }
@@ -79,7 +79,7 @@ function PlanoItem({ plano, onEdit, onDelete, dragHandleProps }) {
               variant="destructive"
               onClick={() => onDelete(plano.id)}
               className="h-8 w-8"
-              title="Excluir Conteúdo"
+              title="Excluir ConteÃºdo"
             >
               <Trash className="w-4 h-4" />
             </Button>
@@ -103,11 +103,11 @@ export default function AdminContentTab() {
   const loadContents = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allContents = await base44.entities.Content.list('-created_date');
+      const allContents = await appClient.entities.Content.list('-created_date');
       setContents(allContents || []);
     } catch (error) {
       console.error("Error loading contents:", error);
-      toast.error("Erro ao carregar conteúdos.");
+      toast.error("Erro ao carregar conteÃºdos.");
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +164,7 @@ export default function AdminContentTab() {
 
       const shouldNotifyZonaMembros = contentData.notify_zona_membros;
       const isUnlocked = contentData.is_zona_membros_unlocked;
-      delete contentData.notify_zona_membros; // Não salvar este campo na DB
+      delete contentData.notify_zona_membros; // NÃ£o salvar este campo na DB
       delete contentData.is_zona_membros_unlocked; // Bypass custom property dropping
 
       // Map is_zona_membros_unlocked to access_level which is a known column
@@ -177,50 +177,50 @@ export default function AdminContentTab() {
       let savedId = null;
 
       if (editingContent) {
-        await base44.entities.Content.update(editingContent.id, contentData);
+        await appClient.entities.Content.update(editingContent.id, contentData);
         savedId = editingContent.id;
-        toast.success("Conteúdo atualizado com sucesso!");
+        toast.success("ConteÃºdo atualizado com sucesso!");
       } else {
         const newContentStatus = contentData.category === 'live' && contentData.is_published ? 'live' : 'draft';
         if (contentData.category === 'planos') {
           contentData.display_order = planoContents.length;
         }
 
-        const newContent = await base44.entities.Content.create({
+        const newContent = await appClient.entities.Content.create({
           ...contentData,
           status: newContentStatus
         });
         savedId = newContent.id;
-        toast.success("Conteúdo adicionado com sucesso!");
+        toast.success("ConteÃºdo adicionado com sucesso!");
       }
 
       // Notificar membros EC10
       if (shouldNotifyZonaMembros && isUnlocked && savedId) {
-        toast.info("Enviando notificações para a Zona de Membros...");
+        toast.info("Enviando notificaÃ§Ãµes para a Zona de Membros...");
         try {
-          const members = await base44.entities.User.filter({ has_zona_membros_access: true });
+          const members = await appClient.entities.User.filter({ has_zona_membros_access: true });
           if (members && members.length > 0) {
             await Promise.all(members.map(member =>
-              base44.entities.Notification.create({
+              appClient.entities.Notification.create({
                 user_id: member.id,
-                title: "Novo Conteúdo VIP 🌟",
-                message: `O conteúdo "${contentData.title}" acabou de ser liberado na Zona de Membros EC10!`,
+                title: "Novo ConteÃºdo VIP ðŸŒŸ",
+                message: `O conteÃºdo "${contentData.title}" acabou de ser liberado na Zona de Membros EC10!`,
                 type: "alert",
                 priority: "high"
               })
             ));
-            toast.success(`Notificações enviadas para ${members.length} membros!`);
+            toast.success(`NotificaÃ§Ãµes enviadas para ${members.length} membros!`);
           }
         } catch (notifError) {
           console.error("Erro ao notificar membros:", notifError);
-          toast.error("Erro ao enviar notificações");
+          toast.error("Erro ao enviar notificaÃ§Ãµes");
         }
       }
 
       resetForm();
       loadContents();
     } catch (error) {
-      toast.error("Erro ao salvar conteúdo");
+      toast.error("Erro ao salvar conteÃºdo");
       console.error(error);
     }
   };
@@ -233,25 +233,25 @@ export default function AdminContentTab() {
 
   const togglePublished = async (content) => {
     try {
-      await base44.entities.Content.update(content.id, { is_published: !content.is_published });
-      toast.success(`Conteúdo ${!content.is_published ? 'publicado' : 'despublicado'} com sucesso!`);
+      await appClient.entities.Content.update(content.id, { is_published: !content.is_published });
+      toast.success(`ConteÃºdo ${!content.is_published ? 'publicado' : 'despublicado'} com sucesso!`);
       loadContents();
     } catch (error) {
-      toast.error("Erro ao atualizar status de publicação");
+      toast.error("Erro ao atualizar status de publicaÃ§Ã£o");
     }
   };
 
   const handleDelete = async (contentId) => {
-    if (!window.confirm("Tem certeza que deseja excluir este conteúdo?")) {
+    if (!window.confirm("Tem certeza que deseja excluir este conteÃºdo?")) {
       return;
     }
     try {
-      await base44.entities.Content.delete(contentId);
-      toast.success("Conteúdo excluído com sucesso!");
+      await appClient.entities.Content.delete(contentId);
+      toast.success("ConteÃºdo excluÃ­do com sucesso!");
       loadContents();
     } catch (error) {
-      console.error("Erro ao excluir conteúdo:", error);
-      toast.error("Erro ao excluir conteúdo");
+      console.error("Erro ao excluir conteÃºdo:", error);
+      toast.error("Erro ao excluir conteÃºdo");
     }
   };
 
@@ -281,7 +281,7 @@ export default function AdminContentTab() {
     try {
       await Promise.all(
         items.map((plano, index) =>
-          base44.entities.Content.update(plano.id, { display_order: index })
+          appClient.entities.Content.update(plano.id, { display_order: index })
         )
       );
       toast.success('Ordem dos planos atualizada!');
@@ -299,7 +299,7 @@ export default function AdminContentTab() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-white">Biblioteca de Conteúdo</h3>
+        <h3 className="text-lg font-semibold text-white">Biblioteca de ConteÃºdo</h3>
         {activeSubTab === "videos" && (
           <Button
             onClick={() => {
@@ -310,7 +310,7 @@ export default function AdminContentTab() {
             className="bg-purple-600 hover:bg-purple-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            {activeTab === 'planos' ? 'Adicionar Plano' : 'Adicionar Conteúdo'}
+            {activeTab === 'planos' ? 'Adicionar Plano' : 'Adicionar ConteÃºdo'}
           </Button>
         )}
       </div>
@@ -324,7 +324,7 @@ export default function AdminContentTab() {
             : "text-gray-400 hover:text-white"
             }`}
         >
-          <Video className="w-4 h-4 mr-2 inline-block" />Vídeos & Conteúdo
+          <Video className="w-4 h-4 mr-2 inline-block" />VÃ­deos & ConteÃºdo
         </button>
         <button
           onClick={() => setActiveSubTab("lives")}
@@ -344,11 +344,11 @@ export default function AdminContentTab() {
           {showAddForm && (
             <Card className="bg-gray-800 border-purple-400/50 mt-6">
               <CardHeader>
-                <CardTitle className="text-purple-400">{editingContent ? 'Editando Conteúdo' : 'Novo Conteúdo'}</CardTitle>
+                <CardTitle className="text-purple-400">{editingContent ? 'Editando ConteÃºdo' : 'Novo ConteÃºdo'}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-white mb-2">Título</label>
+                  <label className="block text-white mb-2">TÃ­tulo</label>
                   <Input
                     value={editForm.title || ''}
                     onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
@@ -371,7 +371,7 @@ export default function AdminContentTab() {
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2">URL da Thumbnail (Capa do Vídeo)</label>
+                  <label className="block text-white mb-2">URL da Thumbnail (Capa do VÃ­deo)</label>
                   <Input
                     value={editForm.thumbnail_url || ''}
                     onChange={(e) => setEditForm(prev => ({ ...prev, thumbnail_url: e.target.value }))}
@@ -393,20 +393,20 @@ export default function AdminContentTab() {
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2">URL do Clipe de Pré-visualização (5-10s, sem som)</label>
+                  <label className="block text-white mb-2">URL do Clipe de PrÃ©-visualizaÃ§Ã£o (5-10s, sem som)</label>
                   <Input
                     value={editForm.preview_video_url || ''}
                     onChange={(e) => setEditForm(prev => ({ ...prev, preview_video_url: e.target.value }))}
                     className="bg-gray-700 border-gray-600 text-white"
                     placeholder="https://exemplo.com/preview.mp4"
                   />
-                  <p className="text-gray-400 text-xs mt-1">Este vídeo tocará automaticamente quando o usuário passar o mouse sobre o card.</p>
+                  <p className="text-gray-400 text-xs mt-1">Este vÃ­deo tocarÃ¡ automaticamente quando o usuÃ¡rio passar o mouse sobre o card.</p>
                 </div>
 
                 {editForm.category !== 'live' && editForm.category !== 'planos' && editForm.category !== 'atletas' && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-white mb-2">URL do Vídeo (para player customizado)</label>
+                      <label className="block text-white mb-2">URL do VÃ­deo (para player customizado)</label>
                       <Input
                         value={editForm.video_url || ''}
                         onChange={(e) => setEditForm(prev => ({ ...prev, video_url: e.target.value }))}
@@ -420,7 +420,7 @@ export default function AdminContentTab() {
                     </div>
 
                     <div>
-                      <label className="block text-white mb-2">Código de Incorporação (Janela de Vídeo / Embed)</label>
+                      <label className="block text-white mb-2">CÃ³digo de IncorporaÃ§Ã£o (Janela de VÃ­deo / Embed)</label>
                       <Textarea
                         value={editForm.live_embed_code || ''}
                         onChange={(e) => setEditForm(prev => ({ ...prev, live_embed_code: e.target.value }))}
@@ -428,14 +428,14 @@ export default function AdminContentTab() {
                         placeholder='<iframe width="100%" height="100%" src="..." frameborder="0" allowfullscreen></iframe>'
                       />
                       <p className="text-gray-400 text-xs mt-1">
-                        Use este campo para incorporar vídeos do YouTube, Vimeo, etc. O player nativo da Zona de Membros exibirá esta janela em tela cheia. Recomendável usar largura e altura 100%.
+                        Use este campo para incorporar vÃ­deos do YouTube, Vimeo, etc. O player nativo da Zona de Membros exibirÃ¡ esta janela em tela cheia. RecomendÃ¡vel usar largura e altura 100%.
                       </p>
                     </div>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-white mb-2">Descrição</label>
+                  <label className="block text-white mb-2">DescriÃ§Ã£o</label>
                   <Textarea
                     value={editForm.description || ''}
                     onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
@@ -454,7 +454,7 @@ export default function AdminContentTab() {
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2">Duração (em minutos)</label>
+                  <label className="block text-white mb-2">DuraÃ§Ã£o (em minutos)</label>
                   <Input
                     type="number"
                     value={editForm.duration || ''}
@@ -474,7 +474,7 @@ export default function AdminContentTab() {
                       placeholder="https://exemplo.com/pagina-destino"
                     />
                     <p className="text-gray-400 text-xs mt-1">
-                      URL para onde o card irá redirecionar quando clicado
+                      URL para onde o card irÃ¡ redirecionar quando clicado
                     </p>
                   </div>
                 )}
@@ -559,7 +559,7 @@ export default function AdminContentTab() {
 
                 <div className="flex gap-3">
                   <Button onClick={handleSaveContent} className="bg-purple-600 hover:bg-purple-700">
-                    Salvar Conteúdo
+                    Salvar ConteÃºdo
                   </Button>
                   <Button variant="outline" onClick={resetForm}>
                     Cancelar
@@ -571,7 +571,7 @@ export default function AdminContentTab() {
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2 bg-gray-800">
-              <TabsTrigger value="videos" className="flex items-center gap-2"><Video className="w-4 h-4" />Conteúdos & Lives</TabsTrigger>
+              <TabsTrigger value="videos" className="flex items-center gap-2"><Video className="w-4 h-4" />ConteÃºdos & Lives</TabsTrigger>
               <TabsTrigger value="planos" className="flex items-center gap-2"><Package className="w-4 h-4" />Planos</TabsTrigger>
             </TabsList>
 
@@ -591,7 +591,7 @@ export default function AdminContentTab() {
                             variant="destructive"
                             onClick={() => handleDelete(content.id)}
                             className="h-8 w-8"
-                            title="Excluir Conteúdo"
+                            title="Excluir ConteÃºdo"
                           >
                             <Trash className="w-4 h-4" />
                           </Button>
@@ -611,7 +611,7 @@ export default function AdminContentTab() {
                   </Card>
                 ))}
               </div>
-              {videoContents.length === 0 && (<div className="text-center py-12 text-gray-500"><Video className="w-16 h-16 mx-auto mb-4" /><h3 className="text-lg font-medium text-white mb-2">Nenhum conteúdo encontrado</h3><p>Adicione conteúdos para começar.</p></div>)}
+              {videoContents.length === 0 && (<div className="text-center py-12 text-gray-500"><Video className="w-16 h-16 mx-auto mb-4" /><h3 className="text-lg font-medium text-white mb-2">Nenhum conteÃºdo encontrado</h3><p>Adicione conteÃºdos para comeÃ§ar.</p></div>)}
             </TabsContent>
 
             <TabsContent value="planos">
@@ -619,7 +619,7 @@ export default function AdminContentTab() {
                 <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4 mb-4">
                   <p className="text-blue-300 text-sm flex items-center gap-2">
                     <GripVertical className="w-4 h-4" />
-                    <strong>Dica:</strong> Arraste os cards pelos três pontos para reordenar os planos
+                    <strong>Dica:</strong> Arraste os cards pelos trÃªs pontos para reordenar os planos
                   </p>
                 </div>
 
@@ -658,7 +658,7 @@ export default function AdminContentTab() {
                   <div className="col-span-full text-center py-12 text-gray-500">
                     <Package className="w-16 h-16 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-white mb-2">Nenhum plano encontrado</h3>
-                    <p>Adicione planos para começar.</p>
+                    <p>Adicione planos para comeÃ§ar.</p>
                   </div>
                 )}
               </div>
@@ -669,3 +669,4 @@ export default function AdminContentTab() {
     </div>
   );
 }
+

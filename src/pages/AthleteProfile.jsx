@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
+import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, Share2, Bookmark, Edit3, Trophy, Target,
-  TrendingUp, Calendar, CheckCircle2, Zap, Award,
-  Clock, Activity, Heart, Droplet, Brain, Users,
-  ChevronRight, Plus, Star, Flame, Shield, BarChart3,
-  TrendingDown, Footprints, Wind, Eye, Ruler, Sparkles, Video } from
+  ArrowLeft, Share2, Edit3, Trophy, Target,
+  TrendingUp, Calendar, CheckCircle2, Zap, Activity, Brain,
+  ChevronRight, Plus, Star, Flame, Shield, BarChart3, Eye, Ruler, Sparkles, Video } from
 "lucide-react";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -20,6 +18,7 @@ import DailyCheckinModal from "@/components/athlete/DailyCheckinModal";
 import DailyCheckinNotification from "@/components/athlete/DailyCheckinNotification";
 import WeeklyAssessmentChat from "@/components/athlete/WeeklyAssessmentChat";
 import WeeklyAssessmentNotification from "@/components/athlete/WeeklyAssessmentNotification";
+import { redirectToPlatformLogin } from "@/lib/auth-routing";
 
 export default function AthleteProfile() {
   const [user, setUser] = useState(null);
@@ -55,24 +54,24 @@ export default function AthleteProfile() {
   const loadUserData = async () => {
     try {
       setLoading(true);
-      const currentUser = await base44.auth.me();
-      console.log("📥 Usuário recarregado:", currentUser);
+      const currentUser = await appClient.auth.me();
+      console.log("ðŸ“¥ UsuÃ¡rio recarregado:", currentUser);
       setUser(currentUser);
 
       // Verificar se precisa configurar perfil
       const needsSetup = !currentUser.birth_date || !currentUser.position;
       if (needsSetup) {
-        console.log("⚠️ Perfil incompleto");
+        console.log("âš ï¸ Perfil incompleto");
         setShowProfileSetup(true);
       }
 
       // Carregar dados relacionados
       const [checkinsData, assessmentsData, tasksData, trophiesData, videosData] = await Promise.all([
-      base44.entities.DailyCheckin.filter({ user_id: currentUser.id }, '-checkin_date', 7),
-      base44.entities.WeeklyAssessment.filter({ user_id: currentUser.id }, '-week_start_date', 4),
-      base44.entities.AthleteTask.filter({ user_id: currentUser.id, status: 'pendente' }),
-      base44.entities.AthleteTrophy.filter({ user_id: currentUser.id }),
-      base44.entities.AthleteVideo.filter({ athlete_id: currentUser.id }, '-created_date', 20)]
+      appClient.entities.DailyCheckin.filter({ user_id: currentUser.id }, '-checkin_date', 7),
+      appClient.entities.WeeklyAssessment.filter({ user_id: currentUser.id }, '-week_start_date', 4),
+      appClient.entities.AthleteTask.filter({ user_id: currentUser.id, status: 'pendente' }),
+      appClient.entities.AthleteTrophy.filter({ user_id: currentUser.id }),
+      appClient.entities.AthleteVideo.filter({ athlete_id: currentUser.id }, '-created_date', 20)]
       );
 
       setDailyCheckins(checkinsData);
@@ -82,7 +81,7 @@ export default function AthleteProfile() {
       setVideos(videosData);
       setLoading(false);
     } catch (error) {
-      console.error("❌ Erro ao carregar:", error);
+      console.error("âŒ Erro ao carregar:", error);
       setLoading(false);
     }
   };
@@ -137,10 +136,10 @@ export default function AthleteProfile() {
     return (
       <div className="min-h-screen bg-[#070A12] flex items-center justify-center p-4">
         <div className="text-center">
-          <h2 className="text-2xl font-black text-white mb-2">Faça Login</h2>
+          <h2 className="text-2xl font-black text-white mb-2">FaÃ§a Login</h2>
           <p className="text-gray-400 mb-6">Para acessar seu perfil de atleta</p>
           <Button
-            onClick={() => base44.auth.redirectToLogin()}
+            onClick={() => redirectToPlatformLogin()}
             className="bg-[#00E5FF] hover:bg-[#00BFFF] text-black font-bold">
 
             Entrar
@@ -153,7 +152,7 @@ export default function AthleteProfile() {
   const age = calculateAge(user.birth_date);
   const levelBadge = getLevelBadge(user.career_level);
 
-  // Calcular estatísticas dos assessments
+  // Calcular estatÃ­sticas dos assessments
   const totalGames = user.career_stats?.total_games || weeklyAssessments.reduce((sum, w) => sum + (w.had_game ? 1 : 0), 0);
   const totalGoals = user.career_stats?.total_goals || weeklyAssessments.reduce((sum, w) => sum + (w.goals || 0), 0);
   const lastFeedback = user.career_stats?.last_assessment_feedback;
@@ -297,11 +296,11 @@ export default function AthleteProfile() {
             {user?.full_name || user?.name || "Atleta"}
           </h1>
 
-          {/* Posição badge */}
+          {/* PosiÃ§Ã£o badge */}
           <div className="flex justify-center mb-4">
             <div className="px-4 py-1.5 bg-[#00E5FF]/20 border border-[#00E5FF] rounded-full backdrop-blur-sm">
               <span className="text-[#00E5FF] text-xs font-black uppercase tracking-wider">
-                {user.position || "POSIÇÃO"}
+                {user.position || "POSIÃ‡ÃƒO"}
               </span>
             </div>
           </div>
@@ -324,8 +323,8 @@ export default function AthleteProfile() {
               onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors">
 
-              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">País</p>
-              <p className="text-slate-50 text-2xl">{user.nationality || "🌍"}</p>
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">PaÃ­s</p>
+              <p className="text-slate-50 text-2xl">{user.nationality || "ðŸŒ"}</p>
             </motion.button>
             
             {/* Jogos */}
@@ -341,13 +340,13 @@ export default function AthleteProfile() {
 
           {/* Segunda linha de info cards */}
           <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto mb-4">
-            {/* Pé Dominante */}
+            {/* PÃ© Dominante */}
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowProfileSetup(true)}
               className="bg-white/5 border border-white/10 hover:border-[#00E5FF]/30 rounded-xl p-2.5 text-center backdrop-blur-sm transition-colors">
 
-              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">Pé</p>
+              <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-0.5">PÃ©</p>
               <p className="text-xs font-black text-white capitalize">{user.foot || "Direito"}</p>
             </motion.button>
 
@@ -417,7 +416,7 @@ export default function AthleteProfile() {
             </motion.button>
           }
 
-          {/* Últimas Conquistas */}
+          {/* Ãšltimas Conquistas */}
           {user.achievements &&
           <motion.button
             whileTap={{ scale: 0.98 }}
@@ -428,7 +427,7 @@ export default function AthleteProfile() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy className="w-4 h-4 text-yellow-500" />
-                    <p className="text-[9px] text-yellow-400 uppercase tracking-wider font-bold">Últimos Campeonatos</p>
+                    <p className="text-[9px] text-yellow-400 uppercase tracking-wider font-bold">Ãšltimos Campeonatos</p>
                   </div>
                   <p className="text-gray-300 text-xs leading-relaxed line-clamp-2">{user.achievements}</p>
                 </div>
@@ -557,7 +556,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
               <Flame className="w-5 md:w-6 h-5 md:h-6 text-orange-500" />
             </div>
             <div>
-              <p className="text-white font-bold text-sm md:text-base">Sequência de Check-ins</p>
+              <p className="text-white font-bold text-sm md:text-base">SequÃªncia de Check-ins</p>
               <p className="text-gray-400 text-xs md:text-sm">{checkinStreak} dias consecutivos</p>
             </div>
           </div>
@@ -569,7 +568,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
       {/* Profile info card */}
       {user.current_club_name &&
       <div className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
-          <h4 className="text-white font-bold mb-3 text-sm">Informações do Perfil</h4>
+          <h4 className="text-white font-bold mb-3 text-sm">InformaÃ§Ãµes do Perfil</h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-400">Clube Atual:</span>
@@ -591,7 +590,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
         </div>
       }
 
-      {/* Último Feedback da Assessoria */}
+      {/* Ãšltimo Feedback da Assessoria */}
       {lastFeedback &&
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -642,7 +641,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
           </div>
           
           <p className="text-gray-300 text-xs mb-3">
-            Participe da nossa próxima seletiva e seja visto por clubes profissionais
+            Participe da nossa prÃ³xima seletiva e seja visto por clubes profissionais
           </p>
           
           <Button
@@ -678,7 +677,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
             <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <Calendar className="w-5 h-5 text-blue-400" />
             </div>
-            <p className="text-white font-bold text-[10px]">Diário</p>
+            <p className="text-white font-bold text-[10px]">DiÃ¡rio</p>
           </motion.button>
 
           <motion.button
@@ -702,7 +701,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
             <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <Trophy className="w-5 h-5 text-yellow-400" />
             </div>
-            <p className="text-white font-bold text-[10px]">Troféus</p>
+            <p className="text-white font-bold text-[10px]">TrofÃ©us</p>
           </motion.button>
 
           <motion.button
@@ -719,7 +718,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
             <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center mb-2 mx-auto">
               <Target className="w-5 h-5 text-cyan-400" />
             </div>
-            <p className="text-white font-bold text-[10px]">Relatório</p>
+            <p className="text-white font-bold text-[10px]">RelatÃ³rio</p>
           </motion.button>
 
           <motion.button
@@ -735,11 +734,11 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
           </div>
           </div>
 
-          {/* Meus Vídeos */}
+          {/* Meus VÃ­deos */}
           {videos && videos.length > 0 &&
       <div className="space-y-3 mt-6">
           <div className="flex items-center justify-between">
-            <h4 className="text-white font-bold text-sm">Meus Vídeos</h4>
+            <h4 className="text-white font-bold text-sm">Meus VÃ­deos</h4>
             <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-xs">
               {videos.length}
             </Badge>
@@ -772,9 +771,9 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
               video.status === 'pending' ? 'bg-yellow-500/80 text-black' :
               'bg-red-500/80 text-white'}`
               }>
-                    {video.status === 'approved' ? '✓ Aprovado' :
-                video.status === 'pending' ? '⏳ Análise' :
-                '✗ Rejeitado'}
+                    {video.status === 'approved' ? 'âœ“ Aprovado' :
+                video.status === 'pending' ? 'â³ AnÃ¡lise' :
+                'âœ— Rejeitado'}
                   </Badge>
                 </div>
 
@@ -792,7 +791,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute bottom-2 left-2 right-2">
                     <p className="text-white text-[10px] font-bold line-clamp-2">
-                      {video.title || video.description || "Vídeo"}
+                      {video.title || video.description || "VÃ­deo"}
                     </p>
                     {video.category &&
                 <Badge className="bg-[#00E5FF]/80 text-black text-[8px] mt-1">
@@ -818,7 +817,7 @@ function OverviewTab({ user, checkinStreak, lastFeedback, onCheckinClick, onNavi
           variant="outline"
           className="w-full mt-2 bg-white/5 border-white/10 text-white hover:bg-white/10">
 
-              Ver todos os vídeos ({videos.length})
+              Ver todos os vÃ­deos ({videos.length})
             </Button>
         }
           </div>
@@ -859,7 +858,7 @@ function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate, onC
               <Calendar className="w-7 h-7 text-blue-400" />
             </div>
             <div>
-              <p className="text-white font-bold mb-1">Check-in Diário</p>
+              <p className="text-white font-bold mb-1">Check-in DiÃ¡rio</p>
               <p className="text-gray-400 text-sm">Registre seu dia a dia</p>
             </div>
           </div>
@@ -872,7 +871,7 @@ function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate, onC
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Target className="w-6 h-6 text-purple-400" />
-            <h4 className="text-white font-bold">Relatório Semanal</h4>
+            <h4 className="text-white font-bold">RelatÃ³rio Semanal</h4>
           </div>
           <Button
             onClick={() => setShowWeeklyForm(!showWeeklyForm)}
@@ -885,7 +884,7 @@ function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate, onC
         </div>
 
         {weeklyAssessments.length === 0 ?
-        <p className="text-gray-400 text-sm text-center py-4">Nenhum relatório ainda</p> :
+        <p className="text-gray-400 text-sm text-center py-4">Nenhum relatÃ³rio ainda</p> :
 
         <div className="space-y-2">
             {weeklyAssessments.map((assessment) =>
@@ -922,7 +921,7 @@ function AssessoriaTab({ userId, dailyCheckins, weeklyAssessments, onUpdate, onC
       <div className="bg-white/5 border border-white/10 rounded-[20px] p-4 md:p-6">
         <h4 className="text-white font-bold mb-3 flex items-center gap-2">
           <Activity className="w-5 h-5 text-cyan-400" />
-          Últimos Check-ins
+          Ãšltimos Check-ins
         </h4>
         {dailyCheckins.length === 0 ?
         <p className="text-gray-400 text-sm text-center py-4">Nenhum check-in ainda</p> :
@@ -966,7 +965,7 @@ function TasksTab({ tasks, userId, onUpdate }) {
       <div className="bg-white/5 border border-white/10 rounded-[20px] p-12 text-center">
           <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <p className="text-white font-bold mb-2">Tudo em dia!</p>
-          <p className="text-gray-400 text-sm">Você não tem tarefas pendentes</p>
+          <p className="text-gray-400 text-sm">VocÃª nÃ£o tem tarefas pendentes</p>
         </div> :
 
       <div className="space-y-3">
@@ -1018,13 +1017,13 @@ function TrophiesTab({ trophies }) {
       exit={{ opacity: 0 }}
       className="space-y-4">
 
-      <h3 className="text-xl font-black text-white mb-4">Troféus e Conquistas</h3>
+      <h3 className="text-xl font-black text-white mb-4">TrofÃ©us e Conquistas</h3>
       
       {trophies.length === 0 ?
       <div className="bg-white/5 border border-white/10 rounded-[20px] p-12 text-center">
           <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <p className="text-white font-bold mb-2">Nenhum troféu ainda</p>
-          <p className="text-gray-400 text-sm">Continue evoluindo para conquistar prêmios</p>
+          <p className="text-white font-bold mb-2">Nenhum trofÃ©u ainda</p>
+          <p className="text-gray-400 text-sm">Continue evoluindo para conquistar prÃªmios</p>
         </div> :
 
       <div className="grid grid-cols-2 gap-3">
@@ -1067,15 +1066,15 @@ function StatsTab({ user, weeklyAssessments }) {
       exit={{ opacity: 0 }}
       className="space-y-4">
 
-      <h3 className="text-xl font-black text-white mb-4">Estatísticas FIFA</h3>
+      <h3 className="text-xl font-black text-white mb-4">EstatÃ­sticas FIFA</h3>
       
       <div className="bg-white/5 border border-white/10 rounded-[20px] p-6 space-y-4">
         <FifaStat label="Velocidade" value={fifaAttributes.pace || 50} color="text-green-400" />
-        <FifaStat label="Finalização" value={fifaAttributes.shooting || 50} color="text-red-400" />
+        <FifaStat label="FinalizaÃ§Ã£o" value={fifaAttributes.shooting || 50} color="text-red-400" />
         <FifaStat label="Passe" value={fifaAttributes.passing || 50} color="text-yellow-400" />
         <FifaStat label="Drible" value={fifaAttributes.dribbling || 50} color="text-purple-400" />
         <FifaStat label="Defesa" value={fifaAttributes.defending || 50} color="text-blue-400" />
-        <FifaStat label="Físico" value={fifaAttributes.physicality || 50} color="text-orange-400" />
+        <FifaStat label="FÃ­sico" value={fifaAttributes.physicality || 50} color="text-orange-400" />
       </div>
     </motion.div>);
 
@@ -1121,7 +1120,7 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
   const imc = calculateIMC();
   const imcStatus = getIMCStatus(imc);
 
-  // Calcular estatísticas de performance
+  // Calcular estatÃ­sticas de performance
   const totalGames = weeklyAssessments.filter((w) => w.had_game).length;
   const totalGoals = weeklyAssessments.reduce((sum, w) => sum + (w.goals || 0), 0);
   const totalAssists = weeklyAssessments.reduce((sum, w) => sum + (w.assists || 0), 0);
@@ -1130,7 +1129,7 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
   (weeklyAssessments.reduce((sum, w) => sum + (w.self_rating || 0), 0) / weeklyAssessments.length).toFixed(1) :
   0;
 
-  // Estilo de jogo baseado em posição e stats
+  // Estilo de jogo baseado em posiÃ§Ã£o e stats
   const getPlayingStyle = () => {
     const position = user.position || "";
     const goalsPerGame = totalGames > 0 ? totalGoals / totalGames : 0;
@@ -1143,16 +1142,16 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
       if (assistsPerGame > 0.5) return { style: "Criador de Jogadas", icon: Brain, color: "from-cyan-500 to-blue-500" };
       return { style: "Organizador", icon: Eye, color: "from-blue-500 to-purple-500" };
     } else if (position === "zagueiro" || position === "lateral") {
-      return { style: "Defensor Sólido", icon: Shield, color: "from-blue-500 to-indigo-500" };
+      return { style: "Defensor SÃ³lido", icon: Shield, color: "from-blue-500 to-indigo-500" };
     } else if (position === "volante") {
       return { style: "Equilibrador", icon: Activity, color: "from-purple-500 to-pink-500" };
     }
-    return { style: "Versátil", icon: Star, color: "from-gray-500 to-gray-600" };
+    return { style: "VersÃ¡til", icon: Star, color: "from-gray-500 to-gray-600" };
   };
 
   const playingStyle = getPlayingStyle();
 
-  // Dados para gráficos (últimas 8 semanas)
+  // Dados para grÃ¡ficos (Ãºltimas 8 semanas)
   const chartData = weeklyAssessments.slice(0, 8).reverse().map((w, idx) => ({
     week: `S${idx + 1}`,
     goals: w.goals || 0,
@@ -1181,7 +1180,7 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-white/80 text-xs">Avaliação</p>
+            <p className="text-white/80 text-xs">AvaliaÃ§Ã£o</p>
             <p className="text-white text-2xl font-black">{avgRating}</p>
           </div>
         </div>
@@ -1212,7 +1211,7 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
             <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
               <Zap className="w-4 h-4 text-blue-400" />
             </div>
-            <p className="text-gray-400 text-xs font-bold">Assistências</p>
+            <p className="text-gray-400 text-xs font-bold">AssistÃªncias</p>
           </div>
           <p className="text-white text-2xl font-black">{totalAssists}</p>
           <p className="text-gray-500 text-[10px] mt-1">Total</p>
@@ -1226,7 +1225,7 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
             <p className="text-gray-400 text-xs font-bold">Treinos</p>
           </div>
           <p className="text-white text-2xl font-black">{totalTraining}</p>
-          <p className="text-gray-500 text-[10px] mt-1">Sessões</p>
+          <p className="text-gray-500 text-[10px] mt-1">SessÃµes</p>
         </div>
 
         <div className="bg-white/5 border border-white/10 rounded-2xl p-3">
@@ -1234,18 +1233,18 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
             <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
               <BarChart3 className="w-4 h-4 text-purple-400" />
             </div>
-            <p className="text-gray-400 text-xs font-bold">Média</p>
+            <p className="text-gray-400 text-xs font-bold">MÃ©dia</p>
           </div>
           <p className="text-white text-2xl font-black">{avgRating}</p>
-          <p className="text-gray-500 text-[10px] mt-1">Avaliação</p>
+          <p className="text-gray-500 text-[10px] mt-1">AvaliaÃ§Ã£o</p>
         </div>
       </div>
 
-      {/* Dados Biométricos e IMC */}
+      {/* Dados BiomÃ©tricos e IMC */}
       <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-4">
           <Ruler className="w-5 h-5 text-[#00E5FF]" />
-          <h4 className="text-white font-bold text-sm">Dados Biométricos</h4>
+          <h4 className="text-white font-bold text-sm">Dados BiomÃ©tricos</h4>
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-4">
@@ -1258,7 +1257,7 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
             <p className="text-white text-lg font-black">{user.weight || "--"}<span className="text-xs text-gray-400">kg</span></p>
           </div>
           <div className="text-center">
-            <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-1">Pé</p>
+            <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-1">PÃ©</p>
             <p className="text-white text-lg font-black capitalize">{user.foot?.charAt(0) || "D"}</p>
           </div>
         </div>
@@ -1266,12 +1265,12 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
         {imc &&
         <div className="bg-white/5 border border-white/10 rounded-xl p-3">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-gray-400 text-xs font-bold">Índice de Massa Corporal</p>
+              <p className="text-gray-400 text-xs font-bold">Ãndice de Massa Corporal</p>
               <p className={`${imcStatus.color} text-xs font-bold`}>{imcStatus.label}</p>
             </div>
             <div className="flex items-baseline gap-2">
               <p className="text-white text-3xl font-black">{imc}</p>
-              <p className="text-gray-400 text-sm">kg/m²</p>
+              <p className="text-gray-400 text-sm">kg/mÂ²</p>
             </div>
             <div className="mt-3 h-2 bg-white/10 rounded-full overflow-hidden">
               <motion.div
@@ -1285,13 +1284,13 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
         }
       </div>
 
-      {/* Gráfico de Performance */}
+      {/* GrÃ¡fico de Performance */}
       {chartData.length > 0 &&
       <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-[#00E5FF]" />
-              <h4 className="text-white font-bold text-sm">Evolução Semanal</h4>
+              <h4 className="text-white font-bold text-sm">EvoluÃ§Ã£o Semanal</h4>
             </div>
             <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] text-[10px]">
               {chartData.length} semanas
@@ -1324,7 +1323,7 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-400 text-xs font-bold">Assistências</span>
+                <span className="text-gray-400 text-xs font-bold">AssistÃªncias</span>
                 <span className="text-blue-400 text-xs font-bold">{totalAssists}</span>
               </div>
               <div className="flex items-end gap-1 h-16">
@@ -1368,3 +1367,4 @@ function PerformanceTab({ user, weeklyAssessments, dailyCheckins }) {
     </motion.div>);
 
 }
+

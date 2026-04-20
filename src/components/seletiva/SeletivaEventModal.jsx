@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 import { toast } from 'sonner';
 import { 
   Loader2, 
@@ -29,12 +29,12 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
     e.preventDefault();
     
     if (!formData.video_url) {
-      toast.error('Por favor, adicione o link do seu vídeo principal');
+      toast.error('Por favor, adicione o link do seu vÃ­deo principal');
       return;
     }
 
     if (!formData.why_participate || formData.why_participate.length < 50) {
-      toast.error('Por favor, descreva por que deseja participar (mínimo 50 caracteres)');
+      toast.error('Por favor, descreva por que deseja participar (mÃ­nimo 50 caracteres)');
       return;
     }
 
@@ -44,7 +44,7 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
         ? formData.additional_videos.split('\n').filter(url => url.trim())
         : [];
 
-      await base44.entities.SeletivaApplication.create({
+      await appClient.entities.SeletivaApplication.create({
         user_id: user.id,
         event_id: event.id,
         full_name: user.full_name,
@@ -64,11 +64,11 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
       });
 
       // Atualizar contador de participantes
-      await base44.entities.SeletivaEvent.update(event.id, {
+      await appClient.entities.SeletivaEvent.update(event.id, {
         current_participants: (event.current_participants || 0) + 1
       });
 
-      toast.success('🎉 Candidatura enviada com sucesso!');
+      toast.success('ðŸŽ‰ Candidatura enviada com sucesso!');
       onSuccess();
     } catch (error) {
       console.error('Error submitting application:', error);
@@ -102,7 +102,7 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center gap-2 text-gray-400">
               <Calendar className="w-4 h-4" />
-              <span>Até: {new Date(event.end_date).toLocaleDateString('pt-BR')}</span>
+              <span>AtÃ©: {new Date(event.end_date).toLocaleDateString('pt-BR')}</span>
             </div>
             {event.location && (
               <div className="flex items-center gap-2 text-gray-400">
@@ -113,7 +113,7 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
             {event.max_participants && (
               <div className="flex items-center gap-2 text-gray-400">
                 <Users className="w-4 h-4" />
-                <span>{event.max_participants - event.current_participants} vagas disponíveis</span>
+                <span>{event.max_participants - event.current_participants} vagas disponÃ­veis</span>
               </div>
             )}
           </div>
@@ -122,7 +122,7 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
             <div>
               <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
                 <Award className="w-4 h-4 text-yellow-400" />
-                Benefícios e Oportunidades:
+                BenefÃ­cios e Oportunidades:
               </h4>
               <ul className="space-y-1 text-sm text-gray-300">
                 {event.benefits.map((benefit, i) => (
@@ -137,11 +137,11 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
 
           {event.requirements && event.requirements.length > 0 && (
             <div>
-              <h4 className="font-semibold text-white mb-2">Requisitos Obrigatórios:</h4>
+              <h4 className="font-semibold text-white mb-2">Requisitos ObrigatÃ³rios:</h4>
               <ul className="space-y-1 text-sm text-gray-300">
                 {event.requirements.map((req, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-yellow-400">•</span>
+                    <span className="text-yellow-400">â€¢</span>
                     <span>{req}</span>
                   </li>
                 ))}
@@ -156,7 +156,7 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
             <div>
               <Label className="text-white flex items-center gap-2 mb-2">
                 <Video className="w-4 h-4 text-yellow-400" />
-                Link do Vídeo Principal *
+                Link do VÃ­deo Principal *
               </Label>
               <Input
                 type="url"
@@ -167,12 +167,12 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
                 required
               />
               <p className="text-xs text-gray-400 mt-1">
-                Envie um vídeo de jogo completo ou melhores momentos (YouTube, Google Drive, etc.)
+                Envie um vÃ­deo de jogo completo ou melhores momentos (YouTube, Google Drive, etc.)
               </p>
             </div>
 
             <div>
-              <Label className="text-white mb-2">Vídeos Adicionais (opcional)</Label>
+              <Label className="text-white mb-2">VÃ­deos Adicionais (opcional)</Label>
               <Textarea
                 value={formData.additional_videos}
                 onChange={(e) => setFormData({...formData, additional_videos: e.target.value})}
@@ -184,18 +184,18 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
 
             <div>
               <Label className="text-white mb-2">
-                Por que você quer participar desta seletiva? *
+                Por que vocÃª quer participar desta seletiva? *
               </Label>
               <Textarea
                 value={formData.why_participate}
                 onChange={(e) => setFormData({...formData, why_participate: e.target.value})}
-                placeholder="Conte-nos suas motivações, objetivos e o que espera desta oportunidade..."
+                placeholder="Conte-nos suas motivaÃ§Ãµes, objetivos e o que espera desta oportunidade..."
                 className="bg-gray-800 border-gray-700 text-white h-32"
                 required
                 minLength={50}
               />
               <p className="text-xs text-gray-400 mt-1">
-                {formData.why_participate.length}/50 caracteres mínimos
+                {formData.why_participate.length}/50 caracteres mÃ­nimos
               </p>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function SeletivaEventModal({ isOpen, onClose, event, user, onSuc
             <h4 className="font-semibold text-white mb-3">Seus Dados (do perfil):</h4>
             <div className="grid grid-cols-2 gap-3 text-sm text-gray-300">
               <div><span className="text-gray-500">Nome:</span> {user.full_name}</div>
-              <div><span className="text-gray-500">Posição:</span> {user.position}</div>
+              <div><span className="text-gray-500">PosiÃ§Ã£o:</span> {user.position}</div>
               <div><span className="text-gray-500">Idade:</span> {user.age} anos</div>
               <div><span className="text-gray-500">Cidade/Estado:</span> {user.city}/{user.state}</div>
             </div>

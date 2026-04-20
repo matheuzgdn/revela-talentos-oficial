@@ -1,9 +1,9 @@
-import React, { useState, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useRef } from "react";
+import { appClient } from "@/api/backendClient";
 import { motion } from "framer-motion";
 import { 
   X, Play, Pause, Check, XCircle, Sparkles, Loader2,
-  Volume2, VolumeX, Maximize, Send, Eye
+  Volume2, VolumeX, Maximize
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,27 +48,27 @@ export default function AdminVideoReviewModal({ video, isOpen, onClose, onUpdate
   const handleAIAnalysis = async () => {
     setIsAnalyzing(true);
     try {
-      const prompt = `Você é um analista de desempenho esportivo especializado em futebol.
+      const prompt = `VocÃª Ã© um analista de desempenho esportivo especializado em futebol.
 
-Analise este vídeo de futebol de forma EXTREMAMENTE DETALHADA:
+Analise este vÃ­deo de futebol de forma EXTREMAMENTE DETALHADA:
 - Atleta: ${video.athlete_name}
-- Posição: ${video.position}
-- Título: ${video.title}
-- Descrição: ${video.description || 'Sem descrição'}
+- PosiÃ§Ã£o: ${video.position}
+- TÃ­tulo: ${video.title}
+- DescriÃ§Ã£o: ${video.description || 'Sem descriÃ§Ã£o'}
 
 TAREFAS:
-1. **Qualidade do Vídeo**: Avalie resolução, iluminação, ângulo da câmera e estabilidade (scores de 0-100)
-2. **Análise de Performance**: Avalie habilidades técnicas, posicionamento, tomada de decisão e condição física (scores de 0-100)
-3. **Detecção de Eventos**: Identifique gols, assistências, defesas, passes importantes, dribles, finalizações (com timestamp aproximado, descrição e qualidade)
-4. **Pontos Fortes**: Liste 3-5 pontos fortes específicos observados
-5. **Pontos Fracos**: Liste 2-4 áreas que precisam melhorar
-6. **Recomendações**: Sugira 3-5 exercícios ou focos de treino específicos
+1. **Qualidade do VÃ­deo**: Avalie resoluÃ§Ã£o, iluminaÃ§Ã£o, Ã¢ngulo da cÃ¢mera e estabilidade (scores de 0-100)
+2. **AnÃ¡lise de Performance**: Avalie habilidades tÃ©cnicas, posicionamento, tomada de decisÃ£o e condiÃ§Ã£o fÃ­sica (scores de 0-100)
+3. **DetecÃ§Ã£o de Eventos**: Identifique gols, assistÃªncias, defesas, passes importantes, dribles, finalizaÃ§Ãµes (com timestamp aproximado, descriÃ§Ã£o e qualidade)
+4. **Pontos Fortes**: Liste 3-5 pontos fortes especÃ­ficos observados
+5. **Pontos Fracos**: Liste 2-4 Ã¡reas que precisam melhorar
+6. **RecomendaÃ§Ãµes**: Sugira 3-5 exercÃ­cios ou focos de treino especÃ­ficos
 7. **Nota Geral**: De 0 a 100
-8. **Resumo**: Parágrafo completo e motivador sobre a performance
+8. **Resumo**: ParÃ¡grafo completo e motivador sobre a performance
 
-Seja ESPECÍFICO, TÉCNICO e CONSTRUTIVO. Use termos do futebol profissional.`;
+Seja ESPECÃFICO, TÃ‰CNICO e CONSTRUTIVO. Use termos do futebol profissional.`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
+      const response = await appClient.integrations.Core.InvokeLLM({
         prompt: prompt,
         add_context_from_internet: false,
         file_urls: [video.video_url],
@@ -125,63 +125,63 @@ Seja ESPECÍFICO, TÉCNICO e CONSTRUTIVO. Use termos do futebol profissional.`;
       });
 
       setAnalysisResult(response);
-      toast.success("Análise de IA concluída!");
+      toast.success("AnÃ¡lise de IA concluÃ­da!");
     } catch (error) {
-      console.error("Erro na análise de IA:", error);
-      toast.error("Erro ao analisar vídeo. Tente novamente.");
+      console.error("Erro na anÃ¡lise de IA:", error);
+      toast.error("Erro ao analisar vÃ­deo. Tente novamente.");
     }
     setIsAnalyzing(false);
   };
 
   const handleApprove = async () => {
     try {
-      await base44.entities.AthleteVideo.update(video.id, {
+      await appClient.entities.AthleteVideo.update(video.id, {
         status: "approved",
         is_approved: true,
         admin_feedback: adminFeedback,
         ai_analysis: analysisResult
       });
 
-      // Criar notificação para o atleta
-      await base44.entities.Notification.create({
+      // Criar notificaÃ§Ã£o para o atleta
+      await appClient.entities.Notification.create({
         user_id: video.athlete_id,
-        title: "Vídeo Aprovado! 🎉",
-        message: `Seu vídeo "${video.title}" foi aprovado e já está disponível com análise completa da IA!`,
+        title: "VÃ­deo Aprovado! ðŸŽ‰",
+        message: `Seu vÃ­deo "${video.title}" foi aprovado e jÃ¡ estÃ¡ disponÃ­vel com anÃ¡lise completa da IA!`,
         type: "upload",
         priority: "high"
       });
 
-      toast.success("Vídeo aprovado com sucesso!");
+      toast.success("VÃ­deo aprovado com sucesso!");
       onUpdate();
       onClose();
     } catch (error) {
       console.error("Erro ao aprovar:", error);
-      toast.error("Erro ao aprovar vídeo");
+      toast.error("Erro ao aprovar vÃ­deo");
     }
   };
 
   const handleReject = async () => {
     try {
-      await base44.entities.AthleteVideo.update(video.id, {
+      await appClient.entities.AthleteVideo.update(video.id, {
         status: "rejected",
-        admin_feedback: adminFeedback || "Vídeo não atende aos critérios de qualidade."
+        admin_feedback: adminFeedback || "VÃ­deo nÃ£o atende aos critÃ©rios de qualidade."
       });
 
       // Notificar atleta
-      await base44.entities.Notification.create({
+      await appClient.entities.Notification.create({
         user_id: video.athlete_id,
-        title: "Vídeo Rejeitado",
-        message: `Seu vídeo "${video.title}" não foi aprovado. Confira o feedback do analista.`,
+        title: "VÃ­deo Rejeitado",
+        message: `Seu vÃ­deo "${video.title}" nÃ£o foi aprovado. Confira o feedback do analista.`,
         type: "upload",
         priority: "medium"
       });
 
-      toast.success("Vídeo rejeitado");
+      toast.success("VÃ­deo rejeitado");
       onUpdate();
       onClose();
     } catch (error) {
       console.error("Erro ao rejeitar:", error);
-      toast.error("Erro ao rejeitar vídeo");
+      toast.error("Erro ao rejeitar vÃ­deo");
     }
   };
 
@@ -203,7 +203,7 @@ Seja ESPECÍFICO, TÉCNICO e CONSTRUTIVO. Use termos do futebol profissional.`;
             <X className="w-5 h-5 text-white" />
           </motion.button>
           
-          <h2 className="text-white font-bold">Análise de Vídeo</h2>
+          <h2 className="text-white font-bold">AnÃ¡lise de VÃ­deo</h2>
 
           <div className="flex items-center gap-2">
             <Badge className={`${
@@ -314,7 +314,7 @@ Seja ESPECÍFICO, TÉCNICO e CONSTRUTIVO. Use termos do futebol profissional.`;
               <div className="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-4">
                 <h4 className="text-white font-bold mb-3 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-purple-400" />
-                  Resultado da Análise IA
+                  Resultado da AnÃ¡lise IA
                 </h4>
                 <div className="space-y-3 text-sm">
                   <div>
@@ -330,7 +330,7 @@ Seja ESPECÍFICO, TÉCNICO e CONSTRUTIVO. Use termos do futebol profissional.`;
                   {analysisResult.detected_events && (
                     <div>
                       <span className="text-gray-400">Eventos Detectados: </span>
-                      <span className="text-[#00E5FF]">{analysisResult.detected_events.length} ações</span>
+                      <span className="text-[#00E5FF]">{analysisResult.detected_events.length} aÃ§Ãµes</span>
                     </div>
                   )}
                 </div>

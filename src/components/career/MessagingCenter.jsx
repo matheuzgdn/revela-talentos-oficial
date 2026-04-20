@@ -1,23 +1,23 @@
-import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+﻿import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Send, Loader2, MessageSquare, ArrowLeft } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 import { toast } from "sonner";
 
-// Função unificada para gerar ID de conversa
+// FunÃ§Ã£o unificada para gerar ID de conversa
 const getConversationId = (userId, contactId) => {
   return [userId, contactId].sort().join(':');
 };
 
 export default function MessagingCenter({ user }) {
   const [contacts] = useState([
-    { id: "analyst_01", name: "Analista de Desempenho", role: "Análise Técnica" },
-    { id: "physio_01", name: "Preparador Físico", role: "Performance Física" },
+    { id: "analyst_01", name: "Analista de Desempenho", role: "AnÃ¡lise TÃ©cnica" },
+    { id: "physio_01", name: "Preparador FÃ­sico", role: "Performance FÃ­sica" },
     { id: "mentor_01", name: "Mentor de Carreira", role: "Aconselhamento" },
-    { id: "marketing_01", name: "Equipe de Marketing", role: "Imagem & Mídia" },
+    { id: "marketing_01", name: "Equipe de Marketing", role: "Imagem & MÃ­dia" },
   ]);
 
   const [selectedContactId, setSelectedContactId] = useState(null);
@@ -39,14 +39,14 @@ export default function MessagingCenter({ user }) {
     }
     setIsLoadingMessages(true);
     try {
-      const messages = await base44.entities.ChatMessage.filter(
+      const messages = await appClient.entities.ChatMessage.filter(
         { conversation_id: conversationId },
         "created_date"
       );
       setChatMessages(messages || []);
     } catch (error) {
       console.error("Error loading messages:", error);
-      toast.error("Não foi possível carregar as mensagens.");
+      toast.error("NÃ£o foi possÃ­vel carregar as mensagens.");
     }
     setIsLoadingMessages(false);
   }, [conversationId]);
@@ -64,7 +64,7 @@ export default function MessagingCenter({ user }) {
 
     setIsSending(true);
     try {
-      await base44.entities.ChatMessage.create({
+      await appClient.entities.ChatMessage.create({
         sender_id: user.id,
         receiver_id: selectedContactId,
         conversation_id: conversationId,
@@ -183,3 +183,4 @@ export default function MessagingCenter({ user }) {
     </div>
   );
 }
+

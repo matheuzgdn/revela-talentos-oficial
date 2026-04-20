@@ -2,7 +2,7 @@
  * Backend Cloud Function to check the health of an HLS URL.
  * It performs a HEAD (or GET) request to ensure the stream is available.
  * 
- * To be deployed in Base44.
+ * Keep this aligned with the current server runtime before deploying.
  */
 
 export default async function checkHlsUrlHealth(req, res) {

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 import { toast } from 'sonner';
 
 export default function RenderPage() {
@@ -14,18 +14,18 @@ export default function RenderPage() {
             const slug = location.pathname;
 
             if (!slug) {
-                setError("Página não encontrada.");
+                setError("PÃ¡gina nÃ£o encontrada.");
                 setIsLoading(false);
                 return;
             }
 
             try {
-                const pages = await base44.entities.LeadPage.filter({ url_slug: slug, is_active: true });
+                const pages = await appClient.entities.LeadPage.filter({ url_slug: slug, is_active: true });
                 if (pages && pages.length > 0) {
                     const pageData = pages[0];
                     setPageContent(pageData);
 
-                    // Adicionar um listener de formulário após o conteúdo ser definido
+                    // Adicionar um listener de formulÃ¡rio apÃ³s o conteÃºdo ser definido
                     setTimeout(() => {
                         const form = document.querySelector('form');
                         if (form && pageData.form_connection_info) {
@@ -33,10 +33,10 @@ export default function RenderPage() {
                         }
                     }, 100);
                 } else {
-                    setError("Página não encontrada ou inativa.");
+                    setError("PÃ¡gina nÃ£o encontrada ou inativa.");
                 }
             } catch (err) {
-                setError("Erro ao carregar a página.");
+                setError("Erro ao carregar a pÃ¡gina.");
                 console.error(err);
             } finally {
                 setIsLoading(false);
@@ -58,22 +58,22 @@ export default function RenderPage() {
             submissionData[targetField] = value;
         }
 
-        // Adiciona a página de origem
+        // Adiciona a pÃ¡gina de origem
         submissionData.source_page = pageData.name;
         submissionData.lgpd_consent = submissionData.lgpd_consent === 'on' || submissionData.lgpd_consent === true;
 
 
         try {
             const targetEntity = pageData.form_connection_info.target_entity;
-            const Entity = targetEntity === 'InternationalLead' ? base44.entities.InternationalLead : base44.entities.Lead;
+            const Entity = targetEntity === 'InternationalLead' ? appClient.entities.InternationalLead : appClient.entities.Lead;
 
             await Entity.create(submissionData);
 
-            toast.success("Inscrição enviada com sucesso!");
+            toast.success("InscriÃ§Ã£o enviada com sucesso!");
             form.reset();
-            // Lógica de redirecionamento ou mensagem de sucesso aqui
+            // LÃ³gica de redirecionamento ou mensagem de sucesso aqui
         } catch (err) {
-            console.error("Erro ao enviar formulário:", err);
+            console.error("Erro ao enviar formulÃ¡rio:", err);
             toast.error("Erro ao enviar. Verifique os campos.");
         }
     };

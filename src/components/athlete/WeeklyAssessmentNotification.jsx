@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Trophy, TrendingUp, Sparkles, Target } from "lucide-react";
+import { X, Trophy, TrendingUp, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function WeeklyAssessmentNotification({ user, onOpen }) {

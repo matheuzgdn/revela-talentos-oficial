@@ -1,39 +1,62 @@
-**Welcome to your Base44 project** 
+# Revela Talentos
 
-**About**
+Frontend React/Vite da plataforma Revela Talentos com backend oficial em Supabase.
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+## Arquitetura Atual
 
-This project contains everything you need to run your app locally.
+- autenticacao: Supabase Auth
+- banco: PostgreSQL via Supabase
+- storage: Supabase Storage
+- funcoes sensiveis: Supabase Edge Functions
+- frontend: React + Vite
 
-**Edit the code in your local development environment**
+O app roda hoje apenas sobre a stack do Supabase no runtime.
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+## Desenvolvimento
 
-**Prerequisites:** 
+1. Instale as dependencias com `npm install`
+2. Configure o `.env.local`
+3. Rode o projeto com `npm run dev`
+4. Valide a configuracao com `npm run supabase:verify`
 
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+## Variaveis de ambiente do frontend
 
+```bash
+VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sua_chave_anon
+VITE_HMS_ROOM_ID=room_id_publico
+VITE_HMS_SUBDOMAIN=seu-subdominio-100ms
 ```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
 
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
+## Segredos do Supabase
+
+Para a funcao `generate-hms-token`, configure estes secrets no Supabase:
+
+```bash
+HMS_APP_ACCESS_KEY=sua_access_key
+HMS_APP_SECRET=seu_secret
+HMS_ROOM_ID=room_id
+HMS_SUBDOMAIN=seu-subdominio-100ms
 ```
 
-Run the app: `npm run dev`
+## Edge Function de live
 
-**Publish your changes**
+A funcao `supabase/functions/generate-hms-token` gera o token do 100ms no backend para que o segredo nao fique exposto no frontend.
 
-Open [Base44.com](http://Base44.com) and click on Publish.
+## Fluxo de deploy do Supabase
 
-**Docs & Support**
+O caminho oficial agora e:
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+1. `npm run supabase:verify`
+2. `npm run supabase:login`
+3. `npm run supabase:link`
+4. `npm run supabase:db:push`
+5. configurar os secrets `HMS_APP_ACCESS_KEY`, `HMS_APP_SECRET`, `HMS_ROOM_ID` e `HMS_SUBDOMAIN`
+6. `npm run supabase:functions:deploy`
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+Mais detalhes operacionais estao em `supabase/README.md`.
+
+## Observacoes
+
+- a pasta de migracao historica permanece apenas como referencia tecnica
+- o diretorio `backend/` nao faz parte do fluxo ativo do frontend Supabase-only

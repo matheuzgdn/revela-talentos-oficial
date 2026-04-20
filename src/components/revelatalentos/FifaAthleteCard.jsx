@@ -87,7 +87,7 @@ export default function FifaAthleteCard({ story, index }) {
       {/* Shadow Effect */}
       <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4/5 h-3 bg-gradient-to-r ${gradient} blur-xl opacity-50 group-hover:opacity-75 transition-opacity`} />
       
-      <style jsx>{`
+      <style>{`
         @keyframes shine {
           0%, 100% {
             background-position: 200% 0;

@@ -1,6 +1,6 @@
-
+﻿
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 
 
 import { motion } from "framer-motion";
@@ -46,7 +46,7 @@ export default function MeusServicosPage() {
   const loadUserData = async () => {
     setIsLoading(true);
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await appClient.auth.me();
       setUser(currentUser);
       setProfileData({
         full_name: currentUser.full_name || "",
@@ -57,18 +57,18 @@ export default function MeusServicosPage() {
       });
 
       // Load subscription data
-      const subscriptions = await base44.entities.UserSubscription.filter({ user_id: currentUser.id });
+      const subscriptions = await appClient.entities.UserSubscription.filter({ user_id: currentUser.id });
       if (subscriptions.length > 0) {
         const sub = subscriptions[0];
         setUserSubscription(sub);
         if (sub.package_id) {
-          const pkg = await base44.entities.SubscriptionPackage.get(sub.package_id);
+          const pkg = await appClient.entities.SubscriptionPackage.get(sub.package_id);
           setCurrentPackage(pkg);
         }
       }
 
       // Load all available packages
-      const allPackages = await base44.entities.SubscriptionPackage.filter({ is_active: true });
+      const allPackages = await appClient.entities.SubscriptionPackage.filter({ is_active: true });
       setAvailablePackages(allPackages);
 
     } catch (error) {
@@ -79,11 +79,18 @@ export default function MeusServicosPage() {
 
   const handleUpdateProfile = async () => {
     try {
-      await User.updateMyUserData(profileData);
-      setUser(prev => ({ ...prev, ...profileData }));
+      const payload = {
+        ...profileData,
+        age: profileData.age ? parseInt(profileData.age, 10) : null
+      };
+
+      await appClient.auth.updateMe(payload);
+      setUser(prev => ({ ...prev, ...payload }));
+      toast.success("Perfil atualizado com sucesso!");
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
+      toast.error("Erro ao atualizar o perfil.");
     }
   };
 
@@ -99,14 +106,14 @@ export default function MeusServicosPage() {
 
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("A imagem deve ter no máximo 5MB");
+      toast.error("A imagem deve ter no mÃ¡ximo 5MB");
       return;
     }
 
     setIsUploadingPhoto(true);
     try {
-      const { file_url } = await base44.storage.uploadFile({ file });
-      await User.updateMyUserData({ profile_picture_url: file_url });
+      const { file_url } = await appClient.storage.uploadFile({ file });
+      await appClient.auth.updateMe({ profile_picture_url: file_url });
       setUser(prev => ({ ...prev, profile_picture_url: file_url }));
       toast.success("Foto de perfil atualizada com sucesso!");
     } catch (error) {
@@ -118,7 +125,7 @@ export default function MeusServicosPage() {
 
   const getBillingPeriodLabel = (period) => {
     const labels = {
-      monthly: '/mês',
+      monthly: '/mÃªs',
       quarterly: '/trimestre',
       semiannual: '/semestre',
       annual: '/ano'
@@ -146,7 +153,7 @@ export default function MeusServicosPage() {
         <div className="absolute inset-0">
           <img
             src="https://static.wixstatic.com/media/933cdd_3b676d68d7c645bea831a0717eccbe12~mv2.png"
-            alt="Meus Serviços"
+            alt="Meus ServiÃ§os"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
@@ -163,7 +170,7 @@ export default function MeusServicosPage() {
               Minha Conta
             </Badge>
             <h1 className="text-3xl md:text-5xl font-bold">
-              Gerencie seus <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Serviços</span>
+              Gerencie seus <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">ServiÃ§os</span>
             </h1>
             <p className="text-gray-300 text-lg max-w-2xl">
               Controle sua assinatura, atualize seus dados e acompanhe seu progresso
@@ -242,7 +249,7 @@ export default function MeusServicosPage() {
                         className="bg-gray-800 border-gray-700 text-white"
                       />
                       <Input
-                        placeholder="Posição"
+                        placeholder="PosiÃ§Ã£o"
                         value={profileData.position}
                         onChange={(e) => setProfileData(prev => ({ ...prev, position: e.target.value }))}
                         className="bg-gray-800 border-gray-700 text-white"
@@ -308,7 +315,7 @@ export default function MeusServicosPage() {
               </Card>
             </motion.div>
 
-            {/* Módulos Ativos Card */}
+            {/* MÃ³dulos Ativos Card */}
             {user && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -319,7 +326,7 @@ export default function MeusServicosPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-white">
                       <ShieldCheck className="w-5 h-5 text-purple-400" />
-                      Módulos Ativos
+                      MÃ³dulos Ativos
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -364,11 +371,11 @@ export default function MeusServicosPage() {
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-300">Status:</span>
-                      <Badge className="bg-green-600 text-white capitalize">{base44.entities.UserSubscription.status}</Badge>
+                      <Badge className="bg-green-600 text-white capitalize">{userSubscription.status}</Badge>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-300">Próxima renovação:</span>
-                      <span className="text-white">{base44.entities.UserSubscription.renewal_date ? new Date(base44.entities.UserSubscription.renewal_date).toLocaleDateString('pt-BR') : "N/A"}</span>
+                      <span className="text-gray-300">PrÃ³xima renovaÃ§Ã£o:</span>
+                      <span className="text-white">{userSubscription.renewal_date ? new Date(userSubscription.renewal_date).toLocaleDateString('pt-BR') : "N/A"}</span>
                     </div>
                     <Button variant="outline" className="w-full">
                       <CreditCard className="w-4 h-4 mr-2" />
@@ -389,7 +396,7 @@ export default function MeusServicosPage() {
               className="space-y-6"
             >
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Planos Disponíveis</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Planos DisponÃ­veis</h2>
                 <p className="text-gray-400">
                   Escolha o plano ideal para acelerar sua carreira no futebol
                 </p>
@@ -467,6 +474,7 @@ export default function MeusServicosPage() {
     </div>
   );
 }
+
 
 
 

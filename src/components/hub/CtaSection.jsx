@@ -3,13 +3,13 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Star, Trophy } from 'lucide-react';
-import { base44 } from "@/api/base44Client";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { redirectToPlatformLogin } from '@/lib/auth-routing';
 
 export default function CtaSection() {
   const handleLoginClick = () => {
-    base44.auth.redirectToLogin();
+    redirectToPlatformLogin();
   };
 
   return (

@@ -1,6 +1,6 @@
-
+﻿
 import React, { useState, useEffect, useCallback } from 'react';
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,19 +22,19 @@ const SALES_REPS = [
   { id: 'lucas', name: 'Lucas', color: 'bg-orange-500', initials: 'LC' }
 ];
 
-// Serviços da EC10
+// ServiÃ§os da EC10
 const EC10_SERVICES = [
   {
     id: 'plano_carreira',
     name: 'Plano de Carreira EC10',
-    description: 'Captação e acompanhamento de atletas',
+    description: 'CaptaÃ§Ã£o e acompanhamento de atletas',
     icon: TrendingUp,
     color: 'bg-green-500'
   },
   {
     id: 'revela_talentos',
     name: 'Plataforma Revela Talentos',
-    description: 'Cadastro e exposição de jogadores',
+    description: 'Cadastro e exposiÃ§Ã£o de jogadores',
     icon: Star,
     color: 'bg-yellow-500'
   },
@@ -47,21 +47,21 @@ const EC10_SERVICES = [
   },
   {
     id: 'intercambios',
-    name: 'Intercâmbios Internacionais',
-    description: 'Experiências de treinamento na Europa',
+    name: 'IntercÃ¢mbios Internacionais',
+    description: 'ExperiÃªncias de treinamento na Europa',
     icon: Plane,
     color: 'bg-blue-500'
   },
   {
     id: 'gestao_atletas',
-    name: 'Gestão Individual de Atletas',
-    description: 'Dados completos, vídeos e estatísticas',
+    name: 'GestÃ£o Individual de Atletas',
+    description: 'Dados completos, vÃ­deos e estatÃ­sticas',
     icon: Users,
     color: 'bg-purple-500'
   },
   {
     id: 'gestao_clubes',
-    name: 'Gestão de Clubes e Parceiros',
+    name: 'GestÃ£o de Clubes e Parceiros',
     description: 'Propostas, contratos e relacionamento',
     icon: Building2,
     color: 'bg-cyan-500'
@@ -126,11 +126,11 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
           CRM Central <span className="text-blue-400">EC10 Talentos</span>
         </h1>
         <p className="text-gray-400">
-          Plataforma completa de gestão comercial integrada
+          Plataforma completa de gestÃ£o comercial integrada
         </p>
       </div>
 
-      {/* Estatísticas Gerais */}
+      {/* EstatÃ­sticas Gerais */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-blue-900/20 border-blue-800">
           <CardContent className="p-4 text-center">
@@ -168,11 +168,11 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
         </Card>
       </div>
 
-      {/* Gráficos do Dashboard */}
+      {/* GrÃ¡ficos do Dashboard */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 bg-gray-800/70 border-gray-700 text-white">
           <CardHeader>
-            <CardTitle>Atividades por Dia (Últimos 30 dias)</CardTitle>
+            <CardTitle>Atividades por Dia (Ãšltimos 30 dias)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -214,7 +214,7 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <UserPlus className="w-5 h-5" />
-            Leads Não Atribuídos ({unassignedLeads.length})
+            Leads NÃ£o AtribuÃ­dos ({unassignedLeads.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -277,7 +277,7 @@ const CRMMainDashboard = ({ onSelectRep, allLeads, allPipelines, generalLeads, i
                         <span className="text-white font-semibold">{stats.wonLeads}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Conversão:</span>
+                        <span className="text-gray-400">ConversÃ£o:</span>
                         <span className="text-white font-semibold">{stats.conversionRate}%</span>
                       </div>
                       <div className="flex justify-between">
@@ -309,11 +309,11 @@ export default function AdvancedCRM() {
     setIsLoading(true);
     try {
       const [crmLeadsData, generalLeadsData, intlLeadsData, pipelinesData, tasksData] = await Promise.all([
-        base44.entities.CRMLead.list('-created_date').catch(() => []),
-        base44.entities.Lead.list('-created_date').catch(() => []),
-        base44.entities.InternationalLead.list('-created_date').catch(() => []),
-        base44.entities.CRMPipeline.list().catch(() => []),
-        base44.entities.CustomTask.list().catch(() => [])
+        appClient.entities.CRMLead.list('-created_date').catch(() => []),
+        appClient.entities.Lead.list('-created_date').catch(() => []),
+        appClient.entities.InternationalLead.list('-created_date').catch(() => []),
+        appClient.entities.CRMPipeline.list().catch(() => []),
+        appClient.entities.CustomTask.list().catch(() => [])
       ]);
 
       setAllCrmLeads(crmLeadsData);
@@ -363,3 +363,4 @@ export default function AdvancedCRM() {
     />
   );
 }
+

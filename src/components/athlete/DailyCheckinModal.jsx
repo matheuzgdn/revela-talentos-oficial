@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState } from "react";
+import { appClient } from "@/api/backendClient";
 import { motion } from "framer-motion";
 import { X, Heart, Droplet, Moon, Zap, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,11 +20,11 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
   });
 
   const moods = [
-    { id: "excelente", label: "Excelente", emoji: "😄", color: "from-green-500 to-emerald-500" },
-    { id: "bom", label: "Bom", emoji: "🙂", color: "from-blue-500 to-cyan-500" },
-    { id: "neutro", label: "Neutro", emoji: "😐", color: "from-gray-500 to-slate-500" },
-    { id: "cansado", label: "Cansado", emoji: "😓", color: "from-orange-500 to-amber-500" },
-    { id: "desmotivado", label: "Desmotivado", emoji: "😞", color: "from-red-500 to-rose-500" }
+    { id: "excelente", label: "Excelente", emoji: "ðŸ˜„", color: "from-green-500 to-emerald-500" },
+    { id: "bom", label: "Bom", emoji: "ðŸ™‚", color: "from-blue-500 to-cyan-500" },
+    { id: "neutro", label: "Neutro", emoji: "ðŸ˜", color: "from-gray-500 to-slate-500" },
+    { id: "cansado", label: "Cansado", emoji: "ðŸ˜“", color: "from-orange-500 to-amber-500" },
+    { id: "desmotivado", label: "Desmotivado", emoji: "ðŸ˜ž", color: "from-red-500 to-rose-500" }
   ];
 
   const handleSubmit = async () => {
@@ -32,22 +32,22 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
       const today = new Date().toISOString().split('T')[0];
       
       // Check if already checked in today
-      const existing = await base44.entities.DailyCheckin.filter({
+      const existing = await appClient.entities.DailyCheckin.filter({
         user_id: userId,
         checkin_date: today
       });
 
       if (existing.length > 0) {
-        toast.error("Você já fez o check-in hoje!");
+        toast.error("VocÃª jÃ¡ fez o check-in hoje!");
         onClose();
         return;
       }
 
       // Calculate streak
-      const allCheckins = await base44.entities.DailyCheckin.filter({ user_id: userId }, '-checkin_date', 30);
+      const allCheckins = await appClient.entities.DailyCheckin.filter({ user_id: userId }, '-checkin_date', 30);
       const streakDays = calculateStreak(allCheckins);
 
-      await base44.entities.DailyCheckin.create({
+      await appClient.entities.DailyCheckin.create({
         user_id: userId,
         checkin_date: today,
         ...formData,
@@ -55,8 +55,8 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
       });
 
       // Update user points
-      const currentUser = await base44.auth.me();
-      await base44.auth.updateMe({
+      const currentUser = await appClient.auth.me();
+      await appClient.auth.updateMe({
         total_points: (currentUser.total_points || 0) + 10
       });
 
@@ -103,7 +103,7 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
           <button onClick={onClose} className="absolute top-4 right-4 w-10 h-10 bg-white/5 rounded-full flex items-center justify-center">
             <X className="w-5 h-5 text-white" />
           </button>
-          <h3 className="text-2xl font-black text-white">Check-in Diário</h3>
+          <h3 className="text-2xl font-black text-white">Check-in DiÃ¡rio</h3>
           <p className="text-gray-400 text-sm mt-1">+10 pontos</p>
         </div>
 
@@ -116,7 +116,7 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
               className="space-y-6"
             >
               <div>
-                <Label className="text-white text-sm mb-3 block">Como você está se sentindo?</Label>
+                <Label className="text-white text-sm mb-3 block">Como vocÃª estÃ¡ se sentindo?</Label>
                 <div className="grid grid-cols-2 gap-2">
                   {moods.map((mood) => (
                     <button
@@ -168,7 +168,7 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
 
                 <div>
                   <Label className="text-gray-400 text-xs flex items-center gap-2 mb-2">
-                    <Droplet className="w-4 h-4" /> Litros de Água
+                    <Droplet className="w-4 h-4" /> Litros de Ãgua
                   </Label>
                   <Input
                     type="number"
@@ -182,7 +182,7 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
 
               <div>
                 <Label className="text-gray-400 text-xs flex items-center gap-2 mb-2">
-                  <Zap className="w-4 h-4" /> Nível de Energia (1-5)
+                  <Zap className="w-4 h-4" /> NÃ­vel de Energia (1-5)
                 </Label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((level) => (
@@ -216,7 +216,7 @@ export default function DailyCheckinModal({ isOpen, onClose, userId, onComplete 
               </div>
 
               <div>
-                <Label className="text-gray-400 text-xs mb-2 block">Observações (opcional)</Label>
+                <Label className="text-gray-400 text-xs mb-2 block">ObservaÃ§Ãµes (opcional)</Label>
                 <Textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}

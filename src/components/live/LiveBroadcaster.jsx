@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import {
     HMSRoomProvider,
     useHMSActions,
@@ -15,7 +15,7 @@ import {
 } from '@100mslive/react-sdk';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 import { generateHmsToken, HMS_MEETING_URL } from '@/lib/hmsUtils';
 import { notifyLiveSession } from '@/components/admin/NotificationSystem';
 import {
@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-// ─── Avatar helper ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Avatar helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const AVATAR_COLORS = [
     'from-rose-500 to-pink-600',
     'from-blue-500 to-cyan-500',
@@ -50,19 +50,19 @@ function PeerAvatar({ name = '?', avatarUrl, size = 'md' }) {
     );
 }
 
-// ─── Error handler inside HMSRoomProvider ──────────────────────────────────────
+// â”€â”€â”€ Error handler inside HMSRoomProvider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function HMSErrorListener() {
     const notification = useHMSNotifications(HMSNotificationTypes.ERROR);
     useEffect(() => {
         if (notification) {
             console.error('[100ms]', notification.data);
-            toast.error(`❌ ${notification.data?.message || 'Erro no servidor de live'}`);
+            toast.error(`âŒ ${notification.data?.message || 'Erro no servidor de live'}`);
         }
     }, [notification]);
     return null;
 }
 
-// ─── Bottom sheet: Viewers ─────────────────────────────────────────────────────
+// â”€â”€â”€ Bottom sheet: Viewers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ViewersSheet({ viewers, onClose }) {
     return (
         <motion.div
@@ -116,7 +116,7 @@ function ViewersSheet({ viewers, onClose }) {
     );
 }
 
-// ─── Bottom sheet: Comments / Chat ─────────────────────────────────────────────
+// â”€â”€â”€ Bottom sheet: Comments / Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function CommentsSheet({ messages, hmsActions, onClose }) {
     const [input, setInput] = useState('');
     const bottomRef = useRef(null);
@@ -157,7 +157,7 @@ function CommentsSheet({ messages, hmsActions, onClose }) {
                 <div className="flex items-center justify-between px-6 py-3 border-b border-white/8 flex-shrink-0">
                     <div className="flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-purple-400" />
-                        <span className="text-white font-black">Comentários ao vivo</span>
+                        <span className="text-white font-black">ComentÃ¡rios ao vivo</span>
                     </div>
                     <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
                         <X className="w-5 h-5" />
@@ -166,7 +166,7 @@ function CommentsSheet({ messages, hmsActions, onClose }) {
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
                     {messages.length === 0
-                        ? <p className="text-gray-600 text-center py-10 text-sm">Nenhum comentário ainda...</p>
+                        ? <p className="text-gray-600 text-center py-10 text-sm">Nenhum comentÃ¡rio ainda...</p>
                         : messages.map(msg => (
                             <div key={msg.id} className="flex items-start gap-3">
                                 <PeerAvatar name={msg.senderName || 'Admin'} size="sm" />
@@ -203,7 +203,7 @@ function CommentsSheet({ messages, hmsActions, onClose }) {
     );
 }
 
-// ─── Inner studio component ────────────────────────────────────────────────────
+// â”€â”€â”€ Inner studio component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function BroadcasterStudio({ user }) {
     const hmsActions = useHMSActions();
     const isConnected = useHMSStore(selectIsConnectedToRoom);
@@ -253,14 +253,14 @@ function BroadcasterStudio({ user }) {
         p.roleName?.includes('viewer')
     );
 
-    // ─── Platform Settings helpers ────────────────────────────────────────────
+    // â”€â”€â”€ Platform Settings helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const upsertSetting = async (key, value) => {
-        const all = await base44.entities.PlatformSettings.list();
+        const all = await appClient.entities.PlatformSettings.list();
         const existing = all.find(s => s.setting_key === key);
         if (existing) {
-            await base44.entities.PlatformSettings.update(existing.id, { setting_value: String(value) });
+            await appClient.entities.PlatformSettings.update(existing.id, { setting_value: String(value) });
         } else {
-            await base44.entities.PlatformSettings.create({ setting_key: key, setting_value: String(value) });
+            await appClient.entities.PlatformSettings.create({ setting_key: key, setting_value: String(value) });
         }
     };
 
@@ -275,7 +275,7 @@ function BroadcasterStudio({ user }) {
         }
     };
 
-    // ─── Attach local video ───────────────────────────────────────────────────
+    // â”€â”€â”€ Attach local video â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (videoRef.current && localVideoTrackId) {
             hmsActions.attachVideo(localVideoTrackId, videoRef.current);
@@ -287,7 +287,7 @@ function BroadcasterStudio({ user }) {
         };
     }, [localVideoTrackId, hmsActions]);
 
-    // ─── Join room ────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Join room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const joinRoom = async (forceVideoOff = false) => {
         setIsJoining(true);
         setDeviceInUse(false);
@@ -317,7 +317,7 @@ function BroadcasterStudio({ user }) {
         }
     };
 
-    // ─── Start live ───────────────────────────────────────────────────────────
+    // â”€â”€â”€ Start live â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const startLive = async () => {
         setIsStartingLive(true);
         try {
@@ -332,18 +332,22 @@ function BroadcasterStudio({ user }) {
             await saveLiveStatus(true, '');
             await upsertSetting('live_started_at', new Date().toISOString());
             setIsLive(true);
-            toast.success('🔴 Live iniciada!');
+            toast.success('ðŸ”´ Live iniciada!');
 
             // Notify viewers (best-effort)
-            base44.entities.User.list().then(users =>
-                notifyLiveSession(users, { id: 'live-' + Date.now(), title: '🔴 Live EC10 Talentos' })
+            appClient.entities.User.list().then(users =>
+                notifyLiveSession(users, { id: 'live-' + Date.now(), title: 'ðŸ”´ Live EC10 Talentos' })
             ).catch(() => { });
 
             // Start HLS for recording in background (non-blocking)
-            hmsActions.startHLSStreaming({
-                variants: [{ meetingURL: HMS_MEETING_URL }],
-                recording: { hlsVod: true, singleFilePerLayer: false },
-            }).catch(e => console.warn('[Live] HLS start (background):', e.message));
+            if (HMS_MEETING_URL) {
+                hmsActions.startHLSStreaming({
+                    variants: [{ meetingURL: HMS_MEETING_URL }],
+                    recording: { hlsVod: true, singleFilePerLayer: false },
+                }).catch(e => console.warn('[Live] HLS start (background):', e.message));
+            } else {
+                console.warn('[Live] HLS start skipped: missing VITE_HMS_ROOM_ID or VITE_HMS_SUBDOMAIN');
+            }
 
         } catch (err) {
             console.error('[Live] startLive error:', err);
@@ -354,7 +358,7 @@ function BroadcasterStudio({ user }) {
         }
     };
 
-    // ─── Stop live ────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Stop live â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const stopLive = async () => {
         setIsStoppingLive(true);
         try {
@@ -363,7 +367,7 @@ function BroadcasterStudio({ user }) {
             await upsertSetting('live_ended_at', new Date().toISOString());
             setIsLive(false);
             await hmsActions.leave();
-            toast.success('⏹ Live encerrada!');
+            toast.success('â¹ Live encerrada!');
         } catch (err) {
             console.error('[Live] stopLive error:', err);
             toast.error('Erro ao encerrar live');
@@ -372,18 +376,18 @@ function BroadcasterStudio({ user }) {
         }
     };
 
-    // ─── Camera switch ────────────────────────────────────────────────────────
+    // â”€â”€â”€ Camera switch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const switchCamera = async () => {
         try {
             const allDevices = await navigator.mediaDevices.enumerateDevices();
             const cameras = allDevices.filter(d => d.kind === 'videoinput');
             if (cameras.length <= 1) {
-                toast.info('Apenas uma câmera disponível neste dispositivo');
+                toast.info('Apenas uma cÃ¢mera disponÃ­vel neste dispositivo');
                 return;
             }
             const nextIdx = (cameraIdx + 1) % cameras.length;
             const target = cameras[nextIdx];
-            console.log('[Live] Trocando câmera →', target.label || target.deviceId);
+            console.log('[Live] Trocando cÃ¢mera â†’', target.label || target.deviceId);
             await hmsActions.setVideoSettings({ deviceId: target.deviceId });
             setCameraIdx(nextIdx);
             setIsFrontCamera(nextIdx === 0);
@@ -394,7 +398,7 @@ function BroadcasterStudio({ user }) {
                 await hmsActions.setVideoSettings({ facingMode: newFacing });
                 setIsFrontCamera(f => !f);
             } catch {
-                toast.error('Não foi possível trocar a câmera');
+                toast.error('NÃ£o foi possÃ­vel trocar a cÃ¢mera');
             }
         }
     };
@@ -403,7 +407,7 @@ function BroadcasterStudio({ user }) {
     const toggleVideo = () => hmsActions.setLocalVideoEnabled(!isVideoEnabled);
     const toggleAudio = () => hmsActions.setLocalAudioEnabled(!isAudioEnabled);
 
-    // ── NOT CONNECTED ──────────────────────────────────────────────────────────
+    // â”€â”€ NOT CONNECTED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if (!isConnected) {
         return (
             <div className="flex flex-col items-center justify-center gap-8 px-4 py-12">
@@ -419,9 +423,9 @@ function BroadcasterStudio({ user }) {
                             <AlertTriangle className="w-7 h-7 text-amber-400" />
                         </div>
                         <div>
-                            <h3 className="text-white font-black text-lg mb-1">Câmera em uso</h3>
+                            <h3 className="text-white font-black text-lg mb-1">CÃ¢mera em uso</h3>
                             <p className="text-amber-200/60 text-sm leading-relaxed">
-                                Outro aplicativo está usando a câmera (Teams, Zoom, OBS…). Feche-o ou entre só com áudio.
+                                Outro aplicativo estÃ¡ usando a cÃ¢mera (Teams, Zoom, OBSâ€¦). Feche-o ou entre sÃ³ com Ã¡udio.
                             </p>
                         </div>
                         <div className="flex flex-col gap-2 w-full">
@@ -429,14 +433,14 @@ function BroadcasterStudio({ user }) {
                                 onClick={() => joinRoom(false)} disabled={isJoining}
                                 className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-black font-black py-4 rounded-2xl"
                             >
-                                {isJoining ? <Loader2 className="w-4 h-4 animate-spin" /> : '🔄 Tentar novamente'}
+                                {isJoining ? <Loader2 className="w-4 h-4 animate-spin" /> : 'ðŸ”„ Tentar novamente'}
                             </Button>
                             <Button
                                 onClick={() => joinRoom(true)} disabled={isJoining}
                                 variant="outline"
                                 className="w-full border-white/10 text-white bg-white/5 py-4 rounded-2xl"
                             >
-                                🎙️ Entrar só com áudio
+                                ðŸŽ™ï¸ Entrar sÃ³ com Ã¡udio
                             </Button>
                         </div>
                     </motion.div>
@@ -453,7 +457,7 @@ function BroadcasterStudio({ user }) {
                             </div>
                         </div>
                         <div className="text-center">
-                            <h3 className="text-2xl font-black text-white mb-1">Studio de Transmissão</h3>
+                            <h3 className="text-2xl font-black text-white mb-1">Studio de TransmissÃ£o</h3>
                             <p className="text-gray-500 text-sm">Conecte-se para transmitir ao vivo</p>
                         </div>
                         <Button
@@ -462,7 +466,7 @@ function BroadcasterStudio({ user }) {
                         >
                             {isJoining
                                 ? <><Loader2 className="w-5 h-5 animate-spin mr-2" /> Conectando...</>
-                                : <>📡 Conectar ao Studio</>
+                                : <>ðŸ“¡ Conectar ao Studio</>
                             }
                         </Button>
                     </motion.div>
@@ -471,10 +475,10 @@ function BroadcasterStudio({ user }) {
         );
     }
 
-    // ── CONNECTED ──────────────────────────────────────────────────────────────
+    // â”€â”€ CONNECTED â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
         <div className="flex flex-col gap-3 w-full">
-            {/* ─ Video panel ─ */}
+            {/* â”€ Video panel â”€ */}
             <div className="relative w-full rounded-3xl overflow-hidden bg-black shadow-2xl shadow-black/80">
                 {/* Portrait video (9/16 on mobile, 16/9 on desktop) */}
                 <div className="aspect-[9/16] md:aspect-video relative">
@@ -488,7 +492,7 @@ function BroadcasterStudio({ user }) {
                     {!isVideoEnabled && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950">
                             <VideoOff className="w-10 h-10 text-gray-700 mb-2" />
-                            <p className="text-gray-600 text-sm">Câmera desligada</p>
+                            <p className="text-gray-600 text-sm">CÃ¢mera desligada</p>
                         </div>
                     )}
 
@@ -507,13 +511,13 @@ function BroadcasterStudio({ user }) {
                         )}
                     </div>
 
-                    {/* ─ Minimalist control icons — bottom-right overlay ─ */}
+                    {/* â”€ Minimalist control icons â€” bottom-right overlay â”€ */}
                     <div className="absolute bottom-4 right-4 flex flex-col gap-2.5">
                         {/* Switch camera */}
                         <button
                             onClick={switchCamera}
                             className="w-11 h-11 bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/15 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-xl"
-                            title="Trocar câmera"
+                            title="Trocar cÃ¢mera"
                         >
                             <RefreshCcw className="w-4 h-4 text-white" />
                         </button>
@@ -525,7 +529,7 @@ function BroadcasterStudio({ user }) {
                                 ? 'bg-black/45 hover:bg-black/65 border-white/15'
                                 : 'bg-red-600/80 hover:bg-red-500/80 border-red-400/20'
                                 }`}
-                            title={isVideoEnabled ? 'Desligar câmera' : 'Ligar câmera'}
+                            title={isVideoEnabled ? 'Desligar cÃ¢mera' : 'Ligar cÃ¢mera'}
                         >
                             {isVideoEnabled
                                 ? <Video className="w-4 h-4 text-white" />
@@ -551,7 +555,7 @@ function BroadcasterStudio({ user }) {
                 </div>
             </div>
 
-            {/* ─ Viewers row (collapsed — tap to expand) ─ */}
+            {/* â”€ Viewers row (collapsed â€” tap to expand) â”€ */}
             <button
                 onClick={() => setShowViewers(true)}
                 className="flex items-center gap-3 w-full bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] rounded-2xl px-4 py-3.5 transition-colors text-left active:scale-[0.98]"
@@ -580,7 +584,7 @@ function BroadcasterStudio({ user }) {
                 <ChevronDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
             </button>
 
-            {/* ─ Comments row (collapsed — tap to expand) ─ */}
+            {/* â”€ Comments row (collapsed â€” tap to expand) â”€ */}
             <button
                 onClick={() => setShowComments(true)}
                 className="relative flex items-center gap-3 w-full bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] rounded-2xl px-4 py-3.5 transition-colors text-left active:scale-[0.98]"
@@ -588,8 +592,8 @@ function BroadcasterStudio({ user }) {
                 <MessageSquare className="w-4 h-4 text-purple-400 flex-shrink-0" />
                 <span className="text-white font-semibold text-sm flex-1 truncate">
                     {messages.length === 0
-                        ? 'Nenhum comentário ainda'
-                        : `${messages.length} comentário${messages.length !== 1 ? 's' : ''}`
+                        ? 'Nenhum comentÃ¡rio ainda'
+                        : `${messages.length} comentÃ¡rio${messages.length !== 1 ? 's' : ''}`
                     }
                 </span>
                 {newCommentDot > 0 && (
@@ -600,7 +604,7 @@ function BroadcasterStudio({ user }) {
                 <ChevronDown className="w-4 h-4 text-gray-600 flex-shrink-0" />
             </button>
 
-            {/* ─ Start / End live button ─ */}
+            {/* â”€ Start / End live button â”€ */}
             {!isLive ? (
                 <Button
                     onClick={startLive} disabled={isStartingLive}
@@ -623,7 +627,7 @@ function BroadcasterStudio({ user }) {
                 </Button>
             )}
 
-            {/* ─ Bottom Sheets ─ */}
+            {/* â”€ Bottom Sheets â”€ */}
             <AnimatePresence>
                 {showViewers && <ViewersSheet viewers={viewers} onClose={() => setShowViewers(false)} />}
             </AnimatePresence>
@@ -636,7 +640,7 @@ function BroadcasterStudio({ user }) {
     );
 }
 
-// ─── Main exported component ───────────────────────────────────────────────────
+// â”€â”€â”€ Main exported component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function LiveBroadcaster({ user }) {
     return (
         <HMSRoomProvider>
@@ -645,3 +649,4 @@ export default function LiveBroadcaster({ user }) {
         </HMSRoomProvider>
     );
 }
+

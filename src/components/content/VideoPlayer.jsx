@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import {
   Play,
   Pause
 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 import { toast } from 'sonner';
 
 export default function VideoPlayer({
@@ -61,7 +61,7 @@ export default function VideoPlayer({
 
   const loadComments = useCallback(async () => {
     try {
-      const allComments = await base44.entities.Comment.filter({ content_id: content.id });
+      const allComments = await appClient.entities.Comment.filter({ content_id: content.id });
       setComments(allComments || []);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -71,7 +71,7 @@ export default function VideoPlayer({
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const currentUser = await base44.entities.User.me();
+        const currentUser = await appClient.entities.User.me();
         setUser(currentUser);
       } catch (error) {
         console.error('Error getting current user:', error);
@@ -90,17 +90,17 @@ export default function VideoPlayer({
     if (!newComment.trim() || !user) return;
 
     try {
-      await base44.entities.Comment.create({
+      await appClient.entities.Comment.create({
         user_id: user.id,
         content_id: content.id,
         comment_text: newComment
       });
       setNewComment('');
       loadComments();
-      toast.success('Comentário adicionado!');
+      toast.success('ComentÃ¡rio adicionado!');
     } catch (error) {
       console.error('Error adding comment:', error);
-      toast.error('Erro ao adicionar comentário');
+      toast.error('Erro ao adicionar comentÃ¡rio');
     }
   };
 
@@ -432,7 +432,7 @@ export default function VideoPlayer({
           }}
         >
           {isExternalEmbed ? (
-            // Vídeo Incorporado via Embed Code (e.g., Twitch, custom streams)
+            // VÃ­deo Incorporado via Embed Code (e.g., Twitch, custom streams)
             <div id="embed-container" className="w-full h-full" />
           ) : isYouTubeAPIPlayer ? (
             // YouTube Player via API (from content.video_url, if not external embed)
@@ -446,15 +446,15 @@ export default function VideoPlayer({
               onPause={() => setIsPlaying(false)}
             >
               <source src={content.video_url} type="video/mp4" />
-              Seu navegador não suporta o elemento de vídeo.
+              Seu navegador nÃ£o suporta o elemento de vÃ­deo.
             </video>
           ) : (
             <div className="text-white text-center">
-              <p>Conteúdo não disponível</p>
+              <p>ConteÃºdo nÃ£o disponÃ­vel</p>
             </div>
           )}
 
-          {/* Camada de proteção APENAS para lives incorporadas */}
+          {/* Camada de proteÃ§Ã£o APENAS para lives incorporadas */}
           {isLiveContent && isExternalEmbed && (
             <div
               className="absolute inset-0 z-10 bg-transparent"
@@ -495,7 +495,7 @@ export default function VideoPlayer({
                 </div>
               )}
 
-              {/* Botões de Controle */}
+              {/* BotÃµes de Controle */}
               <div className="flex items-center gap-4 justify-between">
                 <div className="flex items-center gap-4">
                   {/* Play/Pause */}
@@ -571,7 +571,7 @@ export default function VideoPlayer({
           >
             <div className="p-4 border-b border-gray-800">
               <h3 className="text-white font-semibold">
-                {isLiveContent ? 'Chat da Live' : 'Comentários'}
+                {isLiveContent ? 'Chat da Live' : 'ComentÃ¡rios'}
               </h3>
             </div>
 
@@ -593,7 +593,7 @@ export default function VideoPlayer({
                 <Input
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder={isLiveContent ? "Digite sua mensagem..." : "Adicionar comentário..."}
+                  placeholder={isLiveContent ? "Digite sua mensagem..." : "Adicionar comentÃ¡rio..."}
                   className="bg-gray-800 border-gray-700 text-white"
                   onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
                 />
@@ -608,3 +608,4 @@ export default function VideoPlayer({
     </div>
   );
 }
+

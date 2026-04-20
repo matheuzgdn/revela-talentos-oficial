@@ -1,4 +1,4 @@
-import { base44 } from "@/api/base44Client";
+﻿import { appClient } from "@/api/backendClient";
 
 // Helper function to send notifications to users
 export const sendNotificationToUsers = async (userIds, notificationData) => {
@@ -10,7 +10,7 @@ export const sendNotificationToUsers = async (userIds, notificationData) => {
     
     // Bulk create notifications
     await Promise.all(notifications.map(notification => 
-      base44.entities.UserNotification.create(notification)
+      appClient.entities.UserNotification.create(notification)
     ));
     
     return true;
@@ -33,8 +33,8 @@ export const notifyNewContent = async (content, allUsers) => {
     eligibleUsers.map(u => u.id),
     {
       notification_type: 'new_content',
-      title: 'Novo conteúdo disponível!',
-      message: `"${content.title}" foi adicionado à plataforma. Confira agora!`,
+      title: 'Novo conteÃºdo disponÃ­vel!',
+      message: `"${content.title}" foi adicionado Ã  plataforma. Confira agora!`,
       related_id: content.id,
       priority: 'medium'
     }
@@ -46,17 +46,17 @@ export const notifyCareerUpdate = async (userId, updateType) => {
   const notifications = {
     performance_analyzed: {
       title: 'Sua performance foi analisada!',
-      message: 'Um especialista analisou sua última partida. Veja os insights no seu plano de carreira.',
+      message: 'Um especialista analisou sua Ãºltima partida. Veja os insights no seu plano de carreira.',
       priority: 'high'
     },
     new_message: {
       title: 'Nova mensagem do especialista',
-      message: 'Você recebeu uma nova mensagem no seu plano de carreira.',
+      message: 'VocÃª recebeu uma nova mensagem no seu plano de carreira.',
       priority: 'medium'
     },
     schedule_reminder: {
       title: 'Lembrete de jogo',
-      message: 'Você tem um jogo agendado para hoje. Boa sorte!',
+      message: 'VocÃª tem um jogo agendado para hoje. Boa sorte!',
       priority: 'medium'
     }
   };
@@ -76,8 +76,8 @@ export const notifyLiveSession = async (allUsers, sessionData) => {
     allUsers.map(u => u.id),
     {
       notification_type: 'live_session',
-      title: 'Sessão ao vivo começando!',
-      message: `"${sessionData.title}" está começando agora. Não perca!`,
+      title: 'SessÃ£o ao vivo comeÃ§ando!',
+      message: `"${sessionData.title}" estÃ¡ comeÃ§ando agora. NÃ£o perca!`,
       related_id: sessionData.id,
       priority: 'high'
     }
@@ -87,3 +87,4 @@ export const notifyLiveSession = async (allUsers, sessionData) => {
 export default function NotificationSystem() {
   return null; // This is a utility component, no UI
 }
+

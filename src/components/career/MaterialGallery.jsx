@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +16,7 @@ import {
   XCircle 
 } from "lucide-react";
 
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 import { toast } from "sonner";
 
 export default function MaterialGallery({ user, uploads, onUploadComplete }) {
@@ -34,27 +34,27 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
     
     const files = Array.from(e.target.files);
     
-    // VALIDAÇÃO DE TAMANHO ANTES DE ACEITAR
+    // VALIDAÃ‡ÃƒO DE TAMANHO ANTES DE ACEITAR
     const maxSizeBytes = 10 * 1024 * 1024; // 10MB por arquivo
     const invalidFiles = files.filter(f => f.size > maxSizeBytes);
     
     if (invalidFiles.length > 0) {
       const filesList = invalidFiles.map(f => 
-        `• ${f.name}: ${(f.size / (1024 * 1024)).toFixed(1)}MB`
+        `â€¢ ${f.name}: ${(f.size / (1024 * 1024)).toFixed(1)}MB`
       ).join('\n');
       
       toast.error(
-        `🚫 Arquivo(s) muito grande(s)!\n\n` +
+        `ðŸš« Arquivo(s) muito grande(s)!\n\n` +
         `${filesList}\n\n` +
-        `Limite máximo: 10MB por arquivo.\n\n` +
-        `💡 Para arquivos grandes, hospede no YouTube/Drive e compartilhe o link com a equipe.`,
+        `Limite mÃ¡ximo: 10MB por arquivo.\n\n` +
+        `ðŸ’¡ Para arquivos grandes, hospede no YouTube/Drive e compartilhe o link com a equipe.`,
         { 
           duration: 8000,
           style: { background: '#7f1d1d', color: '#fff', border: '2px solid #dc2626' }
         }
       );
       
-      e.target.value = ''; // Limpa input para permitir nova seleção sem os arquivos inválidos
+      e.target.value = ''; // Limpa input para permitir nova seleÃ§Ã£o sem os arquivos invÃ¡lidos
       setSelectedFiles([]); // Clear any previously selected files if new selection has invalid ones
       return;
     }
@@ -65,12 +65,12 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
   const handleUpload = async () => {
     if (selectedFiles.length === 0 || !user) return;
     
-    // Validação final antes de upload (redundante, mas como safeguard)
+    // ValidaÃ§Ã£o final antes de upload (redundante, mas como safeguard)
     const maxSizeBytes = 10 * 1024 * 1024;
     const invalidFiles = selectedFiles.filter(f => f.size > maxSizeBytes);
     
     if (invalidFiles.length > 0) {
-      toast.error('Alguns arquivos excedem o limite de 10MB. Por favor, remova-os da seleção e tente novamente.');
+      toast.error('Alguns arquivos excedem o limite de 10MB. Por favor, remova-os da seleÃ§Ã£o e tente novamente.');
       // This case should ideally not be hit if handleFileSelect works correctly, but it's a good safeguard.
       setSelectedFiles([]); // Clear selection as it contains invalid files
       return;
@@ -86,9 +86,9 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
       setUploadStatus(prev => prev.map((s, idx) => idx === i ? { ...s, status: 'uploading' } : s));
 
       try {
-        const { file_url } = await base44.storage.uploadFile({ file });
+        const { file_url } = await appClient.storage.uploadFile({ file });
         
-        await base44.entities.AthleteUpload.create({
+        await appClient.entities.AthleteUpload.create({
           user_id: user.id,
           file_url,
           file_name: file.name,
@@ -125,7 +125,7 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
   
   const filterOptions = [
     { id: 'all', label: 'Todos' },
-    { id: 'videos', label: 'Vídeos' },
+    { id: 'videos', label: 'VÃ­deos' },
     { id: 'photos', label: 'Fotos' }
   ];
 
@@ -157,7 +157,7 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
               />
               
               <p className="text-xs text-amber-400 -mt-2">
-                ⚠️ Limite: 10MB por arquivo. Para vídeos maiores, hospede no YouTube/Drive.
+                âš ï¸ Limite: 10MB por arquivo. Para vÃ­deos maiores, hospede no YouTube/Drive.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -174,7 +174,7 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
                 </select>
                 
                 <Input
-                  placeholder="Descrição (opcional)"
+                  placeholder="DescriÃ§Ã£o (opcional)"
                   value={uploadData.description}
                   onChange={(e) => setUploadData(prev => ({ ...prev, description: e.target.value }))}
                   className="bg-gray-800 border-gray-700 text-white"
@@ -220,7 +220,7 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <CardTitle className="flex items-center gap-2 text-green-400">
                 <FolderOpen className="w-5 h-5" />
-                Galeria de Mídia ({filteredUploads.length})
+                Galeria de MÃ­dia ({filteredUploads.length})
               </CardTitle>
               <div className="flex gap-2 p-1 bg-gray-800/50 rounded-lg">
                 {filterOptions.map(opt => (
@@ -285,7 +285,7 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
               <div className="text-center py-12 text-gray-500">
                 <FolderOpen className="w-16 h-16 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white mb-2">Nenhum arquivo encontrado</h3>
-                <p>Use o formulário acima para adicionar seus vídeos e fotos.</p>
+                <p>Use o formulÃ¡rio acima para adicionar seus vÃ­deos e fotos.</p>
               </div>
             )}
           </CardContent>
@@ -294,5 +294,6 @@ export default function MaterialGallery({ user, uploads, onUploadComplete }) {
     </div>
   );
 }
+
 
 

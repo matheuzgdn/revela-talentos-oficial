@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
+import { appClient } from "@/api/backendClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,11 +38,11 @@ export default function AdminPagesTab() {
 
   const loadPages = async () => {
     try {
-      const allPages = await base44.entities.LeadPage.list('-created_date');
+      const allPages = await appClient.entities.LeadPage.list('-created_date');
       setPages(allPages || []);
     } catch (error) {
-      console.error('Erro ao carregar páginas:', error);
-      toast.error("Falha ao carregar páginas.");
+      console.error('Erro ao carregar pÃ¡ginas:', error);
+      toast.error("Falha ao carregar pÃ¡ginas.");
     }
   };
 
@@ -60,7 +60,7 @@ export default function AdminPagesTab() {
     setFormData({
       name: '',
       url_slug: '',
-      html_content: '<!-- Cole seu código HTML aqui -->',
+      html_content: '<!-- Cole seu cÃ³digo HTML aqui -->',
       visibility: 'hidden',
       is_active: true,
       icon: 'Link',
@@ -70,13 +70,13 @@ export default function AdminPagesTab() {
   };
 
   const handleDelete = async (pageId) => {
-    if (window.confirm("Tem certeza que deseja excluir esta página?")) {
+    if (window.confirm("Tem certeza que deseja excluir esta pÃ¡gina?")) {
       try {
-        await base44.entities.LeadPage.delete(pageId);
-        toast.success("Página excluída!");
+        await appClient.entities.LeadPage.delete(pageId);
+        toast.success("PÃ¡gina excluÃ­da!");
         loadPages();
       } catch (error) {
-        toast.error("Falha ao excluir página.");
+        toast.error("Falha ao excluir pÃ¡gina.");
       }
     }
   };
@@ -84,26 +84,26 @@ export default function AdminPagesTab() {
   const handleSubmit = async () => {
     try {
       if (editingPage) {
-        await base44.entities.LeadPage.update(editingPage.id, formData);
-        toast.success("Página atualizada!");
+        await appClient.entities.LeadPage.update(editingPage.id, formData);
+        toast.success("PÃ¡gina atualizada!");
       } else {
-        await base44.entities.LeadPage.create(formData);
-        toast.success("Página criada!");
+        await appClient.entities.LeadPage.create(formData);
+        toast.success("PÃ¡gina criada!");
       }
       setShowModal(false);
       loadPages();
     } catch (error) {
-      toast.error("Erro ao salvar página.");
+      toast.error("Erro ao salvar pÃ¡gina.");
     }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold text-white">Páginas de Captura (HTML)</h3>
+        <h3 className="text-xl font-semibold text-white">PÃ¡ginas de Captura (HTML)</h3>
         <Button onClick={handleNew} className="bg-sky-500 hover:bg-sky-600">
           <Plus className="w-4 h-4 mr-2" />
-          Nova Página
+          Nova PÃ¡gina
         </Button>
       </div>
 
@@ -136,11 +136,11 @@ export default function AdminPagesTab() {
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="max-w-4xl bg-gray-900 border-gray-800 text-white">
           <DialogHeader>
-            <DialogTitle>{editingPage ? "Editar" : "Nova"} Página de Captura</DialogTitle>
+            <DialogTitle>{editingPage ? "Editar" : "Nova"} PÃ¡gina de Captura</DialogTitle>
           </DialogHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
             <Input
-              placeholder="Nome da Página (interno)"
+              placeholder="Nome da PÃ¡gina (interno)"
               value={formData.name}
               onChange={e => setFormData({...formData, name: e.target.value})}
               className="bg-gray-800 border-gray-700"
@@ -153,7 +153,7 @@ export default function AdminPagesTab() {
             />
           </div>
           <Textarea
-            placeholder="Cole seu código HTML aqui..."
+            placeholder="Cole seu cÃ³digo HTML aqui..."
             value={formData.html_content}
             onChange={e => setFormData({...formData, html_content: e.target.value})}
             className="bg-black border-gray-700 font-mono text-sm h-64"
@@ -164,20 +164,21 @@ export default function AdminPagesTab() {
                 <SelectContent>
                     <SelectItem value="hidden">Oculta (Acesso por Link)</SelectItem>
                     <SelectItem value="sidebar_link">Link na Barra Lateral</SelectItem>
-                    <SelectItem value="hub_icon">Ícone no Hub Principal</SelectItem>
+                    <SelectItem value="hub_icon">Ãcone no Hub Principal</SelectItem>
                 </SelectContent>
              </Select>
              <div className="flex items-center gap-2">
                 <input type="checkbox" checked={formData.is_active} onChange={e => setFormData({...formData, is_active: e.target.checked})} id="is_active_check"/>
-                <label htmlFor="is_active_check">Página Ativa</label>
+                <label htmlFor="is_active_check">PÃ¡gina Ativa</label>
              </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setShowModal(false)}>Cancelar</Button>
-            <Button onClick={handleSubmit}>Salvar Página</Button>
+            <Button onClick={handleSubmit}>Salvar PÃ¡gina</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+

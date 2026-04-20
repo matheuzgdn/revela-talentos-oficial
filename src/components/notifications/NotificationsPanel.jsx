@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 import { Bell, X, Check, Eye, MessageCircle, Trophy, Star, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +30,7 @@ export default function NotificationsPanel({ user }) {
 
   const loadNotifications = async () => {
     try {
-      const data = await base44.entities.Notification.filter(
+      const data = await appClient.entities.Notification.filter(
         { user_id: user.id },
         '-created_date',
         50
@@ -38,13 +38,13 @@ export default function NotificationsPanel({ user }) {
       setNotifications(data || []);
       setUnreadCount((data || []).filter(n => !n.is_read).length);
     } catch (error) {
-      console.error('Erro ao carregar notificações:', error);
+      console.error('Erro ao carregar notificaÃ§Ãµes:', error);
     }
   };
 
   const markAsRead = async (notificationId) => {
     try {
-      await base44.entities.Notification.update(notificationId, { is_read: true });
+      await appClient.entities.Notification.update(notificationId, { is_read: true });
       await loadNotifications();
     } catch (error) {
       console.error('Erro ao marcar como lida:', error);
@@ -57,7 +57,7 @@ export default function NotificationsPanel({ user }) {
       const unreadNotifications = notifications.filter(n => !n.is_read);
       await Promise.all(
         unreadNotifications.map(n =>
-          base44.entities.Notification.update(n.id, { is_read: true })
+          appClient.entities.Notification.update(n.id, { is_read: true })
         )
       );
       await loadNotifications();
@@ -161,9 +161,9 @@ export default function NotificationsPanel({ user }) {
                       <Bell className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-bold text-white">Notificações</h2>
+                      <h2 className="text-lg font-bold text-white">NotificaÃ§Ãµes</h2>
                       <p className="text-xs text-gray-400">
-                        {unreadCount > 0 ? `${unreadCount} não lida${unreadCount > 1 ? 's' : ''}` : 'Tudo em dia'}
+                        {unreadCount > 0 ? `${unreadCount} nÃ£o lida${unreadCount > 1 ? 's' : ''}` : 'Tudo em dia'}
                       </p>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export default function NotificationsPanel({ user }) {
                 {notifications.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
                     <Bell className="w-16 h-16 text-gray-700 mb-4" />
-                    <p className="text-gray-400 text-sm">Nenhuma notificação ainda</p>
+                    <p className="text-gray-400 text-sm">Nenhuma notificaÃ§Ã£o ainda</p>
                   </div>
                 ) : (
                   <AnimatePresence>
@@ -240,7 +240,7 @@ export default function NotificationsPanel({ user }) {
                                   }`}>
                                   {notification.type === 'message' ? 'Mensagem' :
                                     notification.type === 'profile_visit' ? 'Visita' :
-                                      notification.type === 'live_session' ? '🔴 Live' :
+                                      notification.type === 'live_session' ? 'ðŸ”´ Live' :
                                         notification.type === 'achievement' ? 'Conquista' : 'Geral'}
                                 </Badge>
                                 <span className="text-[10px] text-gray-500">

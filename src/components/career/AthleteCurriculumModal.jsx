@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +21,7 @@ import {
   BookOpen,
   Briefcase
 } from "lucide-react";
+import { appClient } from "@/api/backendClient";
 import { toast } from "sonner";
 
 export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate }) {
@@ -30,6 +30,12 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
 
   useEffect(() => {
     if (user) {
+      const normalizedAchievements = Array.isArray(user.achievements)
+        ? user.achievements
+        : typeof user.achievements === "string" && user.achievements.trim()
+          ? user.achievements.split('\n').map((item) => item.trim()).filter(Boolean)
+          : [];
+
       setFormData({
         // Personal Info
         birth_date: user.birth_date || "",
@@ -49,7 +55,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
 
         // Career Info
         club_history: user.club_history || [],
-        achievements: user.achievements || [],
+        achievements: normalizedAchievements,
         playing_style: user.playing_style || "",
         strengths: user.strengths || [],
         areas_improvement: user.areas_improvement || [],
@@ -69,12 +75,17 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      await User.updateMyUserData(formData);
-      toast.success("Currículo atualizado com sucesso!");
+      await appClient.auth.updateMe({
+        ...formData,
+        achievements: Array.isArray(formData.achievements)
+          ? formData.achievements.join('\n')
+          : formData.achievements || "",
+      });
+      toast.success("CurrÃ­culo atualizado com sucesso!");
       if (onUpdate) onUpdate();
       onClose();
     } catch (error) {
-      toast.error("Erro ao atualizar currículo");
+      toast.error("Erro ao atualizar currÃ­culo");
       console.error(error);
     }
     setIsLoading(false);
@@ -130,7 +141,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-700 text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-green-400">
-            Currículo do Atleta - {user?.full_name}
+            CurrÃ­culo do Atleta - {user?.full_name}
           </DialogTitle>
         </DialogHeader>
 
@@ -162,7 +173,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
           <TabsContent value="personal" className="space-y-4">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-green-400">Informações Pessoais</CardTitle>
+                <CardTitle className="text-green-400">InformaÃ§Ãµes Pessoais</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -190,7 +201,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                       value={formData.city}
                       onChange={(e) => setFormData(prev => ({ ...prev, city: e.target.value }))}
                       className="bg-gray-700 border-gray-600 text-white"
-                      placeholder="Ex: São Paulo"
+                      placeholder="Ex: SÃ£o Paulo"
                     />
                   </div>
                   <div>
@@ -223,7 +234,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                 </div>
 
                 <div>
-                  <label className="block text-white mb-1">Pé Preferido</label>
+                  <label className="block text-white mb-1">PÃ© Preferido</label>
                   <select
                     value={formData.preferred_foot}
                     onChange={(e) => setFormData(prev => ({ ...prev, preferred_foot: e.target.value }))}
@@ -243,7 +254,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
           <TabsContent value="professional" className="space-y-4">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-green-400">Informações Profissionais</CardTitle>
+                <CardTitle className="text-green-400">InformaÃ§Ãµes Profissionais</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -256,7 +267,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                     />
                   </div>
                   <div>
-                    <label className="block text-white mb-1">Posição</label>
+                    <label className="block text-white mb-1">PosiÃ§Ã£o</label>
                     <select
                       value={formData.position}
                       onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
@@ -321,7 +332,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
           <TabsContent value="career" className="space-y-4">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-green-400">Histórico de Clubes</CardTitle>
+                <CardTitle className="text-green-400">HistÃ³rico de Clubes</CardTitle>
                 <Button onClick={addClubHistory} size="sm" className="bg-green-600 hover:bg-green-700">
                   <Plus className="w-4 h-4 mr-1" />
                   Adicionar Clube
@@ -356,7 +367,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                       />
                       <Input
                         type="number"
-                        placeholder="Ano Início"
+                        placeholder="Ano InÃ­cio"
                         value={club.start_year}
                         onChange={(e) => updateClubHistory(index, 'start_year', e.target.value ? parseInt(e.target.value) : "")}
                         className="bg-gray-700 border-gray-600 text-white"
@@ -383,7 +394,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
 
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-green-400">Conquistas e Títulos</CardTitle>
+                <CardTitle className="text-green-400">Conquistas e TÃ­tulos</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex gap-2 mb-3">
@@ -406,7 +417,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                         onClick={() => removeFromArray('achievements', index)}
                         className="ml-2 text-white hover:text-red-300"
                       >
-                        ×
+                        Ã—
                       </button>
                     </Badge>
                   ))}
@@ -456,7 +467,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                           onClick={() => removeFromArray('strengths', index)}
                           className="ml-2 text-white hover:text-red-300"
                         >
-                          ×
+                          Ã—
                         </button>
                       </Badge>
                     ))}
@@ -466,11 +477,11 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
 
               <Card className="bg-gray-800 border-gray-700">
                 <CardHeader>
-                  <CardTitle className="text-green-400">Áreas para Melhoria</CardTitle>
+                  <CardTitle className="text-green-400">Ãreas para Melhoria</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Input
-                    placeholder="Digite uma área e pressione Enter"
+                    placeholder="Digite uma Ã¡rea e pressione Enter"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         addToArray('areas_improvement', e.target.value);
@@ -487,7 +498,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                           onClick={() => removeFromArray('areas_improvement', index)}
                           className="ml-2 text-white hover:text-red-300"
                         >
-                          ×
+                          Ã—
                         </button>
                       </Badge>
                     ))}
@@ -516,11 +527,11 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
           <TabsContent value="additional" className="space-y-4">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-green-400">Educação</CardTitle>
+                <CardTitle className="text-green-400">EducaÃ§Ã£o</CardTitle>
               </CardHeader>
               <CardContent>
                 <Textarea
-                  placeholder="Formação educacional..."
+                  placeholder="FormaÃ§Ã£o educacional..."
                   value={formData.education}
                   onChange={(e) => setFormData(prev => ({ ...prev, education: e.target.value }))}
                   className="bg-gray-700 border-gray-600 text-white"
@@ -552,7 +563,7 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
                         onClick={() => removeFromArray('languages', index)}
                         className="ml-2 text-white hover:text-red-300"
                       >
-                        ×
+                        Ã—
                       </button>
                     </Badge>
                   ))}
@@ -618,10 +629,11 @@ export default function AthleteCurriculumModal({ isOpen, onClose, user, onUpdate
             className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
           >
             <Save className="w-4 h-4 mr-2" />
-            {isLoading ? "Salvando..." : "Salvar Currículo"}
+            {isLoading ? "Salvando..." : "Salvar CurrÃ­culo"}
           </Button>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
+

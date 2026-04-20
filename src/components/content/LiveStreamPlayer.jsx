@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Slider } from '@/components/ui/slider';
 import { X, Radio, Send, MessageCircle, Volume2, VolumeX, Maximize, Users } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { appClient } from '@/api/backendClient';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -61,19 +61,19 @@ export default function LiveStreamPlayer({ content, onClose }) {
 
   useEffect(() => {
     if (isExternalEmbed && content.live_embed_code) {
-      // Para vídeos/lives incorporados, usar o código embed diretamente
+      // Para vÃ­deos/lives incorporados, usar o cÃ³digo embed diretamente
       const embedContainer = document.getElementById('live-embed-container');
       if (embedContainer) {
         let processedEmbed = content.live_embed_code;
 
-        // Processar códigos do Wix
+        // Processar cÃ³digos do Wix
         if (processedEmbed.includes('wixstatic.com') || processedEmbed.includes('wix.com')) {
-          // Para Wix, manter o embed original mas remover controles se possível
+          // Para Wix, manter o embed original mas remover controles se possÃ­vel
           processedEmbed = processedEmbed.replace(/controls/g, 'controls="false"');
           processedEmbed = processedEmbed.replace(/showinfo="1"/g, 'showinfo="0"');
         }
 
-        // Processar códigos do YouTube
+        // Processar cÃ³digos do YouTube
         if (processedEmbed.includes('youtube.com') || processedEmbed.includes('youtu.be')) {
           processedEmbed = processedEmbed.replace(/src="([^"]+)"/, (match, src) => {
             const url = new URL(src);
@@ -90,7 +90,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
           });
         }
 
-        // Para lives, sempre bloquear navegação externa
+        // Para lives, sempre bloquear navegaÃ§Ã£o externa
         processedEmbed = processedEmbed.replace(/allowfullscreen/g, '');
         processedEmbed = processedEmbed.replace(/allow="[^"]*"/g, '');
 
@@ -105,7 +105,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
           iframe.removeAttribute('width');
           iframe.removeAttribute('height');
 
-          // Bloquear navegação externa para lives
+          // Bloquear navegaÃ§Ã£o externa para lives
           iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
         }
       }
@@ -149,14 +149,14 @@ export default function LiveStreamPlayer({ content, onClose }) {
     // Simular espectadores
     const fetchViewers = async () => {
       try {
-        const allUsers = await base44.entities.User.list();
+        const allUsers = await appClient.entities.User.list();
         if (allUsers && allUsers.length > 0) {
           const viewerCount = Math.floor(Math.random() * (allUsers.length / 2)) + 5;
           const shuffled = [...allUsers].sort(() => 0.5 - Math.random());
           setLiveViewers(shuffled.slice(0, Math.min(viewerCount, allUsers.length)));
         }
       } catch (error) {
-        console.warn("Não foi possível carregar usuários para simular espectadores.", error);
+        console.warn("NÃ£o foi possÃ­vel carregar usuÃ¡rios para simular espectadores.", error);
       }
     };
     fetchViewers();
@@ -164,7 +164,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
 
   const loadComments = useCallback(async () => {
     try {
-      const allComments = await base44.entities.Comment.filter({ content_id: content.id }, "-created_date");
+      const allComments = await appClient.entities.Comment.filter({ content_id: content.id }, "-created_date");
       setComments(allComments || []);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -174,7 +174,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const currentUser = await base44.auth.me();
+        const currentUser = await appClient.auth.me();
         setUser(currentUser);
       } catch (error) {
         console.error('Error getting current user:', error);
@@ -189,12 +189,12 @@ export default function LiveStreamPlayer({ content, onClose }) {
   const handleAddComment = async () => {
     if (!newComment.trim() || !user) return;
     try {
-      await base44.entities.Comment.create({ user_id: user.id, content_id: content.id, comment_text: newComment });
+      await appClient.entities.Comment.create({ user_id: user.id, content_id: content.id, comment_text: newComment });
       setNewComment('');
       loadComments();
-      toast.success('Comentário enviado!');
+      toast.success('ComentÃ¡rio enviado!');
     } catch (error) {
-      toast.error('Erro ao enviar comentário');
+      toast.error('Erro ao enviar comentÃ¡rio');
     }
   };
 
@@ -245,7 +245,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
   return (
     <div className="fixed inset-0 bg-black z-50 flex">
       <div className="flex-1 relative group">
-        {/* Botão de Fechar */}
+        {/* BotÃ£o de Fechar */}
         <Button
           variant="ghost"
           size="icon"
@@ -416,7 +416,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
         )}
       </AnimatePresence>
 
-      {/* Botão para Mostrar Chat quando escondido */}
+      {/* BotÃ£o para Mostrar Chat quando escondido */}
       {!showComments && (
         <Button
           className="fixed bottom-24 md:bottom-4 right-4 z-50 rounded-full bg-red-600 hover:bg-red-700"

@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+﻿import { appClient } from '@/api/backendClient';
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,12 +24,12 @@ export default function AdminPlatformSettingsTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Configurações padrão
+  // ConfiguraÃ§Ãµes padrÃ£o
   const defaultSettings = useCallback(() => [
     {
       key: 'open_revela_talentos',
       label: 'Revela Talentos em Acesso Livre',
-      description: 'Libera o conteúdo da plataforma Revela Talentos para todos',
+      description: 'Libera o conteÃºdo da plataforma Revela Talentos para todos',
       type: 'boolean',
       defaultValue: 'false',
       category: 'acesso'
@@ -37,25 +37,25 @@ export default function AdminPlatformSettingsTab() {
     {
       key: 'open_plano_carreira',
       label: 'Plano de Carreira em Acesso Livre',
-      description: 'Libera o conteúdo do Plano de Carreira para todos',
+      description: 'Libera o conteÃºdo do Plano de Carreira para todos',
       type: 'boolean',
       defaultValue: 'false',
       category: 'acesso'
     },
     {
       key: 'maintenance_mode',
-      label: 'Modo Manutenção',
-      description: 'Coloca a plataforma em modo manutenção (apenas admins têm acesso)',
+      label: 'Modo ManutenÃ§Ã£o',
+      description: 'Coloca a plataforma em modo manutenÃ§Ã£o (apenas admins tÃªm acesso)',
       type: 'boolean',
       defaultValue: 'false',
       category: 'sistema'
     },
     {
       key: 'maintenance_message',
-      label: 'Mensagem de Manutenção',
-      description: 'Mensagem exibida durante a manutenção',
+      label: 'Mensagem de ManutenÃ§Ã£o',
+      description: 'Mensagem exibida durante a manutenÃ§Ã£o',
       type: 'string',
-      defaultValue: '🔧 Plataforma em manutenção. Voltaremos em breve!',
+      defaultValue: 'ðŸ”§ Plataforma em manutenÃ§Ã£o. Voltaremos em breve!',
       category: 'sistema'
     }
   ], []);
@@ -63,7 +63,7 @@ export default function AdminPlatformSettingsTab() {
   const loadSettings = useCallback(async () => {
     setIsLoading(true);
     try {
-      const allSettings = await base44.entities.PlatformSettings.list();
+      const allSettings = await appClient.entities.PlatformSettings.list();
       const settingsMap = {};
       
       allSettings.forEach(setting => {
@@ -75,7 +75,7 @@ export default function AdminPlatformSettingsTab() {
 
       for (const defaultSetting of defaultSettings()) {
         if (!settingsMap[defaultSetting.key]) {
-          const newSetting = await base44.entities.PlatformSettings.create({
+          const newSetting = await appClient.entities.PlatformSettings.create({
             setting_key: defaultSetting.key,
             setting_value: defaultSetting.defaultValue,
             setting_type: defaultSetting.type,
@@ -90,8 +90,8 @@ export default function AdminPlatformSettingsTab() {
 
       setSettings(settingsMap);
     } catch (error) {
-      console.error('Erro ao carregar configurações:', error);
-      toast.error('Erro ao carregar configurações da plataforma');
+      console.error('Erro ao carregar configuraÃ§Ãµes:', error);
+      toast.error('Erro ao carregar configuraÃ§Ãµes da plataforma');
     } finally {
       setIsLoading(false);
     }
@@ -108,14 +108,14 @@ export default function AdminPlatformSettingsTab() {
       const stringValue = typeof value === 'boolean' ? value.toString() : value;
       
       if (setting && setting.id) {
-        await base44.entities.PlatformSettings.update(setting.id, {
+        await appClient.entities.PlatformSettings.update(setting.id, {
           setting_value: stringValue
         });
       } else {
-        // Se a configuração não existir, crie-a
+        // Se a configuraÃ§Ã£o nÃ£o existir, crie-a
         const defaultConfig = defaultSettings().find(s => s.key === key);
         if (defaultConfig) {
-           await base44.entities.PlatformSettings.create({
+           await appClient.entities.PlatformSettings.create({
             setting_key: key,
             setting_value: stringValue,
             setting_type: defaultConfig.type,
@@ -124,11 +124,11 @@ export default function AdminPlatformSettingsTab() {
         }
       }
       
-      toast.success('Configuração atualizada com sucesso!');
-      await loadSettings(); // Recarrega para garantir consistência
+      toast.success('ConfiguraÃ§Ã£o atualizada com sucesso!');
+      await loadSettings(); // Recarrega para garantir consistÃªncia
     } catch (error) {
-      console.error('Erro ao atualizar configuração:', error);
-      toast.error('Erro ao atualizar configuração');
+      console.error('Erro ao atualizar configuraÃ§Ã£o:', error);
+      toast.error('Erro ao atualizar configuraÃ§Ã£o');
     } finally {
       setIsSaving(false);
     }
@@ -154,8 +154,8 @@ export default function AdminPlatformSettingsTab() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-white">Configurações da Plataforma</h2>
-          <p className="text-gray-400">Gerencie configurações globais de acesso e funcionamento</p>
+          <h2 className="text-2xl font-bold text-white">ConfiguraÃ§Ãµes da Plataforma</h2>
+          <p className="text-gray-400">Gerencie configuraÃ§Ãµes globais de acesso e funcionamento</p>
         </div>
       </div>
 
@@ -173,8 +173,8 @@ export default function AdminPlatformSettingsTab() {
               {maintenanceEnabled ? (
                 <>
                   <AlertTriangle className="w-10 h-10 text-orange-500 mx-auto mb-2" />
-                  <Badge className="bg-orange-600 text-white">Manutenção</Badge>
-                  <p className="text-sm text-gray-400 mt-2">Apenas admins têm acesso</p>
+                  <Badge className="bg-orange-600 text-white">ManutenÃ§Ã£o</Badge>
+                  <p className="text-sm text-gray-400 mt-2">Apenas admins tÃªm acesso</p>
                 </>
               ) : (!revelaTalentosOpen && !planoCarreiraOpen) ? (
                  <>
@@ -186,7 +186,7 @@ export default function AdminPlatformSettingsTab() {
                 <>
                   <Unlock className="w-10 h-10 text-green-500 mx-auto mb-2" />
                   <Badge className="bg-green-600 text-white">Acesso Livre Ativo</Badge>
-                   <p className="text-sm text-gray-400 mt-2">Conteúdo liberado</p>
+                   <p className="text-sm text-gray-400 mt-2">ConteÃºdo liberado</p>
                 </>
               )}
             </div>
@@ -214,7 +214,7 @@ export default function AdminPlatformSettingsTab() {
         </CardContent>
       </Card>
 
-      {/* Configurações de Acesso */}
+      {/* ConfiguraÃ§Ãµes de Acesso */}
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -227,11 +227,11 @@ export default function AdminPlatformSettingsTab() {
             <div className="space-y-1">
               <Label className="text-white font-semibold flex items-center gap-2"><Star className="w-4 h-4 text-yellow-400"/>Revela Talentos Aberto</Label>
               <p className="text-sm text-gray-400">
-                Libera a plataforma Revela Talentos para qualquer usuário
+                Libera a plataforma Revela Talentos para qualquer usuÃ¡rio
               </p>
               {revelaTalentosOpen && (
                 <Badge className="bg-green-600/20 text-green-400 text-xs">
-                  ⚡ ATIVO - Revela Talentos está com acesso total
+                  âš¡ ATIVO - Revela Talentos estÃ¡ com acesso total
                 </Badge>
               )}
             </div>
@@ -246,11 +246,11 @@ export default function AdminPlatformSettingsTab() {
             <div className="space-y-1">
               <Label className="text-white font-semibold flex items-center gap-2"><TrendingUp className="w-4 h-4 text-cyan-400"/>Plano de Carreira Aberto</Label>
               <p className="text-sm text-gray-400">
-                Libera o Plano de Carreira para qualquer usuário
+                Libera o Plano de Carreira para qualquer usuÃ¡rio
               </p>
               {planoCarreiraOpen && (
                 <Badge className="bg-green-600/20 text-green-400 text-xs">
-                  ⚡ ATIVO - Plano de Carreira está com acesso total
+                  âš¡ ATIVO - Plano de Carreira estÃ¡ com acesso total
                 </Badge>
               )}
             </div>
@@ -263,24 +263,24 @@ export default function AdminPlatformSettingsTab() {
         </CardContent>
       </Card>
 
-      {/* Configurações de Sistema */}
+      {/* ConfiguraÃ§Ãµes de Sistema */}
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-orange-400" />
-            Configurações de Sistema
+            ConfiguraÃ§Ãµes de Sistema
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center justify-between p-4 bg-gray-900 rounded-lg">
             <div className="space-y-1">
-              <Label className="text-white font-semibold">Modo Manutenção</Label>
+              <Label className="text-white font-semibold">Modo ManutenÃ§Ã£o</Label>
               <p className="text-sm text-gray-400">
-                Bloqueia acesso de usuários comuns, apenas admins podem entrar
+                Bloqueia acesso de usuÃ¡rios comuns, apenas admins podem entrar
               </p>
               {maintenanceEnabled && (
                 <Badge className="bg-orange-600/20 text-orange-400 text-xs">
-                  🔧 ATIVO - Plataforma em manutenção
+                  ðŸ”§ ATIVO - Plataforma em manutenÃ§Ã£o
                 </Badge>
               )}
             </div>
@@ -293,12 +293,12 @@ export default function AdminPlatformSettingsTab() {
 
           {maintenanceEnabled && (
             <div className="space-y-2">
-              <Label className="text-gray-300">Mensagem de Manutenção</Label>
+              <Label className="text-gray-300">Mensagem de ManutenÃ§Ã£o</Label>
               <Textarea
-                value={getSettingValue('maintenance_message', '🔧 Plataforma em manutenção. Voltaremos em breve!')}
+                value={getSettingValue('maintenance_message', 'ðŸ”§ Plataforma em manutenÃ§Ã£o. Voltaremos em breve!')}
                 onChange={(e) => updateSetting('maintenance_message', e.target.value)}
                 className="bg-gray-700 border-gray-600 text-white h-20"
-                placeholder="Mensagem exibida durante a manutenção"
+                placeholder="Mensagem exibida durante a manutenÃ§Ã£o"
                 disabled={isSaving}
               />
             </div>
@@ -312,7 +312,7 @@ export default function AdminPlatformSettingsTab() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-yellow-400">
               <AlertTriangle className="w-5 h-5" />
-              Atenção - Configurações Especiais Ativas
+              AtenÃ§Ã£o - ConfiguraÃ§Ãµes Especiais Ativas
             </CardTitle>
           </CardHeader>
           <CardContent className="text-yellow-200">
@@ -320,19 +320,19 @@ export default function AdminPlatformSettingsTab() {
               {revelaTalentosOpen && (
                 <li className="flex items-center gap-2">
                   <Star className="w-4 h-4 text-yellow-400" />
-                  <span>Revela Talentos está em <strong>acesso livre</strong>.</span>
+                  <span>Revela Talentos estÃ¡ em <strong>acesso livre</strong>.</span>
                 </li>
               )}
               {planoCarreiraOpen && (
                 <li className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-cyan-400" />
-                  <span>Plano de Carreira está em <strong>acesso livre</strong>.</span>
+                  <span>Plano de Carreira estÃ¡ em <strong>acesso livre</strong>.</span>
                 </li>
               )}
               {maintenanceEnabled && (
                 <li className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-orange-400" />
-                  <span>Modo <strong>manutenção ativo</strong> - apenas administradores podem acessar</span>
+                  <span>Modo <strong>manutenÃ§Ã£o ativo</strong> - apenas administradores podem acessar</span>
                 </li>
               )}
             </ul>
@@ -342,3 +342,4 @@ export default function AdminPlatformSettingsTab() {
     </div>
   );
 }
+

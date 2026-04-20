@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect, useCallback } from "react";
+import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,7 @@ const POLL_INTERVAL = 5000;
 
 async function fetchLiveSettings() {
   try {
-    const allSettings = await base44.entities.PlatformSettings.list();
+    const allSettings = await appClient.entities.PlatformSettings.list();
     const get = (key) => allSettings.find((s) => s.setting_key === key)?.setting_value;
     return {
       isLiveActive: get("is_live_active") === "true",
@@ -21,14 +21,14 @@ async function fetchLiveSettings() {
       nextLiveDate: get("next_live_date") || "",
       isPostponed: get("live_is_postponed") === "true",
       postponeMessage: get("live_postpone_message") || "",
-      schedule: get("live_custom_schedule") || get("live_default_schedule") || "Todas as segundas às 20h",
+      schedule: get("live_custom_schedule") || get("live_default_schedule") || "Todas as segundas Ã s 20h",
     };
   } catch {
     return null;
   }
 }
 
-// ─── Waiting / offline screen ─────────────────────────────────────────────────
+// â”€â”€â”€ Waiting / offline screen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LiveOfflineScreen({ settings, onBack }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 text-center px-6">
@@ -47,7 +47,7 @@ function LiveOfflineScreen({ settings, onBack }) {
           <p className="text-yellow-400 font-medium mb-2">{settings.postponeMessage}</p>
         )}
         <p className="text-gray-400 text-lg">
-          {settings.isPostponed ? "Fique atento às notificações" : "Você será notificado quando iniciar"}
+          {settings.isPostponed ? "Fique atento Ã s notificaÃ§Ãµes" : "VocÃª serÃ¡ notificado quando iniciar"}
         </p>
       </div>
 
@@ -58,7 +58,7 @@ function LiveOfflineScreen({ settings, onBack }) {
               <Calendar className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <p className="text-gray-400 text-xs">Próxima live</p>
+              <p className="text-gray-400 text-xs">PrÃ³xima live</p>
               <p className="text-white font-bold">
                 {new Date(settings.nextLiveDate).toLocaleString("pt-BR", {
                   day: "2-digit", month: "2-digit", year: "numeric",
@@ -73,7 +73,7 @@ function LiveOfflineScreen({ settings, onBack }) {
             <Clock className="w-5 h-5 text-purple-400" />
           </div>
           <div>
-            <p className="text-gray-400 text-xs">Horário regular</p>
+            <p className="text-gray-400 text-xs">HorÃ¡rio regular</p>
             <p className="text-white font-bold">{settings.schedule}</p>
           </div>
         </div>
@@ -82,8 +82,8 @@ function LiveOfflineScreen({ settings, onBack }) {
             <Bell className="w-5 h-5 text-green-400" />
           </div>
           <div>
-            <p className="text-gray-400 text-xs">Notificações</p>
-            <p className="text-white font-bold">Você será avisado quando iniciar</p>
+            <p className="text-gray-400 text-xs">NotificaÃ§Ãµes</p>
+            <p className="text-white font-bold">VocÃª serÃ¡ avisado quando iniciar</p>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ function LiveOfflineScreen({ settings, onBack }) {
   );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function LivesPage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -112,7 +112,7 @@ export default function LivesPage() {
   useEffect(() => {
     (async () => {
       try {
-        const currentUser = await base44.auth.me();
+        const currentUser = await appClient.auth.me();
         if (!currentUser) {
           navigate(createPageUrl("RevelaTalentos"));
           return;
@@ -150,7 +150,7 @@ export default function LivesPage() {
             <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-2xl opacity-40 animate-pulse" />
             <Loader2 className="w-20 h-20 text-red-400 animate-spin relative z-10" />
           </div>
-          <p className="text-gray-200 text-xl font-bold">Verificando transmissão...</p>
+          <p className="text-gray-200 text-xl font-bold">Verificando transmissÃ£o...</p>
         </div>
       </div>
     );
@@ -160,7 +160,7 @@ export default function LivesPage() {
 
   return (
     <>
-      {/* ──────── MOBILE ──────── */}
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€ MOBILE â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="md:hidden fixed inset-0 bg-black text-white flex flex-col overflow-y-auto">
         {/* Top bar */}
         <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-gradient-to-b from-black via-black/80 to-transparent">
@@ -209,7 +209,7 @@ export default function LivesPage() {
         </div>
       </div>
 
-      {/* ──────── DESKTOP ──────── */}
+      {/* â”€â”€â”€â”€â”€â”€â”€â”€ DESKTOP â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="hidden md:block min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white">
         <header className="relative bg-gradient-to-b from-black/80 via-gray-950/50 to-transparent py-8 px-6 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto">
@@ -244,8 +244,8 @@ export default function LivesPage() {
             </div>
             <p className="text-gray-300 mt-4 text-lg">
               {isLive
-                ? "Transmissão ao vivo em andamento — assista e interaja agora!"
-                : "Você será notificado quando a próxima live começar"}
+                ? "TransmissÃ£o ao vivo em andamento â€” assista e interaja agora!"
+                : "VocÃª serÃ¡ notificado quando a prÃ³xima live comeÃ§ar"}
             </p>
           </div>
         </header>

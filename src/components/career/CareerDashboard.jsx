@@ -1,6 +1,6 @@
-
+﻿
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
  // Added User import
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,7 +40,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
   const loadFeaturedContent = async () => {
     setIsLoadingContent(true);
     try {
-      const contents = await base44.entities.Content.filter({ is_published: true }, "-created_date", 6);
+      const contents = await appClient.entities.Content.filter({ is_published: true }, "-created_date", 6);
       setFeaturedContents(contents.slice(0, 6)); // Pega os 6 mais recentes
     } catch (error) {
       console.error("Error loading featured content:", error);
@@ -52,7 +52,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
   // Added handleUserUpdate function
   const handleUserUpdate = async () => {
     try {
-      const updatedUser = await base44.auth.me();
+      const updatedUser = await appClient.auth.me();
       setCurrentUser(updatedUser);
     } catch (error) {
       console.error("Error refreshing user data:", error);
@@ -69,10 +69,10 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
   const generalProgress = (averageRating / 10) * 100;
 
   const stats = [
-    { label: "Vídeos Enviados", value: uploads?.length || 0, icon: Video, color: "text-cyan-400" },
+    { label: "VÃ­deos Enviados", value: uploads?.length || 0, icon: Video, color: "text-cyan-400" },
     { label: "Mentorias Assistidas", value: completedMentorias, icon: Star, color: "text-yellow-400" },
     { label: "Progresso Geral", value: `${Math.round(generalProgress)}%`, icon: TrendingUp, color: "text-green-400" },
-    { label: "Nota Média", value: averageRating.toFixed(1), icon: Award, color: "text-purple-400" }
+    { label: "Nota MÃ©dia", value: averageRating.toFixed(1), icon: Award, color: "text-purple-400" }
   ];
 
   return (
@@ -119,24 +119,24 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-400 mb-6">Envie seus vídeos de desempenho e fotos para marketing.</p>
+            <p className="text-gray-400 mb-6">Envie seus vÃ­deos de desempenho e fotos para marketing.</p>
             <div className="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-cyan-400/50 transition-colors duration-300">
               <Upload className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-500 font-medium">Clique aqui para ir à galeria de material</p>
-              <p className="text-xs text-gray-600 mt-2">Envie vídeos de jogos, treinos ou marketing</p>
+              <p className="text-gray-500 font-medium">Clique aqui para ir Ã  galeria de material</p>
+              <p className="text-xs text-gray-600 mt-2">Envie vÃ­deos de jogos, treinos ou marketing</p>
             </div>
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* Módulos de Acompanhamento */}
+      {/* MÃ³dulos de Acompanhamento */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={cardVariants}
         transition={{ delay: 0.4 }}
       >
-        <h2 className="text-2xl font-bold mb-6 text-white">Módulos de Acompanhamento</h2>
+        <h2 className="text-2xl font-bold mb-6 text-white">MÃ³dulos de Acompanhamento</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* Performance Analysis - ATIVADO */}
@@ -146,16 +146,16 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
                 <div className="w-12 h-12 bg-blue-400/10 border border-blue-400/30 rounded-xl flex items-center justify-center">
                   <BarChart3 className="w-6 h-6 text-blue-400" />
                 </div>
-                Análise de Performance
+                AnÃ¡lise de Performance
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-300 text-sm leading-relaxed">
-                Acesse relatórios detalhados sobre sua performance em campo com dados reais conectados ao seu perfil.
+                Acesse relatÃ³rios detalhados sobre sua performance em campo com dados reais conectados ao seu perfil.
               </p>
               <Button asChild className="w-full bg-black text-blue-400 hover:bg-blue-400/10 font-bold py-3 rounded-lg shadow-lg border border-blue-400">
                 <Link to={createPageUrl("AnalisePerformance")}>
-                  Ver Relatórios
+                  Ver RelatÃ³rios
                 </Link>
               </Button>
             </CardContent>
@@ -173,7 +173,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-300 text-sm leading-relaxed">
-                Acesse conteúdos e sessões de mentoria com especialistas reais cadastrados na plataforma.
+                Acesse conteÃºdos e sessÃµes de mentoria com especialistas reais cadastrados na plataforma.
               </p>
               <Button asChild className="w-full bg-black text-green-400 hover:bg-green-400/10 font-bold py-3 rounded-lg shadow-lg border border-green-400">
                 <Link to={createPageUrl("RevelaTalentos")}>
@@ -195,7 +195,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-300 text-sm leading-relaxed">
-                Explore oportunidades no futebol europeu através de nossa rede de scouts.
+                Explore oportunidades no futebol europeu atravÃ©s de nossa rede de scouts.
               </p>
               <Button asChild className="w-full bg-black text-purple-400 hover:bg-purple-400/10 font-bold py-3 rounded-lg shadow-lg border border-purple-400">
                 <Link to={createPageUrl("PlanoInternacional")}>
@@ -214,7 +214,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
         variants={cardVariants}
         transition={{ delay: 0.5 }}
       >
-        <h2 className="text-2xl font-bold mb-6 text-white">Conteúdos Destacados do Revela Talentos</h2>
+        <h2 className="text-2xl font-bold mb-6 text-white">ConteÃºdos Destacados do Revela Talentos</h2>
         {isLoadingContent ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(6)].map((_, i) => (
@@ -231,7 +231,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {featuredContents.map((content, index) => (
               <motion.div
-                key={base44.entities.Content.id}
+                key={content.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
@@ -242,23 +242,23 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
                   <Card className="bg-gray-900/50 border-gray-800 hover:border-cyan-400/50 transition-all duration-300 h-full">
                     <div className="relative h-24 overflow-hidden">
                       <img
-                        src={base44.entities.Content.thumbnail_url || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=400&h=225&auto=format&fit=crop"}
-                        alt={base44.entities.Content.title}
+                        src={content.thumbnail_url || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=400&h=225&auto=format&fit=crop"}
+                        alt={content.title}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <Play className="w-6 h-6 text-white" />
                       </div>
-                      <Badge className={`absolute top-1 right-1 text-xs ${base44.entities.Content.access_level === 'elite' ? 'bg-yellow-500/80 text-black' : 'bg-blue-500/80 text-white'}`}>
-                        {base44.entities.Content.access_level === 'elite' ? 'E' : 'B'}
+                      <Badge className={`absolute top-1 right-1 text-xs ${content.access_level === 'elite' ? 'bg-yellow-500/80 text-black' : 'bg-blue-500/80 text-white'}`}>
+                        {content.access_level === 'elite' ? 'E' : 'B'}
                       </Badge>
                     </div>
                     <CardContent className="p-3">
                       <h3 className="text-white text-sm font-medium line-clamp-2 leading-tight">
-                        {base44.entities.Content.title}
+                        {content.title}
                       </h3>
                       <p className="text-gray-400 text-xs mt-1">
-                        {base44.entities.Content.duration || 15}min
+                        {content.duration || 15}min
                       </p>
                     </CardContent>
                   </Card>
@@ -271,7 +271,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
         <div className="text-center mt-6">
           <Button asChild variant="outline" className="border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black">
             <Link to={createPageUrl("RevelaTalentos")}>
-              Ver Todos os Conteúdos
+              Ver Todos os ConteÃºdos
             </Link>
           </Button>
         </div>
@@ -282,6 +282,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
     </div>
   );
 }
+
 
 
 

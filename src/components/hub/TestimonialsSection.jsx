@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Play, X } from 'lucide-react';
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 import { Button } from '@/components/ui/button';
 
 const VideoModal = ({ videoUrl, onClose }) => {
@@ -45,7 +45,7 @@ export default function TestimonialsSection() {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const data = await base44.entities.Testimonial.filter({ is_active: true });
+        const data = await appClient.entities.Testimonial.filter({ is_active: true });
         setTestimonials(data);
       } catch (error) {
         console.error("Failed to fetch testimonials", error);
@@ -77,7 +77,7 @@ export default function TestimonialsSection() {
             Depoimentos que <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-lime-400">Inspiram</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Histórias reais de atletas que transformaram suas carreiras
+            HistÃ³rias reais de atletas que transformaram suas carreiras
           </p>
         </motion.div>
 

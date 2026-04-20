@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -24,35 +24,34 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 
-// Versículos pré-definidos como fallback
+// VersÃ­culos prÃ©-definidos como fallback
 const fallbackVerses = [
   {
     verse: "Posso todas as coisas naquele que me fortalece.",
     reference: "Filipenses 4:13",
-    reflection: "No futebol, como na vida, enfrentamos desafios que parecem impossíveis. Mas com fé e determinação, podemos superar qualquer obstáculo e alcançar nossos sonhos."
+    reflection: "No futebol, como na vida, enfrentamos desafios que parecem impossÃ­veis. Mas com fÃ© e determinaÃ§Ã£o, podemos superar qualquer obstÃ¡culo e alcanÃ§ar nossos sonhos."
   },
   {
-    verse: "Não foi Deus que lhe disse: Seja forte e corajoso? Não tenha medo, não desanime, pois o Senhor, o seu Deus, estará com você por onde você andar.",
-    reference: "Josué 1:9",
-    reflection: "Cada jogo, cada treino é uma oportunidade de mostrar coragem. Quando confiamos em algo maior que nós mesmos, encontramos a força para seguir em frente mesmo nas derrotas."
+    verse: "NÃ£o foi Deus que lhe disse: Seja forte e corajoso? NÃ£o tenha medo, nÃ£o desanime, pois o Senhor, o seu Deus, estarÃ¡ com vocÃª por onde vocÃª andar.",
+    reference: "JosuÃ© 1:9",
+    reflection: "Cada jogo, cada treino Ã© uma oportunidade de mostrar coragem. Quando confiamos em algo maior que nÃ³s mesmos, encontramos a forÃ§a para seguir em frente mesmo nas derrotas."
   },
   {
-    verse: "Os planos do Senhor permanecem para sempre; os propósitos do seu coração, por todas as gerações.",
+    verse: "Os planos do Senhor permanecem para sempre; os propÃ³sitos do seu coraÃ§Ã£o, por todas as geraÃ§Ãµes.",
     reference: "Salmos 33:11",
-    reflection: "Sua jornada no futebol faz parte de um propósito maior. Cada passo, cada conquista e até mesmo cada dificuldade contribuem para o seu crescimento como atleta e pessoa."
+    reflection: "Sua jornada no futebol faz parte de um propÃ³sito maior. Cada passo, cada conquista e atÃ© mesmo cada dificuldade contribuem para o seu crescimento como atleta e pessoa."
   },
   {
-    verse: "Tudo tem o seu tempo determinado, e há tempo para todo propósito debaixo do céu.",
+    verse: "Tudo tem o seu tempo determinado, e hÃ¡ tempo para todo propÃ³sito debaixo do cÃ©u.",
     reference: "Eclesiastes 3:1",
-    reflection: "Na carreira esportiva, aprendemos que cada fase tem seu momento. Paciência e perseverança são virtudes essenciais para alcançar nossos objetivos no futebol."
+    reflection: "Na carreira esportiva, aprendemos que cada fase tem seu momento. PaciÃªncia e perseveranÃ§a sÃ£o virtudes essenciais para alcanÃ§ar nossos objetivos no futebol."
   },
   {
-    verse: "Mas os que esperam no Senhor renovarão as suas forças; subirão com asas como águias; correrão, e não se cansarão; caminharão, e não se fatigarão.",
-    reference: "Isaías 40:31",
-    reflection: "O preparo físico e mental são fundamentais, mas a força espiritual nos sustenta nos momentos mais desafiadores da nossa jornada esportiva."
+    verse: "Mas os que esperam no Senhor renovarÃ£o as suas forÃ§as; subirÃ£o com asas como Ã¡guias; correrÃ£o, e nÃ£o se cansarÃ£o; caminharÃ£o, e nÃ£o se fatigarÃ£o.",
+    reference: "IsaÃ­as 40:31",
+    reflection: "O preparo fÃ­sico e mental sÃ£o fundamentais, mas a forÃ§a espiritual nos sustenta nos momentos mais desafiadores da nossa jornada esportiva."
   }
 ];
 
@@ -73,9 +72,9 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
   const loadDailyVerse = async () => {
     setIsLoadingVerse(true);
     
-    // Usar diretamente o fallback devido a limitações de quota da API
+    // Usar diretamente o fallback devido a limitaÃ§Ãµes de quota da API
     try {
-      // Seleciona um versículo aleatório baseado no dia atual para consistência
+      // Seleciona um versÃ­culo aleatÃ³rio baseado no dia atual para consistÃªncia
       const today = new Date();
       // Calculate day of the year (0-indexed)
       const startOfYear = new Date(today.getFullYear(), 0, 0);
@@ -92,7 +91,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
       setIsDailyVerseLiked(false);
     } catch (error) {
       console.error("Error loading daily verse:", error);
-      // Fallback para o primeiro versículo se houver qualquer problema inesperado (e.g. if fallbackVerses is empty)
+      // Fallback para o primeiro versÃ­culo se houver qualquer problema inesperado (e.g. if fallbackVerses is empty)
       setDailyVerse(fallbackVerses[0]); // Ensure there's always at least one verse
       setDailyVerseLikes(12);
       setIsDailyVerseLiked(false);
@@ -109,16 +108,16 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
         case 'complete_profile':
           // Auto-populate missing profile fields
           if (!user.career_objectives) {
-            updateData.career_objectives = "Alcançar o futebol profissional e representar meu país em competições internacionais.";
+            updateData.career_objectives = "AlcanÃ§ar o futebol profissional e representar meu paÃ­s em competiÃ§Ãµes internacionais.";
           }
           if (!user.playing_style) {
-            updateData.playing_style = "Jogador técnico com boa visão de jogo";
+            updateData.playing_style = "Jogador tÃ©cnico com boa visÃ£o de jogo";
           }
           break;
         case 'upload_video':
           // This should trigger the tab change on the PlanoCarreiraPage
           setActiveTab('upload');
-          toast.info("Acesse a aba 'Upload' para enviar seu vídeo.");
+          toast.info("Acesse a aba 'Upload' para enviar seu vÃ­deo.");
           return;
         case 'performance_analysis':
           // Redirect to performance analysis
@@ -133,7 +132,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
       }
     } catch (error) {
       console.error("Error handling suggestion:", error);
-      toast.error("Não foi possível aplicar a sugestão.");
+      toast.error("NÃ£o foi possÃ­vel aplicar a sugestÃ£o.");
     }
   };
 
@@ -167,7 +166,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
 
   const stories = [
     { id: 'upload', icon: Plus, label: 'Upload', color: 'from-green-400 to-emerald-500', action: () => setActiveTab('upload') },
-    { id: 'videos', icon: Video, label: `${uploads?.length || 0} Vídeos`, color: 'from-blue-400 to-cyan-500' },
+    { id: 'videos', icon: Video, label: `${uploads?.length || 0} VÃ­deos`, color: 'from-blue-400 to-cyan-500' },
     { id: 'mentorias', icon: Star, label: `${completedMentorias} Mentorias`, color: 'from-yellow-400 to-orange-500' },
     { id: 'performance', icon: Trophy, label: `${averageRating.toFixed(1)} Nota`, color: 'from-purple-400 to-pink-500' }
   ];
@@ -177,21 +176,21 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
     {
       id: 'complete_profile',
       title: 'Complete seu perfil',
-      description: 'Adicione mais informações profissionais',
+      description: 'Adicione mais informaÃ§Ãµes profissionais',
       type: 'complete_profile',
       icon: UserCheck
     },
     {
       id: 'upload_video',
-      title: 'Envie um vídeo',
+      title: 'Envie um vÃ­deo',
       description: 'Mostre suas habilidades',
       type: 'upload_video',
       icon: Video
     },
     {
       id: 'performance_analysis',
-      title: 'Análise de Performance',
-      description: 'Veja seus dados estatísticos',
+      title: 'AnÃ¡lise de Performance',
+      description: 'Veja seus dados estatÃ­sticos',
       type: 'performance_analysis',
       icon: BarChart3
     }
@@ -273,8 +272,8 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
           <Link to={createPageUrl("AnalisePerformance")}>
             <CardContent className="p-4 text-center">
               <BarChart3 className="w-8 h-8 text-white mx-auto mb-2" />
-              <h3 className="font-bold text-white text-sm">Análise Performance</h3>
-              <p className="text-xs text-gray-400 mt-1">{performance?.length || 0} análises</p>
+              <h3 className="font-bold text-white text-sm">AnÃ¡lise Performance</h3>
+              <p className="text-xs text-gray-400 mt-1">{performance?.length || 0} anÃ¡lises</p>
             </CardContent>
           </Link>
         </Card>
@@ -286,7 +285,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
             <CardContent className="p-4 text-center">
               <Users className="w-8 h-8 text-white mx-auto mb-2" />
               <h3 className="font-bold text-white text-sm">Mentorias</h3>
-              <p className="text-xs text-gray-400 mt-1">{completedMentorias} concluídas</p>
+              <p className="text-xs text-gray-400 mt-1">{completedMentorias} concluÃ­das</p>
             </CardContent>
           </Link>
         </Card>
@@ -347,7 +346,7 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
           <CardHeader>
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
               <Star className="w-5 h-5 text-yellow-400" />
-              Sugestões para Você
+              SugestÃµes para VocÃª
             </h3>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -466,4 +465,5 @@ export default function CareerFeed({ user, uploads, progress, performance, gameS
     </div>
   );
 }
+
 

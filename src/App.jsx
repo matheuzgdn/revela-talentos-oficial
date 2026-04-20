@@ -7,9 +7,10 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import CheckoutSuccess from './pages/checkout';
+import LoginPage from './pages/Login';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import { base44 } from '@/api/base44Client';
+import { redirectToPlatformLogin } from '@/lib/auth-routing';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -22,7 +23,7 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 // Helper to redirect to login when hitting a protected route
 const LoginRedirect = () => {
   useEffect(() => {
-    base44.auth.redirectToLogin(window.location.href);
+    redirectToPlatformLogin(window.location.href);
   }, []);
   return null;
 };
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={
         <LayoutWrapper currentPageName={mainPageKey}>
           <MainPage />

@@ -1,20 +1,25 @@
 {
-  "name": "base44-app",
+  "name": "revela-talentos-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "set VITE_BASE44_APP_ID=69965fa12ed67581f8d115e7 && set VITE_BASE44_APP_BASE_URL=https://revelatalentos.base44.app && vite",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --quiet",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "supabase:verify": "node scripts/verify-supabase-setup.mjs",
+    "supabase:bootstrap-admin": "node scripts/bootstrap-admin-user.mjs",
+    "supabase:configure-google": "node scripts/configure-google-auth.mjs",
+    "supabase:login": "npx supabase login",
+    "supabase:link": "npx supabase link --project-ref nttjbhzigaxeohyclsiw",
+    "supabase:db:push": "npx supabase db push",
+    "supabase:functions:deploy": "npx supabase functions deploy generate-hms-token --project-ref nttjbhzigaxeohyclsiw --use-api"
   },
   "dependencies": {
     "@100mslive/react-sdk": "^0.11.2",
-    "@base44/sdk": "^0.8.26",
-    "@base44/vite-plugin": "^1.0.10",
     "@hello-pangea/dnd": "^17.0.0",
     "@hookform/resolvers": "^4.1.2",
     "@radix-ui/react-accordion": "^1.2.3",
@@ -46,6 +51,7 @@
     "@radix-ui/react-tooltip": "^1.1.8",
     "@stripe/react-stripe-js": "^3.0.0",
     "@stripe/stripe-js": "^5.2.0",
+    "@supabase/supabase-js": "^2.103.3",
     "@tanstack/react-query": "^5.84.1",
     "bcryptjs": "^3.0.3",
     "canvas-confetti": "^1.9.4",

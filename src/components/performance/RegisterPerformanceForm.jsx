@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
+import { appClient } from "@/api/backendClient";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ export default function RegisterPerformanceForm({ user, onNewData }) {
   useEffect(() => {
     const fetchUploads = async () => {
       if (user?.id) {
-        const userUploads = await base44.entities.AthleteUpload.filter({ user_id: user.id, file_type: 'video' });
+        const userUploads = await appClient.entities.AthleteUpload.filter({ user_id: user.id, file_type: 'video' });
         setUploads(userUploads);
       }
     };
@@ -34,18 +34,18 @@ export default function RegisterPerformanceForm({ user, onNewData }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.associated_video_url || !formData.opponent || !formData.game_date || !formData.minutes_played) {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      toast.error("Por favor, preencha todos os campos obrigatÃ³rios.");
       return;
     }
     setIsLoading(true);
     try {
-      await base44.entities.PerformanceData.create({
+      await appClient.entities.PerformanceData.create({
         user_id: user.id,
         ...formData,
         minutes_played: parseInt(formData.minutes_played),
         status: 'pending_analysis'
       });
-      toast.success("Partida registrada com sucesso! Aguardando análise.");
+      toast.success("Partida registrada com sucesso! Aguardando anÃ¡lise.");
       setFormData({
         associated_video_url: "",
         opponent: "",
@@ -76,16 +76,16 @@ export default function RegisterPerformanceForm({ user, onNewData }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-3 text-cyan-400">
           <PlusCircle />
-          Registrar Partida para Análise
+          Registrar Partida para AnÃ¡lise
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-white mb-2 text-sm">Vídeo da Partida (Obrigatório)</label>
+            <label className="block text-white mb-2 text-sm">VÃ­deo da Partida (ObrigatÃ³rio)</label>
             <Select onValueChange={handleSelectChange} value={formData.associated_video_url}>
               <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                <SelectValue placeholder="Selecione um vídeo enviado..." />
+                <SelectValue placeholder="Selecione um vÃ­deo enviado..." />
               </SelectTrigger>
               <SelectContent>
                 {uploads.length > 0 ? (
@@ -96,27 +96,28 @@ export default function RegisterPerformanceForm({ user, onNewData }) {
                   ))
                 ) : (
                   <SelectItem value="disabled" disabled>
-                    Nenhum vídeo encontrado. Faça upload primeiro.
+                    Nenhum vÃ­deo encontrado. FaÃ§a upload primeiro.
                   </SelectItem>
                 )}
               </SelectContent>
             </Select>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
-            <Input name="opponent" placeholder="Adversário" value={formData.opponent} onChange={handleInputChange} className="bg-gray-800 border-gray-700 text-white" required />
+            <Input name="opponent" placeholder="AdversÃ¡rio" value={formData.opponent} onChange={handleInputChange} className="bg-gray-800 border-gray-700 text-white" required />
             <Input name="game_date" type="date" value={formData.game_date} onChange={handleInputChange} className="bg-gray-800 border-gray-700 text-white" required />
             <Input name="minutes_played" type="number" placeholder="Minutos jogados" value={formData.minutes_played} onChange={handleInputChange} className="bg-gray-800 border-gray-700 text-white" required />
           </div>
-          <Textarea name="athlete_feeling" placeholder="Como você se sentiu na partida?" value={formData.athlete_feeling} onChange={handleInputChange} className="bg-gray-800 border-gray-700 text-white" />
+          <Textarea name="athlete_feeling" placeholder="Como vocÃª se sentiu na partida?" value={formData.athlete_feeling} onChange={handleInputChange} className="bg-gray-800 border-gray-700 text-white" />
           <Textarea name="athlete_weekly_summary" placeholder="Como foi sua semana de treinos?" value={formData.athlete_weekly_summary} onChange={handleInputChange} className="bg-gray-800 border-gray-700 text-white" />
           <Button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700" disabled={isLoading}>
             {isLoading ? <Loader2 className="animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-            Enviar para Análise
+            Enviar para AnÃ¡lise
           </Button>
         </form>
       </CardContent>
     </Card>
   );
 }
+
 
 

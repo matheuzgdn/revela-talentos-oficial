@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Clock, User as UserIcon, Star, Bell, ChevronRight, Plus, TrendingUp, Flame, Target, Dumbbell, Brain, Activity, Apple, Lock, X, ShoppingCart } from "lucide-react";
+import { Play, Star, ChevronRight, Plus, Flame, Target, Dumbbell, Brain, Activity, Apple, Lock, X, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import VideoPlayer from "../components/content/VideoPlayer";
 import LiveStreamPlayer from "../components/content/LiveStreamPlayer";
 import PendingApproval from "../components/auth/PendingApproval";
@@ -15,6 +14,7 @@ import NotificationsPanel from "../components/notifications/NotificationsPanel";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
 import { createPageUrl } from "@/utils";
+import { redirectToPlatformLogin } from "@/lib/auth-routing";
 
 export default function RevelaTalentosPage() {
   const { t } = useLanguage();
@@ -40,25 +40,30 @@ export default function RevelaTalentosPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Verifica se o conteúdo está bloqueado para este usuário
+  const isAdminUser = useCallback(
+    (candidate) => candidate?.role === 'admin' || candidate?.is_revela_admin === true,
+    []
+  );
+
+  // Verifica se o conteÃºdo estÃ¡ bloqueado para este usuÃ¡rio
   const isContentLocked = user && user.has_revela_talentos_access === false;
 
   const loadContentData = useCallback(async (currentUser) => {
     try {
-      const fetchedContents = await base44.entities.Content.filter({
+      const fetchedContents = await appClient.entities.Content.filter({
         is_published: true
       }, "-created_date", 50).catch(() => []);
       setContents(fetchedContents);
 
       // Carregar atletas em destaque
-      const stories = await base44.entities.AthleteStory.filter({
+      const stories = await appClient.entities.AthleteStory.filter({
         is_active: true,
         category: 'atleta'
       }, "display_order", 20).catch(() => []);
       setAthleteStories(stories);
 
       if (currentUser) {
-        base44.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).then(progress => {
+        appClient.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).then(progress => {
           setUserProgress(progress);
         }).catch(() => { });
       }
@@ -69,7 +74,7 @@ export default function RevelaTalentosPage() {
 
   const checkAccess = useCallback(async () => {
     try {
-      const currentUser = await base44.auth.me().catch(() => null);
+      const currentUser = await appClient.auth.me().catch(() => null);
 
       if (!currentUser) {
         setShowLandingPage(true);
@@ -78,8 +83,9 @@ export default function RevelaTalentosPage() {
         return;
       }
 
-      // Redirecionar automaticamente para a Área de Membros se o admin ativou esse acesso
-      if (currentUser.has_zona_membros_access === true) {
+      // Usuários comuns com acesso à Zona de Membros entram por lá.
+      // Admins permanecem na home principal da plataforma.
+      if (currentUser.has_zona_membros_access === true && !isAdminUser(currentUser)) {
         window.location.href = createPageUrl('ZonaMembros');
         return;
       }
@@ -89,7 +95,7 @@ export default function RevelaTalentosPage() {
 
       // Aguardar platform settings ANTES de finalizar o loading
       try {
-        const platformSettings = await base44.entities.PlatformSettings.list();
+        const platformSettings = await appClient.entities.PlatformSettings.list();
         const restrictionSetting = platformSettings.find(s => s.setting_key === 'is_platform_restricted');
         const isRestricted = restrictionSetting?.setting_value === 'true';
         setIsPlatformRestricted(isRestricted);
@@ -105,7 +111,7 @@ export default function RevelaTalentosPage() {
       setIsCheckingAccess(false);
       loadContentData(null);
     }
-  }, [loadContentData]);
+  }, [isAdminUser, loadContentData]);
 
 
 
@@ -117,7 +123,7 @@ export default function RevelaTalentosPage() {
   useEffect(() => {
     const checkLive = async () => {
       try {
-        const settings = await base44.entities.PlatformSettings.list();
+        const settings = await appClient.entities.PlatformSettings.list();
         const liveSetting = settings.find(s => s.setting_key === 'is_live');
         setIsLive(liveSetting?.setting_value === 'true');
       } catch { }
@@ -136,17 +142,17 @@ export default function RevelaTalentosPage() {
 
   const createWelcomeNotification = async () => {
     try {
-      await base44.entities.Notification.create({
+      await appClient.entities.Notification.create({
         user_id: user.id,
-        title: '🎉 Bem-vindo à EC10 Talentos!',
-        message: 'Estamos muito felizes em ter você conosco! Explore todo o conteúdo exclusivo, participe das seletivas e acompanhe seu desenvolvimento como atleta.',
+        title: 'ðŸŽ‰ Bem-vindo Ã  EC10 Talentos!',
+        message: 'Estamos muito felizes em ter vocÃª conosco! Explore todo o conteÃºdo exclusivo, participe das seletivas e acompanhe seu desenvolvimento como atleta.',
         type: 'general',
         priority: 'high',
         is_read: false
       });
 
       // Mark user as having seen welcome
-      await base44.auth.updateMe({ has_seen_welcome: true });
+      await appClient.auth.updateMe({ has_seen_welcome: true });
     } catch (error) {
       console.error('Error creating welcome notification:', error);
     }
@@ -157,7 +163,7 @@ export default function RevelaTalentosPage() {
       setShowLandingPage(true);
       return;
     }
-    // Conteúdo bloqueado: exibir modal de upgrade
+    // ConteÃºdo bloqueado: exibir modal de upgrade
     if (isContentLocked) {
       setShowUpgradeModal(true);
       return;
@@ -201,7 +207,7 @@ export default function RevelaTalentosPage() {
 
   const planosContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
 
-  // Conteúdos por categoria
+  // ConteÃºdos por categoria
   const mentoriaContents = useMemo(() => regularContents.filter(c => c.category === 'mentoria'), [regularContents]);
   const preparacaoFisicaContents = useMemo(() => regularContents.filter(c => c.category === 'preparacao_fisica'), [regularContents]);
   const treinoTaticoContents = useMemo(() => regularContents.filter(c => c.category === 'treino_tatico'), [regularContents]);
@@ -252,14 +258,7 @@ export default function RevelaTalentosPage() {
 
   if (showLandingPage) {
     const openLogin = () => {
-      const isBase44 = window.location.host.endsWith('base44.app');
-      const nextPath = createPageUrl('ZonaMembros');
-      if (!isBase44) {
-        const base = `${window.location.protocol}//revelatalentos.base44.app`;
-        window.location.href = `${base}/login?from_url=${encodeURIComponent(base + nextPath)}`;
-      } else {
-        base44.auth.redirectToLogin(nextPath);
-      }
+      redirectToPlatformLogin(createPageUrl('ZonaMembros'));
     };
     return <RevelaTalentosLanding onLoginClick={openLogin} />;
   }
@@ -417,7 +416,7 @@ export default function RevelaTalentosPage() {
         </div>
       </section>
 
-      {/* ── LIVE BANNER ── Shows when admin is broadcasting */}
+      {/* â”€â”€ LIVE BANNER â”€â”€ Shows when admin is broadcasting */}
       {isLive && (
         <section className="px-4 md:px-6 py-2">
           <div className="max-w-7xl mx-auto">
@@ -443,10 +442,10 @@ export default function RevelaTalentosPage() {
                 {/* Text */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-red-400 text-xs font-black uppercase tracking-widest">🔴 AO VIVO AGORA</span>
+                    <span className="text-red-400 text-xs font-black uppercase tracking-widest">ðŸ”´ AO VIVO AGORA</span>
                   </div>
                   <h3 className="text-white font-black text-base md:text-lg leading-tight truncate">
-                    Live EC10 Talentos — transmissão ao vivo!
+                    Live EC10 Talentos â€” transmissÃ£o ao vivo!
                   </h3>
                   <p className="text-red-300/70 text-xs mt-0.5">Toque para assistir</p>
                 </div>
@@ -602,7 +601,7 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
-      {/* Preparação Física Section */}
+      {/* PreparaÃ§Ã£o FÃ­sica Section */}
       {preparacaoFisicaContents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
@@ -631,7 +630,7 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
-      {/* Treino Tático Section */}
+      {/* Treino TÃ¡tico Section */}
       {treinoTaticoContents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
@@ -689,7 +688,7 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
-      {/* Nutrição Section */}
+      {/* NutriÃ§Ã£o Section */}
       {nutricaoContents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
@@ -754,7 +753,7 @@ export default function RevelaTalentosPage() {
         user={user}
       />
 
-      {/* Upgrade Modal - Conteúdo Bloqueado */}
+      {/* Upgrade Modal - ConteÃºdo Bloqueado */}
       <AnimatePresence>
         {showUpgradeModal && (
           <motion.div
@@ -787,10 +786,10 @@ export default function RevelaTalentosPage() {
                 </div>
               </div>
               <h2 className="text-white font-black text-2xl text-center mb-2 tracking-tight">
-                Conteúdo <span className="text-[#00E5FF]">Bloqueado</span>
+                ConteÃºdo <span className="text-[#00E5FF]">Bloqueado</span>
               </h2>
               <p className="text-gray-400 text-sm text-center mb-6 leading-relaxed">
-                Este conteúdo faz parte do pacote completo da plataforma EC10 Talentos. Adquira agora para ter acesso ilimitado a todos os conteúdos, vídeos e recursos exclusivos.
+                Este conteÃºdo faz parte do pacote completo da plataforma EC10 Talentos. Adquira agora para ter acesso ilimitado a todos os conteÃºdos, vÃ­deos e recursos exclusivos.
               </p>
               <a
                 href="https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c"
@@ -806,7 +805,7 @@ export default function RevelaTalentosPage() {
                 onClick={() => setShowUpgradeModal(false)}
                 className="w-full py-3 text-gray-500 text-sm font-medium hover:text-gray-300 transition-colors"
               >
-                Agora não
+                Agora nÃ£o
               </button>
             </motion.div>
           </motion.div>
@@ -938,3 +937,4 @@ function PlanCard({ plano, index, onClick, t }) {
     </motion.div>
   );
 }
+

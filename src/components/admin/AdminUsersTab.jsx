@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { appClient } from "@/api/backendClient";
 
 
 
@@ -17,15 +17,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import AdminAthleteDetailsModal from "./AdminAthleteDetailsModal";
 import InviteAthleteModal from "./InviteAthleteModal";
 import CreateMemberUserModal from "./CreateMemberUserModal";
 import {
-  Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Upload, Eye, Target, Trophy,
+  Edit, Search, Check, Star, Shield, TrendingUp, X, BarChart3, Eye,
   Send, Loader2, Megaphone, Crown, Plus, Users,
-  GitBranch, EyeOff, Lock, Unlock, Bell, MessageCircle, Trash2
+  GitBranch, EyeOff, Lock, Unlock, Bell, Trash2
 } from
   "lucide-react";
 
@@ -68,7 +67,7 @@ const AthleteCard = ({ user, userData, onEdit, onSave, pipelines, userPipelines,
       const updateData = Object.fromEntries(
         Object.entries(draft).filter(([k]) => !NON_EDITABLE_KEYS.has(k))
       );
-      await base44.entities.User.update(user.id, updateData);
+      await appClient.entities.User.update(user.id, updateData);
       toast.success('Atleta atualizado com sucesso!');
       setShowEditModal(false);
       onSave?.();
@@ -267,19 +266,19 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
     name: '',
     description: '',
     color: 'blue',
-    stages: [{ name: 'Novo Lead', description: 'Atleta recém cadastrado', order: 1 }]
+    stages: [{ name: 'Novo Lead', description: 'Atleta recÃ©m cadastrado', order: 1 }]
   });
 
   const handleCreatePipeline = async () => {
     try {
-      await base44.entities.Pipeline.create(newPipeline);
+      await appClient.entities.Pipeline.create(newPipeline);
       toast.success('Pipeline criado com sucesso!');
       setShowCreatePipeline(false);
       setNewPipeline({
         name: '',
         description: '',
         color: 'blue',
-        stages: [{ name: 'Novo Lead', description: 'Atleta recém cadastrado', order: 1 }]
+        stages: [{ name: 'Novo Lead', description: 'Atleta recÃ©m cadastrado', order: 1 }]
       });
       onRefresh();
     } catch (error) {
@@ -326,13 +325,13 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {(pipelines || []).map((pipeline) =>
-          <Card key={base44.entities.Pipeline.id} className="bg-gray-800 border-gray-700">
+          <Card key={appClient.entities.Pipeline.id} className="bg-gray-800 border-gray-700">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full bg-${base44.entities.Pipeline.color}-500`} />
-                {base44.entities.Pipeline.name}
+                <div className={`w-3 h-3 rounded-full bg-${appClient.entities.Pipeline.color}-500`} />
+                {appClient.entities.Pipeline.name}
               </CardTitle>
-              <p className="text-xs text-gray-400">{base44.entities.Pipeline.description}</p>
+              <p className="text-xs text-gray-400">{appClient.entities.Pipeline.description}</p>
             </CardHeader>
             <CardContent>
               {/* Content can be added here if needed */}
@@ -373,7 +372,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
               </div>
             </div>
             <div>
-              <Label>Descrição</Label>
+              <Label>DescriÃ§Ã£o</Label>
               <Textarea
                 value={newbase44.entities.Pipeline.description}
                 onChange={(e) => setNewPipeline((prev) => ({ ...prev, description: e.target.value }))}
@@ -383,10 +382,10 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
             <div>
               <div className="flex justify-between items-center mb-3">
-                <Label>Estágios do Pipeline</Label>
+                <Label>EstÃ¡gios do Pipeline</Label>
                 <Button type="button" onClick={addStage} size="sm" className="bg-green-600 hover:bg-green-700">
                   <Plus className="w-3 h-3 mr-1" />
-                  Adicionar Estágio
+                  Adicionar EstÃ¡gio
                 </Button>
               </div>
               <div className="space-y-3">
@@ -394,13 +393,13 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
                   <div key={index} className="flex gap-2 items-start">
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <Input
-                        placeholder="Nome do estágio"
+                        placeholder="Nome do estÃ¡gio"
                         value={stage.name}
                         onChange={(e) => updateStage(index, 'name', e.target.value)}
                         className="bg-gray-800 border-gray-700" />
 
                       <Input
-                        placeholder="Descrição"
+                        placeholder="DescriÃ§Ã£o"
                         value={stage.description}
                         onChange={(e) => updateStage(index, 'description', e.target.value)}
                         className="bg-gray-800 border-gray-700" />
@@ -460,7 +459,7 @@ export default function AdminUsersTab() {
 
   const personas = [
     { id: "analyst_01", name: "Analista de Desempenho" },
-    { id: "physio_01", name: "Preparador Físico" },
+    { id: "physio_01", name: "Preparador FÃ­sico" },
     { id: "mentor_01", name: "Mentor de Carreira" },
     { id: "marketing_01", name: "Equipe de Marketing" }];
 
@@ -469,7 +468,7 @@ export default function AdminUsersTab() {
     if (!isBackgroundLoad) setIsLoading(true);
     try {
       // Load only users initially
-      const users = await base44.entities.User.list('-created_date', 100);
+      const users = await appClient.entities.User.list('-created_date', 100);
       setData((prev) => ({
         ...prev,
         users: users || [],
@@ -477,16 +476,16 @@ export default function AdminUsersTab() {
       if (!isBackgroundLoad) setIsLoading(false);
 
       // Load other data only when needed (in background)
-      base44.entities.Pipeline.filter({ is_active: true }).then((pipelines) => {
+      appClient.entities.Pipeline.filter({ is_active: true }).then((pipelines) => {
         setData((prev) => ({ ...prev, pipelines }));
       }).catch(() => { });
 
-      base44.entities.UserPipeline.list().then((userPipelines) => {
+      appClient.entities.UserPipeline.list().then((userPipelines) => {
         setData((prev) => ({ ...prev, userPipelines }));
       }).catch(() => { });
     } catch (error) {
       console.error('Error loading user data:', error);
-      toast.error('Erro ao carregar dados dos usuários.');
+      toast.error('Erro ao carregar dados dos usuÃ¡rios.');
       setIsLoading(false);
     }
   }, []);
@@ -499,7 +498,7 @@ export default function AdminUsersTab() {
   const loadPlatformSettings = async () => {
     setIsLoadingSettings(true);
     try {
-      const settings = await base44.entities.PlatformSettings.list();
+      const settings = await appClient.entities.PlatformSettings.list();
       const restrictionSetting = settings.find((s) => s.setting_key === 'is_platform_restricted');
       setIsPlatformRestricted(restrictionSetting?.setting_value === 'true');
     } catch (error) {
@@ -522,66 +521,66 @@ export default function AdminUsersTab() {
 
   const handleProfileVisit = async (user) => {
     try {
-      await base44.entities.Notification.create({
+      await appClient.entities.Notification.create({
         user_id: user.id,
         title: 'Visita ao Perfil',
         message: 'Eric Cena visitou seu perfil',
         type: 'profile_visit',
         priority: 'medium'
       });
-      toast.success(`Notificação de visita enviada para ${user.full_name}`);
+      toast.success(`NotificaÃ§Ã£o de visita enviada para ${user.full_name}`);
     } catch (error) {
       console.error('Error sending visit notification:', error);
-      toast.error('Erro ao enviar notificação');
+      toast.error('Erro ao enviar notificaÃ§Ã£o');
     }
   };
 
   const handleSubmitNotification = async () => {
     if (!notificationForm.title || !notificationForm.message) {
-      toast.error('Preencha título e mensagem');
+      toast.error('Preencha tÃ­tulo e mensagem');
       return;
     }
 
     try {
-      await base44.entities.Notification.create({
+      await appClient.entities.Notification.create({
         user_id: notificationTarget.id,
         title: notificationForm.title,
         message: notificationForm.message,
         type: notificationForm.type,
         priority: notificationForm.priority
       });
-      toast.success(`Notificação enviada para ${notificationTarget.full_name}`);
+      toast.success(`NotificaÃ§Ã£o enviada para ${notificationTarget.full_name}`);
       setShowNotificationModal(false);
       setNotificationTarget(null);
     } catch (error) {
       console.error('Error sending notification:', error);
-      toast.error('Erro ao enviar notificação');
+      toast.error('Erro ao enviar notificaÃ§Ã£o');
     }
   };
 
   const togglePlatformRestriction = async () => {
     try {
-      const settings = await base44.entities.PlatformSettings.list();
+      const settings = await appClient.entities.PlatformSettings.list();
       const restrictionSetting = settings.find((s) => s.setting_key === 'is_platform_restricted');
 
       const newValue = !isPlatformRestricted;
 
       if (restrictionSetting) {
-        await base44.entities.PlatformSettings.update(restrictionSetting.id, {
+        await appClient.entities.PlatformSettings.update(restrictionSetting.id, {
           setting_value: newValue.toString()
         });
       } else {
-        await base44.entities.PlatformSettings.create({
+        await appClient.entities.PlatformSettings.create({
           setting_key: 'is_platform_restricted',
           setting_value: newValue.toString()
         });
       }
 
       setIsPlatformRestricted(newValue);
-      toast.success(newValue ? 'Plataforma bloqueada para novos usuários' : 'Plataforma liberada para todos');
+      toast.success(newValue ? 'Plataforma bloqueada para novos usuÃ¡rios' : 'Plataforma liberada para todos');
     } catch (error) {
       console.error('Error toggling platform restriction:', error);
-      toast.error('Erro ao alterar configuração');
+      toast.error('Erro ao alterar configuraÃ§Ã£o');
     }
   };
 
@@ -662,23 +661,23 @@ export default function AdminUsersTab() {
       // The logic for role and is_revela_admin is now handled by handleRoleChange
       // so we can directly use updateData without further modification here.
 
-      await base44.entities.User.update(id, updateData);
+      await appClient.entities.User.update(id, updateData);
 
-      await base44.entities.Notification.create({
+      await appClient.entities.Notification.create({
         user_id: id,
         title: "Perfil Atualizado",
-        message: "Seu perfil foi atualizado pela administração.",
+        message: "Seu perfil foi atualizado pela administraÃ§Ã£o.",
         type: "general",
         priority: "medium"
       });
 
-      toast.success("Usuário atualizado com sucesso!");
+      toast.success("UsuÃ¡rio atualizado com sucesso!");
       setIsModalOpen(false);
       setEditingUser(null);
       loadAllData();
     } catch (error) {
       console.error("Failed to update user:", error);
-      toast.error("Falha ao atualizar usuário.");
+      toast.error("Falha ao atualizar usuÃ¡rio.");
     }
   };
 
@@ -689,8 +688,8 @@ export default function AdminUsersTab() {
   const confirmDeleteUser = async () => {
     if (!userToDelete) return;
     try {
-      await base44.entities.User.delete(userToDelete.id);
-      toast.success("Atleta excluído com sucesso.");
+      await appClient.entities.User.delete(userToDelete.id);
+      toast.success("Atleta excluÃ­do com sucesso.");
       setUserToDelete(null);
       loadAllData();
     } catch (error) {
@@ -701,8 +700,8 @@ export default function AdminUsersTab() {
 
   const handleToggleFeatureUpload = async (upload) => {
     try {
-      await base44.entities.AthleteUpload.update(upload.id, { is_featured: !upload.is_featured });
-      toast.success(`Upload ${!upload.is_featured ? 'destacado' : 'não destacado'} com sucesso!`);
+      await appClient.entities.AthleteUpload.update(upload.id, { is_featured: !upload.is_featured });
+      toast.success(`Upload ${!upload.is_featured ? 'destacado' : 'nÃ£o destacado'} com sucesso!`);
       loadAllData();
     } catch (error) {
       toast.error("Erro ao destacar upload.");
@@ -716,7 +715,7 @@ export default function AdminUsersTab() {
     try {
       const conversationId = `conv_${editingUser.id}_${Date.now()}`;
 
-      await base44.entities.ChatMessage.create({
+      await appClient.entities.ChatMessage.create({
         sender_id: replyAs,
         receiver_id: editingUser.id,
         conversation_id: conversationId,
@@ -754,7 +753,7 @@ export default function AdminUsersTab() {
   const handleSavePerformanceUpdate = async () => {
     if (!editingPerformanceItem) return;
     try {
-      await base44.entities.PerformanceData.update(editingPerformanceItem.id, {
+      await appClient.entities.PerformanceData.update(editingPerformanceItem.id, {
         ...performanceForm,
         status: 'completed'
       });
@@ -780,12 +779,12 @@ export default function AdminUsersTab() {
   const loadUserDetails = async (userId) => {
     try {
       const [uploads, messages, performance, progress] = await Promise.all([
-        base44.entities.AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
-        base44.entities.ChatMessage.filter({
+        appClient.entities.AthleteUpload.filter({ user_id: userId }, "-created_date", 20),
+        appClient.entities.ChatMessage.filter({
           $or: [{ sender_id: userId }, { receiver_id: userId }]
         }, "-created_date", 50),
-        base44.entities.PerformanceData.filter({ user_id: userId }, "-game_date", 20),
-        base44.entities.UserProgress.filter({ user_id: userId }, null, 50)]
+        appClient.entities.PerformanceData.filter({ user_id: userId }, "-game_date", 20),
+        appClient.entities.UserProgress.filter({ user_id: userId }, null, 50)]
       );
 
       setData((prev) => ({
@@ -830,8 +829,8 @@ export default function AdminUsersTab() {
                 </h3>
                 <p className="text-sm text-gray-400">
                   {isPlatformRestricted ?
-                    'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
-                    'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
+                    'Apenas usuÃ¡rios aprovados podem acessar. Novos usuÃ¡rios verÃ£o tela de aguardando aprovaÃ§Ã£o.' :
+                    'Todos os usuÃ¡rios tÃªm acesso automÃ¡tico ao Revela Talentos apÃ³s login.'}
                 </p>
               </div>
             </div>
@@ -1014,7 +1013,7 @@ export default function AdminUsersTab() {
               <div className="space-y-4 mb-4">
                 <div className="flex items-center gap-3">
                   <TrendingUp className="w-6 h-6 text-purple-400" />
-                  <h3 className="text-xl font-bold text-white">Visão CRM por Categoria</h3>
+                  <h3 className="text-xl font-bold text-white">VisÃ£o CRM por Categoria</h3>
                   <Badge className="bg-purple-600/20 text-purple-400">Organizada por Acesso</Badge>
                 </div>
               </div>
@@ -1184,7 +1183,7 @@ export default function AdminUsersTab() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Bell className="w-5 h-5 text-blue-400" />
-              Enviar Notificação para {notificationTarget?.full_name}
+              Enviar NotificaÃ§Ã£o para {notificationTarget?.full_name}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -1210,14 +1209,14 @@ export default function AdminUsersTab() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="low">Baixa</SelectItem>
-                  <SelectItem value="medium">Média</SelectItem>
+                  <SelectItem value="medium">MÃ©dia</SelectItem>
                   <SelectItem value="high">Alta</SelectItem>
                   <SelectItem value="urgent">Urgente</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label className="text-gray-400">Título</Label>
+              <Label className="text-gray-400">TÃ­tulo</Label>
               <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
             </div>
             <div>
@@ -1244,21 +1243,21 @@ export default function AdminUsersTab() {
                 <div className="space-y-3">
                   <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
                   <div className="p-4 bg-gray-800 rounded-lg space-y-2">
-                    <h4 className="font-semibold text-white">Diário do Atleta</h4>
+                    <h4 className="font-semibold text-white">DiÃ¡rio do Atleta</h4>
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
                   </div>
                 </div>
               }
               <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">AdversÃ¡rio</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Minutos Jogados</Label><Input type="number" value={performanceForm.minutes_played} onChange={(e) => setPerformanceForm((p) => ({ ...p, minutes_played: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Gols</Label><Input type="number" value={performanceForm.goals} onChange={(e) => setPerformanceForm((p) => ({ ...p, goals: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
-                <div><Label className="text-gray-400">Assistências</Label><Input type="number" value={performanceForm.assists} onChange={(e) => setPerformanceForm((p) => ({ ...p, assists: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">AssistÃªncias</Label><Input type="number" value={performanceForm.assists} onChange={(e) => setPerformanceForm((p) => ({ ...p, assists: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Nota (1-10)</Label><Input type="number" step="0.1" value={performanceForm.rating} onChange={(e) => setPerformanceForm((p) => ({ ...p, rating: parseFloat(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
               </div>
-              <div><Label className="text-gray-400">Observações do Analista</Label><Textarea value={performanceForm.analyst_notes} onChange={(e) => setPerformanceForm((p) => ({ ...p, analyst_notes: e.target.value }))} className="bg-gray-800 border-gray-700 h-24" /></div>
+              <div><Label className="text-gray-400">ObservaÃ§Ãµes do Analista</Label><Textarea value={performanceForm.analyst_notes} onChange={(e) => setPerformanceForm((p) => ({ ...p, analyst_notes: e.target.value }))} className="bg-gray-800 border-gray-700 h-24" /></div>
               <DialogFooter><Button variant="outline" onClick={() => setEditingPerformanceItem(null)}>Cancelar</Button><Button onClick={handleSavePerformanceUpdate}>Salvar Performance</Button></DialogFooter>
             </div>
           }
@@ -1274,7 +1273,7 @@ export default function AdminUsersTab() {
             </DialogTitle>
           </DialogHeader>
           <div className="py-4 text-gray-300">
-            Tem certeza de que deseja excluir permanentemente o atleta <strong>{userToDelete?.full_name}</strong>? Esta ação não pode ser desfeita e todos os dados serão perdidos.
+            Tem certeza de que deseja excluir permanentemente o atleta <strong>{userToDelete?.full_name}</strong>? Esta aÃ§Ã£o nÃ£o pode ser desfeita e todos os dados serÃ£o perdidos.
           </div>
           <DialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button variant="outline" className="text-gray-400 border-gray-700 hover:bg-gray-800" onClick={() => setUserToDelete(null)}>

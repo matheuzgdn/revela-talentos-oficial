@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState } from "react";
+import { appClient } from "@/api/backendClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,10 +75,10 @@ export default function AdminPackagesTab({ packages, onRefresh }) {
 
     try {
       if (editingPackage) {
-        await base44.entities.SubscriptionPackage.update(editingPackage.id, payload);
+        await appClient.entities.SubscriptionPackage.update(editingPackage.id, payload);
         toast.success("Pacote atualizado com sucesso!");
       } else {
-        await base44.entities.SubscriptionPackage.create(payload);
+        await appClient.entities.SubscriptionPackage.create(payload);
         toast.success("Pacote criado com sucesso!");
       }
       resetAndRefresh();
@@ -89,9 +89,9 @@ export default function AdminPackagesTab({ packages, onRefresh }) {
   };
 
   const handleDelete = async (packageId) => {
-    if (window.confirm("Tem certeza que deseja apagar este pacote? Esta ação não pode ser desfeita.")) {
+    if (window.confirm("Tem certeza que deseja apagar este pacote? Esta aÃ§Ã£o nÃ£o pode ser desfeita.")) {
       try {
-        await base44.entities.SubscriptionPackage.delete(packageId);
+        await appClient.entities.SubscriptionPackage.delete(packageId);
         toast.success("Pacote apagado com sucesso!");
         onRefresh();
       } catch (error) {
@@ -136,7 +136,7 @@ export default function AdminPackagesTab({ packages, onRefresh }) {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input name="name" value={formState.name} onChange={handleFormChange} placeholder="Nome do Pacote" className="bg-gray-700 text-white border-gray-600" />
-              <Input type="number" name="price" value={formState.price} onChange={handleFormChange} placeholder="Preço (R$)" className="bg-gray-700 text-white border-gray-600" />
+              <Input type="number" name="price" value={formState.price} onChange={handleFormChange} placeholder="PreÃ§o (R$)" className="bg-gray-700 text-white border-gray-600" />
               <select name="billing_period" value={formState.billing_period} onChange={handleFormChange} className="w-full bg-gray-700 text-white border-gray-600 rounded-md p-2">
                 <option value="monthly">Mensal</option>
                 <option value="quarterly">Trimestral</option>
@@ -201,3 +201,4 @@ export default function AdminPackagesTab({ packages, onRefresh }) {
     </div>
   );
 }
+

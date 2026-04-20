@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/AuthContext';
+
 import jsPDF from 'jspdf';
 import {
   CheckCircle,
@@ -57,14 +58,12 @@ export default function CheckoutSuccess({
       return;
     }
 
-    const isBase44 = window.location.host.endsWith('base44.app');
-
     if (user) {
       window.location.href = '/RevelaTalentos';
       return;
     }
 
-    window.location.href = isBase44 ? '/' : 'https://revelatalentos.com/';
+    window.location.href = 'https://revelatalentos.com/';
   };
 
   const downloadReceipt = () => {

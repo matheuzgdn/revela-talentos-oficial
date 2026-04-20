@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+﻿import { useState, useEffect, useMemo, useRef } from "react";
 import MainLandingCarousel from "../components/hub/MainLandingCarousel";
-import { base44 } from "@/api/base44Client";
+import { appClient } from "@/api/backendClient";
 import BeneficiosRevelaTalentos from "../components/hub/BeneficiosRevelaTalentos";
 import { Link } from "react-router-dom";
 import {
   Sparkles, Award, Users,
   ChevronDown, ChevronUp,
-  Star, Globe, Shield, Zap, Calendar, User, MapPin, Lock, Volume2, VolumeX, Phone
+  Star, Globe, Zap, Calendar, Volume2, VolumeX, Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,15 +26,15 @@ import { toast } from "sonner";
 const faqs = [
   {
     q: "O que a Revela Talentos entrega para pais e atletas?",
-    a: "A Revela Talentos une preparação física, mental e técnica com direcionamento estratégico de carreira, mentorias e conexão real com oportunidades em clubes do Brasil e do exterior."
+    a: "A Revela Talentos une preparaÃ§Ã£o fÃ­sica, mental e tÃ©cnica com direcionamento estratÃ©gico de carreira, mentorias e conexÃ£o real com oportunidades em clubes do Brasil e do exterior."
   },
   {
     q: "Como funciona a plataforma da Revela Talentos?",
-    a: "A plataforma reúne metodologia, mentorias, seletivas, conteúdos estratégicos e direcionamento prático para pais e atletas que querem acelerar a evolução com mais clareza e profissionalismo."
+    a: "A plataforma reÃºne metodologia, mentorias, seletivas, conteÃºdos estratÃ©gicos e direcionamento prÃ¡tico para pais e atletas que querem acelerar a evoluÃ§Ã£o com mais clareza e profissionalismo."
   },
   {
     q: "O que acontece depois que eu entro na plataforma?",
-    a: "Você passa a ter acesso ao ecossistema da Revela Talentos para entender o processo, aplicar a metodologia, usar os conteúdos e avançar com mais preparo nas próximas etapas da jornada esportiva."
+    a: "VocÃª passa a ter acesso ao ecossistema da Revela Talentos para entender o processo, aplicar a metodologia, usar os conteÃºdos e avanÃ§ar com mais preparo nas prÃ³ximas etapas da jornada esportiva."
   }
 ];
 
@@ -42,34 +42,34 @@ const faqs = [
 
 const testimonials = [
   {
-    name: "Mãe do Matheus (14 anos)",
-    school: "Família Revela Talentos",
-    text: "Meu filho mudou radicalmente de postura em casa e nos estudos. A mentalidade que ele adotou agora é de um verdadeiro atleta nota 10!",
+    name: "MÃ£e do Matheus (14 anos)",
+    school: "FamÃ­lia Revela Talentos",
+    text: "Meu filho mudou radicalmente de postura em casa e nos estudos. A mentalidade que ele adotou agora Ã© de um verdadeiro atleta nota 10!",
     rating: 5,
     avatar: "M"
   },
   {
     name: "Pai da Sofia (12 anos)",
     school: "Jornada de Desenvolvimento",
-    text: "Assistir às explicações sobre a metodologia me deu segurança para entender o processo e enxergar um caminho mais profissional para a carreira da minha filha.",
+    text: "Assistir Ã s explicaÃ§Ãµes sobre a metodologia me deu seguranÃ§a para entender o processo e enxergar um caminho mais profissional para a carreira da minha filha.",
     rating: 5,
     avatar: "P"
   },
   {
-    name: "Mãe do Lucas (15 anos)",
-    school: "Mentoria para Famílias",
-    text: "Perceber que meu filho está sendo preparado como atleta e como ser humano nos deixou muito mais confiantes para apoiar essa caminhada.",
+    name: "MÃ£e do Lucas (15 anos)",
+    school: "Mentoria para FamÃ­lias",
+    text: "Perceber que meu filho estÃ¡ sendo preparado como atleta e como ser humano nos deixou muito mais confiantes para apoiar essa caminhada.",
     rating: 5,
     avatar: "M"
   }
 ];
 
-// === DADOS E FUNÇÕES DE PROVAS SOCIAIS INJETADOS ===
+// === DADOS E FUNÃ‡Ã•ES DE PROVAS SOCIAIS INJETADOS ===
 const athleteSpotlights = {
   default: {
     eyebrow: '/ Atletas Revelados',
     highlight: 'DESENVOLVIMENTO',
-    description: 'Atletas e alunos que já vêm sendo forjados por nossa metodologia desde a base até o exterior.',
+    description: 'Atletas e alunos que jÃ¡ vÃªm sendo forjados por nossa metodologia desde a base atÃ© o exterior.',
     accent: 'cyan',
     items: [
       ['Theo e Luccas', 'America Mineiro', 'https://static.wixstatic.com/media/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg/v1/fill/w_600,h_437,al_c,q_80,enc_auto/933cdd_cb57242b5d6a473cafa74fbdc70d897d~mv2.jpeg'],
@@ -87,21 +87,21 @@ const marqueeCards = [
   ['NOVOHORIZONTINO', 'Brasil', 'https://static.wixstatic.com/media/933cdd_1bd05dce59264c96aaf31a31e0a59341~mv2.png'],
   ['ATLETICO', 'Espanha', 'https://static.wixstatic.com/media/933cdd_57a7f61662d8485d876dfad0cd849b17~mv2.jpg'],
   ['SC BRAGA', 'Portugal', 'https://static.wixstatic.com/media/933cdd_7cc3cf595f684a1faec143ec04b34966~mv2.jpg'],
-  ['ROYAL CITY', 'Índia', 'https://static.wixstatic.com/media/933cdd_a60fbc26f42f402c9674ca2f869bbafe~mv2.jpeg'],
+  ['ROYAL CITY', 'Ãndia', 'https://static.wixstatic.com/media/933cdd_a60fbc26f42f402c9674ca2f869bbafe~mv2.jpeg'],
   ['AMERICA', 'Brasil', 'https://static.wixstatic.com/media/933cdd_14ccc273b64f4cabbe2e143c50b26878~mv2.png'],
 ];
 
 const statsData = {
   statOneValue: '150+',
   statOneLabel: 'ATLETAS AGENCIADOS / REVELADOS',
-  statOneText: 'Jovens em preparação para oportunidades reais no Brasil e no exterior.',
+  statOneText: 'Jovens em preparaÃ§Ã£o para oportunidades reais no Brasil e no exterior.',
   statOneImage: 'https://static.wixstatic.com/media/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg/v1/fill/w_450,h_600,al_c,q_80,enc_auto/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg',
   statTwoEyebrow: 'MERCADO INTERNACIONAL',
   statTwoValue: '+14',
-  statTwoTitle: 'PAÍSES',
+  statTwoTitle: 'PAÃSES',
   statTwoCaption: 'ATIVOS AGORA',
   statTwoVideo: 'https://video.wixstatic.com/video/933cdd_eb14b07c4db843ac878f02fed62bb4c6/720p/mp4/file.mp4',
-  countries: ['Espanha', 'Portugal', 'Polônia', 'Eslováquia', 'EUA'],
+  countries: ['Espanha', 'Portugal', 'PolÃ´nia', 'EslovÃ¡quia', 'EUA'],
 };
 
 const heroServiceCards = [
@@ -145,12 +145,12 @@ const heroServiceCards = [
 const heroServiceCarouselCards = [...heroServiceCards, ...heroServiceCards];
 
 const opportunitiesData = [
-  { title: 'Avaliação Premium', location: 'São Paulo, Brasil', flag: '🇧🇷', country: 'Brasil', market: 'Base Nacional', format: 'Presencial', teaser: 'Vagas limitadas para atletas em avaliação.' },
-  { title: 'Alta Performance', location: 'Belo Horizonte, Brasil', flag: '🇧🇷', country: 'Brasil', market: 'Desenvolvimento', format: 'Presencial', teaser: 'Ambiente ideal para acelerar evolução.' },
-  { title: 'Janela Portugal', location: 'Braga, Portugal', flag: '🇵🇹', country: 'Portugal', market: 'Europa', format: 'Híbrido', teaser: 'Uma rota aberta para o mercado europeu.' },
-  { title: 'Camp Espanha', location: 'Madrid, Espanha', flag: '🇪🇸', country: 'Espanha', market: 'Europa', format: 'Híbrido', teaser: 'Curadoria especial para atletas promissores.' },
-  { title: 'Exposição Polônia', location: 'Varsóvia, Polônia', flag: '🇵🇱', country: 'Polônia', market: 'Europa', format: 'Online + Presencial', teaser: 'Uma vitrine estratégica em crescimento.' },
-  { title: 'Entrada Eslováquia', location: 'Bratislava, Eslováquia', flag: '🇸🇰', country: 'Eslováquia', market: 'Europa', format: 'Online + Presencial', teaser: 'Descubra uma porta de entrada competitiva.' },
+  { title: 'AvaliaÃ§Ã£o Premium', location: 'SÃ£o Paulo, Brasil', flag: 'ðŸ‡§ðŸ‡·', country: 'Brasil', market: 'Base Nacional', format: 'Presencial', teaser: 'Vagas limitadas para atletas em avaliaÃ§Ã£o.' },
+  { title: 'Alta Performance', location: 'Belo Horizonte, Brasil', flag: 'ðŸ‡§ðŸ‡·', country: 'Brasil', market: 'Desenvolvimento', format: 'Presencial', teaser: 'Ambiente ideal para acelerar evoluÃ§Ã£o.' },
+  { title: 'Janela Portugal', location: 'Braga, Portugal', flag: 'ðŸ‡µðŸ‡¹', country: 'Portugal', market: 'Europa', format: 'HÃ­brido', teaser: 'Uma rota aberta para o mercado europeu.' },
+  { title: 'Camp Espanha', location: 'Madrid, Espanha', flag: 'ðŸ‡ªðŸ‡¸', country: 'Espanha', market: 'Europa', format: 'HÃ­brido', teaser: 'Curadoria especial para atletas promissores.' },
+  { title: 'ExposiÃ§Ã£o PolÃ´nia', location: 'VarsÃ³via, PolÃ´nia', flag: 'ðŸ‡µðŸ‡±', country: 'PolÃ´nia', market: 'Europa', format: 'Online + Presencial', teaser: 'Uma vitrine estratÃ©gica em crescimento.' },
+  { title: 'Entrada EslovÃ¡quia', location: 'Bratislava, EslovÃ¡quia', flag: 'ðŸ‡¸ðŸ‡°', country: 'EslovÃ¡quia', market: 'Europa', format: 'Online + Presencial', teaser: 'Descubra uma porta de entrada competitiva.' },
 ];
 
 const supportContacts = [
@@ -190,8 +190,8 @@ function StatsSection({ accentClass }) {
     <section className="relative z-10 px-4 py-16 sm:px-6 sm:py-20">
       <div className="container mx-auto">
         <div className="mb-12 text-center">
-          <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>/ Nossa Força</span>
-          <h2 className="text-[1.9rem] font-bold text-white sm:text-3xl md:text-4xl">NÚMEROS QUE COMPROVAM</h2>
+          <span className={`mb-4 block font-mono text-xs uppercase tracking-[0.3em] ${accentClass}`}>/ Nossa ForÃ§a</span>
+          <h2 className="text-[1.9rem] font-bold text-white sm:text-3xl md:text-4xl">NÃšMEROS QUE COMPROVAM</h2>
         </div>
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2">
           <article className="relative flex h-[260px] flex-col justify-end overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#0a0a0a] p-4 shadow-[0_30px_80px_rgba(0,0,0,0.45)] sm:h-[390px] sm:rounded-[2rem] sm:p-6 md:h-[470px] md:p-10">
@@ -430,17 +430,17 @@ export default function Evento() {
     }
     setIsSubmittingSchedule(true);
     try {
-      await base44.entities.Lead.create({
+      await appClient.entities.Lead.create({
         full_name: fullName,
         email,
         phone,
         lead_category: "revela_talentos",
         source_page: "evento",
-        objectives: "Solicitação de acesso à plataforma Revela Talentos",
+        objectives: "SolicitaÃ§Ã£o de acesso Ã  plataforma Revela Talentos",
         notes: "Interesse em conhecer a plataforma, a metodologia, as mentorias e as seletivas da Revela Talentos.",
         lgpd_consent: true,
       });
-      toast.success("Solicitação recebida! Nossa equipe fará o contato com os próximos passos.");
+      toast.success("SolicitaÃ§Ã£o recebida! Nossa equipe farÃ¡ o contato com os prÃ³ximos passos.");
       resetScheduleForm();
       setIsSchedulingOpen(false);
     } catch (error) {
@@ -485,7 +485,7 @@ export default function Evento() {
         </div>
       </header>
 
-      {/* HERO — Netflix title-page layout */}
+      {/* HERO â€” Netflix title-page layout */}
       <section className="relative min-h-0 overflow-hidden escola-parceira-hero bg-black sm:min-h-[100vh]">
         <div className="absolute inset-0 z-0 overflow-hidden">
           <video
@@ -554,7 +554,7 @@ export default function Evento() {
                 className="hidden pointer-events-auto absolute right-0 top-4 items-center gap-2 rounded-full border border-cyan-200/25 bg-black/55 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100"
               >
                 <VolumeX className="h-4 w-4" />
-                <span>Ativar áudio</span>
+                <span>Ativar Ã¡udio</span>
               </button>
               </>
             )}
@@ -581,17 +581,17 @@ export default function Evento() {
                 {isMobileViewport && isMobileHeroLocked ? (
                   <div className="max-w-[19rem] rounded-[1.4rem] border border-white/10 bg-white/[0.04] px-4 py-3 backdrop-blur-sm sm:hidden">
                     <p className="text-[0.98rem] leading-7 text-white/86">
-                      Assista ao vídeo completo de 2 min para desbloquear todos os benefícios da plataforma.
+                      Assista ao vÃ­deo completo de 2 min para desbloquear todos os benefÃ­cios da plataforma.
                     </p>
                   </div>
                 ) : (
                   <p className="max-w-2xl text-[15px] leading-7 text-white/88 sm:text-base md:text-[1.15rem] md:leading-8">
-                    A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direção, mentoria, preparação completa e conexão real com oportunidades no Brasil e no exterior.
+                    A plataforma da Revela Talentos foi criada para pais e atletas que querem evoluir com direÃ§Ã£o, mentoria, preparaÃ§Ã£o completa e conexÃ£o real com oportunidades no Brasil e no exterior.
                   </p>
                 )}
                 <div className={`pt-2 sm:pt-3 ${isMobileViewport && isMobileHeroLocked ? 'hidden sm:block' : ''}`}>
                   <h2 className="max-w-[18rem] text-[1.55rem] font-black uppercase leading-[0.9] tracking-tight text-white sm:text-[1.9rem]">
-                    BENEFÍCIOS
+                    BENEFÃCIOS
                     <span className="block text-transparent" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.3)' }}>
                       REVELA TALENTOS
                     </span>
@@ -697,7 +697,7 @@ export default function Evento() {
                       className="absolute bottom-4 right-4 z-20 inline-flex items-center gap-2 rounded-full border border-cyan-200/25 bg-black/45 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-200/40 hover:bg-black/60 hover:text-cyan-100 sm:bottom-5 sm:right-5"
                     >
                       <VolumeX className="h-4 w-4" />
-                      <span>Ativar áudio</span>
+                      <span>Ativar Ã¡udio</span>
                     </button>
                   )}
                 </div>
@@ -1030,7 +1030,7 @@ export default function Evento() {
                 <div className="mt-6 rounded-[1.6rem] border border-white/15 bg-[linear-gradient(180deg,rgba(13,20,32,0.38),rgba(5,10,18,0.74))] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.34),inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-[24px] sm:p-6">
                   <div className="flex flex-col gap-3 text-sm text-white/[0.72] sm:flex-row sm:items-center sm:justify-between">
                     <p className="max-w-xl leading-6">
-                      Veja os detalhes do serviço e, se fizer sentido para sua família, siga para solicitar seu acesso à plataforma Revela Talentos.
+                      Veja os detalhes do serviÃ§o e, se fizer sentido para sua famÃ­lia, siga para solicitar seu acesso Ã  plataforma Revela Talentos.
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row">
                       <Button
@@ -1061,9 +1061,9 @@ export default function Evento() {
         <DialogContent className="max-h-[92vh] overflow-y-auto border border-cyan-400/20 bg-[#050811] p-0 text-white sm:max-w-2xl">
           <div className="bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.16),transparent_38%),linear-gradient(180deg,rgba(255,255,255,0.02),transparent)] p-6 sm:p-7">
             <DialogHeader className="space-y-3 text-left">
-              <Badge className="w-fit border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-300">Solicitação de acesso</Badge>
-              <DialogTitle className="text-2xl font-black tracking-tight text-white sm:text-[2rem]">Garanta seu acesso à plataforma Revela Talentos</DialogTitle>
-              <DialogDescription className="max-w-xl text-sm leading-6 text-white/70 sm:text-[15px]">Preencha nome completo, WhatsApp e e-mail para receber o contato da nossa equipe com os próximos passos para entrar na plataforma.</DialogDescription>
+              <Badge className="w-fit border border-cyan-400/20 bg-cyan-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-cyan-300">SolicitaÃ§Ã£o de acesso</Badge>
+              <DialogTitle className="text-2xl font-black tracking-tight text-white sm:text-[2rem]">Garanta seu acesso Ã  plataforma Revela Talentos</DialogTitle>
+              <DialogDescription className="max-w-xl text-sm leading-6 text-white/70 sm:text-[15px]">Preencha nome completo, WhatsApp e e-mail para receber o contato da nossa equipe com os prÃ³ximos passos para entrar na plataforma.</DialogDescription>
             </DialogHeader>
 
             <form className="mt-6 space-y-4" onSubmit={handleScheduleSubmit}>
@@ -1082,7 +1082,7 @@ export default function Evento() {
                 </div>
               </div>
               <DialogFooter className="gap-3 border-t border-white/10 pt-5 sm:justify-between sm:space-x-0">
-                <p className="text-xs leading-5 text-white/45">Ao enviar, seus dados entram na base da Revela Talentos para que nossa equipe apresente a plataforma e os próximos passos do seu acesso.</p>
+                <p className="text-xs leading-5 text-white/45">Ao enviar, seus dados entram na base da Revela Talentos para que nossa equipe apresente a plataforma e os prÃ³ximos passos do seu acesso.</p>
                 <Button type="submit" disabled={isSubmittingSchedule} className="hero-cta-submit h-12 min-w-[180px] rounded-[1.05rem] border border-violet-300/20 px-6 text-sm font-semibold text-white">{isSubmittingSchedule ? "Enviando..." : "Solicitar acesso"}</Button>
               </DialogFooter>
             </form>
@@ -1091,9 +1091,9 @@ export default function Evento() {
       </Dialog>
 
       {/* 1. SOCIAL PROOF MARQUEE */}
-      <MainLandingCarousel eyebrow="/ Nossa Estrutura Global" title="CONEXÕES EUROPEIAS E NACIONAIS" description="A metodologia da Revela Talentos já levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelência do mundo." onCardClick={scrollToSignupCta} />
+      <MainLandingCarousel eyebrow="/ Nossa Estrutura Global" title="CONEXÃ•ES EUROPEIAS E NACIONAIS" description="A metodologia da Revela Talentos jÃ¡ levou centenas de atletas a oportunidades exclusivas nos maiores centros de excelÃªncia do mundo." onCardClick={scrollToSignupCta} />
 
-      {/* BENEFÍCIOS REVELA TALENTOS */}
+      {/* BENEFÃCIOS REVELA TALENTOS */}
       <BeneficiosRevelaTalentos />
 
       {/* 3. SOCIAL PROOF GALLERY (Spotlights) */}
@@ -1132,12 +1132,12 @@ export default function Evento() {
         </div>
       </section>
 
-      {/* DEPOIMENTOS FAMÍLIA */}
+      {/* DEPOIMENTOS FAMÃLIA */}
       <section className="bg-[#040507] py-16 sm:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center mb-16">
-            <h2 className="mb-4 text-[2rem] font-bold sm:text-4xl md:text-5xl">O Que Dizem as <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Famílias</span></h2>
-            <p className="text-gray-400">Pais e atletas que já enxergam mais clareza, disciplina e direção na jornada esportiva.</p>
+            <h2 className="mb-4 text-[2rem] font-bold sm:text-4xl md:text-5xl">O Que Dizem as <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">FamÃ­lias</span></h2>
+            <p className="text-gray-400">Pais e atletas que jÃ¡ enxergam mais clareza, disciplina e direÃ§Ã£o na jornada esportiva.</p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((t, i) => (
@@ -1162,7 +1162,7 @@ export default function Evento() {
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <div className="text-center mb-16">
             <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Perguntas Comuns</h2>
-            <p className="text-gray-400">O que você precisa saber antes de entrar na plataforma Revela Talentos.</p>
+            <p className="text-gray-400">O que vocÃª precisa saber antes de entrar na plataforma Revela Talentos.</p>
           </div>
           <div className="space-y-4">{faqs.map((faq, i) => <FAQItem key={i} {...faq} />)}</div>
         </div>
@@ -1174,7 +1174,7 @@ export default function Evento() {
       <footer className="border-t border-white/10 bg-[#040507] py-10 sm:py-12">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-4 sm:px-6 md:flex-row">
           <img src="https://static.wixstatic.com/media/933cdd_6a91d4f3263241aa82fc5e9345f6c522~mv2.png" alt="Revela Talentos" className="h-8 w-auto opacity-80" />
-          <p className="text-gray-600 text-sm text-center">© {new Date().getFullYear()} Revela Talentos. Todos os direitos reservados.</p>
+          <p className="text-gray-600 text-sm text-center">Â© {new Date().getFullYear()} Revela Talentos. Todos os direitos reservados.</p>
           <div className="flex gap-6 text-gray-600 text-sm">
             <a href="#" className="hover:text-white transition-colors">Termos</a>
             <a href="#" className="hover:text-white transition-colors">Instagram</a>
@@ -1184,3 +1184,4 @@ export default function Evento() {
     </div>
   );
 }
+

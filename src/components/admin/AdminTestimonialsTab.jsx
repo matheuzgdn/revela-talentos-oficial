@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+﻿import { appClient } from '@/api/backendClient';
 import React, { useState, useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ export default function AdminTestimonialsTab() {
   const loadTestimonials = async () => {
     setIsLoading(true);
     try {
-      const data = await base44.entities.Testimonial.list();
+      const data = await appClient.entities.Testimonial.list();
       setTestimonials(data);
     } catch (error) {
       toast.error("Falha ao carregar depoimentos.");
@@ -56,7 +56,7 @@ export default function AdminTestimonialsTab() {
   const handleDelete = async (id) => {
     if (window.confirm("Tem certeza que deseja apagar este depoimento?")) {
       try {
-        await base44.entities.Testimonial.delete(id);
+        await appClient.entities.Testimonial.delete(id);
         toast.success("Depoimento apagado com sucesso!");
         loadTestimonials();
       } catch (error) {
@@ -69,10 +69,10 @@ export default function AdminTestimonialsTab() {
     e.preventDefault();
     try {
       if (editingTestimonial) {
-        await base44.entities.Testimonial.update(editingTestimonial.id, formData);
+        await appClient.entities.Testimonial.update(editingTestimonial.id, formData);
         toast.success("Depoimento atualizado com sucesso!");
       } else {
-        await base44.entities.Testimonial.create(formData);
+        await appClient.entities.Testimonial.create(formData);
         toast.success("Depoimento criado com sucesso!");
       }
       setIsFormOpen(false);
@@ -99,8 +99,8 @@ export default function AdminTestimonialsTab() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input placeholder="Nome do Atleta" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
-              <Input placeholder="Posição (ex: Atleta Profissional)" value={formData.position} onChange={(e) => setFormData({...formData, position: e.target.value})} />
-              <Input placeholder="URL do Vídeo" value={formData.video_url} onChange={(e) => setFormData({...formData, video_url: e.target.value})} required />
+              <Input placeholder="PosiÃ§Ã£o (ex: Atleta Profissional)" value={formData.position} onChange={(e) => setFormData({...formData, position: e.target.value})} />
+              <Input placeholder="URL do VÃ­deo" value={formData.video_url} onChange={(e) => setFormData({...formData, video_url: e.target.value})} required />
               <Input placeholder="URL da Thumbnail (imagem de capa)" value={formData.thumbnail_url} onChange={(e) => setFormData({...formData, thumbnail_url: e.target.value})} required />
               <label className="flex items-center gap-2 text-sm text-white">
                 <input type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({...formData, is_active: e.target.checked})} />
@@ -137,3 +137,4 @@ export default function AdminTestimonialsTab() {
     </div>
   );
 }
+

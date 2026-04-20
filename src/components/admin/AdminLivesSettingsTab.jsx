@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+﻿import React, { useState, useEffect } from 'react';
+import { appClient } from '@/api/backendClient';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,20 +8,20 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Radio, Calendar, Clock, Eye, EyeOff, AlertCircle, Save, Trash2, RefreshCw, Activity, MonitorSmartphone } from 'lucide-react';
+import { Radio, Calendar, Eye, EyeOff, AlertCircle, Save, RefreshCw, Activity, MonitorSmartphone } from 'lucide-react';
 import LiveBroadcaster from '@/components/live/LiveBroadcaster';
 
 export default function AdminLivesSettingsTab() {
   const [currentUser, setCurrentUser] = useState(null);
   const [settings, setSettings] = useState({
     show_live_card: true,
-    default_schedule: 'Todas as segundas às 20h',
+    default_schedule: 'Todas as segundas Ã s 20h',
     custom_schedule: '',
     custom_image_url: '',
     is_live_active: false,
     next_live_date: '',
     is_postponed: false,
-    postpone_message: 'Live adiada para terça às 20h'
+    postpone_message: 'Live adiada para terÃ§a Ã s 20h'
   });
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function AdminLivesSettingsTab() {
   useEffect(() => {
     const init = async () => {
       try {
-        const user = await base44.auth.me();
+        const user = await appClient.auth.me();
         setCurrentUser(user);
       } catch (e) {
         console.error(e);
@@ -46,7 +46,7 @@ export default function AdminLivesSettingsTab() {
     setIsLoadingLogs(true);
     try {
       // Usando filter para ordenar, limitando do lado do client para os ultimos 50
-      const logs = await base44.entities.LivePlaybackLogs.filter({}, "-created_date");
+      const logs = await appClient.entities.LivePlaybackLogs.filter({}, "-created_date");
       setPlaybackLogs(logs?.slice(0, 50) || []);
     } catch (err) {
       console.warn('Playback Logs entity might not exist yet', err);
@@ -58,33 +58,33 @@ export default function AdminLivesSettingsTab() {
   const loadSettings = async () => {
     setIsLoading(true);
     try {
-      const allSettings = await base44.entities.PlatformSettings.list();
+      const allSettings = await appClient.entities.PlatformSettings.list();
       const settingsMap = {
         show_live_card: allSettings.find(s => s.setting_key === 'show_live_card')?.setting_value === 'true',
-        default_schedule: allSettings.find(s => s.setting_key === 'live_default_schedule')?.setting_value || 'Todas as segundas às 20h',
+        default_schedule: allSettings.find(s => s.setting_key === 'live_default_schedule')?.setting_value || 'Todas as segundas Ã s 20h',
         custom_schedule: allSettings.find(s => s.setting_key === 'live_custom_schedule')?.setting_value || '',
         custom_image_url: allSettings.find(s => s.setting_key === 'live_custom_image')?.setting_value || '',
         is_live_active: allSettings.find(s => s.setting_key === 'is_live_active')?.setting_value === 'true',
         next_live_date: allSettings.find(s => s.setting_key === 'next_live_date')?.setting_value || '',
         is_postponed: allSettings.find(s => s.setting_key === 'live_is_postponed')?.setting_value === 'true',
-        postpone_message: allSettings.find(s => s.setting_key === 'live_postpone_message')?.setting_value || 'Live adiada para terça às 20h'
+        postpone_message: allSettings.find(s => s.setting_key === 'live_postpone_message')?.setting_value || 'Live adiada para terÃ§a Ã s 20h'
       };
       setSettings(settingsMap);
     } catch (error) {
       console.error('Error loading settings:', error);
-      toast.error('Erro ao carregar configurações');
+      toast.error('Erro ao carregar configuraÃ§Ãµes');
     }
     setIsLoading(false);
   };
 
   const saveSetting = async (key, value) => {
-    const existingSettings = await base44.entities.PlatformSettings.filter({ setting_key: key });
+    const existingSettings = await appClient.entities.PlatformSettings.filter({ setting_key: key });
     const settingValue = String(value);
     const settingType = typeof value === 'boolean' ? 'boolean' : 'string';
     if (existingSettings.length > 0) {
-      await base44.entities.PlatformSettings.update(existingSettings[0].id, { setting_value: settingValue, setting_type: settingType });
+      await appClient.entities.PlatformSettings.update(existingSettings[0].id, { setting_value: settingValue, setting_type: settingType });
     } else {
-      await base44.entities.PlatformSettings.create({ setting_key: key, setting_value: settingValue, setting_type: settingType, description: `Live setting: ${key}`, is_active: true });
+      await appClient.entities.PlatformSettings.create({ setting_key: key, setting_value: settingValue, setting_type: settingType, description: `Live setting: ${key}`, is_active: true });
     }
   };
 
@@ -98,10 +98,10 @@ export default function AdminLivesSettingsTab() {
       await saveSetting('next_live_date', settings.next_live_date);
       await saveSetting('live_is_postponed', settings.is_postponed);
       await saveSetting('live_postpone_message', settings.postpone_message);
-      toast.success('✅ Configurações salvas!');
+      toast.success('âœ… ConfiguraÃ§Ãµes salvas!');
       await loadSettings();
     } catch (error) {
-      toast.error('❌ Erro ao salvar configurações');
+      toast.error('âŒ Erro ao salvar configuraÃ§Ãµes');
     }
     setIsSaving(false);
   };
@@ -117,11 +117,11 @@ export default function AdminLivesSettingsTab() {
   return (
     <div className="space-y-6">
 
-      {/* ── LIVE BROADCASTER ── */}
+      {/* â”€â”€ LIVE BROADCASTER â”€â”€ */}
       <div>
         <h2 className="text-xl font-black text-white mb-4 flex items-center gap-2">
           <Radio className="w-5 h-5 text-red-500" />
-          Estúdio de Transmissão
+          EstÃºdio de TransmissÃ£o
         </h2>
         {currentUser ? (
           <LiveBroadcaster user={currentUser} />
@@ -132,12 +132,12 @@ export default function AdminLivesSettingsTab() {
         )}
       </div>
 
-      {/* ── SETTINGS ── */}
+      {/* â”€â”€ SETTINGS â”€â”€ */}
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Radio className="w-5 h-5 text-red-500" />
-            Configurações do Card de Lives
+            ConfiguraÃ§Ãµes do Card de Lives
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -148,7 +148,7 @@ export default function AdminLivesSettingsTab() {
               {settings.show_live_card ? <Eye className="w-5 h-5 text-green-500" /> : <EyeOff className="w-5 h-5 text-gray-500" />}
               <div>
                 <Label className="text-white">Exibir Card de Lives no Hub</Label>
-                <p className="text-sm text-gray-400">Mostrar ou ocultar o card para os usuários</p>
+                <p className="text-sm text-gray-400">Mostrar ou ocultar o card para os usuÃ¡rios</p>
               </div>
             </div>
             <Switch
@@ -160,7 +160,7 @@ export default function AdminLivesSettingsTab() {
           {/* Live status badges */}
           <div className="flex items-center gap-2">
             <Badge className={`${settings.is_live_active ? 'bg-red-600' : 'bg-gray-600'} text-white`}>
-              {settings.is_live_active ? '🔴 AO VIVO' : 'OFFLINE'}
+              {settings.is_live_active ? 'ðŸ”´ AO VIVO' : 'OFFLINE'}
             </Badge>
             {settings.is_postponed && <Badge className="bg-yellow-500 text-black">ADIADO</Badge>}
           </div>
@@ -171,7 +171,7 @@ export default function AdminLivesSettingsTab() {
               <AlertCircle className="w-5 h-5 text-yellow-500" />
               <div>
                 <Label className="text-white">Marcar Live como Adiada</Label>
-                <p className="text-sm text-gray-400">Mostra aviso de adiamento para os usuários</p>
+                <p className="text-sm text-gray-400">Mostra aviso de adiamento para os usuÃ¡rios</p>
               </div>
             </div>
             <Switch
@@ -195,18 +195,18 @@ export default function AdminLivesSettingsTab() {
           )}
 
           <div className="space-y-2">
-            <Label className="text-white">Horário Padrão das Lives</Label>
+            <Label className="text-white">HorÃ¡rio PadrÃ£o das Lives</Label>
             <Input
               value={settings.default_schedule}
               onChange={(e) => setSettings({ ...settings, default_schedule: e.target.value })}
-              placeholder="Ex: Todas as segundas às 20h"
+              placeholder="Ex: Todas as segundas Ã s 20h"
               className="bg-gray-900 border-gray-700 text-white"
             />
           </div>
 
           <div className="space-y-2">
             <Label className="text-white flex items-center gap-2">
-              <Calendar className="w-4 h-4" />Data da Próxima Live
+              <Calendar className="w-4 h-4" />Data da PrÃ³xima Live
             </Label>
             <Input
               type="datetime-local"
@@ -225,18 +225,18 @@ export default function AdminLivesSettingsTab() {
             {isSaving ? (
               <><RefreshCw className="w-5 h-5 mr-2 animate-spin" />Salvando...</>
             ) : (
-              <><Save className="w-5 h-5 mr-2" />Salvar Configurações</>
+              <><Save className="w-5 h-5 mr-2" />Salvar ConfiguraÃ§Ãµes</>
             )}
           </Button>
         </CardContent>
       </Card>
 
-      {/* ── LOGS DE REPRODUÇÃO ── */}
+      {/* â”€â”€ LOGS DE REPRODUÃ‡ÃƒO â”€â”€ */}
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-white flex items-center gap-2">
             <Activity className="w-5 h-5 text-blue-400" />
-            Logs de Reprodução (Erros dos Usuários)
+            Logs de ReproduÃ§Ã£o (Erros dos UsuÃ¡rios)
           </CardTitle>
           <Button
             variant="outline"
@@ -252,7 +252,7 @@ export default function AdminLivesSettingsTab() {
         <CardContent>
           {playbackLogs.length === 0 ? (
             <div className="text-center p-8 bg-gray-900 rounded-lg border border-gray-700">
-              <p className="text-gray-400">Nenhum erro de reprodução registrado recentemente.</p>
+              <p className="text-gray-400">Nenhum erro de reproduÃ§Ã£o registrado recentemente.</p>
             </div>
           ) : (
             <div className="space-y-4 max-h-96 overflow-y-auto pr-2">

@@ -2,14 +2,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { base44 } from "@/api/base44Client";
 import { Bell, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { redirectToPlatformLogin } from "@/lib/auth-routing";
 
 export default function HeroSection({ user, totalNotifications, userNotifications }) {
   const handleLoginClick = () => {
-    base44.auth.redirectToLogin();
+    redirectToPlatformLogin();
   };
 
   return (

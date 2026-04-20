@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect } from "react";
+import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Camera, Check, ChevronRight, ChevronLeft, Loader2 as Loader, Trophy, Calendar, MapPin, Activity } from "lucide-react";
@@ -8,86 +8,86 @@ import { Camera, Check, ChevronRight, ChevronLeft, Loader2 as Loader, Trophy, Ca
 const T = {
   pt: {
     lang_title: "Escolha seu idioma",
-    lang_sub: "Você poderá mudar depois.",
+    lang_sub: "VocÃª poderÃ¡ mudar depois.",
     welcome_badge: "Plataforma #1 de Talentos do Futebol",
     welcome_title: "Bem-vindo,",
     welcome_desc: "A plataforma mais completa para desenvolver, revelar e evoluir talentos do futebol.",
-    stats_vid: "Vídeos analisados",
+    stats_vid: "VÃ­deos analisados",
     stats_atl: "Atletas revelados",
-    stats_pai: "Países",
-    start_btn: "Começar",
+    stats_pai: "PaÃ­ses",
+    start_btn: "ComeÃ§ar",
     start_hint: "Leva menos de 2 minutos",
 
     step1_title: "Foto do Atleta",
     step1_sub: "Mostre o rosto dele ao mundo",
     step1_no_photo: "Sem foto",
-    step1_desc: "Sua foto aparece no perfil público para olheiros e clubes",
+    step1_desc: "Sua foto aparece no perfil pÃºblico para olheiros e clubes",
     step1_chk1: "Olheiros veem o rosto",
     step1_chk2: "Perfil mais profissional",
     step1_chk3: "Maior visibilidade",
     btn_skip: "Pular por agora",
     btn_skip_short: "Pular",
 
-    step2_title: "Dados Básicos",
+    step2_title: "Dados BÃ¡sicos",
     step2_sub: "Nome, cidade e idade",
     form_nationality: "Nacionalidade",
     form_age: "Idade",
     form_age_ph: "Ex: 17",
     form_city: "Cidade / Estado",
-    form_city_ph: "Ex: São Paulo, SP",
+    form_city_ph: "Ex: SÃ£o Paulo, SP",
     btn_continue: "Continuar",
 
-    step3_title: "Físico",
-    step3_sub: "Altura, peso e pé",
+    step3_title: "FÃ­sico",
+    step3_sub: "Altura, peso e pÃ©",
     form_height: "Altura (cm)",
     form_weight: "Peso (kg)",
-    form_foot: "Pé Dominante",
+    form_foot: "PÃ© Dominante",
     foot_r: "Destro",
-    foot_r_sub: "Pé direito dominante",
+    foot_r_sub: "PÃ© direito dominante",
     foot_l: "Canhoto",
-    foot_l_sub: "Pé esquerdo dominante",
+    foot_l_sub: "PÃ© esquerdo dominante",
     foot_b: "Ambidestro",
-    foot_b_sub: "Usa os dois pés",
+    foot_b_sub: "Usa os dois pÃ©s",
 
-    step4_title: "Posição em Campo",
+    step4_title: "PosiÃ§Ã£o em Campo",
     step4_sub: "Onde o atleta joga?",
-    form_pos: "Posição principal",
+    form_pos: "PosiÃ§Ã£o principal",
 
     step5_title: "Clube",
     step5_sub: "Clube atual do atleta",
     form_club: "Clube Atual",
-    form_club_ph: "Ex: EC Vitória Sub-17",
+    form_club_ph: "Ex: EC VitÃ³ria Sub-17",
     form_prev_club: "Clube Anterior (Opcional)",
     form_prev_club_ph: "Ex: Escola de Futebol Santos",
     club_info_title: "Por que informar o clube?",
-    club_info_desc: "Olheiros e clubes buscam atletas por posição e clube. Quanto mais completo, mais visível o perfil fica.",
+    club_info_desc: "Olheiros e clubes buscam atletas por posiÃ§Ã£o e clube. Quanto mais completo, mais visÃ­vel o perfil fica.",
     btn_save: "Salvar e Continuar",
     btn_saving: "Salvando...",
     logout: "Mudar Perfil"
   },
   es: {
     lang_title: "Elige tu idioma",
-    lang_sub: "Podrás cambiar esto más tarde.",
-    welcome_badge: "Plataforma #1 de Talentos de Fútbol",
+    lang_sub: "PodrÃ¡s cambiar esto mÃ¡s tarde.",
+    welcome_badge: "Plataforma #1 de Talentos de FÃºtbol",
     welcome_title: "Bienvenido,",
-    welcome_desc: "La plataforma más completa para desarrollar, revelar y evolucionar talentos del fútbol.",
+    welcome_desc: "La plataforma mÃ¡s completa para desarrollar, revelar y evolucionar talentos del fÃºtbol.",
     stats_vid: "Videos analizados",
     stats_atl: "Atletas revelados",
-    stats_pai: "Países",
+    stats_pai: "PaÃ­ses",
     start_btn: "Comenzar",
     start_hint: "Toma menos de 2 minutos",
 
     step1_title: "Foto del Atleta",
     step1_sub: "Muestra su rostro al mundo",
     step1_no_photo: "Sin foto",
-    step1_desc: "Su foto aparece en el perfil público para ojeadores y clubes",
+    step1_desc: "Su foto aparece en el perfil pÃºblico para ojeadores y clubes",
     step1_chk1: "Los ojeadores ven el rostro",
-    step1_chk2: "Perfil más profesional",
+    step1_chk2: "Perfil mÃ¡s profesional",
     step1_chk3: "Mayor visibilidad",
     btn_skip: "Saltar por ahora",
     btn_skip_short: "Saltar",
 
-    step2_title: "Datos Básicos",
+    step2_title: "Datos BÃ¡sicos",
     step2_sub: "Nombre, ciudad y edad",
     form_nationality: "Nacionalidad",
     form_age: "Edad",
@@ -96,7 +96,7 @@ const T = {
     form_city_ph: "Ej: Madrid",
     btn_continue: "Continuar",
 
-    step3_title: "Físico",
+    step3_title: "FÃ­sico",
     step3_sub: "Altura, peso y pie",
     form_height: "Altura (cm)",
     form_weight: "Peso (kg)",
@@ -108,18 +108,18 @@ const T = {
     foot_b: "Ambidiestro",
     foot_b_sub: "Usa ambos pies",
 
-    step4_title: "Posición en Campo",
-    step4_sub: "¿Dónde juega el atleta?",
-    form_pos: "Posición principal",
+    step4_title: "PosiciÃ³n en Campo",
+    step4_sub: "Â¿DÃ³nde juega el atleta?",
+    form_pos: "PosiciÃ³n principal",
 
     step5_title: "Club",
     step5_sub: "Club actual del atleta",
     form_club: "Club Actual",
     form_club_ph: "Ej: formativas Real Madrid",
     form_prev_club: "Club Anterior (Opcional)",
-    form_prev_club_ph: "Ej: Escuela de Fútbol",
-    club_info_title: "¿Por qué informar el club?",
-    club_info_desc: "Los ojeadores buscan atletas por posición y club. Cuanto más completo, más visible es el perfil.",
+    form_prev_club_ph: "Ej: Escuela de FÃºtbol",
+    club_info_title: "Â¿Por quÃ© informar el club?",
+    club_info_desc: "Los ojeadores buscan atletas por posiciÃ³n y club. Cuanto mÃ¡s completo, mÃ¡s visible es el perfil.",
     btn_save: "Guardar y Continuar",
     btn_saving: "Guardando...",
     logout: "Cambiar Perfil"
@@ -128,31 +128,31 @@ const T = {
 
 const COUNTRIES = {
   pt: [
-    "Brasil", "Portugal", "Argentina", "Espanha", "França",
-    "Itália", "Alemanha", "Inglaterra", "Holanda", "Uruguai", "Colômbia"
+    "Brasil", "Portugal", "Argentina", "Espanha", "FranÃ§a",
+    "ItÃ¡lia", "Alemanha", "Inglaterra", "Holanda", "Uruguai", "ColÃ´mbia"
   ],
   es: [
-    "Brasil", "Portugal", "Argentina", "España", "Francia",
+    "Brasil", "Portugal", "Argentina", "EspaÃ±a", "Francia",
     "Italia", "Alemania", "Inglaterra", "Holanda", "Uruguay", "Colombia"
   ]
 };
 
 const POSITIONS = {
   pt: [
-    { id: "goleiro", label: "🧤 Goleiro" },
-    { id: "zagueiro", label: "🛡️ Zagueiro" },
-    { id: "lateral", label: "🏃 Lateral" },
-    { id: "volante", label: "⚙️ Volante" },
-    { id: "meia", label: "🎯 Meia" },
-    { id: "atacante", label: "⚡ Atacante" }
+    { id: "goleiro", label: "ðŸ§¤ Goleiro" },
+    { id: "zagueiro", label: "ðŸ›¡ï¸ Zagueiro" },
+    { id: "lateral", label: "ðŸƒ Lateral" },
+    { id: "volante", label: "âš™ï¸ Volante" },
+    { id: "meia", label: "ðŸŽ¯ Meia" },
+    { id: "atacante", label: "âš¡ Atacante" }
   ],
   es: [
-    { id: "portero", label: "🧤 Portero" },
-    { id: "defensa", label: "🛡️ Defensa" },
-    { id: "lateral", label: "🏃 Lateral" },
-    { id: "pivote", label: "⚙️ Pivote" },
-    { id: "medio", label: "🎯 Medio" },
-    { id: "delantero", label: "⚡ Delantero" }
+    { id: "portero", label: "ðŸ§¤ Portero" },
+    { id: "defensa", label: "ðŸ›¡ï¸ Defensa" },
+    { id: "lateral", label: "ðŸƒ Lateral" },
+    { id: "pivote", label: "âš™ï¸ Pivote" },
+    { id: "medio", label: "ðŸŽ¯ Medio" },
+    { id: "delantero", label: "âš¡ Delantero" }
   ]
 };
 
@@ -248,21 +248,21 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      toast.error("A imagem deve ter no máximo 10MB.");
+      toast.error("A imagem deve ter no mÃ¡ximo 10MB.");
       return;
     }
 
     setUploading(true);
     try {
-      // base44.integrations.Core.UploadFile is the correct way to upload files
+      // appClient.integrations.Core.UploadFile is the correct way to upload files
       // (base64 is too large for direct field storage)
-      const result = await base44.integrations.Core.UploadFile({ file });
+      const result = await appClient.integrations.Core.UploadFile({ file });
       const file_url = result?.url || result?.file_url || result;
 
       if (file_url && typeof file_url === 'string') {
-        await base44.auth.updateMe({ profile_picture_url: file_url });
+        await appClient.auth.updateMe({ profile_picture_url: file_url });
         set("profile_picture_url", file_url);
-        toast.success("✅ Foto salva com sucesso!");
+        toast.success("âœ… Foto salva com sucesso!");
       } else {
         console.error("UploadFile response:", result);
         toast.error("Erro: resposta inesperada do servidor.");
@@ -280,7 +280,7 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Build a valid birth_date from age — only if age is a valid number
+      // Build a valid birth_date from age â€” only if age is a valid number
       let birth_date = null;
       const ageNum = parseInt(form.age);
       if (!isNaN(ageNum) && ageNum > 0 && ageNum < 100) {
@@ -301,6 +301,7 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
         position: form.position || null,
         nationality: form.nationality || "Brasil",
         foot: form.foot || "direito",
+        preferred_foot: form.foot || "direito",
         profile_picture_url: form.profile_picture_url || null,
         ...(city && { city }),
         ...(state && { state }),
@@ -311,9 +312,9 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
         onboarding_completed: true
       };
 
-      await base44.auth.updateMe(updateData);
+      await appClient.auth.updateMe(updateData);
       if (lang) localStorage.setItem('lang_pref', lang);
-      toast.success("Perfil salvo com sucesso! ✅", { duration: 3000 });
+      toast.success("Perfil salvo com sucesso! âœ…", { duration: 3000 });
       setTimeout(async () => {
         if (onSave) await onSave();
         setSaving(false);
@@ -371,14 +372,14 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
               <LogoSvg />
               <div>
                 <h1 className="text-3xl font-bold mb-2">Escolha seu idioma / Elige tu idioma</h1>
-                <p className="text-gray-400 text-sm">Você poderá mudar isso depois na edição do perfil.</p>
+                <p className="text-gray-400 text-sm">VocÃª poderÃ¡ mudar isso depois na ediÃ§Ã£o do perfil.</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <button onClick={() => setLang('pt')} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-6 transition flex items-center justify-center gap-3 text-xl font-bold">
-                  🇧🇷 Português
+                  ðŸ‡§ðŸ‡· PortuguÃªs
                 </button>
                 <button onClick={() => setLang('es')} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-6 transition flex items-center justify-center gap-3 text-xl font-bold">
-                  🇪🇸 Español
+                  ðŸ‡ªðŸ‡¸ EspaÃ±ol
                 </button>
               </div>
             </motion.div>
@@ -389,10 +390,10 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
             <motion.div key="step-0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full text-center">
               <LogoSvg />
               <div className="mx-auto bg-transparent border border-[#00a8e1]/30 rounded-full py-1.5 px-4 inline-flex items-center gap-2 mb-8 shadow-[0_0_15px_rgba(0,168,225,0.15)] text-[#00a8e1] text-xs font-bold uppercase tracking-wide">
-                ⚡ {t.welcome_badge}
+                âš¡ {t.welcome_badge}
               </div>
               <h1 className="text-4xl md:text-5xl font-black mb-4">
-                {t.welcome_title} <span className="text-[#00a8e1]">{user?.full_name?.split(' ')[0] || 'Usuário'}</span>
+                {t.welcome_title} <span className="text-[#00a8e1]">{user?.full_name?.split(' ')[0] || 'UsuÃ¡rio'}</span>
               </h1>
               <p className="text-gray-400 text-sm md:text-base max-w-md mx-auto mb-10 leading-relaxed">
                 {t.welcome_desc}
@@ -639,3 +640,4 @@ export default function ProfileSetup({ isOpen, onClose, user, onSave }) {
     </div>
   );
 }
+

@@ -1,0 +1,2 @@
+-- Optional seed file for local Supabase development.
+-- Keep empty until the project needs deterministic local seed data.

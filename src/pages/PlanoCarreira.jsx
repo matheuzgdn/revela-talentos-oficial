@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+﻿import React, { useState, useEffect, useCallback } from "react";
+import { appClient } from "@/api/backendClient";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,18 +50,18 @@ const PlanoCarreiraLandingPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.lgpd_consent) {
-      toast.error("É necessário aceitar os termos LGPD para prosseguir.");
+      toast.error("Ã‰ necessÃ¡rio aceitar os termos LGPD para prosseguir.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await base44.entities.Lead.create({
+      await appClient.entities.Lead.create({
         ...formData,
         lead_category: "plano_carreira",
         source_page: "plano_carreira"
       });
-      toast.success("Interesse registrado! Nossa equipe entrará em contato em breve.");
+      toast.success("Interesse registrado! Nossa equipe entrarÃ¡ em contato em breve.");
       setFormData({
         full_name: "", email: "", phone: "", birth_date: "", position: "",
         current_club: "", experience_level: "amador", objectives: "",
@@ -78,7 +78,7 @@ const PlanoCarreiraLandingPage = () => {
   useEffect(() => {
     const listeners = [];
 
-    // --- ANIMAÇÃO DE ENTRADA AO ROLAR ---
+    // --- ANIMAÃ‡ÃƒO DE ENTRADA AO ROLAR ---
     const itemsToReveal = document.querySelectorAll('.reveal-on-scroll');
     if ('IntersectionObserver' in window) {
       const observer = new IntersectionObserver((entries) => {
@@ -95,7 +95,7 @@ const PlanoCarreiraLandingPage = () => {
       itemsToReveal.forEach(item => item.classList.add('is-visible'));
     }
 
-    // --- LÓGICA DO SLIDESHOW ---
+    // --- LÃ“GICA DO SLIDESHOW ---
     const images = document.querySelectorAll('.slideshow-image');
     let currentImageIndex = 0;
     let slideshowInterval;
@@ -107,7 +107,7 @@ const PlanoCarreiraLandingPage = () => {
       }, 4000);
     }
 
-    // --- LÓGICA 3D ---
+    // --- LÃ“GICA 3D ---
     const add3dEffect = (containerSelector, wrapperSelector, layers) => {
       const container = document.querySelector(containerSelector);
       const wrapper = document.querySelector(wrapperSelector);
@@ -164,15 +164,15 @@ const PlanoCarreiraLandingPage = () => {
     { name: 'EUA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/us.svg' },
     { name: 'PORTUGAL', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/pt.svg' },
     { name: 'ESPANHA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/es.svg' },
-    { name: 'ITÁLIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/it.svg' },
+    { name: 'ITÃLIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/it.svg' },
     { name: 'ALEMANHA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/de.svg' },
-    { name: 'SUÍÇA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ch.svg' },
-    { name: 'ÁUSTRIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/at.svg' },
-    { name: 'ESLOVÁQUIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/sk.svg' },
+    { name: 'SUÃÃ‡A', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ch.svg' },
+    { name: 'ÃUSTRIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/at.svg' },
+    { name: 'ESLOVÃQUIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/sk.svg' },
     { name: 'REP. TCHECA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/cz.svg' },
-    { name: 'CROÁCIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/hr.svg' },
-    { name: 'BÓSNIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ba.svg' },
-    { name: 'FINLÂNDIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/fi.svg' },
+    { name: 'CROÃCIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/hr.svg' },
+    { name: 'BÃ“SNIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ba.svg' },
+    { name: 'FINLÃ‚NDIA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/fi.svg' },
     { name: 'ANDORRA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ad.svg' },
     { name: 'DUBAI', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/ae.svg' },
     { name: 'CHINA', flag: 'https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/cn.svg' }
@@ -188,7 +188,7 @@ const PlanoCarreiraLandingPage = () => {
             color: #e2e8f0; /* text-slate-200 */
         }
 
-        /* --- Estilos da Seção Herói --- */
+        /* --- Estilos da SeÃ§Ã£o HerÃ³i --- */
         .hero-section { background-color: #020617; position: relative; overflow: hidden; }
         .hero-map-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.15; }
         .hero-map-svg { width: 100%; height: 100%; object-fit: cover; }
@@ -207,7 +207,7 @@ const PlanoCarreiraLandingPage = () => {
         .slideshow-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .slideshow-image.active { opacity: 1; }
 
-        /* --- Estilos da Seção 2 (O que é) --- */
+        /* --- Estilos da SeÃ§Ã£o 2 (O que Ã©) --- */
         .section-bg { background-color: #020617; position: relative; overflow: hidden; }
         .video-container { perspective: 1000px; }
         .video-wrapper { border-radius: 1rem; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); transition: transform 0.2s ease-out; transform-style: preserve-3d; will-change: transform; aspect-ratio: 9 / 16; width: 100%; max-width: 320px; margin: auto; }
@@ -215,7 +215,7 @@ const PlanoCarreiraLandingPage = () => {
         .stat-card { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.1); transition: all 0.3s ease; }
         .stat-card:hover { transform: scale(1.05); border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 0 30px rgba(14, 165, 233, 0.2); }
 
-        /* --- Estilos da Seção Cases de Sucesso --- */
+        /* --- Estilos da SeÃ§Ã£o Cases de Sucesso --- */
         .section-bg::before { content: ''; position: absolute; top: 50%; left: 50%; width: 1000px; height: 1000px; background-image: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0) 70%); transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
         .case-card { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.1); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; aspect-ratio: 9 / 16; perspective: 800px; border-radius: 1rem; overflow: hidden; }
         .case-card:hover { border-color: rgba(56, 189, 248, 0.6); box-shadow: 0 0 5px rgba(56, 189, 248, 0.8), 0 0 15px rgba(56, 189, 248, 0.6), 0 0 30px rgba(56, 189, 248, 0.4); }
@@ -224,7 +224,7 @@ const PlanoCarreiraLandingPage = () => {
         .case-card .stats-hud-card { position: absolute; width: 120%; height: 120%; top: -10%; left: -10%; opacity: 0.4; animation: rotate-hud 30s linear infinite reverse; }
         @keyframes rotate-hud { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* --- Estilos da Seção Países (CORRIGIDO COM CARDS ESTILO NETFLIX) --- */
+        /* --- Estilos da SeÃ§Ã£o PaÃ­ses (CORRIGIDO COM CARDS ESTILO NETFLIX) --- */
         .country-card {
             background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
@@ -279,7 +279,7 @@ const PlanoCarreiraLandingPage = () => {
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
-        /* --- Estilos da Seção Como Funciona --- */
+        /* --- Estilos da SeÃ§Ã£o Como Funciona --- */
         .tactical-bg { background-color: #020617; position: relative; overflow: hidden; }
         #tactical-field-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.2; transition: opacity 0.5s ease; }
         #tactical-field { width: 100%; height: 100%; }
@@ -297,7 +297,7 @@ const PlanoCarreiraLandingPage = () => {
         .pillar-item:hover .pillar-number { color: rgba(14, 165, 233, 0.1); }
         .pillar-content { position: relative; z-index: 1; }
 
-        /* --- Estilos da Seção Equipe & Depoimentos --- */
+        /* --- Estilos da SeÃ§Ã£o Equipe & Depoimentos --- */
         .aurora-bg { background-color: #020617; position: relative; overflow: hidden; }
         .aurora-bg::before, .aurora-bg::after { content: ''; position: absolute; width: 600px; height: 600px; background-image: radial-gradient(circle, rgba(14, 165, 233, 0.25) 0%, rgba(14, 165, 233, 0) 70%); border-radius: 50%; z-index: 0; pointer-events: none; animation: aurora-flow 20s infinite linear; }
         .aurora-bg::before { top: -150px; right: -150px; }
@@ -320,20 +320,20 @@ const PlanoCarreiraLandingPage = () => {
         .testimonial-carousel > * { flex-shrink: 0; width: 80%; max-width: 320px; scroll-snap-align: center; }
         @media (min-width: 1024px) { .testimonial-carousel { display: grid; grid-template-columns: repeat(3, 1fr); overflow-x: visible; padding: 0; margin: 0; gap: 2rem; } .testimonial-carousel > * { width: auto; max-width: none; } }
 
-        /* --- Estilos da Seção Planos --- */
+        /* --- Estilos da SeÃ§Ã£o Planos --- */
         .plan-card { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(56, 189, 248, 0.3); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 60px rgba(14, 165, 233, 0.1); }
         .plan-card:hover { transform: translateY(-10px) scale(1.03); border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 0 80px rgba(14, 165, 233, 0.2); }
         .glow-button { box-shadow: 0 0 10px rgba(14, 165, 233, 0.5), 0 0 25px rgba(14, 165, 233, 0.3); transition: all 0.3s ease-in-out; }
         .glow-button:hover { box-shadow: 0 0 15px rgba(14, 165, 233, 0.8), 0 0 40px rgba(14, 165, 233, 0.5); transform: scale(1.05); }
 
-        /* Animação de Entrada Genérica */
+        /* AnimaÃ§Ã£o de Entrada GenÃ©rica */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); }
         .reveal-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
       `}</style>
       <div className="page-container-lp">
-        {/* Seção 1: Herói */}
+        {/* SeÃ§Ã£o 1: HerÃ³i */}
         <section className="hero-section min-h-screen flex items-center justify-center p-4">
           <div className="container mx-auto relative z-10">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -342,7 +342,7 @@ const PlanoCarreiraLandingPage = () => {
                   Plano de Carreira <span className="text-sky-400">EC10 Talentos</span>
                 </h1>
                 <p className="mt-4 text-lg md:text-xl text-gray-100 max-w-lg mx-auto md:mx-0">
-                  O caminho para o futebol profissional só é possível com uma assessoria esportiva qualificada e uma mentalidade forte.
+                  O caminho para o futebol profissional sÃ³ Ã© possÃ­vel com uma assessoria esportiva qualificada e uma mentalidade forte.
                 </p>
                 <div className="mt-10">
                   <a href="#planos" className="inline-block bg-sky-500 text-white font-bold uppercase tracking-wider py-4 px-10 rounded-lg text-lg glow-on-hover">
@@ -376,19 +376,19 @@ const PlanoCarreiraLandingPage = () => {
           </div>
         </section>
 
-        {/* Seção 2: O que é (com vídeo) */}
+        {/* SeÃ§Ã£o 2: O que Ã© (com vÃ­deo) */}
         <section id="plano-carreira" className="py-20 px-4 section-bg min-h-screen flex items-center">
           <div className="container mx-auto">
             <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
               <div className="video-container w-full order-last md:order-first reveal-on-scroll">
                 <div className="video-wrapper">
-                  <iframe src="https://player.vimeo.com/video/1109683681?badge=0&autopause=0&player_id=0&app_id=58479" frameBorder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} title="EC10 Talentos - O que é o Plano de Carreira?"></iframe>
+                  <iframe src="https://player.vimeo.com/video/1109683681?badge=0&autopause=0&player_id=0&app_id=58479" frameBorder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} title="EC10 Talentos - O que Ã© o Plano de Carreira?"></iframe>
                 </div>
               </div>
 
               <div className="w-full text-center md:text-left reveal-on-scroll" style={{ transitionDelay: '150ms' }}>
-                <h2 className="text-3xl lg:text-5xl font-black uppercase">O que é o <span className="text-sky-400">Plano de Carreira?</span></h2>
-                <p className="mt-4 text-lg lg:text-xl text-gray-300">Uma assessoria esportiva com foco em mentoria esportiva e gerar conexões entre atletas de alto rendimento e clubes de futebol profissional.</p>
+                <h2 className="text-3xl lg:text-5xl font-black uppercase">O que Ã© o <span className="text-sky-400">Plano de Carreira?</span></h2>
+                <p className="mt-4 text-lg lg:text-xl text-gray-300">Uma assessoria esportiva com foco em mentoria esportiva e gerar conexÃµes entre atletas de alto rendimento e clubes de futebol profissional.</p>
               </div>
             </div>
 
@@ -396,7 +396,7 @@ const PlanoCarreiraLandingPage = () => {
               <div className="border-t border-sky-500/20 w-1/4 mx-auto reveal-on-scroll"></div>
               <div className="mt-12 text-center reveal-on-scroll">
                 <h3 className="text-2xl md:text-4xl font-bold uppercase tracking-wider">Nossos Talentos Pelo Mundo</h3>
-                <p className="mt-2 text-gray-400">Resultados que comprovam nossa eficiência.</p>
+                <p className="mt-2 text-gray-400">Resultados que comprovam nossa eficiÃªncia.</p>
                 <div className="mt-10 flex justify-center">
                   <div className="grid sm:grid-cols-1 gap-6 text-center max-w-xs w-full">
                     <div className="stat-card p-6 rounded-xl"><p className="text-5xl lg:text-6xl font-black text-sky-400">800+</p><p className="mt-2 text-lg text-gray-300">Oportunidades geradas</p></div>
@@ -407,15 +407,15 @@ const PlanoCarreiraLandingPage = () => {
           </div>
         </section>
 
-        {/* Seção 3: Cases de Sucesso */}
+        {/* SeÃ§Ã£o 3: Cases de Sucesso */}
         <section id="cases-de-sucesso" className="py-24 px-4 section-bg">
           <div className="container mx-auto relative z-10">
             <div className="text-center mb-16 reveal-on-scroll">
               <h2 className="text-3xl md:text-5xl font-black uppercase tracking-wide">
-                Nossas <span className="text-sky-400">Histórias de Sucesso</span>
+                Nossas <span className="text-sky-400">HistÃ³rias de Sucesso</span>
               </h2>
               <p className="mt-4 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-                Conheça os atletas que confiaram no nosso trabalho e alcançaram o sonho do futebol profissional.
+                ConheÃ§a os atletas que confiaram no nosso trabalho e alcanÃ§aram o sonho do futebol profissional.
               </p>
             </div>
 
@@ -443,12 +443,12 @@ const PlanoCarreiraLandingPage = () => {
           </div>
         </section>
 
-        {/* Seção 4: Presença Global (CORRIGIDA COM CARDS ESTILO NETFLIX) */}
+        {/* SeÃ§Ã£o 4: PresenÃ§a Global (CORRIGIDA COM CARDS ESTILO NETFLIX) */}
         <section id="paises" className="py-24 px-4 section-bg">
           <div className="container mx-auto relative z-10">
             <div className="text-center mb-16 reveal-on-scroll">
               <h2 className="text-3xl md:text-5xl font-black uppercase tracking-wide">
-                Presença <span className="text-sky-400">Global</span>
+                PresenÃ§a <span className="text-sky-400">Global</span>
               </h2>
               <p className="mt-4 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
                 Nossa rede de contatos abre portas para atletas nos principais mercados do futebol mundial.
@@ -473,7 +473,7 @@ const PlanoCarreiraLandingPage = () => {
           </div>
         </section>
 
-        {/* Seção 5: Como Funciona (CORRIGIDA) */}
+        {/* SeÃ§Ã£o 5: Como Funciona (CORRIGIDA) */}
         <section id="como-funciona" className="py-24 px-4 tactical-bg">
           <div className="container mx-auto relative z-10">
             <div className="text-center mb-16">
@@ -492,13 +492,13 @@ const PlanoCarreiraLandingPage = () => {
                     <Trophy className="h-8 w-8 text-sky-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl md:text-2xl font-bold uppercase mb-2">Mentoria 🧠</h3>
+                    <h3 className="text-xl md:text-2xl font-bold uppercase mb-2">Mentoria ðŸ§ </h3>
                     <p className="text-gray-300">Mentoria semanal com Eric, CEO e ex-atleta profissional com passagens por Argentina, Alemanha, Chile, Portugal e Brasil.</p>
                   </div>
                 </div>
               </div>
 
-              {/* Pilar 2: Análise de Desempenho */}
+              {/* Pilar 2: AnÃ¡lise de Desempenho */}
               <div className="pillar-item reveal-on-scroll rounded-2xl p-6 md:p-8">
                 <span className="pillar-number">02</span>
                 <div className="pillar-content flex items-center gap-6">
@@ -506,8 +506,8 @@ const PlanoCarreiraLandingPage = () => {
                     <BarChart3 className="h-8 w-8 text-sky-400" />
                   </div>
                   <div>
-                    <h3 className="text-xl md:text-2xl font-bold uppercase mb-2">Análise de Desempenho</h3>
-                    <p className="text-gray-300">Phidelis, ex-jogador com mais de 16 anos na Europa, fará sua análise mensal para melhorar seu desempenho individual.</p>
+                    <h3 className="text-xl md:text-2xl font-bold uppercase mb-2">AnÃ¡lise de Desempenho</h3>
+                    <p className="text-gray-300">Phidelis, ex-jogador com mais de 16 anos na Europa, farÃ¡ sua anÃ¡lise mensal para melhorar seu desempenho individual.</p>
                   </div>
                 </div>
               </div>
@@ -521,7 +521,7 @@ const PlanoCarreiraLandingPage = () => {
                   </div>
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold uppercase mb-2">Marketing Esportivo</h3>
-                    <p className="text-gray-300">Assessoria completa com flyers e edição de vídeos individuais com seus melhores momentos para construir sua imagem.</p>
+                    <p className="text-gray-300">Assessoria completa com flyers e ediÃ§Ã£o de vÃ­deos individuais com seus melhores momentos para construir sua imagem.</p>
                   </div>
                 </div>
               </div>
@@ -535,7 +535,7 @@ const PlanoCarreiraLandingPage = () => {
                   </div>
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold uppercase mb-2">Treino Personalizado</h3>
-                    <p className="text-gray-300">Um preparador físico disponível para desenvolver o melhor programa de treino personalizado de acordo com a análise de desempenho.</p>
+                    <p className="text-gray-300">Um preparador fÃ­sico disponÃ­vel para desenvolver o melhor programa de treino personalizado de acordo com a anÃ¡lise de desempenho.</p>
                   </div>
                 </div>
               </div>
@@ -549,7 +549,7 @@ const PlanoCarreiraLandingPage = () => {
                   </div>
                   <div>
                     <h3 className="text-xl md:text-2xl font-bold uppercase mb-2">Assessoria Esportiva</h3>
-                    <p className="text-gray-300">Os atletas mais desenvolvidos são indicados para avaliações em clubes no Brasil ou exterior. (não trabalhamos com peneira)</p>
+                    <p className="text-gray-300">Os atletas mais desenvolvidos sÃ£o indicados para avaliaÃ§Ãµes em clubes no Brasil ou exterior. (nÃ£o trabalhamos com peneira)</p>
                   </div>
                 </div>
               </div>
@@ -557,7 +557,7 @@ const PlanoCarreiraLandingPage = () => {
           </div>
         </section>
 
-        {/* Seção 6: O Investimento que Muda o Jogo (CORRIGIDA) */}
+        {/* SeÃ§Ã£o 6: O Investimento que Muda o Jogo (CORRIGIDA) */}
         <section id="planos" className="py-24 px-4 section-bg">
           <div className="container mx-auto relative z-10">
             <div className="text-center mb-16 reveal-on-scroll">
@@ -579,22 +579,22 @@ const PlanoCarreiraLandingPage = () => {
 
                 <ul className="space-y-3 my-6 text-gray-400 text-sm flex-grow">
                   <li className="flex justify-between items-center"><span className="line-through">Mentoria semanal</span> <span className="line-through">R$4400</span></li>
-                  <li className="flex justify-between items-center"><span className="line-through">Preparador físico</span> <span className="line-through">R$3120</span></li>
-                  <li className="flex justify-between items-center"><span className="line-through">Análise de desempenho</span> <span className="line-through">R$2800</span></li>
+                  <li className="flex justify-between items-center"><span className="line-through">Preparador fÃ­sico</span> <span className="line-through">R$3120</span></li>
+                  <li className="flex justify-between items-center"><span className="line-through">AnÃ¡lise de desempenho</span> <span className="line-through">R$2800</span></li>
                   <li className="flex justify-between items-center"><span className="line-through">Assessoria de marketing</span> <span className="line-through">R$3400</span></li>
                   <li className="flex justify-between items-center mt-4 pt-4 border-t border-sky-500/20"><span className="flex items-center gap-2 text-white font-semibold"><Star className="w-4 h-4 text-yellow-400" /> Assessoria para buscar clubes</span> <Badge className="bg-green-500 text-white">Gratuito</Badge></li>
                 </ul>
 
                 <div className="text-center my-6">
                   <p className="text-6xl font-black my-1 text-sky-300">12x R$299</p>
-                  <p className="text-gray-300 text-lg">ou R$3.099 à vista</p>
+                  <p className="text-gray-300 text-lg">ou R$3.099 Ã  vista</p>
                 </div>
 
                 <ul className="space-y-4 my-8 text-gray-300 text-base">
-                  <li className="flex items-start gap-3"><CheckCircle className="w-6 h-6 text-sky-400 flex-shrink-0 mt-1" /><span>Todos os benefícios acima</span></li>
-                  <li className="flex items-start gap-3"><CheckCircle className="w-6 h-6 text-sky-400 flex-shrink-0 mt-1" /><span>Análise de Desempenho Mensal</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle className="w-6 h-6 text-sky-400 flex-shrink-0 mt-1" /><span>Todos os benefÃ­cios acima</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle className="w-6 h-6 text-sky-400 flex-shrink-0 mt-1" /><span>AnÃ¡lise de Desempenho Mensal</span></li>
                   <li className="flex items-start gap-3"><CheckCircle className="w-6 h-6 text-sky-400 flex-shrink-0 mt-1" /><span>Marketing Completo (Reels e Flyers)</span></li>
-                  <li className="flex items-start gap-3"><CheckCircle className="w-6 h-6 text-sky-400 flex-shrink-0 mt-1" /><span>Acompanhamento com Preparador Físico</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle className="w-6 h-6 text-sky-400 flex-shrink-0 mt-1" /><span>Acompanhamento com Preparador FÃ­sico</span></li>
                   <li className="flex items-start gap-3 text-white font-bold"><CheckCircle className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-1" /><span>Assessoria Esportiva para Clubes</span></li>
                 </ul>
 
@@ -606,7 +606,7 @@ const PlanoCarreiraLandingPage = () => {
           </div>
         </section>
 
-        {/* Seção 7: Formulário de Cadastro */}
+        {/* SeÃ§Ã£o 7: FormulÃ¡rio de Cadastro */}
         <section id="cadastro" className="py-24 px-4 section-bg">
           <div className="container mx-auto relative z-10">
             <div className="text-center mb-16 reveal-on-scroll">
@@ -614,7 +614,7 @@ const PlanoCarreiraLandingPage = () => {
                 CADASTRE SEU <span className="text-sky-400">INTERESSE</span>
               </h2>
               <p className="mt-4 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-                Preencha seus dados e nossa equipe entrará em contato para apresentar o melhor plano para sua carreira.
+                Preencha seus dados e nossa equipe entrarÃ¡ em contato para apresentar o melhor plano para sua carreira.
               </p>
             </div>
 
@@ -675,7 +675,7 @@ const PlanoCarreiraLandingPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="position" className="block text-white text-sm font-medium mb-2">Posição <span className="text-red-500">*</span></label>
+                    <label htmlFor="position" className="block text-white text-sm font-medium mb-2">PosiÃ§Ã£o <span className="text-red-500">*</span></label>
                     <select
                       id="position"
                       value={formData.position}
@@ -683,13 +683,13 @@ const PlanoCarreiraLandingPage = () => {
                       className="w-full bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2"
                       required
                     >
-                      <option value="">Selecione sua posição</option>
+                      <option value="">Selecione sua posiÃ§Ã£o</option>
                       <option value="goleiro">Goleiro</option>
                       <option value="zagueiro">Zagueiro</option>
                       <option value="lateral">Lateral</option>
                       <option value="meio-campo">Meio-campo</option>
                       <option value="atacante">Atacante</option>
-                      <option value="nao_informar">Prefiro não informar</option>
+                      <option value="nao_informar">Prefiro nÃ£o informar</option>
                     </select>
                   </div>
                   <div>
@@ -707,7 +707,7 @@ const PlanoCarreiraLandingPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="experience_level" className="block text-white text-sm font-medium mb-2">Nível de Experiência</label>
+                    <label htmlFor="experience_level" className="block text-white text-sm font-medium mb-2">NÃ­vel de ExperiÃªncia</label>
                     <select
                       id="experience_level"
                       value={formData.experience_level}
@@ -728,7 +728,7 @@ const PlanoCarreiraLandingPage = () => {
                       onChange={(e) => setFormData({ ...formData, budget_range: e.target.value })}
                       className="w-full bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2"
                     >
-                      <option value="ate_500">Até R$ 500</option>
+                      <option value="ate_500">AtÃ© R$ 500</option>
                       <option value="500_1000">R$ 500 - R$ 1.000</option>
                       <option value="1000_2000">R$ 1.000 - R$ 2.000</option>
                       <option value="acima_2000">Acima de R$ 2.000</option>
@@ -780,12 +780,12 @@ const PlanoCarreiraLandingPage = () => {
           </div>
         </section>
 
-        {/* Footer com informações de contato */}
+        {/* Footer com informaÃ§Ãµes de contato */}
         <footer className="py-12 px-4 section-bg border-t border-gray-800">
           <div className="container mx-auto text-center">
             <p className="text-gray-400 mb-2 text-sm">CNPJ: 54.433.892/0001-43</p>
             <p className="text-gray-400 text-sm">Entre em contato: +351 914 945 252</p>
-            <p className="text-gray-500 text-xs mt-4">© {new Date().getFullYear()} EC10 Talentos. Todos os direitos reservados.</p>
+            <p className="text-gray-500 text-xs mt-4">Â© {new Date().getFullYear()} EC10 Talentos. Todos os direitos reservados.</p>
           </div>
         </footer>
       </div>
@@ -811,31 +811,31 @@ export default function PlanoCarreiraPage() {
     try {
       // Load only essential data first
       const [userUploads, userPerformance] = await Promise.all([
-        base44.entities.AthleteUpload.filter({ user_id: currentUser.id }, "-created_date", 20),
-        base44.entities.PerformanceData.filter({ user_id: currentUser.id }, "-game_date", 20)
+        appClient.entities.AthleteUpload.filter({ user_id: currentUser.id }, "-created_date", 20),
+        appClient.entities.PerformanceData.filter({ user_id: currentUser.id }, "-game_date", 20)
       ]);
 
       setUploads(userUploads);
       setPerformance(userPerformance);
 
       // Load remaining data in background
-      base44.entities.ChatMessage.filter({
+      appClient.entities.ChatMessage.filter({
         $or: [
           { sender_id: currentUser.id },
           { receiver_id: currentUser.id }
         ]
       }, "-created_date", 50).then(setMessages).catch(() => { });
 
-      base44.entities.UserProgress.filter({ user_id: currentUser.id }).then(setProgress).catch(() => { });
+      appClient.entities.UserProgress.filter({ user_id: currentUser.id }).then(setProgress).catch(() => { });
 
-      base44.entities.GameSchedule.filter({
+      appClient.entities.GameSchedule.filter({
         user_id: currentUser.id,
         status: "scheduled"
       }, "-game_date", 10).then(setGameSchedules).catch(() => { });
 
       Promise.all([
-        base44.entities.Content.filter({ category: "feed_posts", is_published: true }, "-created_date", 10),
-        base44.entities.CareerPost.filter({ is_active: true }, "-created_date", 10)
+        appClient.entities.Content.filter({ category: "feed_posts", is_published: true }, "-created_date", 10),
+        appClient.entities.CareerPost.filter({ is_active: true }, "-created_date", 10)
       ]).then(([generalPosts, careerPosts]) => {
         const combinedPosts = [...generalPosts, ...careerPosts].sort(
           (a, b) => new Date(b.created_date) - new Date(a.created_date)
@@ -851,7 +851,7 @@ export default function PlanoCarreiraPage() {
   const checkAccess = useCallback(async () => {
     setIsLoading(true);
     try {
-      const currentUser = await base44.auth.me();
+      const currentUser = await appClient.auth.me();
       setUser(currentUser);
       setIsLoading(false);
 
@@ -985,7 +985,7 @@ export default function PlanoCarreiraPage() {
             <div className="mb-6">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-yellow-400" />
-                Suas Estatísticas
+                Suas EstatÃ­sticas
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-gray-900 p-3 rounded-lg text-center">
@@ -1003,7 +1003,7 @@ export default function PlanoCarreiraPage() {
               <div className="mb-6">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-blue-400" />
-                  Próximos Jogos
+                  PrÃ³ximos Jogos
                 </h3>
                 <div className="space-y-3">
                   {gameSchedules.slice(0, 3).map((game) => (
@@ -1019,15 +1019,15 @@ export default function PlanoCarreiraPage() {
             <div className="mb-6">
               <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 <Star className="w-5 h-5 text-purple-400" />
-                Sugestões para Você
+                SugestÃµes para VocÃª
               </h3>
               <div className="space-y-3">
                 <div className="bg-gray-900 p-3 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
                   <p className="font-semibold text-white text-sm">Complete seu perfil</p>
-                  <p className="text-xs text-gray-400">Adicione mais informações</p>
+                  <p className="text-xs text-gray-400">Adicione mais informaÃ§Ãµes</p>
                 </div>
                 <div className="bg-gray-900 p-3 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors">
-                  <p className="font-semibold text-white text-sm">Envie um vídeo</p>
+                  <p className="font-semibold text-white text-sm">Envie um vÃ­deo</p>
                   <p className="text-xs text-gray-400">Mostre suas habilidades</p>
                 </div>
               </div>
@@ -1109,6 +1109,7 @@ export default function PlanoCarreiraPage() {
     </div>
   );
 }
+
 
 
 
