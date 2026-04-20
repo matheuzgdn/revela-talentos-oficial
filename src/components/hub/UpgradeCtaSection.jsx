@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { appClient } from "@/api/backendClient";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -198,7 +198,7 @@ export default function UpgradeCtaSection() {
 
               <div>
                 <h3 className="text-2xl md:text-4xl font-black text-white leading-tight mb-4">
-                  {currentService?.title || 'ServiÃ§o Premium'}{' '}
+                  {currentService?.title || 'Serviço Premium'}{' '}
                   <span className={`text-transparent bg-clip-text bg-gradient-to-r ${colors.titleGradient}`}>
                     {currentService?.title_highlight}
                   </span>
@@ -213,7 +213,7 @@ export default function UpgradeCtaSection() {
                 onClick={() => handleButtonClick(currentService)}
                 className={`bg-gradient-to-r ${colors.buttonGradient} text-white font-bold px-8 py-6 rounded-xl text-base shadow-lg ${colors.buttonShadow} transition-all`}
               >
-                {currentService?.button_text || 'Ver BenefÃ­cios'}
+                {currentService?.button_text || 'Ver Benefícios'}
               </Button>
 
               {services.length > 1 && (

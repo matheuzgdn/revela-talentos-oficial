@@ -1,4 +1,4 @@
-﻿import { appClient } from '@/api/backendClient';
+import { appClient } from '@/api/backendClient';
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -43,7 +43,7 @@ export default function CreatePipelineModal({ isOpen, onClose, salesRepId, servi
         is_active: true
       });
       toast.success("Pipeline criado com sucesso!");
-      onSuccess(); // Corrigido: Usando onSuccess que Ã© passado como prop
+      onSuccess(); // Corrigido: Usando onSuccess que é passado como prop
     } catch (error) {
       toast.error("Erro ao criar pipeline.");
     }
@@ -67,10 +67,10 @@ export default function CreatePipelineModal({ isOpen, onClose, salesRepId, servi
               />
             </div>
             <div>
-              <Label>ServiÃ§o Associado</Label>
+              <Label>Serviço Associado</Label>
               <Select value={serviceCategory} onValueChange={setServiceCategory}>
                 <SelectTrigger className="bg-gray-800 border-gray-700">
-                  <SelectValue placeholder="Selecione um serviÃ§o" />
+                  <SelectValue placeholder="Selecione um serviço" />
                 </SelectTrigger>
                 <SelectContent>
                   {services.map(service => (

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { appClient } from '@/api/backendClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { 
@@ -258,7 +258,7 @@ export default function AdminSeletivasTab() {
       {activeView === 'events' && (
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-white">GestÃ£o de Eventos de Seletiva</h2>
+            <h2 className="text-2xl font-bold text-white">Gestão de Eventos de Seletiva</h2>
             <Button
               onClick={() => {
                 setSelectedEvent(null);
@@ -286,7 +286,7 @@ export default function AdminSeletivasTab() {
                     try {
                       await appClient.entities.SeletivaEvent.delete(event.id);
                       queryClient.invalidateQueries(['seletiva-events']);
-                      toast.success('Evento excluÃ­do com sucesso');
+                      toast.success('Evento excluído com sucesso');
                     } catch (error) {
                       toast.error('Erro ao excluir evento');
                     }
@@ -318,7 +318,7 @@ export default function AdminSeletivasTab() {
               <SelectContent>
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="pending">Pendente</SelectItem>
-                <SelectItem value="under_review">Em AnÃ¡lise</SelectItem>
+                <SelectItem value="under_review">Em Análise</SelectItem>
                 <SelectItem value="approved">Aprovado</SelectItem>
                 <SelectItem value="rejected">Rejeitado</SelectItem>
                 <SelectItem value="waitlist">Lista de Espera</SelectItem>
@@ -439,7 +439,7 @@ function EventCard({ event, applications, onEdit, onDelete, index }) {
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2 text-gray-400">
               <Calendar className="w-4 h-4" />
-              <span>AtÃ©: {new Date(event.end_date).toLocaleDateString('pt-BR')}</span>
+              <span>Até: {new Date(event.end_date).toLocaleDateString('pt-BR')}</span>
             </div>
             {event.location && (
               <div className="flex items-center gap-2 text-gray-400">
@@ -515,7 +515,7 @@ function ApplicationCard({ application, event, onClick, index }) {
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500">PosiÃ§Ã£o</p>
+                  <p className="text-gray-500">Posição</p>
                   <p className="text-white font-medium">{application.position}</p>
                 </div>
                 <div>
@@ -538,7 +538,7 @@ function ApplicationCard({ application, event, onClick, index }) {
 
               {application.rating && (
                 <div className="mt-3 flex items-center gap-2">
-                  <span className="text-sm text-gray-400">AvaliaÃ§Ã£o:</span>
+                  <span className="text-sm text-gray-400">Avaliação:</span>
                   <div className="flex gap-0.5">
                     {[...Array(10)].map((_, i) => (
                       <div
@@ -598,7 +598,7 @@ function EventModal({ event, onClose, onSave }) {
 
   const handleSave = async () => {
     if (!formData.title || !formData.description || !formData.start_date || !formData.end_date) {
-      toast.error('Preencha todos os campos obrigatÃ³rios');
+      toast.error('Preencha todos os campos obrigatórios');
       return;
     }
 
@@ -631,10 +631,10 @@ function EventModal({ event, onClose, onSave }) {
         <div className="space-y-6 mt-4">
           {/* Basic Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-yellow-400">InformaÃ§Ãµes BÃ¡sicas</h3>
+            <h3 className="text-lg font-semibold text-yellow-400">Informações Básicas</h3>
             
             <div>
-              <Label>TÃ­tulo *</Label>
+              <Label>Título *</Label>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({...formData, title: e.target.value})}
@@ -644,7 +644,7 @@ function EventModal({ event, onClose, onSave }) {
             </div>
 
             <div>
-              <Label>DescriÃ§Ã£o *</Label>
+              <Label>Descrição *</Label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
@@ -695,7 +695,7 @@ function EventModal({ event, onClose, onSave }) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Nome do Clube (se aplicÃ¡vel)</Label>
+                <Label>Nome do Clube (se aplicável)</Label>
                 <Input
                   value={formData.club_name}
                   onChange={(e) => setFormData({...formData, club_name: e.target.value})}
@@ -717,7 +717,7 @@ function EventModal({ event, onClose, onSave }) {
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label>Data de InÃ­cio *</Label>
+                <Label>Data de Início *</Label>
                 <Input
                   type="date"
                   value={formData.start_date}
@@ -727,7 +727,7 @@ function EventModal({ event, onClose, onSave }) {
               </div>
 
               <div>
-                <Label>Data de TÃ©rmino *</Label>
+                <Label>Data de Término *</Label>
                 <Input
                   type="date"
                   value={formData.end_date}
@@ -753,13 +753,13 @@ function EventModal({ event, onClose, onSave }) {
                 <Input
                   value={formData.location}
                   onChange={(e) => setFormData({...formData, location: e.target.value})}
-                  placeholder="Ex: SÃ£o Paulo - SP"
+                  placeholder="Ex: São Paulo - SP"
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
 
               <div>
-                <Label>MÃ¡ximo de Participantes</Label>
+                <Label>Máximo de Participantes</Label>
                 <Input
                   type="number"
                   value={formData.max_participants}
@@ -778,7 +778,7 @@ function EventModal({ event, onClose, onSave }) {
                   onChange={(e) => setFormData({...formData, is_virtual: e.target.checked})}
                   className="w-4 h-4"
                 />
-                <span className="text-white">Seletiva Virtual (anÃ¡lise de vÃ­deos)</span>
+                <span className="text-white">Seletiva Virtual (análise de vídeos)</span>
               </label>
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -805,11 +805,11 @@ function EventModal({ event, onClose, onSave }) {
 
           {/* Criteria */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-yellow-400">CritÃ©rios de Elegibilidade</h3>
+            <h3 className="text-lg font-semibold text-yellow-400">Critérios de Elegibilidade</h3>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Idade MÃ­nima</Label>
+                <Label>Idade Mínima</Label>
                 <Input
                   type="number"
                   value={formData.criteria.min_age}
@@ -823,7 +823,7 @@ function EventModal({ event, onClose, onSave }) {
               </div>
 
               <div>
-                <Label>Idade MÃ¡xima</Label>
+                <Label>Idade Máxima</Label>
                 <Input
                   type="number"
                   value={formData.criteria.max_age}
@@ -838,7 +838,7 @@ function EventModal({ event, onClose, onSave }) {
             </div>
 
             <div>
-              <Label>PosiÃ§Ãµes Aceitas (separadas por vÃ­rgula)</Label>
+              <Label>Posições Aceitas (separadas por vírgula)</Label>
               <Input
                 value={formData.criteria.positions?.join(', ') || ''}
                 onChange={(e) => setFormData({
@@ -854,7 +854,7 @@ function EventModal({ event, onClose, onSave }) {
             </div>
 
             <div>
-              <Label>Estados Aceitos (separados por vÃ­rgula)</Label>
+              <Label>Estados Aceitos (separados por vírgula)</Label>
               <Input
                 value={formData.criteria.states?.join(', ') || ''}
                 onChange={(e) => setFormData({
@@ -870,7 +870,7 @@ function EventModal({ event, onClose, onSave }) {
             </div>
 
             <div>
-              <Label>GÃªnero</Label>
+              <Label>Gênero</Label>
               <Select 
                 value={formData.criteria.gender} 
                 onValueChange={(v) => setFormData({
@@ -892,17 +892,17 @@ function EventModal({ event, onClose, onSave }) {
 
           {/* Benefits & Requirements */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-yellow-400">BenefÃ­cios e Requisitos</h3>
+            <h3 className="text-lg font-semibold text-yellow-400">Benefícios e Requisitos</h3>
             
             <div>
-              <Label>BenefÃ­cios (um por linha)</Label>
+              <Label>Benefícios (um por linha)</Label>
               <Textarea
                 value={formData.benefits?.join('\n') || ''}
                 onChange={(e) => setFormData({
                   ...formData,
                   benefits: e.target.value.split('\n').filter(Boolean)
                 })}
-                placeholder="Ex: &#10;AvaliaÃ§Ã£o com tÃ©cnicos profissionais&#10;Possibilidade de contrato&#10;Certificado de participaÃ§Ã£o"
+                placeholder="Ex: &#10;Avaliação com técnicos profissionais&#10;Possibilidade de contrato&#10;Certificado de participação"
                 className="bg-gray-800 border-gray-700 text-white h-32"
               />
             </div>
@@ -915,7 +915,7 @@ function EventModal({ event, onClose, onSave }) {
                   ...formData,
                   requirements: e.target.value.split('\n').filter(Boolean)
                 })}
-                placeholder="Ex: &#10;VÃ­deo de jogo completo&#10;Atestado mÃ©dico&#10;Documento de identidade"
+                placeholder="Ex: &#10;Vídeo de jogo completo&#10;Atestado médico&#10;Documento de identidade"
                 className="bg-gray-800 border-gray-700 text-white h-32"
               />
             </div>
@@ -983,7 +983,7 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
         <DialogHeader>
           <DialogTitle className="text-2xl flex items-center gap-3">
             <Trophy className="w-6 h-6 text-yellow-400" />
-            AnÃ¡lise de Candidatura
+            Análise de Candidatura
           </DialogTitle>
         </DialogHeader>
 
@@ -1012,7 +1012,7 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">PosiÃ§Ã£o</p>
+                    <p className="text-sm text-gray-400">Posição</p>
                     <p className="text-white font-medium">{application.position}</p>
                   </div>
                   <div>
@@ -1024,12 +1024,12 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
                     <p className="text-white font-medium">{application.height}cm / {application.weight}kg</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-400">PÃ© Preferido</p>
+                    <p className="text-sm text-gray-400">Pé Preferido</p>
                     <p className="text-white font-medium">{application.preferred_foot}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Clube Atual</p>
-                    <p className="text-white font-medium">{application.current_club || 'NÃ£o informado'}</p>
+                    <p className="text-white font-medium">{application.current_club || 'Não informado'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Telefone</p>
@@ -1051,12 +1051,12 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Video className="w-5 h-5 text-yellow-400" />
-                  VÃ­deos
+                  Vídeos
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <p className="text-sm text-gray-400 mb-2">VÃ­deo Principal</p>
+                  <p className="text-sm text-gray-400 mb-2">Vídeo Principal</p>
                   <a
                     href={application.video_url}
                     target="_blank"
@@ -1064,13 +1064,13 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
                     className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Assistir VÃ­deo
+                    Assistir Vídeo
                   </a>
                 </div>
 
                 {application.additional_videos && application.additional_videos.length > 0 && (
                   <div>
-                    <p className="text-sm text-gray-400 mb-2">VÃ­deos Adicionais</p>
+                    <p className="text-sm text-gray-400 mb-2">Vídeos Adicionais</p>
                     <div className="space-y-2">
                       {application.additional_videos.map((url, index) => (
                         <a
@@ -1081,7 +1081,7 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
                           className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300"
                         >
                           <ExternalLink className="w-4 h-4" />
-                          VÃ­deo {index + 1}
+                          Vídeo {index + 1}
                         </a>
                       ))}
                     </div>
@@ -1124,7 +1124,7 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
             {/* Rating */}
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-sm">AvaliaÃ§Ã£o</CardTitle>
+                <CardTitle className="text-sm">Avaliação</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -1158,14 +1158,14 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
               <CardHeader>
                 <CardTitle className="text-sm flex items-center gap-2">
                   <MessageSquare className="w-4 h-4" />
-                  ObservaÃ§Ãµes Internas
+                  Observações Internas
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <Textarea
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="ObservaÃ§Ãµes internas sobre o atleta..."
+                  placeholder="Observações internas sobre o atleta..."
                   className="bg-gray-900 border-gray-700 text-white h-32"
                 />
               </CardContent>
@@ -1183,7 +1183,7 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
                 <Textarea
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value)}
-                  placeholder="Feedback que serÃ¡ enviado ao atleta..."
+                  placeholder="Feedback que será enviado ao atleta..."
                   className="bg-gray-900 border-gray-700 text-white h-32"
                 />
               </CardContent>
@@ -1192,7 +1192,7 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
             {/* Actions */}
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-sm">AÃ§Ãµes</CardTitle>
+                <CardTitle className="text-sm">Ações</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button
@@ -1201,7 +1201,7 @@ function ApplicationModal({ application, event, onClose, onUpdate }) {
                   className="w-full bg-blue-600 hover:bg-blue-700"
                 >
                   <Clock className="w-4 h-4 mr-2" />
-                  Em AnÃ¡lise
+                  Em Análise
                 </Button>
                 <Button
                   onClick={() => handleUpdateStatus('approved')}
@@ -1251,9 +1251,9 @@ function getStatusColor(status) {
 function getStatusLabel(status) {
   const labels = {
     pending: 'Aguardando',
-    under_review: 'Em AnÃ¡lise',
+    under_review: 'Em Análise',
     approved: 'Aprovado',
-    rejected: 'NÃ£o Aprovado',
+    rejected: 'Não Aprovado',
     waitlist: 'Lista de Espera'
   };
   return labels[status] || status;
@@ -1473,7 +1473,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <UserIcon className="w-5 h-5 text-yellow-400" />
-                  InformaÃ§Ãµes Pessoais
+                  Informações Pessoais
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -1502,13 +1502,13 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                   )}
                   {athlete.position && (
                     <div>
-                      <p className="text-sm text-gray-400">PosiÃ§Ã£o</p>
+                      <p className="text-sm text-gray-400">Posição</p>
                       <p className="text-white font-medium">{athlete.position}</p>
                     </div>
                   )}
                   {(athlete.city || athlete.state) && (
                     <div>
-                      <p className="text-sm text-gray-400">LocalizaÃ§Ã£o</p>
+                      <p className="text-sm text-gray-400">Localização</p>
                       <p className="text-white font-medium">
                         {[athlete.city, athlete.state].filter(Boolean).join(', ')}
                       </p>
@@ -1528,7 +1528,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                   )}
                   {athlete.preferred_foot && (
                     <div>
-                      <p className="text-sm text-gray-400">PÃ© Preferido</p>
+                      <p className="text-sm text-gray-400">Pé Preferido</p>
                       <p className="text-white font-medium">{athlete.preferred_foot}</p>
                     </div>
                   )}
@@ -1555,20 +1555,20 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
               </CardContent>
             </Card>
 
-            {/* VÃ­deos da Seletiva Online */}
+            {/* Vídeos da Seletiva Online */}
             {seletivaData && (
               <Card className="bg-gray-800 border-gray-700">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Video className="w-5 h-5 text-yellow-400" />
-                    VÃ­deos da Seletiva Online
+                    Vídeos da Seletiva Online
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {seletivaData.video_url_game && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-400">VÃ­deo de Jogo Completo</p>
+                        <p className="text-sm text-gray-400">Vídeo de Jogo Completo</p>
                         <Button
                           size="sm"
                           variant="outline"
@@ -1576,7 +1576,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                           className="text-yellow-400 border-yellow-500/50"
                         >
                           <ExternalLink className="w-3 h-3 mr-2" />
-                          Assistir VÃ­deo
+                          Assistir Vídeo
                         </Button>
                       </div>
                       <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
@@ -1593,7 +1593,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                   {seletivaData.video_url_drills && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-gray-400">VÃ­deo de Treinos/Habilidades</p>
+                        <p className="text-sm text-gray-400">Vídeo de Treinos/Habilidades</p>
                         <Button
                           size="sm"
                           variant="outline"
@@ -1601,7 +1601,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                           className="text-yellow-400 border-yellow-500/50"
                         >
                           <ExternalLink className="w-3 h-3 mr-2" />
-                          Assistir VÃ­deo
+                          Assistir Vídeo
                         </Button>
                       </div>
                       <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden">
@@ -1617,7 +1617,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
 
                   {seletivaData.self_assessment && (
                     <div className="pt-4 border-t border-gray-700">
-                      <p className="text-sm text-gray-400 mb-2">AutoavaliaÃ§Ã£o do Atleta</p>
+                      <p className="text-sm text-gray-400 mb-2">Autoavaliação do Atleta</p>
                       <p className="text-white bg-gray-900 p-3 rounded-lg">{seletivaData.self_assessment}</p>
                     </div>
                   )}
@@ -1630,7 +1630,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-yellow-400" />
-                  HistÃ³rico de Candidaturas ({applications.length})
+                  Histórico de Candidaturas ({applications.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1663,7 +1663,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                           
                           {app.rating && (
                             <div className="flex items-center gap-2 mt-2">
-                              <span className="text-sm text-gray-400">AvaliaÃ§Ã£o:</span>
+                              <span className="text-sm text-gray-400">Avaliação:</span>
                               <div className="flex gap-0.5">
                                 {[...Array(10)].map((_, i) => (
                                   <div
@@ -1700,7 +1700,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
             {/* Quick Stats */}
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-sm">EstatÃ­sticas</CardTitle>
+                <CardTitle className="text-sm">Estatísticas</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -1709,7 +1709,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                 </div>
 
                 <div>
-                  <p className="text-gray-400 text-sm mb-1">AprovaÃ§Ãµes</p>
+                  <p className="text-gray-400 text-sm mb-1">Aprovações</p>
                   <p className="text-3xl font-bold text-green-400">
                     {applications.filter(a => a.status === 'approved').length}
                   </p>
@@ -1723,7 +1723,7 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
                 </div>
 
                 <div>
-                  <p className="text-gray-400 text-sm mb-1">Em AnÃ¡lise</p>
+                  <p className="text-gray-400 text-sm mb-1">Em Análise</p>
                   <p className="text-3xl font-bold text-purple-400">
                     {applications.filter(a => a.status === 'under_review').length}
                   </p>
@@ -1735,19 +1735,19 @@ function AthleteDetailModal({ athlete: athleteData, applications: allApplication
             {athleteData.user && (
               <Card className="bg-gray-800 border-gray-700">
                 <CardHeader>
-                  <CardTitle className="text-sm">InformaÃ§Ãµes de Acesso</CardTitle>
+                  <CardTitle className="text-sm">Informações de Acesso</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400 text-sm">Revela Talentos</span>
                     <Badge className={athlete.has_revela_talentos_access ? 'bg-green-600' : 'bg-gray-600'}>
-                      {athlete.has_revela_talentos_access ? 'Sim' : 'NÃ£o'}
+                      {athlete.has_revela_talentos_access ? 'Sim' : 'Não'}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400 text-sm">Plano Carreira</span>
                     <Badge className={athlete.has_plano_carreira_access ? 'bg-green-600' : 'bg-gray-600'}>
-                      {athlete.has_plano_carreira_access ? 'Sim' : 'NÃ£o'}
+                      {athlete.has_plano_carreira_access ? 'Sim' : 'Não'}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">

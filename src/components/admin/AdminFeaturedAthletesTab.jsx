@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { appClient } from '@/api/backendClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -107,7 +107,7 @@ export default function AdminFeaturedAthletesTab() {
     try {
       const { file_url } = await appClient.integrations.Core.UploadFile({ file });
       setFormData(prev => ({ ...prev, [field]: file_url }));
-      toast.success('Upload concluÃ­do!');
+      toast.success('Upload concluído!');
     } catch (error) {
       console.error('Erro no upload:', error);
       toast.error('Erro ao fazer upload');
@@ -118,7 +118,7 @@ export default function AdminFeaturedAthletesTab() {
 
   const handleSubmit = async () => {
     if (!formData.athlete_name || !formData.position || !formData.photo_url) {
-      toast.error('Preencha nome, posiÃ§Ã£o e foto');
+      toast.error('Preencha nome, posição e foto');
       return;
     }
 
@@ -154,7 +154,7 @@ export default function AdminFeaturedAthletesTab() {
           <Star className="w-6 h-6 text-yellow-400" fill="#FFD700" />
           <div>
             <h2 className="text-2xl font-bold text-white">Atletas em Destaque</h2>
-            <p className="text-sm text-gray-400">Figurinhas de futebol exibidas na pÃ¡gina inicial</p>
+            <p className="text-sm text-gray-400">Figurinhas de futebol exibidas na página inicial</p>
           </div>
         </div>
         <Button onClick={handleCreate} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400">
@@ -183,7 +183,7 @@ export default function AdminFeaturedAthletesTab() {
           <CardContent className="p-4 text-center">
             <Video className="w-8 h-8 text-blue-400 mx-auto mb-2" />
             <p className="text-2xl font-bold text-white">{athletes.filter(a => a.video_url).length}</p>
-            <p className="text-xs text-gray-400">Com VÃ­deo</p>
+            <p className="text-xs text-gray-400">Com Vídeo</p>
           </CardContent>
         </Card>
       </div>
@@ -226,7 +226,7 @@ export default function AdminFeaturedAthletesTab() {
                   <div className="absolute top-2 right-2">
                     <Badge className="bg-purple-500/80 text-white flex items-center gap-1">
                       <Video className="w-3 h-3" />
-                      VÃ­deo
+                      Vídeo
                     </Badge>
                   </div>
                 )}
@@ -245,7 +245,7 @@ export default function AdminFeaturedAthletesTab() {
                   <h3 className="text-white font-bold text-lg truncate">{athlete.athlete_name}</h3>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge className="bg-cyan-500/20 text-cyan-400 text-xs">
-                      {athlete.position || 'Sem posiÃ§Ã£o'}
+                      {athlete.position || 'Sem posição'}
                     </Badge>
                     {athlete.club_name && (
                       <span className="text-xs text-gray-400 truncate">{athlete.club_name}</span>
@@ -301,7 +301,7 @@ export default function AdminFeaturedAthletesTab() {
         <div className="text-center py-12 text-gray-500">
           <Star className="w-16 h-16 mx-auto mb-4 text-gray-700" />
           <h3 className="text-lg font-medium text-white mb-2">Nenhum atleta em destaque</h3>
-          <p className="mb-4">Crie atletas em destaque para exibir na pÃ¡gina inicial</p>
+          <p className="mb-4">Crie atletas em destaque para exibir na página inicial</p>
           <Button onClick={handleCreate} className="bg-gradient-to-r from-blue-600 to-cyan-500">
             <Plus className="w-4 h-4 mr-2" />
             Criar Primeiro Atleta
@@ -332,7 +332,7 @@ export default function AdminFeaturedAthletesTab() {
                 />
               </div>
               <div>
-                <Label className="text-gray-400">PosiÃ§Ã£o *</Label>
+                <Label className="text-gray-400">Posição *</Label>
                 <Select 
                   value={formData.position} 
                   onValueChange={(v) => setFormData(prev => ({ ...prev, position: v }))}
@@ -430,12 +430,12 @@ export default function AdminFeaturedAthletesTab() {
 
             {/* Video */}
             <div>
-              <Label className="text-gray-400">VÃ­deo do Atleta</Label>
+              <Label className="text-gray-400">Vídeo do Atleta</Label>
               <div className="flex gap-2">
                 <Input
                   value={formData.video_url}
                   onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
-                  placeholder="URL do vÃ­deo"
+                  placeholder="URL do vídeo"
                   className="bg-gray-800 border-gray-700 flex-1"
                 />
                 <Button
@@ -460,7 +460,7 @@ export default function AdminFeaturedAthletesTab() {
 
             {/* Bio */}
             <div>
-              <Label className="text-gray-400">Biografia / DescriÃ§Ã£o</Label>
+              <Label className="text-gray-400">Biografia / Descrição</Label>
               <Textarea
                 value={formData.bio}
                 onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
@@ -471,7 +471,7 @@ export default function AdminFeaturedAthletesTab() {
 
             {/* Stats */}
             <div>
-              <Label className="text-gray-400 mb-2 block">EstatÃ­sticas</Label>
+              <Label className="text-gray-400 mb-2 block">Estatísticas</Label>
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <Label className="text-xs text-gray-500">Jogos</Label>
@@ -498,7 +498,7 @@ export default function AdminFeaturedAthletesTab() {
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-500">AssistÃªncias</Label>
+                  <Label className="text-xs text-gray-500">Assistências</Label>
                   <Input
                     type="number"
                     value={formData.stats.assists}
@@ -515,7 +515,7 @@ export default function AdminFeaturedAthletesTab() {
             {/* Settings */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-gray-400">Ordem de ExibiÃ§Ã£o</Label>
+                <Label className="text-gray-400">Ordem de Exibição</Label>
                 <Input
                   type="number"
                   value={formData.display_order}
@@ -531,7 +531,7 @@ export default function AdminFeaturedAthletesTab() {
                     onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.checked }))}
                     className="w-4 h-4"
                   />
-                  <span className="text-sm text-gray-400">Ativo na pÃ¡gina inicial</span>
+                  <span className="text-sm text-gray-400">Ativo na página inicial</span>
                 </label>
               </div>
             </div>

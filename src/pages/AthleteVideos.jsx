@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { appClient } from "@/api/backendClient";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -26,7 +26,7 @@ export default function AthleteVideos() {
       if (!user?.id) {
         return appClient.entities.AthleteVideo.filter({ status: "approved" }, "-created_date", 50);
       }
-      // Para o usuÃ¡rio logado, mostrar todos os seus vÃ­deos
+      // Para o usuário logado, mostrar todos os seus vídeos
       const myVideos = await appClient.entities.AthleteVideo.filter({ athlete_id: user.id }, "-created_date", 50);
       return myVideos;
     },

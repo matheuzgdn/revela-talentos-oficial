@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { appClient } from '@/api/backendClient';
 import { toast } from 'sonner';
@@ -14,7 +14,7 @@ export default function RenderPage() {
             const slug = location.pathname;
 
             if (!slug) {
-                setError("PÃ¡gina nÃ£o encontrada.");
+                setError("Página não encontrada.");
                 setIsLoading(false);
                 return;
             }
@@ -25,7 +25,7 @@ export default function RenderPage() {
                     const pageData = pages[0];
                     setPageContent(pageData);
 
-                    // Adicionar um listener de formulÃ¡rio apÃ³s o conteÃºdo ser definido
+                    // Adicionar um listener de formulário após o conteúdo ser definido
                     setTimeout(() => {
                         const form = document.querySelector('form');
                         if (form && pageData.form_connection_info) {
@@ -33,10 +33,10 @@ export default function RenderPage() {
                         }
                     }, 100);
                 } else {
-                    setError("PÃ¡gina nÃ£o encontrada ou inativa.");
+                    setError("Página não encontrada ou inativa.");
                 }
             } catch (err) {
-                setError("Erro ao carregar a pÃ¡gina.");
+                setError("Erro ao carregar a página.");
                 console.error(err);
             } finally {
                 setIsLoading(false);
@@ -58,7 +58,7 @@ export default function RenderPage() {
             submissionData[targetField] = value;
         }
 
-        // Adiciona a pÃ¡gina de origem
+        // Adiciona a página de origem
         submissionData.source_page = pageData.name;
         submissionData.lgpd_consent = submissionData.lgpd_consent === 'on' || submissionData.lgpd_consent === true;
 
@@ -69,11 +69,11 @@ export default function RenderPage() {
 
             await Entity.create(submissionData);
 
-            toast.success("InscriÃ§Ã£o enviada com sucesso!");
+            toast.success("Inscrição enviada com sucesso!");
             form.reset();
-            // LÃ³gica de redirecionamento ou mensagem de sucesso aqui
+            // Lógica de redirecionamento ou mensagem de sucesso aqui
         } catch (err) {
-            console.error("Erro ao enviar formulÃ¡rio:", err);
+            console.error("Erro ao enviar formulário:", err);
             toast.error("Erro ao enviar. Verifique os campos.");
         }
     };

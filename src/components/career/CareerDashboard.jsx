@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { appClient } from "@/api/backendClient";
  // Added User import
@@ -69,10 +69,10 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
   const generalProgress = (averageRating / 10) * 100;
 
   const stats = [
-    { label: "VÃ­deos Enviados", value: uploads?.length || 0, icon: Video, color: "text-cyan-400" },
+    { label: "Vídeos Enviados", value: uploads?.length || 0, icon: Video, color: "text-cyan-400" },
     { label: "Mentorias Assistidas", value: completedMentorias, icon: Star, color: "text-yellow-400" },
     { label: "Progresso Geral", value: `${Math.round(generalProgress)}%`, icon: TrendingUp, color: "text-green-400" },
-    { label: "Nota MÃ©dia", value: averageRating.toFixed(1), icon: Award, color: "text-purple-400" }
+    { label: "Nota Média", value: averageRating.toFixed(1), icon: Award, color: "text-purple-400" }
   ];
 
   return (
@@ -119,24 +119,24 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-400 mb-6">Envie seus vÃ­deos de desempenho e fotos para marketing.</p>
+            <p className="text-gray-400 mb-6">Envie seus vídeos de desempenho e fotos para marketing.</p>
             <div className="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-cyan-400/50 transition-colors duration-300">
               <Upload className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-500 font-medium">Clique aqui para ir Ã  galeria de material</p>
-              <p className="text-xs text-gray-600 mt-2">Envie vÃ­deos de jogos, treinos ou marketing</p>
+              <p className="text-gray-500 font-medium">Clique aqui para ir à galeria de material</p>
+              <p className="text-xs text-gray-600 mt-2">Envie vídeos de jogos, treinos ou marketing</p>
             </div>
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* MÃ³dulos de Acompanhamento */}
+      {/* Módulos de Acompanhamento */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={cardVariants}
         transition={{ delay: 0.4 }}
       >
-        <h2 className="text-2xl font-bold mb-6 text-white">MÃ³dulos de Acompanhamento</h2>
+        <h2 className="text-2xl font-bold mb-6 text-white">Módulos de Acompanhamento</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* Performance Analysis - ATIVADO */}
@@ -146,16 +146,16 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
                 <div className="w-12 h-12 bg-blue-400/10 border border-blue-400/30 rounded-xl flex items-center justify-center">
                   <BarChart3 className="w-6 h-6 text-blue-400" />
                 </div>
-                AnÃ¡lise de Performance
+                Análise de Performance
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-300 text-sm leading-relaxed">
-                Acesse relatÃ³rios detalhados sobre sua performance em campo com dados reais conectados ao seu perfil.
+                Acesse relatórios detalhados sobre sua performance em campo com dados reais conectados ao seu perfil.
               </p>
               <Button asChild className="w-full bg-black text-blue-400 hover:bg-blue-400/10 font-bold py-3 rounded-lg shadow-lg border border-blue-400">
                 <Link to={createPageUrl("AnalisePerformance")}>
-                  Ver RelatÃ³rios
+                  Ver Relatórios
                 </Link>
               </Button>
             </CardContent>
@@ -173,7 +173,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-300 text-sm leading-relaxed">
-                Acesse conteÃºdos e sessÃµes de mentoria com especialistas reais cadastrados na plataforma.
+                Acesse conteúdos e sessões de mentoria com especialistas reais cadastrados na plataforma.
               </p>
               <Button asChild className="w-full bg-black text-green-400 hover:bg-green-400/10 font-bold py-3 rounded-lg shadow-lg border border-green-400">
                 <Link to={createPageUrl("RevelaTalentos")}>
@@ -195,7 +195,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-300 text-sm leading-relaxed">
-                Explore oportunidades no futebol europeu atravÃ©s de nossa rede de scouts.
+                Explore oportunidades no futebol europeu através de nossa rede de scouts.
               </p>
               <Button asChild className="w-full bg-black text-purple-400 hover:bg-purple-400/10 font-bold py-3 rounded-lg shadow-lg border border-purple-400">
                 <Link to={createPageUrl("PlanoInternacional")}>
@@ -214,7 +214,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
         variants={cardVariants}
         transition={{ delay: 0.5 }}
       >
-        <h2 className="text-2xl font-bold mb-6 text-white">ConteÃºdos Destacados do Revela Talentos</h2>
+        <h2 className="text-2xl font-bold mb-6 text-white">Conteúdos Destacados do Revela Talentos</h2>
         {isLoadingContent ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[...Array(6)].map((_, i) => (
@@ -271,7 +271,7 @@ export default function CareerDashboard({ user, uploads, setActiveView, progress
         <div className="text-center mt-6">
           <Button asChild variant="outline" className="border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black">
             <Link to={createPageUrl("RevelaTalentos")}>
-              Ver Todos os ConteÃºdos
+              Ver Todos os Conteúdos
             </Link>
           </Button>
         </div>

@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { appClient } from "@/api/backendClient";
 
 
@@ -266,7 +266,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
     name: '',
     description: '',
     color: 'blue',
-    stages: [{ name: 'Novo Lead', description: 'Atleta recÃ©m cadastrado', order: 1 }]
+    stages: [{ name: 'Novo Lead', description: 'Atleta recém cadastrado', order: 1 }]
   });
 
   const handleCreatePipeline = async () => {
@@ -278,7 +278,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
         name: '',
         description: '',
         color: 'blue',
-        stages: [{ name: 'Novo Lead', description: 'Atleta recÃ©m cadastrado', order: 1 }]
+        stages: [{ name: 'Novo Lead', description: 'Atleta recém cadastrado', order: 1 }]
       });
       onRefresh();
     } catch (error) {
@@ -372,7 +372,7 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
               </div>
             </div>
             <div>
-              <Label>DescriÃ§Ã£o</Label>
+              <Label>Descrição</Label>
               <Textarea
                 value={newbase44.entities.Pipeline.description}
                 onChange={(e) => setNewPipeline((prev) => ({ ...prev, description: e.target.value }))}
@@ -382,10 +382,10 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
 
             <div>
               <div className="flex justify-between items-center mb-3">
-                <Label>EstÃ¡gios do Pipeline</Label>
+                <Label>Estágios do Pipeline</Label>
                 <Button type="button" onClick={addStage} size="sm" className="bg-green-600 hover:bg-green-700">
                   <Plus className="w-3 h-3 mr-1" />
-                  Adicionar EstÃ¡gio
+                  Adicionar Estágio
                 </Button>
               </div>
               <div className="space-y-3">
@@ -393,13 +393,13 @@ const PipelineManager = ({ pipelines, onRefresh }) => {
                   <div key={index} className="flex gap-2 items-start">
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <Input
-                        placeholder="Nome do estÃ¡gio"
+                        placeholder="Nome do estágio"
                         value={stage.name}
                         onChange={(e) => updateStage(index, 'name', e.target.value)}
                         className="bg-gray-800 border-gray-700" />
 
                       <Input
-                        placeholder="DescriÃ§Ã£o"
+                        placeholder="Descrição"
                         value={stage.description}
                         onChange={(e) => updateStage(index, 'description', e.target.value)}
                         className="bg-gray-800 border-gray-700" />
@@ -459,7 +459,7 @@ export default function AdminUsersTab() {
 
   const personas = [
     { id: "analyst_01", name: "Analista de Desempenho" },
-    { id: "physio_01", name: "Preparador FÃ­sico" },
+    { id: "physio_01", name: "Preparador Físico" },
     { id: "mentor_01", name: "Mentor de Carreira" },
     { id: "marketing_01", name: "Equipe de Marketing" }];
 
@@ -485,7 +485,7 @@ export default function AdminUsersTab() {
       }).catch(() => { });
     } catch (error) {
       console.error('Error loading user data:', error);
-      toast.error('Erro ao carregar dados dos usuÃ¡rios.');
+      toast.error('Erro ao carregar dados dos usuários.');
       setIsLoading(false);
     }
   }, []);
@@ -528,16 +528,16 @@ export default function AdminUsersTab() {
         type: 'profile_visit',
         priority: 'medium'
       });
-      toast.success(`NotificaÃ§Ã£o de visita enviada para ${user.full_name}`);
+      toast.success(`Notificação de visita enviada para ${user.full_name}`);
     } catch (error) {
       console.error('Error sending visit notification:', error);
-      toast.error('Erro ao enviar notificaÃ§Ã£o');
+      toast.error('Erro ao enviar notificação');
     }
   };
 
   const handleSubmitNotification = async () => {
     if (!notificationForm.title || !notificationForm.message) {
-      toast.error('Preencha tÃ­tulo e mensagem');
+      toast.error('Preencha título e mensagem');
       return;
     }
 
@@ -549,12 +549,12 @@ export default function AdminUsersTab() {
         type: notificationForm.type,
         priority: notificationForm.priority
       });
-      toast.success(`NotificaÃ§Ã£o enviada para ${notificationTarget.full_name}`);
+      toast.success(`Notificação enviada para ${notificationTarget.full_name}`);
       setShowNotificationModal(false);
       setNotificationTarget(null);
     } catch (error) {
       console.error('Error sending notification:', error);
-      toast.error('Erro ao enviar notificaÃ§Ã£o');
+      toast.error('Erro ao enviar notificação');
     }
   };
 
@@ -577,10 +577,10 @@ export default function AdminUsersTab() {
       }
 
       setIsPlatformRestricted(newValue);
-      toast.success(newValue ? 'Plataforma bloqueada para novos usuÃ¡rios' : 'Plataforma liberada para todos');
+      toast.success(newValue ? 'Plataforma bloqueada para novos usuários' : 'Plataforma liberada para todos');
     } catch (error) {
       console.error('Error toggling platform restriction:', error);
-      toast.error('Erro ao alterar configuraÃ§Ã£o');
+      toast.error('Erro ao alterar configuração');
     }
   };
 
@@ -666,18 +666,18 @@ export default function AdminUsersTab() {
       await appClient.entities.Notification.create({
         user_id: id,
         title: "Perfil Atualizado",
-        message: "Seu perfil foi atualizado pela administraÃ§Ã£o.",
+        message: "Seu perfil foi atualizado pela administração.",
         type: "general",
         priority: "medium"
       });
 
-      toast.success("UsuÃ¡rio atualizado com sucesso!");
+      toast.success("Usuário atualizado com sucesso!");
       setIsModalOpen(false);
       setEditingUser(null);
       loadAllData();
     } catch (error) {
       console.error("Failed to update user:", error);
-      toast.error("Falha ao atualizar usuÃ¡rio.");
+      toast.error("Falha ao atualizar usuário.");
     }
   };
 
@@ -689,7 +689,7 @@ export default function AdminUsersTab() {
     if (!userToDelete) return;
     try {
       await appClient.entities.User.delete(userToDelete.id);
-      toast.success("Atleta excluÃ­do com sucesso.");
+      toast.success("Atleta excluído com sucesso.");
       setUserToDelete(null);
       loadAllData();
     } catch (error) {
@@ -701,7 +701,7 @@ export default function AdminUsersTab() {
   const handleToggleFeatureUpload = async (upload) => {
     try {
       await appClient.entities.AthleteUpload.update(upload.id, { is_featured: !upload.is_featured });
-      toast.success(`Upload ${!upload.is_featured ? 'destacado' : 'nÃ£o destacado'} com sucesso!`);
+      toast.success(`Upload ${!upload.is_featured ? 'destacado' : 'não destacado'} com sucesso!`);
       loadAllData();
     } catch (error) {
       toast.error("Erro ao destacar upload.");
@@ -829,8 +829,8 @@ export default function AdminUsersTab() {
                 </h3>
                 <p className="text-sm text-gray-400">
                   {isPlatformRestricted ?
-                    'Apenas usuÃ¡rios aprovados podem acessar. Novos usuÃ¡rios verÃ£o tela de aguardando aprovaÃ§Ã£o.' :
-                    'Todos os usuÃ¡rios tÃªm acesso automÃ¡tico ao Revela Talentos apÃ³s login.'}
+                    'Apenas usuários aprovados podem acessar. Novos usuários verão tela de aguardando aprovação.' :
+                    'Todos os usuários têm acesso automático ao Revela Talentos após login.'}
                 </p>
               </div>
             </div>
@@ -1013,7 +1013,7 @@ export default function AdminUsersTab() {
               <div className="space-y-4 mb-4">
                 <div className="flex items-center gap-3">
                   <TrendingUp className="w-6 h-6 text-purple-400" />
-                  <h3 className="text-xl font-bold text-white">VisÃ£o CRM por Categoria</h3>
+                  <h3 className="text-xl font-bold text-white">Visão CRM por Categoria</h3>
                   <Badge className="bg-purple-600/20 text-purple-400">Organizada por Acesso</Badge>
                 </div>
               </div>
@@ -1183,7 +1183,7 @@ export default function AdminUsersTab() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Bell className="w-5 h-5 text-blue-400" />
-              Enviar NotificaÃ§Ã£o para {notificationTarget?.full_name}
+              Enviar Notificação para {notificationTarget?.full_name}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -1209,14 +1209,14 @@ export default function AdminUsersTab() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="low">Baixa</SelectItem>
-                  <SelectItem value="medium">MÃ©dia</SelectItem>
+                  <SelectItem value="medium">Média</SelectItem>
                   <SelectItem value="high">Alta</SelectItem>
                   <SelectItem value="urgent">Urgente</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label className="text-gray-400">TÃ­tulo</Label>
+              <Label className="text-gray-400">Título</Label>
               <Input value={notificationForm.title} onChange={(e) => setNotificationForm((prev) => ({ ...prev, title: e.target.value }))} placeholder="Ex: Nova mensagem" className="bg-gray-800 border-gray-700" />
             </div>
             <div>
@@ -1243,21 +1243,21 @@ export default function AdminUsersTab() {
                 <div className="space-y-3">
                   <video key={editingPerformanceItem.associated_video_url} controls className="w-full rounded-lg" src={editingPerformanceItem.associated_video_url}></video>
                   <div className="p-4 bg-gray-800 rounded-lg space-y-2">
-                    <h4 className="font-semibold text-white">DiÃ¡rio do Atleta</h4>
+                    <h4 className="font-semibold text-white">Diário do Atleta</h4>
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Sentimento:</strong> "{editingPerformanceItem.athlete_feeling || 'N/A'}"</p>
                     <p className="text-sm text-gray-400"><strong className="text-gray-300">Resumo da Semana:</strong> "{editingPerformanceItem.athlete_weekly_summary || 'N/A'}"</p>
                   </div>
                 </div>
               }
               <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-gray-400">AdversÃ¡rio</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">Adversário</Label><Input value={performanceForm.opponent} onChange={(e) => setPerformanceForm((p) => ({ ...p, opponent: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Data</Label><Input type="date" value={performanceForm.game_date} onChange={(e) => setPerformanceForm((p) => ({ ...p, game_date: e.target.value }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Minutos Jogados</Label><Input type="number" value={performanceForm.minutes_played} onChange={(e) => setPerformanceForm((p) => ({ ...p, minutes_played: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Gols</Label><Input type="number" value={performanceForm.goals} onChange={(e) => setPerformanceForm((p) => ({ ...p, goals: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
-                <div><Label className="text-gray-400">AssistÃªncias</Label><Input type="number" value={performanceForm.assists} onChange={(e) => setPerformanceForm((p) => ({ ...p, assists: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
+                <div><Label className="text-gray-400">Assistências</Label><Input type="number" value={performanceForm.assists} onChange={(e) => setPerformanceForm((p) => ({ ...p, assists: parseInt(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
                 <div><Label className="text-gray-400">Nota (1-10)</Label><Input type="number" step="0.1" value={performanceForm.rating} onChange={(e) => setPerformanceForm((p) => ({ ...p, rating: parseFloat(e.target.value) }))} className="bg-gray-800 border-gray-700" /></div>
               </div>
-              <div><Label className="text-gray-400">ObservaÃ§Ãµes do Analista</Label><Textarea value={performanceForm.analyst_notes} onChange={(e) => setPerformanceForm((p) => ({ ...p, analyst_notes: e.target.value }))} className="bg-gray-800 border-gray-700 h-24" /></div>
+              <div><Label className="text-gray-400">Observações do Analista</Label><Textarea value={performanceForm.analyst_notes} onChange={(e) => setPerformanceForm((p) => ({ ...p, analyst_notes: e.target.value }))} className="bg-gray-800 border-gray-700 h-24" /></div>
               <DialogFooter><Button variant="outline" onClick={() => setEditingPerformanceItem(null)}>Cancelar</Button><Button onClick={handleSavePerformanceUpdate}>Salvar Performance</Button></DialogFooter>
             </div>
           }
@@ -1273,7 +1273,7 @@ export default function AdminUsersTab() {
             </DialogTitle>
           </DialogHeader>
           <div className="py-4 text-gray-300">
-            Tem certeza de que deseja excluir permanentemente o atleta <strong>{userToDelete?.full_name}</strong>? Esta aÃ§Ã£o nÃ£o pode ser desfeita e todos os dados serÃ£o perdidos.
+            Tem certeza de que deseja excluir permanentemente o atleta <strong>{userToDelete?.full_name}</strong>? Esta ação não pode ser desfeita e todos os dados serão perdidos.
           </div>
           <DialogFooter className="gap-2 sm:gap-0 mt-4">
             <Button variant="outline" className="text-gray-400 border-gray-700 hover:bg-gray-800" onClick={() => setUserToDelete(null)}>

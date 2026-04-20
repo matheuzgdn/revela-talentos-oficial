@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState } from "react";
 import { appClient } from "@/api/backendClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -53,7 +53,7 @@ export default function AdminSubscriptionsTab({ subscriptions, users, packages, 
   
   const getBillingPeriodLabel = (period) => {
     const labels = {
-      monthly: '/mÃªs',
+      monthly: '/mês',
       quarterly: '/trimestre',
       semiannual: '/semestre',
       annual: '/ano'
@@ -126,7 +126,7 @@ export default function AdminSubscriptionsTab({ subscriptions, users, packages, 
                 </select>
               </div>
               <div>
-                <label className="block text-white mb-2">Data de RenovaÃ§Ã£o</label>
+                <label className="block text-white mb-2">Data de Renovação</label>
                  <input
                   type="date"
                   value={editForm.renewal_date}
@@ -135,7 +135,7 @@ export default function AdminSubscriptionsTab({ subscriptions, users, packages, 
                 />
               </div>
               <div>
-                <label className="block text-white mb-2">PreÃ§o (R$)</label>
+                <label className="block text-white mb-2">Preço (R$)</label>
                 <input
                   type="number"
                   value={editForm.price_at_subscription}
@@ -146,7 +146,7 @@ export default function AdminSubscriptionsTab({ subscriptions, users, packages, 
             </div>
             <div className="flex gap-3">
               <Button onClick={handleSaveSubscription} className="bg-green-600 hover:bg-green-700">
-                Salvar AlteraÃ§Ãµes
+                Salvar Alterações
               </Button>
               <Button variant="outline" onClick={() => setEditingSubscription(null)}>
                 Cancelar
@@ -226,7 +226,7 @@ export default function AdminSubscriptionsTab({ subscriptions, users, packages, 
 
                   {subscription.renewal_date && (
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-400">RenovaÃ§Ã£o:</span>
+                      <span className="text-gray-400">Renovação:</span>
                       <div className="flex items-center gap-1 text-gray-300">
                         <Calendar className="w-3 h-3" />
                         <span>{new Date(subscription.renewal_date).toLocaleDateString('pt-BR')}</span>

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { appClient } from '@/api/backendClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,13 +16,13 @@ export default function AdminServicesTab() {
     title_highlight: '',
     description: '',
     icon_name: 'Crown',
-    button_text: 'Ver BenefÃ­cios',
+    button_text: 'Ver Benefícios',
     button_url: 'PlanoCarreira',
     card_color: 'green',
     features: [
-      { icon: 'TrendingUp', text: 'GestÃ£o de Carreira Personalizada' },
+      { icon: 'TrendingUp', text: 'Gestão de Carreira Personalizada' },
       { icon: 'Users', text: 'Chat Direto com Especialistas' },
-      { icon: 'Shield', text: 'AnÃ¡lises Individuais Detalhadas' }
+      { icon: 'Shield', text: 'Análises Individuais Detalhadas' }
     ],
     is_active: true,
     display_order: 0
@@ -35,7 +35,7 @@ export default function AdminServicesTab() {
       setServices(data);
     } catch (error) {
       console.error('Error loading services:', error);
-      toast.error('Erro ao carregar serviÃ§os');
+      toast.error('Erro ao carregar serviços');
     } finally {
       setIsLoading(false);
     }
@@ -50,16 +50,16 @@ export default function AdminServicesTab() {
     try {
       if (editingService) {
         await appClient.entities.ServiceHighlight.update(editingService.id, formData);
-        toast.success('ServiÃ§o atualizado!');
+        toast.success('Serviço atualizado!');
       } else {
         await appClient.entities.ServiceHighlight.create(formData);
-        toast.success('ServiÃ§o criado!');
+        toast.success('Serviço criado!');
       }
       resetForm();
       loadServices();
     } catch (error) {
       console.error('Error saving service:', error);
-      toast.error('Erro ao salvar serviÃ§o');
+      toast.error('Erro ao salvar serviço');
     }
   };
 
@@ -69,14 +69,14 @@ export default function AdminServicesTab() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Tem certeza que deseja deletar este serviÃ§o?')) return;
+    if (!confirm('Tem certeza que deseja deletar este serviço?')) return;
     try {
       await appClient.entities.ServiceHighlight.delete(id);
-      toast.success('ServiÃ§o deletado!');
+      toast.success('Serviço deletado!');
       loadServices();
     } catch (error) {
       console.error('Error deleting service:', error);
-      toast.error('Erro ao deletar serviÃ§o');
+      toast.error('Erro ao deletar serviço');
     }
   };
 
@@ -87,13 +87,13 @@ export default function AdminServicesTab() {
       title_highlight: '',
       description: '',
       icon_name: 'Crown',
-      button_text: 'Ver BenefÃ­cios',
+      button_text: 'Ver Benefícios',
       button_url: 'PlanoCarreira',
       card_color: 'green',
       features: [
-        { icon: 'TrendingUp', text: 'GestÃ£o de Carreira Personalizada' },
+        { icon: 'TrendingUp', text: 'Gestão de Carreira Personalizada' },
         { icon: 'Users', text: 'Chat Direto com Especialistas' },
-        { icon: 'Shield', text: 'AnÃ¡lises Individuais Detalhadas' }
+        { icon: 'Shield', text: 'Análises Individuais Detalhadas' }
       ],
       is_active: true,
       display_order: 0
@@ -137,22 +137,22 @@ export default function AdminServicesTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white">ServiÃ§os Premium</h2>
-        <p className="text-gray-400 text-sm">Configure o card de serviÃ§os premium (estilo Plano de Carreira)</p>
+        <h2 className="text-2xl font-bold text-white">Serviços Premium</h2>
+        <p className="text-gray-400 text-sm">Configure o card de serviços premium (estilo Plano de Carreira)</p>
       </div>
 
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <Crown className="w-5 h-5 text-green-400" />
-            {editingService ? 'Editar ServiÃ§o' : 'Novo ServiÃ§o'}
+            {editingService ? 'Editar Serviço' : 'Novo Serviço'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-white text-sm font-medium mb-2">TÃ­tulo (primeira parte) *</label>
+                <label className="block text-white text-sm font-medium mb-2">Título (primeira parte) *</label>
                 <Input
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -163,7 +163,7 @@ export default function AdminServicesTab() {
               </div>
 
               <div>
-                <label className="block text-white text-sm font-medium mb-2">TÃ­tulo em Destaque (verde) *</label>
+                <label className="block text-white text-sm font-medium mb-2">Título em Destaque (verde) *</label>
                 <Input
                   value={formData.title_highlight}
                   onChange={(e) => setFormData({ ...formData, title_highlight: e.target.value })}
@@ -175,7 +175,7 @@ export default function AdminServicesTab() {
             </div>
 
             <div>
-              <label className="block text-white text-sm font-medium mb-2">DescriÃ§Ã£o *</label>
+              <label className="block text-white text-sm font-medium mb-2">Descrição *</label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -188,7 +188,7 @@ export default function AdminServicesTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-white text-sm font-medium mb-2">Ãcone Principal</label>
+                <label className="block text-white text-sm font-medium mb-2">Ícone Principal</label>
                 <select
                   value={formData.icon_name}
                   onChange={(e) => setFormData({ ...formData, icon_name: e.target.value })}
@@ -240,17 +240,17 @@ export default function AdminServicesTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-white text-sm font-medium mb-2">Texto do BotÃ£o</label>
+                <label className="block text-white text-sm font-medium mb-2">Texto do Botão</label>
                 <Input
                   value={formData.button_text}
                   onChange={(e) => setFormData({ ...formData, button_text: e.target.value })}
-                  placeholder="Ver BenefÃ­cios"
+                  placeholder="Ver Benefícios"
                   className="bg-gray-800 border-gray-700 text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-white text-sm font-medium mb-2">URL do BotÃ£o</label>
+                <label className="block text-white text-sm font-medium mb-2">URL do Botão</label>
                 <Input
                   value={formData.button_url}
                   onChange={(e) => setFormData({ ...formData, button_url: e.target.value })}
@@ -309,14 +309,14 @@ export default function AdminServicesTab() {
                 className="w-4 h-4 text-green-600 bg-gray-800 border-gray-700 rounded"
               />
               <label htmlFor="is_active" className="text-white text-sm cursor-pointer">
-                âœ… Ativo
+                �S& Ativo
               </label>
             </div>
 
             <div className="flex gap-3">
               <Button type="submit" className="bg-green-600 hover:bg-green-700">
                 <Save className="w-4 h-4 mr-2" />
-                {editingService ? 'Atualizar' : 'Criar ServiÃ§o'}
+                {editingService ? 'Atualizar' : 'Criar Serviço'}
               </Button>
               {editingService && (
                 <Button type="button" variant="outline" onClick={resetForm}>
@@ -333,7 +333,7 @@ export default function AdminServicesTab() {
         {isLoading ? (
           <p className="text-gray-400">Carregando...</p>
         ) : services.length === 0 ? (
-          <p className="text-gray-400">Nenhum serviÃ§o criado ainda</p>
+          <p className="text-gray-400">Nenhum serviço criado ainda</p>
         ) : (
           services.map((service) => (
             <Card key={service.id} className="bg-gray-900 border-gray-800">
@@ -350,7 +350,7 @@ export default function AdminServicesTab() {
                     <div className="space-y-2">
                       {service.features?.map((feature, idx) => (
                         <div key={idx} className="text-sm text-gray-300">
-                          âœ“ {feature.text}
+                          �S {feature.text}
                         </div>
                       ))}
                     </div>

@@ -1,4 +1,4 @@
-﻿import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { appClient } from '@/api/backendClient';
 import { useQuery } from '@tanstack/react-query';
@@ -40,9 +40,9 @@ export default function PageNotFound({}) {
     
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50">
-            {/* Se for rota BemVindo, mostra feedback rÃ¡pido enquanto redireciona */}
+            {/* Se for rota BemVindo, mostra feedback rápido enquanto redireciona */}
             {(pageName?.toLowerCase?.() === 'bemvindo' || pageName?.toLowerCase?.() === 'bem-vindo') && (
-                <div className="fixed top-4 left-1/2 -translate-x-1/2 text-sm text-slate-500">Redirecionandoâ€¦</div>
+                <div className="fixed top-4 left-1/2 -translate-x-1/2 text-sm text-slate-500">Redirecionando⬦</div>
             )}
             <div className="max-w-md w-full">
                 <div className="text-center space-y-6">

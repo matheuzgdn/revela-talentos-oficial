@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
   const [existingUser, setExistingUser] = useState(null);
   
   const [formData, setFormData] = useState({
-    // ETAPA 1: CriaÃ§Ã£o de Conta (sÃ³ se nÃ£o estiver logado)
+    // ETAPA 1: Criação de Conta (só se não estiver logado)
     email: '',
     password: '',
     confirm_password: '',
@@ -31,13 +31,13 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
     city: '',
     state: '',
     
-    // Dados do responsÃ¡vel (se menor)
+    // Dados do responsável (se menor)
     responsible_full_name: '',
     responsible_phone: '',
     responsible_email: '',
     responsible_relation: '',
     
-    // ETAPA 3: Dados fÃ­sicos e profissionais
+    // ETAPA 3: Dados físicos e profissionais
     height: '',
     weight: '',
     preferred_foot: '',
@@ -48,14 +48,14 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
     strengths: '',
     areas_improvement: '',
     
-    // ETAPA 4: VÃ­deo
+    // ETAPA 4: Vídeo
     video_url: '',
     
     // LGPD
     lgpd_consent: false
   });
 
-  // Verificar se jÃ¡ estÃ¡ logado ao abrir o modal
+  // Verificar se já está logado ao abrir o modal
   useEffect(() => {
     const checkIfLoggedIn = async () => {
       if (isOpen) {
@@ -65,7 +65,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
             setIsAlreadyLoggedIn(true);
             setExistingUser(currentUser);
             
-            // Preencher dados jÃ¡ existentes
+            // Preencher dados já existentes
             setFormData(prev => ({
               ...prev,
               email: currentUser.email || '',
@@ -147,20 +147,20 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
         // This case is only relevant if not already logged in
         if (!isAlreadyLoggedIn) {
           if (!formData.email || !formData.password || !formData.confirm_password) {
-            toast.error('Preencha todos os campos obrigatÃ³rios');
+            toast.error('Preencha todos os campos obrigatórios');
             return false;
           }
           if (formData.password !== formData.confirm_password) {
-            toast.error('As senhas nÃ£o coincidem');
+            toast.error('As senhas não coincidem');
             return false;
           }
           if (formData.password.length < 6) {
-            toast.error('A senha deve ter no mÃ­nimo 6 caracteres');
+            toast.error('A senha deve ter no mínimo 6 caracteres');
             return false;
           }
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(formData.email)) {
-            toast.error('Digite um email vÃ¡lido');
+            toast.error('Digite um email válido');
             return false;
           }
         }
@@ -168,12 +168,12 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
         
       case 2:
         if (!formData.full_name || !formData.birth_date || !formData.phone || !formData.city || !formData.state) {
-          toast.error('Preencha todos os campos obrigatÃ³rios');
+          toast.error('Preencha todos os campos obrigatórios');
           return false;
         }
         if (isMinor()) {
           if (!formData.responsible_full_name || !formData.responsible_phone || !formData.responsible_email || !formData.responsible_relation) {
-            toast.error('Preencha os dados do responsÃ¡vel (vocÃª Ã© menor de 18 anos)');
+            toast.error('Preencha os dados do responsável (você é menor de 18 anos)');
             return false;
           }
         }
@@ -181,18 +181,18 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
         
       case 3:
         if (!formData.height || !formData.weight || !formData.preferred_foot || !formData.position) {
-          toast.error('Preencha todos os campos obrigatÃ³rios');
+          toast.error('Preencha todos os campos obrigatórios');
           return false;
         }
         return true;
         
       case 4:
         if (!formData.video_url) {
-          toast.error('Por favor, adicione o link do seu vÃ­deo');
+          toast.error('Por favor, adicione o link do seu vídeo');
           return false;
         }
         if (!formData.lgpd_consent) {
-          toast.error('VocÃª precisa aceitar os termos de uso e polÃ­tica de privacidade');
+          toast.error('Você precisa aceitar os termos de uso e política de privacidade');
           return false;
         }
         return true;
@@ -216,7 +216,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
       const age = calculateAge(formData.birth_date);
       let currentUser = existingUser; // Start with existing user if available
       
-      // PASSO 1: Criar conta APENAS se nÃ£o estiver logado
+      // PASSO 1: Criar conta APENAS se não estiver logado
       if (!isAlreadyLoggedIn) {
         try {
           // Tenta criar nova conta
@@ -226,25 +226,25 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
             full_name: formData.full_name
           });
           
-          // Aguarda um pouco para garantir que o signup foi concluÃ­do
+          // Aguarda um pouco para garantir que o signup foi concluído
           await new Promise(resolve => setTimeout(resolve, 1000));
           
-          // Faz login automÃ¡tico
+          // Faz login automático
           await appClient.auth.login(formData.email, formData.password);
           
-          // Aguarda um pouco para garantir que o login foi concluÃ­do
+          // Aguarda um pouco para garantir que o login foi concluído
           await new Promise(resolve => setTimeout(resolve, 1000));
           
           currentUser = await appClient.auth.me();
         } catch (signupError) {
-          // Se o erro for de email jÃ¡ existente, tenta fazer login
+          // Se o erro for de email já existente, tenta fazer login
           if (signupError.message?.includes('already') || signupError.message?.includes('exists')) {
             try {
               await appClient.auth.login(formData.email, formData.password);
               await new Promise(resolve => setTimeout(resolve, 1000));
               currentUser = await appClient.auth.me();
             } catch (loginError) {
-              throw new Error('Email jÃ¡ cadastrado com senha diferente. Use a senha correta ou outro email.');
+              throw new Error('Email já cadastrado com senha diferente. Use a senha correta ou outro email.');
             }
           } else {
             throw signupError;
@@ -256,7 +256,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
         throw new Error('Erro ao processar cadastro. Tente novamente.');
       }
       
-      // PASSO 2: Atualizar dados completos do usuÃ¡rio
+      // PASSO 2: Atualizar dados completos do usuário
       await appClient.auth.updateMe({
         full_name: formData.full_name,
         phone: formData.phone,
@@ -310,10 +310,10 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
       });
 
       toast.success(isAlreadyLoggedIn 
-        ? 'ðŸŽ‰ Cadastro completado! Sua inscriÃ§Ã£o na seletiva foi enviada.' 
-        : 'ðŸŽ‰ Cadastro completado! VocÃª jÃ¡ estÃ¡ logado e pode acessar todo o conteÃºdo.');
+        ? 'Cadastro completado! Sua inscrição na seletiva foi enviada.' 
+        : 'Cadastro completado! Você já está logado e pode acessar todo o conteúdo.');
       
-      // Recarrega a pÃ¡gina para atualizar o estado
+      // Recarrega a página para atualizar o estado
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -378,7 +378,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  placeholder="MÃ­nimo 6 caracteres"
+                  placeholder="Mínimo 6 caracteres"
                   className="bg-gray-800 border-gray-700"
                   required
                 />
@@ -415,7 +415,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               </div>
               <div>
                 <h3 className="font-semibold text-white">Dados Pessoais</h3>
-                <p className="text-sm text-gray-400">InformaÃ§Ãµes bÃ¡sicas sobre vocÃª</p>
+                <p className="text-sm text-gray-400">Informações básicas sobre você</p>
               </div>
             </div>
 
@@ -476,10 +476,10 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
 
             {isMinor() && (
               <div className="mt-6 p-4 bg-amber-900/20 border border-amber-500/30 rounded-lg">
-                <p className="text-amber-400 font-semibold mb-4">Dados do ResponsÃ¡vel (Menor de 18 anos)</p>
+                <p className="text-amber-400 font-semibold mb-4">Dados do Responsável (Menor de 18 anos)</p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <Label>Nome do ResponsÃ¡vel *</Label>
+                    <Label>Nome do Responsável *</Label>
                     <Input
                       value={formData.responsible_full_name}
                       onChange={(e) => setFormData({...formData, responsible_full_name: e.target.value})}
@@ -488,7 +488,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                     />
                   </div>
                   <div>
-                    <Label>Telefone do ResponsÃ¡vel *</Label>
+                    <Label>Telefone do Responsável *</Label>
                     <Input
                       value={formData.responsible_phone}
                       onChange={(e) => setFormData({...formData, responsible_phone: e.target.value})}
@@ -497,7 +497,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                     />
                   </div>
                   <div>
-                    <Label>Email do ResponsÃ¡vel *</Label>
+                    <Label>Email do Responsável *</Label>
                     <Input
                       type="email"
                       value={formData.responsible_email}
@@ -507,14 +507,14 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                     />
                   </div>
                   <div className="col-span-2">
-                    <Label>RelaÃ§Ã£o *</Label>
+                    <Label>Relação *</Label>
                     <Select value={formData.responsible_relation} onValueChange={(v) => setFormData({...formData, responsible_relation: v})}>
                       <SelectTrigger className="bg-gray-800 border-gray-700">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="pai">Pai</SelectItem>
-                        <SelectItem value="mae">MÃ£e</SelectItem>
+                        <SelectItem value="mae">Mãe</SelectItem>
                         <SelectItem value="tutor_legal">Tutor Legal</SelectItem>
                         <SelectItem value="agente">Agente</SelectItem>
                         <SelectItem value="outro">Outro</SelectItem>
@@ -535,8 +535,8 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                 <Activity className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">Dados FÃ­sicos e Profissionais</h3>
-                <p className="text-sm text-gray-400">Sobre vocÃª como atleta</p>
+                <h3 className="font-semibold text-white">Dados Físicos e Profissionais</h3>
+                <p className="text-sm text-gray-400">Sobre você como atleta</p>
               </div>
             </div>
 
@@ -566,7 +566,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               </div>
 
               <div>
-                <Label>PÃ© Preferido *</Label>
+                <Label>Pé Preferido *</Label>
                 <Select value={formData.preferred_foot} onValueChange={(v) => setFormData({...formData, preferred_foot: v})}>
                   <SelectTrigger className="bg-gray-800 border-gray-700">
                     <SelectValue placeholder="Selecione" />
@@ -580,7 +580,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               </div>
 
               <div className="col-span-2">
-                <Label>PosiÃ§Ã£o *</Label>
+                <Label>Posição *</Label>
                 <Select value={formData.position} onValueChange={(v) => setFormData({...formData, position: v})}>
                   <SelectTrigger className="bg-gray-800 border-gray-700">
                     <SelectValue placeholder="Selecione" />
@@ -621,28 +621,28 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                 <Textarea
                   value={formData.career_objectives}
                   onChange={(e) => setFormData({...formData, career_objectives: e.target.value})}
-                  placeholder="Quais sÃ£o seus objetivos no futebol?"
+                  placeholder="Quais são seus objetivos no futebol?"
                   className="bg-gray-800 border-gray-700"
                   rows={2}
                 />
               </div>
 
               <div className="col-span-3">
-                <Label>Pontos Fortes (separados por vÃ­rgula)</Label>
+                <Label>Pontos Fortes (separados por vírgula)</Label>
                 <Input
                   value={formData.strengths}
                   onChange={(e) => setFormData({...formData, strengths: e.target.value})}
-                  placeholder="Ex: Velocidade, FinalizaÃ§Ã£o, Passe longo"
+                  placeholder="Ex: Velocidade, Finalização, Passe longo"
                   className="bg-gray-800 border-gray-700"
                 />
               </div>
 
               <div className="col-span-3">
-                <Label>Ãreas para Melhoria (separados por vÃ­rgula)</Label>
+                <Label>Áreas para Melhoria (separados por vírgula)</Label>
                 <Input
                   value={formData.areas_improvement}
                   onChange={(e) => setFormData({...formData, areas_improvement: e.target.value})}
-                  placeholder="Ex: MarcaÃ§Ã£o, Jogo aÃ©reo"
+                  placeholder="Ex: Marcação, Jogo aéreo"
                   className="bg-gray-800 border-gray-700"
                 />
               </div>
@@ -658,7 +658,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                 <Video className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-white">Link do VÃ­deo</h3>
+                <h3 className="font-semibold text-white">Link do Vídeo</h3>
                 <p className="text-sm text-gray-400">Mostre suas habilidades em campo</p>
               </div>
             </div>
@@ -667,16 +667,16 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               <div className="flex items-start gap-3">
                 <Video className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-blue-400 text-sm font-semibold mb-1">ðŸ“¹ Cole o link do seu vÃ­deo</p>
+                  <p className="text-blue-400 text-sm font-semibold mb-1">Cole o link do seu vídeo</p>
                   <p className="text-gray-300 text-xs leading-relaxed">
-                    Envie seu vÃ­deo para <strong>YouTube</strong>, <strong>Google Drive</strong>, <strong>Vimeo</strong> ou <strong>WeTransfer</strong> e cole o link abaixo.
+                    Envie seu vídeo para <strong>YouTube</strong>, <strong>Google Drive</strong>, <strong>Vimeo</strong> ou <strong>WeTransfer</strong> e cole o link abaixo.
                   </p>
                 </div>
               </div>
             </div>
 
             <div>
-              <Label className="text-white">Link do VÃ­deo *</Label>
+              <Label className="text-white">Link do Vídeo *</Label>
               <Input
                 type="url"
                 value={formData.video_url}
@@ -687,7 +687,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               />
               <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
                 <Trophy className="w-3 h-3" />
-                Envie um vÃ­deo de jogo completo ou melhores momentos
+                Envie um vídeo de jogo completo ou melhores momentos
               </p>
             </div>
 
@@ -695,7 +695,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               <div className="p-3 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-green-400 font-semibold text-sm">âœ… Link adicionado com sucesso!</p>
+                  <p className="text-green-400 font-semibold text-sm">Link adicionado com sucesso!</p>
                   <p className="text-gray-400 text-xs truncate">{formData.video_url}</p>
                 </div>
               </div>
@@ -711,7 +711,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
                   required
                 />
                 <span className="text-sm text-gray-300">
-                  Aceito os <a href="#" className="text-cyan-400 underline">Termos de Uso</a> e a <a href="#" className="text-cyan-400 underline">PolÃ­tica de Privacidade</a> da EC10 Talentos. Autorizo o uso dos meus dados para anÃ¡lise e gestÃ£o de carreira. *
+                  Aceito os <a href="#" className="text-cyan-400 underline">Termos de Uso</a> e a <a href="#" className="text-cyan-400 underline">Política de Privacidade</a> da EC10 Talentos. Autorizo o uso dos meus dados para análise e gestão de carreira. *
                 </span>
               </label>
             </div>
@@ -728,7 +728,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
       <DialogContent className="max-w-2xl bg-gray-900 border-gray-800 text-white max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            {isAlreadyLoggedIn ? 'Completar InscriÃ§Ã£o na Seletiva' : 'Criar Conta e Completar Cadastro'}
+            {isAlreadyLoggedIn ? 'Completar Inscrição na Seletiva' : 'Criar Conta e Completar Cadastro'}
           </DialogTitle>
           <p className="text-gray-400">
             {isAlreadyLoggedIn 
@@ -797,7 +797,7 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               onClick={handleNext}
               className="bg-gradient-to-r from-cyan-500 to-blue-500"
             >
-              PrÃ³ximo
+              Próximo
             </Button>
           ) : (
             <Button
@@ -809,12 +809,12 @@ export default function ManualRegistrationModal({ isOpen, onClose, onComplete })
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {isAlreadyLoggedIn ? 'Enviando inscriÃ§Ã£o...' : 'Criando conta...'}
+                  {isAlreadyLoggedIn ? 'Enviando inscrição...' : 'Criando conta...'}
                 </>
               ) : (
                 <>
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  {isAlreadyLoggedIn ? 'Enviar InscriÃ§Ã£o' : 'Criar Conta e Participar'}
+                  {isAlreadyLoggedIn ? 'Enviar Inscrição' : 'Criar Conta e Participar'}
                 </>
               )}
             </Button>

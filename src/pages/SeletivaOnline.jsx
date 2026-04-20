@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from 'react';
 import { appClient } from '@/api/backendClient';
 import { motion } from 'framer-motion';
@@ -69,7 +69,7 @@ export default function SeletivaOnlinePage() {
       return;
     }
 
-    // Verificar se jÃ¡ se candidatou
+    // Verificar se já se candidatou
     const hasApplied = myApplications.some(app => app.event_id === event.id);
     if (hasApplied) {
       setShowMyApplications(true); // Still show MinhasSeletivasModal for individual event application status
@@ -79,32 +79,32 @@ export default function SeletivaOnlinePage() {
     setSelectedEvent(event);
   };
 
-  // FunÃ§Ã£o para lidar com clique no botÃ£o principal do hero
+  // Função para lidar com clique no botão principal do hero
   const handleParticipateClick = () => {
-    // Se nÃ£o estÃ¡ logado OU nÃ£o completou o cadastro
+    // Se não está logado OU não completou o cadastro
     if (!user || !user.onboarding_completed) {
       setShowRegistrationModal(true);
     } else {
-      // Se jÃ¡ estÃ¡ logado e cadastrado, rola para as oportunidades
+      // Se já está logado e cadastrado, rola para as oportunidades
       setView('opportunities'); // Ensure we are on opportunities view
       window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
     }
   };
 
   const checkEligibility = (event) => {
-    if (!user) return { eligible: false, reasons: ['VocÃª precisa estar logado'] };
+    if (!user) return { eligible: false, reasons: ['Você precisa estar logado'] };
 
     const reasons = [];
     const criteria = event.criteria || {};
 
     if (criteria.min_age && user.age < criteria.min_age) {
-      reasons.push(`Idade mÃ­nima: ${criteria.min_age} anos`);
+      reasons.push(`Idade mínima: ${criteria.min_age} anos`);
     }
     if (criteria.max_age && user.age > criteria.max_age) {
-      reasons.push(`Idade mÃ¡xima: ${criteria.max_age} anos`);
+      reasons.push(`Idade máxima: ${criteria.max_age} anos`);
     }
     if (criteria.positions && criteria.positions.length > 0 && !criteria.positions.includes(user.position)) {
-      reasons.push(`PosiÃ§Ãµes aceitas: ${criteria.positions.join(', ')}`);
+      reasons.push(`Posições aceitas: ${criteria.positions.join(', ')}`);
     }
     if (criteria.states && criteria.states.length > 0 && !criteria.states.includes(user.state)) {
       reasons.push(`Estados aceitos: ${criteria.states.join(', ')}`);
@@ -125,7 +125,7 @@ export default function SeletivaOnlinePage() {
   const featuredEvents = filteredEvents.filter(e => e.is_featured);
   const regularEvents = filteredEvents.filter(e => !e.is_featured);
 
-  // Verificar se usuÃ¡rio tem cadastro completo
+  // Verificar se usuário tem cadastro completo
   const hasCompletedProfile = user && user.onboarding_completed;
 
   return (
@@ -166,8 +166,8 @@ export default function SeletivaOnlinePage() {
             transition={{ delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed"
           >
-            Esta Ã© a sua chance de ser visto por nossa equipe de especialistas. <br />
-            Envie seus vÃ­deos, preencha seus dados e dÃª o primeiro passo para uma carreira de sucesso.
+            Esta é a sua chance de ser visto por nossa equipe de especialistas. <br />
+            Envie seus vídeos, preencha seus dados e dê o primeiro passo para uma carreira de sucesso.
           </motion.p>
 
           <motion.div
@@ -177,7 +177,7 @@ export default function SeletivaOnlinePage() {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             {hasCompletedProfile ? (
-              // UsuÃ¡rio jÃ¡ tem cadastro completo
+              // Usuário já tem cadastro completo
               <>
                 <Button
                   size="lg"
@@ -198,7 +198,7 @@ export default function SeletivaOnlinePage() {
                 </Button>
               </>
             ) : (
-              // UsuÃ¡rio nÃ£o tem cadastro completo (ou nÃ£o estÃ¡ logado)
+              // Usuário não tem cadastro completo (ou não está logado)
               <Button
                 size="lg"
                 onClick={handleParticipateClick}
@@ -212,7 +212,7 @@ export default function SeletivaOnlinePage() {
         </div>
       </section>
 
-      {/* ConteÃºdo Principal */}
+      {/* Conteúdo Principal */}
       {hasCompletedProfile && view === 'panel' ? (
         // Painel do Atleta
         <AthletePanel 
@@ -304,7 +304,7 @@ export default function SeletivaOnlinePage() {
               ) : regularEvents.length === 0 ? (
                 <div className="text-center py-20">
                   <AlertCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                  <p className="text-gray-400 text-lg">Nenhuma seletiva disponÃ­vel no momento.</p>
+                  <p className="text-gray-400 text-lg">Nenhuma seletiva disponível no momento.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -384,9 +384,9 @@ function EventCard({ event, user, applications, onClick, checkEligibility, index
       };
       const statusLabels = {
         pending: 'Pendente',
-        under_review: 'Em AnÃ¡lise',
+        under_review: 'Em Análise',
         approved: 'Aprovado',
-        rejected: 'NÃ£o Aprovado',
+        rejected: 'Não Aprovado',
         waitlist: 'Lista de Espera'
       };
       return (
@@ -423,7 +423,7 @@ function EventCard({ event, user, applications, onClick, checkEligibility, index
     }
     
     if (!eligibility.eligible) {
-      return 'NÃ£o ElegÃ­vel';
+      return 'Não Elegível';
     }
     
     return (
@@ -474,7 +474,7 @@ function EventCard({ event, user, applications, onClick, checkEligibility, index
 
           {isAlmostFull && !isFull && (
             <div className="absolute top-3 left-3 bg-orange-600 px-3 py-1 rounded-full text-xs font-bold animate-pulse">
-              ÃšLTIMAS VAGAS
+              ÚLTIMAS VAGAS
             </div>
           )}
 
@@ -493,10 +493,10 @@ function EventCard({ event, user, applications, onClick, checkEligibility, index
 
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline" className="text-xs">
-              {event.event_type === 'clube' ? 'âš½ Clube' : 
-               event.event_type === 'evento' ? 'ðŸŽ¯ Evento' :
-               event.event_type === 'eurocamp' ? 'ðŸŒ EuroCamp' :
-               event.event_type === 'showcase' ? 'â­ Showcase' : 'ðŸ† Geral'}
+              {event.event_type === 'clube' ? 'Clube' : 
+               event.event_type === 'evento' ? 'Evento' :
+               event.event_type === 'eurocamp' ? 'EuroCamp' :
+               event.event_type === 'showcase' ? 'Showcase' : 'Geral'}
             </Badge>
             {event.is_virtual && (
               <Badge variant="outline" className="text-xs">
@@ -509,7 +509,7 @@ function EventCard({ event, user, applications, onClick, checkEligibility, index
           <div className="space-y-2 text-sm text-gray-400">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>InscriÃ§Ãµes atÃ©: {new Date(event.end_date).toLocaleDateString('pt-BR')}</span>
+              <span>Inscrições até: {new Date(event.end_date).toLocaleDateString('pt-BR')}</span>
             </div>
             {event.location && (
               <div className="flex items-center gap-2">
@@ -527,10 +527,10 @@ function EventCard({ event, user, applications, onClick, checkEligibility, index
 
           {!hasApplied && !eligibility.eligible && hasCompletedProfile && (
             <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-3">
-              <p className="text-red-400 text-xs font-semibold mb-1">CritÃ©rios nÃ£o atendidos:</p>
+              <p className="text-red-400 text-xs font-semibold mb-1">Critérios não atendidos:</p>
               <ul className="text-red-300 text-xs space-y-1">
                 {eligibility.reasons.map((reason, i) => (
-                  <li key={i}>â€¢ {reason}</li>
+                  <li key={i}>⬢ {reason}</li>
                 ))}
               </ul>
             </div>

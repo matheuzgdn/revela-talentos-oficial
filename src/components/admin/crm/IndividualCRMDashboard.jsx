@@ -1,4 +1,4 @@
-﻿import { appClient } from '@/api/backendClient';
+import { appClient } from '@/api/backendClient';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -73,8 +73,8 @@ export default function IndividualCRMDashboard({ salesRep, onBack, services, una
         <TabsList className="bg-gray-800">
           <TabsTrigger value="pipelines"><LayoutGrid className="w-4 h-4 mr-2" />Pipelines</TabsTrigger>
           <TabsTrigger value="ferramentas"><Briefcase className="w-4 h-4 mr-2" />Ferramentas</TabsTrigger>
-          <TabsTrigger value="calendario"><Calendar className="w-4 h-4 mr-2" />CalendÃ¡rio</TabsTrigger>
-          <TabsTrigger value="relatorios"><BarChart className="w-4 h-4 mr-2" />RelatÃ³rios</TabsTrigger>
+          <TabsTrigger value="calendario"><Calendar className="w-4 h-4 mr-2" />Calendário</TabsTrigger>
+          <TabsTrigger value="relatorios"><BarChart className="w-4 h-4 mr-2" />Relatórios</TabsTrigger>
         </TabsList>
         
         <TabsContent value="pipelines" className="mt-6">

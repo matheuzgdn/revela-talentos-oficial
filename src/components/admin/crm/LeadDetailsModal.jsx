@@ -1,4 +1,4 @@
-﻿import { appClient } from '@/api/backendClient';
+import { appClient } from '@/api/backendClient';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -45,7 +45,7 @@ const BasicInfoSection = ({ lead, onFieldChange }) => (
         <Input value={lead.state || ''} onChange={(e) => onFieldChange('state', e.target.value)} className="bg-gray-800 border-gray-700"/>
       </div>
       <div>
-        <Label className="text-gray-300">PaÃ­s</Label>
+        <Label className="text-gray-300">País</Label>
         <Input value={lead.country || ''} onChange={(e) => onFieldChange('country', e.target.value)} className="bg-gray-800 border-gray-700"/>
       </div>
     </div>
@@ -82,7 +82,7 @@ const ContactSection = ({ lead, onFieldChange }) => (
       </div>
       <div>
         <Label className="text-gray-300">Highlight Reel</Label>
-        <Input value={lead.highlight_reel || ''} onChange={(e) => onFieldChange('highlight_reel', e.target.value)} placeholder="Link do vÃ­deo" className="bg-gray-800 border-gray-700"/>
+        <Input value={lead.highlight_reel || ''} onChange={(e) => onFieldChange('highlight_reel', e.target.value)} placeholder="Link do vídeo" className="bg-gray-800 border-gray-700"/>
       </div>
     </div>
   </div>
@@ -142,7 +142,7 @@ const AthleteDataSection = ({ lead, onFieldChange }) => {
           />
         </div>
         <div>
-          <Label className="text-gray-300">PosiÃ§Ã£o</Label>
+          <Label className="text-gray-300">Posição</Label>
           <Select value={lead.position || ''} onValueChange={(v) => onFieldChange('position', v)}>
             <SelectTrigger className="bg-gray-800 border-gray-700">
               <SelectValue placeholder="Selecione..." />
@@ -157,7 +157,7 @@ const AthleteDataSection = ({ lead, onFieldChange }) => {
           </Select>
         </div>
         <div>
-          <Label className="text-gray-300">PÃ© Dominante</Label>
+          <Label className="text-gray-300">Pé Dominante</Label>
           <Select value={lead.dominant_foot || ''} onValueChange={(v) => onFieldChange('dominant_foot', v)}>
             <SelectTrigger className="bg-gray-800 border-gray-700">
               <SelectValue placeholder="Selecione..." />
@@ -177,22 +177,22 @@ const AthleteDataSection = ({ lead, onFieldChange }) => {
         </div>
         <div>
           <Label className="text-gray-300">Clubes Anteriores</Label>
-          <Input value={(lead.previous_clubs || []).join(', ')} onChange={(e) => onFieldChange('previous_clubs', e.target.value.split(', '))} placeholder="Separados por vÃ­rgula" className="bg-gray-800 border-gray-700"/>
+          <Input value={(lead.previous_clubs || []).join(', ')} onChange={(e) => onFieldChange('previous_clubs', e.target.value.split(', '))} placeholder="Separados por vírgula" className="bg-gray-800 border-gray-700"/>
         </div>
       </div>
       <div>
-        <Label className="text-gray-300">EstatÃ­sticas</Label>
+        <Label className="text-gray-300">Estatísticas</Label>
         <div className="grid grid-cols-5 gap-2 mt-2">
           <Input type="number" placeholder="Gols" value={lead.stats?.goals || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), goals: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
-          <Input type="number" placeholder="AssistÃªncias" value={lead.stats?.assists || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), assists: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
+          <Input type="number" placeholder="Assistências" value={lead.stats?.assists || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), assists: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
           <Input type="number" placeholder="Jogos" value={lead.stats?.games || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), games: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
-          <Input type="number" placeholder="CartÃµes Amarelos" value={lead.stats?.yellow_cards || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), yellow_cards: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
-          <Input type="number" placeholder="CartÃµes Vermelhos" value={lead.stats?.red_cards || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), red_cards: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
+          <Input type="number" placeholder="Cartões Amarelos" value={lead.stats?.yellow_cards || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), yellow_cards: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
+          <Input type="number" placeholder="Cartões Vermelhos" value={lead.stats?.red_cards || ''} onChange={(e) => onFieldChange('stats', {...(lead.stats || {}), red_cards: parseInt(e.target.value) || 0})} className="bg-gray-800 border-gray-700"/>
         </div>
       </div>
       <div>
-        <Label className="text-gray-300">VÃ­deo do Atleta</Label>
-        <Input value={lead.video_url || ''} onChange={(e) => onFieldChange('video_url', e.target.value)} placeholder="URL do vÃ­deo" className="bg-gray-800 border-gray-700"/>
+        <Label className="text-gray-300">Vídeo do Atleta</Label>
+        <Input value={lead.video_url || ''} onChange={(e) => onFieldChange('video_url', e.target.value)} placeholder="URL do vídeo" className="bg-gray-800 border-gray-700"/>
       </div>
     </div>
   );
@@ -202,19 +202,19 @@ const ResponsibleSection = ({ lead, onFieldChange }) => (
   <div className="space-y-4">
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Label className="text-gray-300">Nome do ResponsÃ¡vel</Label>
+        <Label className="text-gray-300">Nome do Responsável</Label>
         <Input value={lead.responsible_name || ''} onChange={(e) => onFieldChange('responsible_name', e.target.value)} className="bg-gray-800 border-gray-700"/>
       </div>
       <div>
-        <Label className="text-gray-300">RelaÃ§Ã£o</Label>
+        <Label className="text-gray-300">Relação</Label>
         <Select value={lead.responsible_relation || ''} onValueChange={(v) => onFieldChange('responsible_relation', v)}>
           <SelectTrigger className="bg-gray-800 border-gray-700">
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="pai">Pai</SelectItem>
-            <SelectItem value="mae">MÃ£e</SelectItem>
-            <SelectItem value="empresario">EmpresÃ¡rio</SelectItem>
+            <SelectItem value="mae">Mãe</SelectItem>
+            <SelectItem value="empresario">Empresário</SelectItem>
             <SelectItem value="treinador">Treinador</SelectItem>
             <SelectItem value="tutor">Tutor</SelectItem>
             <SelectItem value="outro">Outro</SelectItem>
@@ -224,11 +224,11 @@ const ResponsibleSection = ({ lead, onFieldChange }) => (
     </div>
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Label className="text-gray-300">Telefone do ResponsÃ¡vel</Label>
+        <Label className="text-gray-300">Telefone do Responsável</Label>
         <Input value={lead.responsible_phone || ''} onChange={(e) => onFieldChange('responsible_phone', e.target.value)} className="bg-gray-800 border-gray-700"/>
       </div>
       <div>
-        <Label className="text-gray-300">Email do ResponsÃ¡vel</Label>
+        <Label className="text-gray-300">Email do Responsável</Label>
         <Input type="email" value={lead.responsible_email || ''} onChange={(e) => onFieldChange('responsible_email', e.target.value)} className="bg-gray-800 border-gray-700"/>
       </div>
     </div>
@@ -273,15 +273,15 @@ const HistorySection = ({ lead, onFieldChange }) => (
   <div className="space-y-4">
     <div>
       <Label className="text-gray-300">Origem do Lead</Label>
-      <Input value={lead.lead_origin_detail || ''} onChange={(e) => onFieldChange('lead_origin_detail', e.target.value)} placeholder="Ex: Instagram via post X, IndicaÃ§Ã£o de JoÃ£o" className="bg-gray-800 border-gray-700"/>
+      <Input value={lead.lead_origin_detail || ''} onChange={(e) => onFieldChange('lead_origin_detail', e.target.value)} placeholder="Ex: Instagram via post X, Indicação de João" className="bg-gray-800 border-gray-700"/>
     </div>
     <div>
-      <Label className="text-gray-300">PrÃ³ximos Passos</Label>
-      <Textarea value={lead.next_steps || ''} onChange={(e) => onFieldChange('next_steps', e.target.value)} placeholder="Descreva os prÃ³ximos passos agendados..." className="bg-gray-800 border-gray-700"/>
+      <Label className="text-gray-300">Próximos Passos</Label>
+      <Textarea value={lead.next_steps || ''} onChange={(e) => onFieldChange('next_steps', e.target.value)} placeholder="Descreva os próximos passos agendados..." className="bg-gray-800 border-gray-700"/>
     </div>
     <div>
-      <Label className="text-gray-300">AnotaÃ§Ãµes do Vendedor</Label>
-      <Textarea value={lead.vendor_notes || ''} onChange={(e) => onFieldChange('vendor_notes', e.target.value)} placeholder="ObservaÃ§Ãµes internas sobre o lead..." className="bg-gray-800 border-gray-700 h-24"/>
+      <Label className="text-gray-300">Anotações do Vendedor</Label>
+      <Textarea value={lead.vendor_notes || ''} onChange={(e) => onFieldChange('vendor_notes', e.target.value)} placeholder="Observações internas sobre o lead..." className="bg-gray-800 border-gray-700 h-24"/>
     </div>
   </div>
 );
@@ -292,8 +292,8 @@ const WhatsAppTab = ({ lead }) => {
 
   useEffect(() => {
     setMessages([
-      { direction: 'incoming', content: 'OlÃ¡, gostaria de saber mais sobre o Plano de Carreira.', timestamp: new Date().toISOString() },
-      { direction: 'outgoing', content: 'OlÃ¡! Claro, posso te ajudar. Qual sua principal dÃºvida?', timestamp: new Date().toISOString() }
+      { direction: 'incoming', content: 'Olá, gostaria de saber mais sobre o Plano de Carreira.', timestamp: new Date().toISOString() },
+      { direction: 'outgoing', content: 'Olá! Claro, posso te ajudar. Qual sua principal dúvida?', timestamp: new Date().toISOString() }
     ]);
   }, [lead.id]);
 
@@ -301,7 +301,7 @@ const WhatsAppTab = ({ lead }) => {
     if (!newMessage.trim()) return;
     setMessages(prev => [...prev, { direction: 'outgoing', content: newMessage, timestamp: new Date().toISOString() }]);
     setNewMessage('');
-    toast.info("SimulaÃ§Ã£o: Mensagem enviada via WhatsApp.");
+    toast.info("Simulação: Mensagem enviada via WhatsApp.");
   };
   
   return (
@@ -359,7 +359,7 @@ const DocumentsTab = ({ lead, onUpdate }) => {
         <label htmlFor="doc-upload">{isUploading ? <Loader2 className="w-4 h-4 animate-spin mr-2"/> : <Plus className="w-4 h-4 mr-2"/>} Anexar Documento</label>
       </Button>
       <Input id="doc-upload" type="file" className="hidden" onChange={handleFileUpload}/>
-      <div className="text-xs text-gray-400 mb-2">Tipos: RG, Passaporte, AutorizaÃ§Ã£o dos pais, Carteirinha da federaÃ§Ã£o, Contratos, Exames mÃ©dicos</div>
+      <div className="text-xs text-gray-400 mb-2">Tipos: RG, Passaporte, Autorização dos pais, Carteirinha da federação, Contratos, Exames médicos</div>
 
       <div className="space-y-2">
         {(lead.documents || []).map((doc, index) => (
@@ -399,13 +399,13 @@ const TasksTab = ({ lead }) => {
     loadTasks();
   };
 
-  // Checklist padrÃ£o de vendas
+  // Checklist padrão de vendas
   const defaultChecklist = [
     'Contato inicial realizado',
-    'AnÃ¡lise de perfil do atleta',
+    'Análise de perfil do atleta',
     'Envio de proposta comercial',
-    'ReuniÃ£o de apresentaÃ§Ã£o agendada',
-    'NegociaÃ§Ã£o de valores',
+    'Reunião de apresentação agendada',
+    'Negociação de valores',
     'Contrato assinado',
     'Pagamento confirmado'
   ];
@@ -485,20 +485,20 @@ export default function LeadDetailsModal({ lead, isOpen, onClose, onUpdate }) {
 
         <Tabs defaultValue="basic" className="flex-1 overflow-hidden">
           <TabsList className="bg-gray-800 mb-4">
-            <TabsTrigger value="basic"><User className="w-4 h-4 mr-2"/>BÃ¡sico</TabsTrigger>
+            <TabsTrigger value="basic"><User className="w-4 h-4 mr-2"/>Básico</TabsTrigger>
             <TabsTrigger value="athlete"><Target className="w-4 h-4 mr-2"/>Atleta</TabsTrigger>
-            <TabsTrigger value="responsible"><UsersIcon className="w-4 h-4 mr-2"/>ResponsÃ¡vel</TabsTrigger>
+            <TabsTrigger value="responsible"><UsersIcon className="w-4 h-4 mr-2"/>Responsável</TabsTrigger>
             <TabsTrigger value="financial"><DollarSign className="w-4 h-4 mr-2"/>Financeiro</TabsTrigger>
-            <TabsTrigger value="communication"><MessageSquare className="w-4 h-4 mr-2"/>ComunicaÃ§Ã£o</TabsTrigger>
+            <TabsTrigger value="communication"><MessageSquare className="w-4 h-4 mr-2"/>Comunicação</TabsTrigger>
             <TabsTrigger value="tasks"><CheckSquare className="w-4 h-4 mr-2"/>Tarefas</TabsTrigger>
             <TabsTrigger value="docs"><FileText className="w-4 h-4 mr-2"/>Documentos</TabsTrigger>
-            <TabsTrigger value="history"><Calendar className="w-4 h-4 mr-2"/>HistÃ³rico</TabsTrigger>
+            <TabsTrigger value="history"><Calendar className="w-4 h-4 mr-2"/>Histórico</TabsTrigger>
           </TabsList>
 
           <ScrollArea className="flex-1 pr-4">
             <TabsContent value="basic" className="space-y-6">
               <Card className="bg-gray-800/50 border-gray-700">
-                <CardHeader><CardTitle className="text-sky-400">IdentificaÃ§Ã£o BÃ¡sica</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-sky-400">Identificação Básica</CardTitle></CardHeader>
                 <CardContent><BasicInfoSection lead={currentLead} onFieldChange={handleFieldChange} /></CardContent>
               </Card>
               <Card className="bg-gray-800/50 border-gray-700">
@@ -516,14 +516,14 @@ export default function LeadDetailsModal({ lead, isOpen, onClose, onUpdate }) {
 
             <TabsContent value="responsible">
               <Card className="bg-gray-800/50 border-gray-700">
-                <CardHeader><CardTitle className="text-purple-400">Dados do ResponsÃ¡vel</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-purple-400">Dados do Responsável</CardTitle></CardHeader>
                 <CardContent><ResponsibleSection lead={currentLead} onFieldChange={handleFieldChange} /></CardContent>
               </Card>
             </TabsContent>
 
             <TabsContent value="financial">
               <Card className="bg-gray-800/50 border-gray-700">
-                <CardHeader><CardTitle className="text-yellow-400">InformaÃ§Ãµes Financeiras</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-yellow-400">Informações Financeiras</CardTitle></CardHeader>
                 <CardContent><FinancialSection lead={currentLead} onFieldChange={handleFieldChange} /></CardContent>
               </Card>
             </TabsContent>
@@ -542,7 +542,7 @@ export default function LeadDetailsModal({ lead, isOpen, onClose, onUpdate }) {
 
             <TabsContent value="history">
               <Card className="bg-gray-800/50 border-gray-700">
-                <CardHeader><CardTitle className="text-cyan-400">Relacionamento e HistÃ³rico</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-cyan-400">Relacionamento e Histórico</CardTitle></CardHeader>
                 <CardContent><HistorySection lead={currentLead} onFieldChange={handleFieldChange} /></CardContent>
               </Card>
             </TabsContent>
@@ -552,7 +552,7 @@ export default function LeadDetailsModal({ lead, isOpen, onClose, onUpdate }) {
         <DialogFooter className="border-t border-gray-800 pt-4">
           <DialogClose asChild><Button variant="outline">Fechar</Button></DialogClose>
           <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? <Loader2 className="w-4 h-4 animate-spin"/> : "Salvar Todas as AlteraÃ§Ãµes"}
+            {isSaving ? <Loader2 className="w-4 h-4 animate-spin"/> : "Salvar Todas as Alterações"}
           </Button>
         </DialogFooter>
       </DialogContent>

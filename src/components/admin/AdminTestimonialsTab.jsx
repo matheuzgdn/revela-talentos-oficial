@@ -1,4 +1,4 @@
-﻿import { appClient } from '@/api/backendClient';
+import { appClient } from '@/api/backendClient';
 import React, { useState, useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -99,8 +99,8 @@ export default function AdminTestimonialsTab() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input placeholder="Nome do Atleta" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
-              <Input placeholder="PosiÃ§Ã£o (ex: Atleta Profissional)" value={formData.position} onChange={(e) => setFormData({...formData, position: e.target.value})} />
-              <Input placeholder="URL do VÃ­deo" value={formData.video_url} onChange={(e) => setFormData({...formData, video_url: e.target.value})} required />
+              <Input placeholder="Posição (ex: Atleta Profissional)" value={formData.position} onChange={(e) => setFormData({...formData, position: e.target.value})} />
+              <Input placeholder="URL do Vídeo" value={formData.video_url} onChange={(e) => setFormData({...formData, video_url: e.target.value})} required />
               <Input placeholder="URL da Thumbnail (imagem de capa)" value={formData.thumbnail_url} onChange={(e) => setFormData({...formData, thumbnail_url: e.target.value})} required />
               <label className="flex items-center gap-2 text-sm text-white">
                 <input type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({...formData, is_active: e.target.checked})} />

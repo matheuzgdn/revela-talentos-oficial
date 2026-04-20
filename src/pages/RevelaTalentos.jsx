@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Star, ChevronRight, Plus, Flame, Target, Dumbbell, Brain, Activity, Apple, Lock, X, ShoppingCart } from "lucide-react";
@@ -45,7 +45,7 @@ export default function RevelaTalentosPage() {
     []
   );
 
-  // Verifica se o conteÃºdo estÃ¡ bloqueado para este usuÃ¡rio
+  // Verifica se o conteúdo está bloqueado para este usuário
   const isContentLocked = user && user.has_revela_talentos_access === false;
 
   const loadContentData = useCallback(async (currentUser) => {
@@ -83,7 +83,7 @@ export default function RevelaTalentosPage() {
         return;
       }
 
-      // Usuários comuns com acesso à Zona de Membros entram por lá.
+      // Usu�rios comuns com acesso � Zona de Membros entram por l�.
       // Admins permanecem na home principal da plataforma.
       if (currentUser.has_zona_membros_access === true && !isAdminUser(currentUser)) {
         window.location.href = createPageUrl('ZonaMembros');
@@ -144,8 +144,8 @@ export default function RevelaTalentosPage() {
     try {
       await appClient.entities.Notification.create({
         user_id: user.id,
-        title: 'ðŸŽ‰ Bem-vindo Ã  EC10 Talentos!',
-        message: 'Estamos muito felizes em ter vocÃª conosco! Explore todo o conteÃºdo exclusivo, participe das seletivas e acompanhe seu desenvolvimento como atleta.',
+        title: 'Bem-vindo à EC10 Talentos!',
+        message: 'Estamos muito felizes em ter você conosco! Explore todo o conteúdo exclusivo, participe das seletivas e acompanhe seu desenvolvimento como atleta.',
         type: 'general',
         priority: 'high',
         is_read: false
@@ -163,7 +163,7 @@ export default function RevelaTalentosPage() {
       setShowLandingPage(true);
       return;
     }
-    // ConteÃºdo bloqueado: exibir modal de upgrade
+    // Conteúdo bloqueado: exibir modal de upgrade
     if (isContentLocked) {
       setShowUpgradeModal(true);
       return;
@@ -207,7 +207,7 @@ export default function RevelaTalentosPage() {
 
   const planosContents = useMemo(() => contents.filter(c => c.category === 'planos'), [contents]);
 
-  // ConteÃºdos por categoria
+  // Conteúdos por categoria
   const mentoriaContents = useMemo(() => regularContents.filter(c => c.category === 'mentoria'), [regularContents]);
   const preparacaoFisicaContents = useMemo(() => regularContents.filter(c => c.category === 'preparacao_fisica'), [regularContents]);
   const treinoTaticoContents = useMemo(() => regularContents.filter(c => c.category === 'treino_tatico'), [regularContents]);
@@ -416,7 +416,7 @@ export default function RevelaTalentosPage() {
         </div>
       </section>
 
-      {/* â”€â”€ LIVE BANNER â”€â”€ Shows when admin is broadcasting */}
+      {/* LIVE BANNER - shown when admin is broadcasting */}
       {isLive && (
         <section className="px-4 md:px-6 py-2">
           <div className="max-w-7xl mx-auto">
@@ -442,10 +442,10 @@ export default function RevelaTalentosPage() {
                 {/* Text */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-red-400 text-xs font-black uppercase tracking-widest">ðŸ”´ AO VIVO AGORA</span>
+                    <span className="text-red-400 text-xs font-black uppercase tracking-widest">AO VIVO AGORA</span>
                   </div>
                   <h3 className="text-white font-black text-base md:text-lg leading-tight truncate">
-                    Live EC10 Talentos â€” transmissÃ£o ao vivo!
+                    Live EC10 Talentos - transmissão ao vivo!
                   </h3>
                   <p className="text-red-300/70 text-xs mt-0.5">Toque para assistir</p>
                 </div>
@@ -601,7 +601,7 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
-      {/* PreparaÃ§Ã£o FÃ­sica Section */}
+      {/* Preparação Física Section */}
       {preparacaoFisicaContents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
@@ -630,7 +630,7 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
-      {/* Treino TÃ¡tico Section */}
+      {/* Treino Tático Section */}
       {treinoTaticoContents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
@@ -688,7 +688,7 @@ export default function RevelaTalentosPage() {
         </section>
       )}
 
-      {/* NutriÃ§Ã£o Section */}
+      {/* Nutrição Section */}
       {nutricaoContents.length > 0 && (
         <section className="px-4 md:px-6 py-4">
           <div className="max-w-7xl mx-auto">
@@ -753,7 +753,7 @@ export default function RevelaTalentosPage() {
         user={user}
       />
 
-      {/* Upgrade Modal - ConteÃºdo Bloqueado */}
+      {/* Upgrade Modal - Conteúdo Bloqueado */}
       <AnimatePresence>
         {showUpgradeModal && (
           <motion.div
@@ -786,10 +786,10 @@ export default function RevelaTalentosPage() {
                 </div>
               </div>
               <h2 className="text-white font-black text-2xl text-center mb-2 tracking-tight">
-                ConteÃºdo <span className="text-[#00E5FF]">Bloqueado</span>
+                Conteúdo <span className="text-[#00E5FF]">Bloqueado</span>
               </h2>
               <p className="text-gray-400 text-sm text-center mb-6 leading-relaxed">
-                Este conteÃºdo faz parte do pacote completo da plataforma EC10 Talentos. Adquira agora para ter acesso ilimitado a todos os conteÃºdos, vÃ­deos e recursos exclusivos.
+                Este conteúdo faz parte do pacote completo da plataforma EC10 Talentos. Adquira agora para ter acesso ilimitado a todos os conteúdos, vídeos e recursos exclusivos.
               </p>
               <a
                 href="https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c"
@@ -805,7 +805,7 @@ export default function RevelaTalentosPage() {
                 onClick={() => setShowUpgradeModal(false)}
                 className="w-full py-3 text-gray-500 text-sm font-medium hover:text-gray-300 transition-colors"
               >
-                Agora nÃ£o
+                Agora não
               </button>
             </motion.div>
           </motion.div>

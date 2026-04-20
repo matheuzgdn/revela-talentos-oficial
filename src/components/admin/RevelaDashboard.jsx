@@ -1,4 +1,4 @@
-﻿import { appClient } from '@/api/backendClient';
+import { appClient } from '@/api/backendClient';
 import React, { useState, useEffect } from 'react';
 
 
@@ -34,13 +34,13 @@ export default function RevelaDashboard() {
         appClient.entities.Content.list('-created_date').catch(() => [])
       ]);
 
-      // Calcular estatÃ­sticas de submissÃµes
+      // Calcular estatísticas de submissões
       const totalSubmissions = submissions?.length || 0;
       const pendingReview = submissions?.filter(s => s.status === 'pending_review').length || 0;
       const approved = submissions?.filter(s => s.status === 'approved').length || 0;
       const rejected = submissions?.filter(s => s.status === 'rejected').length || 0;
 
-      // Calcular estatÃ­sticas de conteÃºdo
+      // Calcular estatísticas de conteúdo
       const totalContents = contents?.length || 0;
       const publishedContents = contents?.filter(c => c.is_published).length || 0;
       const liveEvents = contents?.filter(c => c.category === 'live' && c.status === 'live').length || 0;
@@ -57,7 +57,7 @@ export default function RevelaDashboard() {
         featuredContents,
       });
 
-      // Preparar dados para grÃ¡fico de submissÃµes por dia (Ãºltimos 7 dias)
+      // Preparar dados para gráfico de submissões por dia (últimos 7 dias)
       const last7Days = [];
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
@@ -71,16 +71,16 @@ export default function RevelaDashboard() {
       }
       setSubmissionsByDay(last7Days);
 
-      // Dados para grÃ¡fico de pizza de status
+      // Dados para gráfico de pizza de status
       const statusData = [
         { name: 'Aguardando', value: pendingReview, color: '#eab308' },
         { name: 'Aprovados', value: approved, color: '#22c55e' },
         { name: 'Rejeitados', value: rejected, color: '#ef4444' },
-        { name: 'Em AnÃ¡lise', value: submissions?.filter(s => s.status === 'under_review').length || 0, color: '#3b82f6' },
+        { name: 'Em Análise', value: submissions?.filter(s => s.status === 'under_review').length || 0, color: '#3b82f6' },
       ];
       setSubmissionsByStatus(statusData);
 
-      // Dados para grÃ¡fico de conteÃºdos por categoria
+      // Dados para gráfico de conteúdos por categoria
       const categories = ['mentoria', 'treino_tatico', 'preparacao_fisica', 'psicologia', 'nutricao', 'live'];
       const categoryData = categories.map(cat => ({
         name: cat.replace('_', ' ').charAt(0).toUpperCase() + cat.slice(1).replace('_', ' '),
@@ -104,11 +104,11 @@ export default function RevelaDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Cards de MÃ©tricas Principais */}
+      {/* Cards de Métricas Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-gradient-to-br from-yellow-500 to-orange-500 text-white border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de InscriÃ§Ãµes</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Inscrições</CardTitle>
             <Trophy className="h-5 w-5" />
           </CardHeader>
           <CardContent>
@@ -119,18 +119,18 @@ export default function RevelaDashboard() {
 
         <Card className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aguardando AnÃ¡lise</CardTitle>
+            <CardTitle className="text-sm font-medium">Aguardando Análise</CardTitle>
             <Clock className="h-5 w-5" />
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{stats.pendingReview}</div>
-            <p className="text-xs text-white/80 mt-1">Precisam de revisÃ£o</p>
+            <p className="text-xs text-white/80 mt-1">Precisam de revisão</p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-green-500 to-emerald-500 text-white border-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">ConteÃºdos Publicados</CardTitle>
+            <CardTitle className="text-sm font-medium">Conteúdos Publicados</CardTitle>
             <Video className="h-5 w-5" />
           </CardHeader>
           <CardContent>
@@ -146,17 +146,17 @@ export default function RevelaDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{stats.liveEvents}</div>
-            <p className="text-xs text-white/80 mt-1">TransmissÃµes ao vivo</p>
+            <p className="text-xs text-white/80 mt-1">Transmissões ao vivo</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* GrÃ¡ficos */}
+      {/* Gráficos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* GrÃ¡fico de InscriÃ§Ãµes por Dia */}
+        {/* Gráfico de Inscrições por Dia */}
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-white">InscriÃ§Ãµes nos Ãšltimos 7 Dias</CardTitle>
+            <CardTitle className="text-white">Inscrições nos �altimos 7 Dias</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-80">
@@ -176,10 +176,10 @@ export default function RevelaDashboard() {
           </CardContent>
         </Card>
 
-        {/* GrÃ¡fico de Pizza - Status das InscriÃ§Ãµes */}
+        {/* Gráfico de Pizza - Status das Inscrições */}
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-white">Status das InscriÃ§Ãµes</CardTitle>
+            <CardTitle className="text-white">Status das Inscrições</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-80">
@@ -208,10 +208,10 @@ export default function RevelaDashboard() {
           </CardContent>
         </Card>
 
-        {/* GrÃ¡fico de Barras - ConteÃºdos por Categoria */}
+        {/* Gráfico de Barras - Conteúdos por Categoria */}
         <Card className="bg-gray-800 border-gray-700 lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-white">ConteÃºdos por Categoria</CardTitle>
+            <CardTitle className="text-white">Conteúdos por Categoria</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-80">
@@ -232,11 +232,11 @@ export default function RevelaDashboard() {
         </Card>
       </div>
 
-      {/* Cards de MÃ©tricas SecundÃ¡rias */}
+      {/* Cards de Métricas Secundárias */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">Taxa de AprovaÃ§Ã£o</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-300">Taxa de Aprovação</CardTitle>
             <CheckCircle className="h-5 w-5 text-green-400" />
           </CardHeader>
           <CardContent>
@@ -253,23 +253,23 @@ export default function RevelaDashboard() {
 
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">ConteÃºdos em Destaque</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-300">Conteúdos em Destaque</CardTitle>
             <Star className="h-5 w-5 text-yellow-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">{stats.featuredContents}</div>
-            <p className="text-xs text-gray-400 mt-1">ConteÃºdos destacados</p>
+            <p className="text-xs text-gray-400 mt-1">Conteúdos destacados</p>
           </CardContent>
         </Card>
 
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-300">PendÃªncias</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-300">Pendências</CardTitle>
             <AlertCircle className="h-5 w-5 text-orange-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">{stats.pendingReview}</div>
-            <p className="text-xs text-gray-400 mt-1">InscriÃ§Ãµes para revisar</p>
+            <p className="text-xs text-gray-400 mt-1">Inscrições para revisar</p>
           </CardContent>
         </Card>
       </div>

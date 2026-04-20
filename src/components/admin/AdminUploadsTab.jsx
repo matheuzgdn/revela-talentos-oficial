@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { appClient } from "@/api/backendClient";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
@@ -60,7 +60,7 @@ export default function AdminUploadsTab() {
     <>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">VÃ­deos dos Atletas</h3>
+          <h3 className="text-lg font-semibold text-white">Vídeos dos Atletas</h3>
           <div className="flex gap-2">
             <Badge className="bg-yellow-600 text-white">{pendingVideos.length} Pendentes</Badge>
             <Badge className="bg-green-600 text-white">{approvedVideos.length} Aprovados</Badge>
@@ -72,7 +72,7 @@ export default function AdminUploadsTab() {
           <div>
             <h4 className="text-yellow-400 font-bold mb-4 flex items-center gap-2">
               <Sparkles className="w-5 h-5" />
-              Aguardando AnÃ¡lise
+              Aguardando Análise
             </h4>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {pendingVideos.map((video) => {
@@ -144,7 +144,7 @@ export default function AdminUploadsTab() {
         {/* Approved Videos */}
         {approvedVideos.length > 0 && (
           <div>
-            <h4 className="text-green-400 font-bold mb-4">VÃ­deos Aprovados</h4>
+            <h4 className="text-green-400 font-bold mb-4">Vídeos Aprovados</h4>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {approvedVideos.slice(0, 6).map((video) => {
                 const user = getUserById(video.athlete_id);
@@ -177,8 +177,8 @@ export default function AdminUploadsTab() {
         {videos.length === 0 && !isLoading && (
           <div className="text-center py-12 text-gray-500">
             <Upload className="w-16 h-16 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">Nenhum vÃ­deo encontrado</h3>
-            <p>Os vÃ­deos dos atletas aparecerÃ£o aqui.</p>
+            <h3 className="text-lg font-medium text-white mb-2">Nenhum vídeo encontrado</h3>
+            <p>Os vídeos dos atletas aparecerão aqui.</p>
           </div>
         )}
       </div>

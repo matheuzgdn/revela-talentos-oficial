@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -100,7 +100,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
 
   const handleAddVideo = async () => {
     if (!newVideo.url || !newVideo.title) {
-      toast.error('Preencha o tÃ­tulo e a URL do vÃ­deo');
+      toast.error('Preencha o título e a URL do vídeo');
       return;
     }
 
@@ -116,26 +116,26 @@ export default function AthletePanel({ user, applications, onUpdate }) {
         processing_status: 'completed'
       });
       
-      toast.success('VÃ­deo adicionado com sucesso!');
+      toast.success('Vídeo adicionado com sucesso!');
       setNewVideo({ title: '', url: '', description: '', category: 'jogo' });
       loadVideos();
     } catch (error) {
       console.error('Error adding video:', error);
-      toast.error('Erro ao adicionar vÃ­deo.');
+      toast.error('Erro ao adicionar vídeo.');
     }
     setIsUploadingVideo(false);
   };
 
   const handleDeleteVideo = async (videoId) => {
-    if (!confirm('Tem certeza que deseja remover este vÃ­deo?')) return;
+    if (!confirm('Tem certeza que deseja remover este vídeo?')) return;
     
     try {
       await appClient.entities.AthleteUpload.delete(videoId);
-      toast.success('VÃ­deo removido com sucesso!');
+      toast.success('Vídeo removido com sucesso!');
       loadVideos();
     } catch (error) {
       console.error('Error deleting video:', error);
-      toast.error('Erro ao remover vÃ­deo.');
+      toast.error('Erro ao remover vídeo.');
     }
   };
 
@@ -152,10 +152,10 @@ export default function AthletePanel({ user, applications, onUpdate }) {
 
   const getStatusLabel = (status) => {
     const labels = {
-      pending: 'Aguardando AnÃ¡lise',
-      under_review: 'Em AnÃ¡lise',
+      pending: 'Aguardando Análise',
+      under_review: 'Em Análise',
       approved: 'Aprovado',
-      rejected: 'NÃ£o Aprovado',
+      rejected: 'Não Aprovado',
       waitlist: 'Lista de Espera'
     };
     return labels[status] || status;
@@ -179,7 +179,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
               </TabsTrigger>
               <TabsTrigger value="videos" className="data-[state=active]:bg-yellow-500">
                 <Video className="w-4 h-4 mr-2" />
-                Meus VÃ­deos ({videos.length})
+                Meus Vídeos ({videos.length})
               </TabsTrigger>
               <TabsTrigger value="applications" className="data-[state=active]:bg-yellow-500">
                 <Trophy className="w-4 h-4 mr-2" />
@@ -199,7 +199,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                   {isSaving ? (
                     <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Salvando...</>
                   ) : isEditingProfile ? (
-                    <><CheckCircle className="w-4 h-4 mr-2" />Salvar AlteraÃ§Ãµes</>
+                    <><CheckCircle className="w-4 h-4 mr-2" />Salvar Alterações</>
                   ) : (
                     <><Edit className="w-4 h-4 mr-2" />Editar Perfil</>
                   )}
@@ -236,7 +236,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                   />
                 </div>
                 <div>
-                  <Label className="text-gray-300">PosiÃ§Ã£o</Label>
+                  <Label className="text-gray-300">Posição</Label>
                   <Input
                     value={profileData.position}
                     onChange={(e) => setProfileData({...profileData, position: e.target.value})}
@@ -284,7 +284,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                   />
                 </div>
                 <div>
-                  <Label className="text-gray-300">PÃ© Preferido</Label>
+                  <Label className="text-gray-300">Pé Preferido</Label>
                   <Select 
                     value={profileData.preferred_foot} 
                     onValueChange={(v) => setProfileData({...profileData, preferred_foot: v})}
@@ -328,41 +328,41 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                   />
                 </div>
                 <div>
-                  <Label className="text-gray-300">Pontos Fortes (separados por vÃ­rgula)</Label>
+                  <Label className="text-gray-300">Pontos Fortes (separados por vírgula)</Label>
                   <Input
                     value={profileData.strengths}
                     onChange={(e) => setProfileData({...profileData, strengths: e.target.value})}
                     disabled={!isEditingProfile}
-                    placeholder="Ex: Velocidade, FinalizaÃ§Ã£o"
+                    placeholder="Ex: Velocidade, Finalização"
                     className="bg-gray-800 border-gray-700 text-white"
                   />
                 </div>
                 <div>
-                  <Label className="text-gray-300">Ãreas para Melhoria (separados por vÃ­rgula)</Label>
+                  <Label className="text-gray-300">Áreas para Melhoria (separados por vírgula)</Label>
                   <Input
                     value={profileData.areas_improvement}
                     onChange={(e) => setProfileData({...profileData, areas_improvement: e.target.value})}
                     disabled={!isEditingProfile}
-                    placeholder="Ex: MarcaÃ§Ã£o, Jogo aÃ©reo"
+                    placeholder="Ex: Marcação, Jogo aéreo"
                     className="bg-gray-800 border-gray-700 text-white"
                   />
                 </div>
               </div>
             </TabsContent>
 
-            {/* ABA VÃDEOS */}
+            {/* ABA VÍDEOS */}
             <TabsContent value="videos" className="space-y-6 mt-6">
               <Card className="bg-gray-800 border-gray-700">
                 <CardHeader>
                   <CardTitle className="text-lg text-white flex items-center gap-2">
                     <Upload className="w-5 h-5 text-yellow-400" />
-                    Adicionar Novo VÃ­deo
+                    Adicionar Novo Vídeo
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-gray-300">TÃ­tulo do VÃ­deo</Label>
+                      <Label className="text-gray-300">Título do Vídeo</Label>
                       <Input
                         value={newVideo.title}
                         onChange={(e) => setNewVideo({...newVideo, title: e.target.value})}
@@ -389,7 +389,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                     </div>
                   </div>
                   <div>
-                    <Label className="text-gray-300">URL do VÃ­deo</Label>
+                    <Label className="text-gray-300">URL do Vídeo</Label>
                     <Input
                       value={newVideo.url}
                       onChange={(e) => setNewVideo({...newVideo, url: e.target.value})}
@@ -401,11 +401,11 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                     </p>
                   </div>
                   <div>
-                    <Label className="text-gray-300">DescriÃ§Ã£o (opcional)</Label>
+                    <Label className="text-gray-300">Descrição (opcional)</Label>
                     <Textarea
                       value={newVideo.description}
                       onChange={(e) => setNewVideo({...newVideo, description: e.target.value})}
-                      placeholder="Adicione detalhes sobre o vÃ­deo..."
+                      placeholder="Adicione detalhes sobre o vídeo..."
                       className="bg-gray-900 border-gray-600 text-white h-20"
                     />
                   </div>
@@ -417,20 +417,20 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                     {isUploadingVideo ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Adicionando...</>
                     ) : (
-                      <><Upload className="w-4 h-4 mr-2" />Adicionar VÃ­deo</>
+                      <><Upload className="w-4 h-4 mr-2" />Adicionar Vídeo</>
                     )}
                   </Button>
                 </CardContent>
               </Card>
 
-              {/* Lista de VÃ­deos */}
+              {/* Lista de Vídeos */}
               <div className="space-y-3">
-                <h3 className="text-xl font-semibold text-white">Meus VÃ­deos ({videos.length})</h3>
+                <h3 className="text-xl font-semibold text-white">Meus Vídeos ({videos.length})</h3>
                 {videos.length === 0 ? (
                   <Card className="bg-gray-800 border-gray-700">
                     <CardContent className="p-8 text-center">
                       <Video className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                      <p className="text-gray-400">VocÃª ainda nÃ£o adicionou nenhum vÃ­deo.</p>
+                      <p className="text-gray-400">Você ainda não adicionou nenhum vídeo.</p>
                       <p className="text-gray-500 text-sm mt-2">
                         Adicione seus melhores momentos para usar nas candidaturas!
                       </p>
@@ -499,9 +499,9 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                 <Card className="bg-gray-800 border-gray-700">
                   <CardContent className="p-8 text-center">
                     <Trophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                    <p className="text-gray-400">VocÃª ainda nÃ£o se candidatou a nenhuma seletiva.</p>
+                    <p className="text-gray-400">Você ainda não se candidatou a nenhuma seletiva.</p>
                     <p className="text-gray-500 text-sm mt-2">
-                      Explore as oportunidades disponÃ­veis abaixo!
+                      Explore as oportunidades disponíveis abaixo!
                     </p>
                   </CardContent>
                 </Card>
@@ -527,7 +527,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
 
                         {app.video_url && (
                           <div className="mb-3">
-                            <Label className="text-gray-400 text-sm">VÃ­deo Enviado:</Label>
+                            <Label className="text-gray-400 text-sm">Vídeo Enviado:</Label>
                             <a 
                               href={app.video_url} 
                               target="_blank" 
@@ -535,14 +535,14 @@ export default function AthletePanel({ user, applications, onUpdate }) {
                               className="flex items-center gap-2 text-yellow-400 hover:text-yellow-300 text-sm mt-1"
                             >
                               <Eye className="w-4 h-4" />
-                              Ver VÃ­deo
+                              Ver Vídeo
                             </a>
                           </div>
                         )}
 
                         {app.analyst_notes && (
                           <div className="bg-gray-900 rounded-lg p-3 mt-3">
-                            <p className="text-xs text-gray-500 mb-1">ObservaÃ§Ãµes do Analista:</p>
+                            <p className="text-xs text-gray-500 mb-1">Observações do Analista:</p>
                             <p className="text-sm text-gray-300">{app.analyst_notes}</p>
                           </div>
                         )}
@@ -556,7 +556,7 @@ export default function AthletePanel({ user, applications, onUpdate }) {
 
                         {app.rating && (
                           <div className="flex items-center gap-2 mt-3">
-                            <span className="text-sm text-gray-400">AvaliaÃ§Ã£o:</span>
+                            <span className="text-sm text-gray-400">Avaliação:</span>
                             <div className="flex items-center gap-1">
                               {[...Array(10)].map((_, i) => (
                                 <div

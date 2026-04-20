@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,17 +7,17 @@ import { Send, Loader2, MessageSquare, ArrowLeft } from "lucide-react";
 import { appClient } from "@/api/backendClient";
 import { toast } from "sonner";
 
-// FunÃ§Ã£o unificada para gerar ID de conversa
+// Função unificada para gerar ID de conversa
 const getConversationId = (userId, contactId) => {
   return [userId, contactId].sort().join(':');
 };
 
 export default function MessagingCenter({ user }) {
   const [contacts] = useState([
-    { id: "analyst_01", name: "Analista de Desempenho", role: "AnÃ¡lise TÃ©cnica" },
-    { id: "physio_01", name: "Preparador FÃ­sico", role: "Performance FÃ­sica" },
+    { id: "analyst_01", name: "Analista de Desempenho", role: "Análise Técnica" },
+    { id: "physio_01", name: "Preparador Físico", role: "Performance Física" },
     { id: "mentor_01", name: "Mentor de Carreira", role: "Aconselhamento" },
-    { id: "marketing_01", name: "Equipe de Marketing", role: "Imagem & MÃ­dia" },
+    { id: "marketing_01", name: "Equipe de Marketing", role: "Imagem & Mídia" },
   ]);
 
   const [selectedContactId, setSelectedContactId] = useState(null);
@@ -46,7 +46,7 @@ export default function MessagingCenter({ user }) {
       setChatMessages(messages || []);
     } catch (error) {
       console.error("Error loading messages:", error);
-      toast.error("NÃ£o foi possÃ­vel carregar as mensagens.");
+      toast.error("Não foi possível carregar as mensagens.");
     }
     setIsLoadingMessages(false);
   }, [conversationId]);

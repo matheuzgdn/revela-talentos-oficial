@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Video, Check, Zap } from "lucide-react";
@@ -22,19 +22,19 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
   const fileInputRef = useRef(null);
 
   const positions = [
-    { value: "goleiro", label: "Goleiro", icon: "ðŸ§¤" },
-    { value: "zagueiro", label: "Zagueiro", icon: "ðŸ›¡ï¸" },
-    { value: "lateral", label: "Lateral", icon: "ðŸƒ" },
-    { value: "volante", label: "Volante", icon: "âš™ï¸" },
-    { value: "meia", label: "Meia", icon: "ðŸŽ¯" },
-    { value: "atacante", label: "Atacante", icon: "âš¡" },
+    { value: "goleiro", label: "Goleiro", icon: "GL" },
+    { value: "zagueiro", label: "Zagueiro", icon: "ZG" },
+    { value: "lateral", label: "Lateral", icon: "LT" },
+    { value: "volante", label: "Volante", icon: "VOL" },
+    { value: "meia", label: "Meia", icon: "MEI" },
+    { value: "atacante", label: "Atacante", icon: "ATA" },
   ];
 
   const categories = [
-    { value: "destaque", label: "Destaque", icon: "ðŸ”¥" },
-    { value: "treino", label: "Treino", icon: "ðŸ’ª" },
-    { value: "jogo", label: "Jogo", icon: "ðŸ†" },
-    { value: "habilidade", label: "Habilidade", icon: "âœ¨" },
+    { value: "destaque", label: "Destaque", icon: "DT" },
+    { value: "treino", label: "Treino", icon: "TR" },
+    { value: "jogo", label: "Jogo", icon: "JG" },
+    { value: "habilidade", label: "Habilidade", icon: "HB" },
   ];
 
   const handleFileSelect = (e) => {
@@ -80,7 +80,7 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
         setTimeout(() => {
           onClose();
           resetForm();
-          // Recarregar a pÃ¡gina para mostrar o novo vÃ­deo
+          // Recarregar a página para mostrar o novo vídeo
           window.location.reload();
         }, 2000);
       }, 500);
@@ -125,7 +125,7 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
             <X className="w-5 h-5 text-white" />
           </motion.button>
           <h2 className="text-lg font-black text-white uppercase tracking-wider">
-            {step === 1 && "Novo VÃ­deo"}
+            {step === 1 && "Novo Vídeo"}
             {step === 2 && "Detalhes"}
             {step === 3 && "Sucesso!"}
           </h2>
@@ -173,7 +173,7 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
                   <Video className="w-12 h-12 text-black" />
                 </div>
                 <div className="text-center">
-                  <p className="text-white font-bold mb-1">Selecionar VÃ­deo</p>
+                  <p className="text-white font-bold mb-1">Selecionar Vídeo</p>
                   <p className="text-[#666] text-sm">Toque para escolher</p>
                 </div>
               </motion.button>
@@ -202,7 +202,7 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] text-[#666] mb-2 block uppercase tracking-widest font-bold">TÃ­tulo *</label>
+                  <label className="text-[10px] text-[#666] mb-2 block uppercase tracking-widest font-bold">Título *</label>
                   <Input
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -212,7 +212,7 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
                 </div>
 
                 <div>
-                  <label className="text-[10px] text-[#666] mb-2 block uppercase tracking-widest font-bold">DescriÃ§Ã£o</label>
+                  <label className="text-[10px] text-[#666] mb-2 block uppercase tracking-widest font-bold">Descrição</label>
                   <Textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -223,7 +223,7 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[10px] text-[#666] mb-2 block uppercase tracking-widest font-bold">PosiÃ§Ã£o</label>
+                    <label className="text-[10px] text-[#666] mb-2 block uppercase tracking-widest font-bold">Posição</label>
                     <Select
                       value={formData.position}
                       onValueChange={(value) => setFormData({ ...formData, position: value })}
@@ -283,7 +283,7 @@ export default function VideoUploadModal({ isOpen, onClose, user }) {
               </motion.div>
               <h3 className="text-2xl font-black text-white mt-8 mb-2 uppercase tracking-tight">Enviado!</h3>
               <p className="text-[#666] text-center text-sm">
-                Seu vÃ­deo estÃ¡ em anÃ¡lise e serÃ¡ publicado em breve
+                Seu vídeo está em análise e será publicado em breve
               </p>
             </motion.div>
           )}

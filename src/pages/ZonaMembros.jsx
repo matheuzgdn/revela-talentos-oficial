@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { appClient } from '@/api/backendClient';
 import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock, LogOut, Settings, Plus, Minus, RotateCcw, User } from 'lucide-react';
 import ProfileSetup from '@/components/athlete/ProfileSetup';
@@ -7,7 +7,7 @@ const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?che
 const EVENTS = [
     { id: 1, nome: 'Sudacademy', city: 'Belo Horizonte', country: 'Brasil', month: 'Diciembre', pos: { top: '61.5%', left: '37.5%' } },
     { id: 2, nome: 'Libertacademy', city: 'Buenos Aires', country: 'Argentina', month: 'Julio', pos: { top: '76.4%', left: '34.3%' } },
-    { id: 3, nome: 'Eurocamp', city: 'Madrid', country: 'EspaÃ±a', month: 'Agosto', pos: { top: '28%', left: '48.5%' } },
+    { id: 3, nome: 'Eurocamp', city: 'Madrid', country: 'España', month: 'Agosto', pos: { top: '28%', left: '48.5%' } },
 ];
 
 /* ================== AUTO-TRANSLATION ================== */
@@ -98,7 +98,7 @@ const UpgModal = ({ onClose }) => (
                 Contenido <span className="text-[#00a8e1]">Bloqueado</span>
             </h2>
             <p className="text-gray-400 text-sm text-center mb-6 leading-relaxed">
-                Este contenido forma parte del paquete completo de la plataforma EC10 Talentos. AdquiÃ©relo ahora para tener acceso ilimitado.
+                Este contenido forma parte del paquete completo de la plataforma EC10 Talentos. Adquiérelo ahora para tener acceso ilimitado.
             </p>
             <a href={PURCHASE_URL} target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r from-[#00a8e1] to-[#0066FF] text-black font-black text-base rounded-2xl shadow-xl shadow-[#00a8e1]/30 transition-all duration-300 hover:-translate-y-0.5 mb-3">
@@ -183,14 +183,14 @@ const InicioView = ({ contents, onPlay, onNav }) => {
                     <PBtn onClick={() => onNav('empieza')} Ic={Play} v="pr">Comenzar Ahora</PBtn>
                 </div>
             </div>
-            <CRow title="Ãšltimos Lanzamientos" items={latest} onPlay={onPlay} />
-            {ment.length > 0 && <CRow title="MentorÃ­as" items={ment} onPlay={onPlay} />}
-            {trein.length > 0 && <CRow title="Entrenamiento TÃ¡ctico" items={trein} onPlay={onPlay} />}
-            {fis.length > 0 && <CRow title="PreparaciÃ³n FÃ­sica" items={fis} onPlay={onPlay} />}
+            <CRow title="Últimos Lanzamientos" items={latest} onPlay={onPlay} />
+            {ment.length > 0 && <CRow title="Mentorías" items={ment} onPlay={onPlay} />}
+            {trein.length > 0 && <CRow title="Entrenamiento Táctico" items={trein} onPlay={onPlay} />}
+            {fis.length > 0 && <CRow title="Preparación Física" items={fis} onPlay={onPlay} />}
             {contents.length === 0 && (
                 <div className="text-center py-16 text-white/40">
                     <Play className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p className="font-bold">El administrador aÃ±adirÃ¡ videos pronto.</p>
+                    <p className="font-bold">El administrador añadirá videos pronto.</p>
                 </div>
             )}
         </div>
@@ -226,14 +226,14 @@ const EnVivoView = ({ isLive }) => (
         {isLive ? (
             <>
                 <Bdg txt="EN VIVO AHORA" type="al" />
-                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">Â¡TransmisiÃ³n En Vivo!</h1>
+                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">¡Transmisión En Vivo!</h1>
                 <a href="?page=Lives" className="mt-4 flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-black py-3 px-8 rounded-full transition-all"><Play className="w-5 h-5 fill-white" /> Ver Ahora</a>
             </>
         ) : (
             <>
-                <Bdg txt="TransmisiÃ³n en directo" type="rv" />
-                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">Tus clases te esperan aquÃ­.</h1>
-                <p className="text-sm md:text-xl text-[#00a8e1] font-black flex items-center gap-2"><Hourglass className="w-4 h-4 animate-pulse" /> Â¡Disponibles muy pronto!</p>
+                <Bdg txt="Transmisión en directo" type="rv" />
+                <h1 className="text-3xl md:text-5xl font-black text-white mt-5 mb-4 tracking-tighter uppercase">Tus clases te esperan aquí.</h1>
+                <p className="text-sm md:text-xl text-[#00a8e1] font-black flex items-center gap-2"><Hourglass className="w-4 h-4 animate-pulse" /> ¡Disponibles muy pronto!</p>
             </>
         )}
     </div>
@@ -328,7 +328,7 @@ const IntercambioView = () => {
                         <button onClick={handleZoomIn} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="Zoom In">
                             <Plus className="w-4 h-4" />
                         </button>
-                        <button onClick={handleZoomReset} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="PadrÃ£o">
+                        <button onClick={handleZoomReset} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="Padrão">
                             <RotateCcw className="w-4 h-4" />
                         </button>
                         <button onClick={handleZoomOut} className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-[#00a8e1]/20 hover:text-[#00a8e1] text-white transition-colors" title="Zoom Out">
@@ -423,21 +423,21 @@ const ConsejosView = ({ contents, onPlay }) => {
             ) : (
                 <div className="text-center py-16 text-white/40 mb-10">
                     <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                    <p className="font-bold">NingÃºn consejo disponible aÃºn.</p>
+                    <p className="font-bold">Ningún consejo disponible aún.</p>
                 </div>
             )}
             <div className="bg-[#05080a] border border-[#00a8e1]/40 rounded-3xl p-6 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                    <h3 className="text-xl md:text-2xl font-black text-white mb-2 uppercase">Â¿Quieres ir mÃ¡s allÃ¡?</h3>
-                    <p className="text-[#00a8e1] font-bold mb-3 text-xs md:text-base">Accede a nuestra MENTORÃA COMPLETA.</p>
+                    <h3 className="text-xl md:text-2xl font-black text-white mb-2 uppercase">¿Quieres ir más allá?</h3>
+                    <p className="text-[#00a8e1] font-bold mb-3 text-xs md:text-base">Accede a nuestra MENTORÍA COMPLETA.</p>
                     <ul className="text-white/80 text-xs md:text-base space-y-2">
-                        {['Planes personalizados', 'AcompaÃ±amiento', 'PreparaciÃ³n mental'].map((b, i) => (
+                        {['Planes personalizados', 'Acompañamiento', 'Preparación mental'].map((b, i) => (
                             <li key={i} className="flex items-center gap-1.5"><CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-[#00a8e1]" /> {b}</li>
                         ))}
                     </ul>
                 </div>
                 <a href={PURCHASE_URL} target="_blank" rel="noopener noreferrer">
-                    <PBtn v="bl">CONTÃCTANOS</PBtn>
+                    <PBtn v="bl">CONTÁCTANOS</PBtn>
                 </a>
             </div>
         </div>
@@ -449,9 +449,9 @@ const MentoriasView = () => (
         <div className="bg-black rounded-3xl overflow-hidden flex flex-col lg:flex-row shadow-xl border border-[#00a8e1]/30 relative">
             <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-[#00a8e1]/10 rounded-full blur-[80px] pointer-events-none z-0" />
             <div className="p-6 md:p-12 lg:p-16 flex-1 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-white/5 relative z-10">
-                <div className="mb-4"><Bdg txt="ATENCIÃ“N FAMILIAS" type="al" Ic={AlertCircle} /></div>
+                <div className="mb-4"><Bdg txt="ATENCI�N FAMILIAS" type="al" Ic={AlertCircle} /></div>
                 <h2 className="text-3xl md:text-5xl font-black text-[#00a8e1] leading-tight uppercase mb-3 tracking-tighter">
-                    NUESTRA MENTORÃA ESTÃ EN ANÃLISIS
+                    NUESTRA MENTORÍA ESTÁ EN ANÁLISIS
                 </h2>
                 <p className="text-white/90 text-sm md:text-xl mb-6 font-bold max-w-lg">Prepara a tu hijo para el siguiente nivel profesional.</p>
                 <div className="flex flex-col gap-3">
@@ -462,7 +462,7 @@ const MentoriasView = () => (
             <div className="p-6 md:p-12 lg:p-16 bg-[#05080a]/80 flex-1 flex flex-col justify-center relative z-10">
                 <h3 className="text-xl md:text-2xl font-black text-white mb-6 uppercase flex items-center gap-2"><Star className="w-6 h-6 text-[#00a8e1]" /> Beneficios</h3>
                 <ul className="space-y-4 mb-8">
-                    {['AcompaÃ±amiento completo', 'PreparaciÃ³n para eventos', 'AsesorÃ­a en viajes y documentaciÃ³n', 'Cuidados fÃ­sicos y mentales'].map((b, i) => (
+                    {['Acompañamiento completo', 'Preparación para eventos', 'Asesoría en viajes y documentación', 'Cuidados físicos y mentales'].map((b, i) => (
                         <li key={i} className="flex items-start gap-3">
                             <div className="w-6 h-6 shrink-0 rounded-full bg-[#0a0f14] border border-[#00a8e1]/50 flex items-center justify-center mt-0.5">
                                 <Check className="w-3 h-3 text-[#00a8e1]" />
@@ -474,7 +474,7 @@ const MentoriasView = () => (
                 <div className="bg-amber-500/5 border border-amber-500/30 p-4 rounded-xl">
                     <h4 className="text-amber-500 font-bold flex items-center gap-2 mb-2 text-xs md:text-base"><AlertTriangle className="w-4 h-4" /> IMPORTANTE</h4>
                     <p className="text-white/70 text-[10px] md:text-sm leading-relaxed">
-                        Considera nuestros eventos y la preparaciÃ³n adecuada para que tu atleta estÃ© listo.
+                        Considera nuestros eventos y la preparación adecuada para que tu atleta esté listo.
                     </p>
                 </div>
             </div>
@@ -628,7 +628,7 @@ export default function ZonaMembros() {
                             onClick={() => setTab('inicio')} />
                     </div>
                     <nav className={`flex-1 pt-4 pb-6 flex flex-col gap-1 overflow-y-auto zh ${hov ? 'px-5' : 'px-3'}`}>
-                        {hov && <div className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] mb-1 ml-3">NavegaciÃ³n</div>}
+                        {hov && <div className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] mb-1 ml-3">Navegación</div>}
                         {MENU.map(item => {
                             const active = tab === item.id;
                             return (
@@ -731,7 +731,7 @@ export default function ZonaMembros() {
                                         onClick={() => { handleLogout(); setProfileDrop(false); }}
                                         className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-500/10 transition"
                                     >
-                                        <LogOut className="w-4 h-4" /> Cerrar SesiÃ³n
+                                        <LogOut className="w-4 h-4" /> Cerrar Sesión
                                     </button>
                                 </div>
                             )}

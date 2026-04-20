@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { appClient } from "@/api/backendClient";
 
@@ -106,7 +106,7 @@ export default function MeusServicosPage() {
 
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("A imagem deve ter no mÃ¡ximo 5MB");
+      toast.error("A imagem deve ter no máximo 5MB");
       return;
     }
 
@@ -125,7 +125,7 @@ export default function MeusServicosPage() {
 
   const getBillingPeriodLabel = (period) => {
     const labels = {
-      monthly: '/mÃªs',
+      monthly: '/mês',
       quarterly: '/trimestre',
       semiannual: '/semestre',
       annual: '/ano'
@@ -153,7 +153,7 @@ export default function MeusServicosPage() {
         <div className="absolute inset-0">
           <img
             src="https://static.wixstatic.com/media/933cdd_3b676d68d7c645bea831a0717eccbe12~mv2.png"
-            alt="Meus ServiÃ§os"
+            alt="Meus Serviços"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
@@ -170,7 +170,7 @@ export default function MeusServicosPage() {
               Minha Conta
             </Badge>
             <h1 className="text-3xl md:text-5xl font-bold">
-              Gerencie seus <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">ServiÃ§os</span>
+              Gerencie seus <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Serviços</span>
             </h1>
             <p className="text-gray-300 text-lg max-w-2xl">
               Controle sua assinatura, atualize seus dados e acompanhe seu progresso
@@ -249,7 +249,7 @@ export default function MeusServicosPage() {
                         className="bg-gray-800 border-gray-700 text-white"
                       />
                       <Input
-                        placeholder="PosiÃ§Ã£o"
+                        placeholder="Posição"
                         value={profileData.position}
                         onChange={(e) => setProfileData(prev => ({ ...prev, position: e.target.value }))}
                         className="bg-gray-800 border-gray-700 text-white"
@@ -315,7 +315,7 @@ export default function MeusServicosPage() {
               </Card>
             </motion.div>
 
-            {/* MÃ³dulos Ativos Card */}
+            {/* Módulos Ativos Card */}
             {user && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -326,7 +326,7 @@ export default function MeusServicosPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-white">
                       <ShieldCheck className="w-5 h-5 text-purple-400" />
-                      MÃ³dulos Ativos
+                      Módulos Ativos
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -374,7 +374,7 @@ export default function MeusServicosPage() {
                       <Badge className="bg-green-600 text-white capitalize">{userSubscription.status}</Badge>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-300">PrÃ³xima renovaÃ§Ã£o:</span>
+                      <span className="text-gray-300">Próxima renovação:</span>
                       <span className="text-white">{userSubscription.renewal_date ? new Date(userSubscription.renewal_date).toLocaleDateString('pt-BR') : "N/A"}</span>
                     </div>
                     <Button variant="outline" className="w-full">
@@ -396,7 +396,7 @@ export default function MeusServicosPage() {
               className="space-y-6"
             >
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Planos DisponÃ­veis</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Planos Disponíveis</h2>
                 <p className="text-gray-400">
                   Escolha o plano ideal para acelerar sua carreira no futebol
                 </p>

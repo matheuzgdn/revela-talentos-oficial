@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { appClient } from "@/api/backendClient";
 import {
@@ -47,8 +47,8 @@ export default function HubPage() {
     {
       id: "revela-talentos",
       title: "Revela Talentos",
-      subtitle: "ConteÃºdo & Mentorias",
-      description: "Acesse vÃ­deos exclusivos, mentorias e desenvolvimento com especialistas.",
+      subtitle: "Conteúdo & Mentorias",
+      description: "Acesse vídeos exclusivos, mentorias e desenvolvimento com especialistas.",
       icon: Star,
       route: "RevelaTalentos",
       gradient: "from-blue-500 to-cyan-500",
@@ -56,15 +56,15 @@ export default function HubPage() {
       borderColor: "border-blue-500/20",
       hoverBorder: "hover:border-blue-400/60",
       glowColor: "hover:shadow-blue-500/20",
-      features: ["Mentorias semanais", "ConteÃºdo tÃ©cnico", "Lives exclusivas"],
-      price: "R$ 197/mÃªs",
+      features: ["Mentorias semanais", "Conteúdo técnico", "Lives exclusivas"],
+      price: "R$ 197/mês",
       public: false
     },
     {
       id: "plano-carreira",
       title: "Plano de Carreira",
-      subtitle: "GestÃ£o Completa",
-      description: "AnÃ¡lise de performance, marketing e conexÃµes diretas com clubes.",
+      subtitle: "Gestão Completa",
+      description: "Análise de performance, marketing e conexões diretas com clubes.",
       icon: TrendingUp,
       route: "PlanoCarreira",
       gradient: "from-green-500 to-emerald-500",
@@ -72,8 +72,8 @@ export default function HubPage() {
       borderColor: "border-green-500/20",
       hoverBorder: "hover:border-green-400/60",
       glowColor: "hover:shadow-green-500/20",
-      features: ["AnÃ¡lise de performance", "Marketing pessoal", "ConexÃµes com clubes"],
-      price: "R$ 997/mÃªs",
+      features: ["Análise de performance", "Marketing pessoal", "Conexões com clubes"],
+      price: "R$ 997/mês",
       public: false,
       popular: true
     },
@@ -81,7 +81,7 @@ export default function HubPage() {
       id: "plano-internacional",
       title: "Plano Internacional",
       subtitle: "Futebol Europeu & Mundial",
-      description: "Sua porta de entrada para o futebol europeu com EuroCamps e avaliaÃ§Ãµes diretas.",
+      description: "Sua porta de entrada para o futebol europeu com EuroCamps e avaliações diretas.",
       icon: Globe,
       route: "PlanoInternacional",
       gradient: "from-purple-500 to-violet-500",
@@ -89,7 +89,7 @@ export default function HubPage() {
       borderColor: "border-purple-500/20",
       hoverBorder: "hover:border-purple-400/60",
       glowColor: "hover:shadow-purple-500/20",
-      features: ["EuroCamp", "AvaliaÃ§Ãµes diretas", "Network internacional"],
+      features: ["EuroCamp", "Avaliações diretas", "Network internacional"],
       price: "Consulte",
       public: true,
       featured: true
@@ -97,7 +97,7 @@ export default function HubPage() {
     {
       id: "campeonatos-ec10",
       title: "Campeonatos EC10",
-      subtitle: "CompetiÃ§Ãµes Exclusivas",
+      subtitle: "Competições Exclusivas",
       description: "Participe dos campeonatos organizados e mostre seu talento em campo.",
       icon: Trophy,
       route: "CampeonatosEC10",
@@ -106,7 +106,7 @@ export default function HubPage() {
       borderColor: "border-amber-500/20",
       hoverBorder: "hover:border-amber-400/60",
       glowColor: "hover:shadow-amber-500/20",
-      features: ["Torneios mensais", "Scouts presentes", "PremiaÃ§Ãµes"],
+      features: ["Torneios mensais", "Scouts presentes", "Premiações"],
       price: "Gratuito",
       public: true
     }

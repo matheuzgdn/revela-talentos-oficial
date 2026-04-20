@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { appClient } from "@/api/backendClient";
 import { motion } from "framer-motion";
 import { 
@@ -29,7 +29,7 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
       // Mensagem inicial da IA
       setChatMessages([{
         role: "assistant",
-        content: `OlÃ¡! Assisti seu vÃ­deo "${video.title}" e fiz uma anÃ¡lise completa. ${video.ai_analysis.summary || 'Estou aqui para te ajudar a evoluir! Pode me perguntar qualquer coisa sobre sua performance.'}`
+        content: `Olá! Assisti seu vídeo "${video.title}" e fiz uma análise completa. ${video.ai_analysis.summary || 'Estou aqui para te ajudar a evoluir! Pode me perguntar qualquer coisa sobre sua performance.'}`
       }]);
     }
   }, [isOpen, video]);
@@ -81,18 +81,18 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
     setIsSendingMessage(true);
 
     try {
-      const context = `VocÃª Ã© um analista de desempenho esportivo especializado em futebol. 
-      VocÃª estÃ¡ conversando com ${video.athlete_name}, um ${video.position}.
+      const context = `Você é um analista de desempenho esportivo especializado em futebol. 
+      Você está conversando com ${video.athlete_name}, um ${video.position}.
       
       ${hasAnalysis ? `
-      AnÃ¡lise do vÃ­deo:
+      Análise do vídeo:
       - Nota geral: ${analysis.overall_score}/100
       - Pontos fortes: ${analysis.strengths?.join(', ')}
       - Pontos fracos: ${analysis.weaknesses?.join(', ')}
       - Eventos detectados: ${analysis.detected_events?.map(e => `${e.type} (${e.quality})`).join(', ')}
       ` : ''}
       
-      Responda de forma motivadora, construtiva e especÃ­fica. Use dados da anÃ¡lise quando relevante.`;
+      Responda de forma motivadora, construtiva e específica. Use dados da análise quando relevante.`;
 
       const response = await appClient.integrations.Core.InvokeLLM({
         prompt: `${context}\n\nPergunta do atleta: ${userMsg}`,
@@ -148,7 +148,7 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
             {hasAnalysis && (
               <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border-[#00E5FF]/30 text-[10px] md:text-xs">
                 <Sparkles className="w-2.5 h-2.5 md:w-3 md:h-3 mr-1" />
-                AnÃ¡lise IA
+                Análise IA
               </Badge>
             )}
           </div>
@@ -223,7 +223,7 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
             <TabsList className="w-full bg-gradient-to-r from-[#111111] to-[#0D1117] border-b border-[#00E5FF]/20 rounded-none p-1">
               <TabsTrigger value="analysis" className="flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
                 <BarChart3 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span className="hidden md:inline">AnÃ¡lise</span>
+                <span className="hidden md:inline">Análise</span>
               </TabsTrigger>
               <TabsTrigger value="chat" className="flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
                 <MessageCircle className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
@@ -272,7 +272,7 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
                     <div className="bg-gradient-to-br from-white/5 to-white/10 border border-[#00E5FF]/20 rounded-2xl p-3 md:p-4">
                       <h4 className="text-white font-bold mb-3 md:mb-4 flex items-center gap-2 text-sm md:text-base">
                         <Target className="w-4 h-4 md:w-5 md:h-5 text-[#00E5FF]" />
-                        AnÃ¡lise de Performance
+                        Análise de Performance
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {Object.entries(analysis.performance_analysis).map(([key, value]) => {
@@ -362,7 +362,7 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
                         <ul className="space-y-2">
                           {analysis.strengths.map((strength, idx) => (
                             <li key={idx} className="text-green-300 text-sm flex items-start gap-2">
-                              <span className="text-green-500 mt-0.5">â€¢</span>
+                              <span className="text-green-500 mt-0.5">⬢</span>
                               {strength}
                             </li>
                           ))}
@@ -379,7 +379,7 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
                         <ul className="space-y-2">
                           {analysis.weaknesses.map((weakness, idx) => (
                             <li key={idx} className="text-orange-300 text-sm flex items-start gap-2">
-                              <span className="text-orange-500 mt-0.5">â€¢</span>
+                              <span className="text-orange-500 mt-0.5">⬢</span>
                               {weakness}
                             </li>
                           ))}
@@ -393,7 +393,7 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
                     <div className="bg-gradient-to-br from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/30 rounded-2xl p-4">
                       <h4 className="text-white font-bold mb-3 flex items-center gap-2">
                         <Brain className="w-5 h-5 text-[#00E5FF]" />
-                        RecomendaÃ§Ãµes de Treino
+                        Recomendações de Treino
                       </h4>
                       <ul className="space-y-2">
                         {analysis.recommendations.map((rec, idx) => (
@@ -420,9 +420,9 @@ export default function VideoAnalysisModal({ video, isOpen, onClose, user }) {
               ) : (
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
                   <Sparkles className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                  <p className="text-white font-bold mb-2">AnÃ¡lise em Andamento</p>
+                  <p className="text-white font-bold mb-2">Análise em Andamento</p>
                   <p className="text-gray-400 text-sm">
-                    Nossa IA estÃ¡ analisando seu vÃ­deo. VocÃª receberÃ¡ uma notificaÃ§Ã£o quando estiver pronta!
+                    Nossa IA está analisando seu vídeo. Você receberá uma notificação quando estiver pronta!
                   </p>
                 </div>
               )}

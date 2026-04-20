@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -13,10 +13,10 @@ export default function LivesCard({ liveCount = 0, isLiveActive = false, image =
     show_card: true,
     is_live_active: false,
     is_postponed: false,
-    default_schedule: 'Todas as segundas Ã s 20h',
+    default_schedule: 'Todas as segundas às 20h',
     custom_schedule: '',
     custom_image_url: '',
-    postpone_message: 'Live adiada para terÃ§a Ã s 20h',
+    postpone_message: 'Live adiada para terça às 20h',
     next_live_date: ''
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -31,18 +31,18 @@ export default function LivesCard({ liveCount = 0, isLiveActive = false, image =
       const allSettings = await appClient.entities.PlatformSettings.list();
       
       const loadedSettings = {
-        // CORREÃ‡ÃƒO: Verifica se Ã© exatamente 'true', se nÃ£o achar assume true (padrÃ£o)
+        // CORRE�!ÒO: Verifica se é exatamente 'true', se não achar assume true (padrão)
         show_card: (() => {
           const setting = allSettings.find(s => s.setting_key === 'show_live_card');
-          if (!setting) return true; // Se nÃ£o existe, mostra por padrÃ£o
-          return setting.setting_value === 'true'; // SÃ³ mostra se for explicitamente 'true'
+          if (!setting) return true; // Se não existe, mostra por padrão
+          return setting.setting_value === 'true'; // Só mostra se for explicitamente 'true'
         })(),
         is_live_active: allSettings.find(s => s.setting_key === 'is_live_active')?.setting_value === 'true',
         is_postponed: allSettings.find(s => s.setting_key === 'live_is_postponed')?.setting_value === 'true',
-        default_schedule: allSettings.find(s => s.setting_key === 'live_default_schedule')?.setting_value || 'Todas as segundas Ã s 20h',
+        default_schedule: allSettings.find(s => s.setting_key === 'live_default_schedule')?.setting_value || 'Todas as segundas às 20h',
         custom_schedule: allSettings.find(s => s.setting_key === 'live_custom_schedule')?.setting_value || '',
         custom_image_url: allSettings.find(s => s.setting_key === 'live_custom_image')?.setting_value || '',
-        postpone_message: allSettings.find(s => s.setting_key === 'live_postpone_message')?.setting_value || 'Live adiada para terÃ§a Ã s 20h',
+        postpone_message: allSettings.find(s => s.setting_key === 'live_postpone_message')?.setting_value || 'Live adiada para terça às 20h',
         next_live_date: allSettings.find(s => s.setting_key === 'next_live_date')?.setting_value || ''
       };
       
@@ -53,17 +53,17 @@ export default function LivesCard({ liveCount = 0, isLiveActive = false, image =
     setIsLoading(false);
   };
 
-  // Se ainda estÃ¡ carregando, nÃ£o mostra nada
+  // Se ainda está carregando, não mostra nada
   if (isLoading) {
     return null;
   }
 
-  // Se o admin desabilitou o card, nÃ£o mostra nada
+  // Se o admin desabilitou o card, não mostra nada
   if (!settings.show_card) {
     return null;
   }
 
-  // Usar as props passadas ou as configuraÃ§Ãµes carregadas
+  // Usar as props passadas ou as configurações carregadas
   const displaySchedule = schedule || settings.custom_schedule || settings.default_schedule;
   const displayImage = image || settings.custom_image_url || null;
 
@@ -154,7 +154,7 @@ export default function LivesCard({ liveCount = 0, isLiveActive = false, image =
             Lives EC10
           </h3>
           
-          {/* HorÃ¡rio das Lives */}
+          {/* Horário das Lives */}
           <div className="flex items-start gap-1 text-[10px] text-gray-200 mb-2 bg-black/40 backdrop-blur-sm p-2 rounded">
             <Calendar className="w-3 h-3 flex-shrink-0 mt-0.5" />
             <span className="leading-tight">
@@ -162,7 +162,7 @@ export default function LivesCard({ liveCount = 0, isLiveActive = false, image =
             </span>
           </div>
 
-          {/* PrÃ³xima Live (se houver data definida) */}
+          {/* Próxima Live (se houver data definida) */}
           {settings.next_live_date && !settings.is_postponed && (
             <div className="flex items-center gap-1 text-[10px] text-cyan-300 mb-2 bg-cyan-900/30 p-1.5 rounded">
               <Clock className="w-3 h-3" />
@@ -180,7 +180,7 @@ export default function LivesCard({ liveCount = 0, isLiveActive = false, image =
           {liveCount > 0 && (
             <div className="flex items-center gap-1 text-xs text-gray-300 mb-2">
               <Users className="w-3 h-3" />
-              <span>{liveCount} {liveCount === 1 ? 'live disponÃ­vel' : 'lives disponÃ­veis'}</span>
+              <span>{liveCount} {liveCount === 1 ? 'live disponível' : 'lives disponíveis'}</span>
             </div>
           )}
 

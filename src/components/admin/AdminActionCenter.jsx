@@ -1,4 +1,4 @@
-﻿import { appClient } from '@/api/backendClient';
+import { appClient } from '@/api/backendClient';
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +15,7 @@ import { BarChart3, Megaphone, Upload, AlertCircle, CheckCircle, Plus, Clock, Lo
 
 import { toast } from 'sonner';
 
-// --- MODAIS DE EDIÃ‡ÃƒO ---
+// --- MODAIS DE EDI�!ÒO ---
 
 const EditPerformanceModal = ({ request, onRefresh, onClose }) => {
   const [formState, setFormState] = useState({
@@ -30,11 +30,11 @@ const EditPerformanceModal = ({ request, onRefresh, onClose }) => {
     setIsSaving(true);
     try {
       await appClient.entities.PerformanceData.update(request.id, { ...formState, status: 'completed' });
-      toast.success("AnÃ¡lise de performance salva!");
+      toast.success("Análise de performance salva!");
       onRefresh();
       onClose();
     } catch (error) {
-      toast.error("Erro ao salvar anÃ¡lise.");
+      toast.error("Erro ao salvar análise.");
     }
     setIsSaving(false);
   };
@@ -46,14 +46,14 @@ const EditPerformanceModal = ({ request, onRefresh, onClose }) => {
       </DialogHeader>
       {request.associated_video_url && (
         <div className="p-4 bg-gray-900/50 rounded-lg">
-          <h4 className="text-sm font-semibold text-white mb-3">DiÃ¡rio do Atleta</h4>
+          <h4 className="text-sm font-semibold text-white mb-3">Diário do Atleta</h4>
           <div className="space-y-3 text-sm">
             <p><strong className="text-gray-400">Sentimento:</strong> <span className="text-gray-200 italic">"{request.athlete_feeling || 'N/A'}"</span></p>
             <p><strong className="text-gray-400">Resumo:</strong> <span className="text-gray-200 italic">"{request.athlete_weekly_summary || 'N/A'}"</span></p>
           </div>
           <Button asChild size="sm" className="mt-3 bg-blue-600 hover:bg-blue-700">
             <a href={request.associated_video_url} target="_blank" rel="noopener noreferrer">
-              <BarChart3 className="w-4 h-4 mr-2"/> Ver VÃ­deo da Partida
+              <BarChart3 className="w-4 h-4 mr-2"/> Ver Vídeo da Partida
             </a>
           </Button>
         </div>
@@ -63,10 +63,10 @@ const EditPerformanceModal = ({ request, onRefresh, onClose }) => {
         <Input type="number" value={formState.goals} onChange={e => setFormState(s=>({...s, goals: parseInt(e.target.value)}))} placeholder="Gols" className="bg-gray-800 border-gray-700"/>
         <Input type="number" value={formState.assists} onChange={e => setFormState(s=>({...s, assists: parseInt(e.target.value)}))} placeholder="Assist." className="bg-gray-800 border-gray-700"/>
       </div>
-      <Textarea value={formState.analyst_notes} onChange={e => setFormState(s=>({...s, analyst_notes: e.target.value}))} placeholder="ObservaÃ§Ãµes do analista..." className="bg-gray-800 border-gray-700" />
+      <Textarea value={formState.analyst_notes} onChange={e => setFormState(s=>({...s, analyst_notes: e.target.value}))} placeholder="Observações do analista..." className="bg-gray-800 border-gray-700" />
       <DialogFooter>
         <Button variant="outline" onClick={onClose}>Cancelar</Button>
-        <Button onClick={handleSave} disabled={isSaving}>{isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin"/>} Salvar AnÃ¡lise</Button>
+        <Button onClick={handleSave} disabled={isSaving}>{isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin"/>} Salvar Análise</Button>
       </DialogFooter>
     </div>
   )
@@ -85,25 +85,25 @@ const EditMarketingModal = ({ request, onRefresh, onClose }) => {
         setIsSaving(true);
         try {
             await appClient.entities.Marketing.update(request.id, formState);
-            toast.success("SolicitaÃ§Ã£o de marketing atualizada!");
+            toast.success("Solicitação de marketing atualizada!");
             onRefresh();
             onClose();
         } catch (error) {
-            toast.error("Erro ao atualizar solicitaÃ§Ã£o.");
+            toast.error("Erro ao atualizar solicitação.");
         }
         setIsSaving(false);
     };
 
     return (
       <div className="space-y-4">
-        <DialogHeader><DialogTitle>Gerenciar SolicitaÃ§Ã£o de Marketing</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>Gerenciar Solicitação de Marketing</DialogTitle></DialogHeader>
         <p className="text-sm text-gray-400">Tipo: {request.request_type}</p>
         <Select value={formState.status} onValueChange={v => setFormState(s=>({...s, status: v}))}>
             <SelectTrigger className="bg-gray-800 border-gray-700"><SelectValue/></SelectTrigger>
             <SelectContent>
                 <SelectItem value="pending">Pendente</SelectItem>
-                <SelectItem value="in_progress">Em ProduÃ§Ã£o</SelectItem>
-                <SelectItem value="completed">ConcluÃ­do</SelectItem>
+                <SelectItem value="in_progress">Em Produção</SelectItem>
+                <SelectItem value="completed">Concluído</SelectItem>
                 <SelectItem value="rejected">Rejeitado</SelectItem>
             </SelectContent>
         </Select>
@@ -131,7 +131,7 @@ const TaskCard = ({ item, user, type, onComplete, onClick }) => {
   const getTitle = () => {
     switch (type) {
       case 'performance': return `Analisar: vs ${item.opponent}`;
-      case 'marketing': return `Marketing: ${item.request_type === 'flyer' ? 'Flyer' : 'VÃ­deo Destaque'}`;
+      case 'marketing': return `Marketing: ${item.request_type === 'flyer' ? 'Flyer' : 'Vídeo Destaque'}`;
       case 'upload': return `Upload: ${item.category}`;
       case 'custom': return item.title;
       default: return 'Tarefa Desconhecida';
@@ -172,7 +172,7 @@ const CompletedTaskItem = ({ task, user }) => (
             <CheckCircle className="w-4 h-4 text-green-500"/>
             <div>
                 <p className="text-sm text-gray-300">{task.title || `Tarefa de ${task.request_type || 'performance'}`}</p>
-                <p className="text-xs text-gray-500">ConcluÃ­da por {user?.full_name || 'Admin'} em {new Date(task.updated_date).toLocaleDateString()}</p>
+                <p className="text-xs text-gray-500">Concluída por {user?.full_name || 'Admin'} em {new Date(task.updated_date).toLocaleDateString()}</p>
             </div>
         </div>
     </div>
@@ -217,7 +217,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
         appClient.entities.CustomTask.filter({ status: 'completed' }, '-updated_date', 20),
     ]);
     const allCompleted = [
-        ...(perf || []).map(i => ({...i, title: `AnÃ¡lise: vs ${i.opponent}`, type: 'performance', user_id: i.user_id, updated_date: i.updated_date})),
+        ...(perf || []).map(i => ({...i, title: `Análise: vs ${i.opponent}`, type: 'performance', user_id: i.user_id, updated_date: i.updated_date})),
         ...(mark || []).map(i => ({...i, title: `Marketing: ${i.request_type}`, type: 'marketing', user_id: i.user_id, updated_date: i.updated_date})),
         ...(up || []).map(i => ({...i, title: `Upload: ${i.file_name}`, type: 'upload', user_id: i.user_id, updated_date: i.updated_date})),
         ...(cust || []).map(i => ({...i, type: 'custom', related_user_id: i.related_user_id, updated_date: i.updated_date}))
@@ -243,7 +243,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
         default:
           throw new Error("Tipo de tarefa desconhecido");
       }
-      toast.success("Tarefa concluÃ­da com sucesso!");
+      toast.success("Tarefa concluída com sucesso!");
       onRefresh();
       loadCompletedTasks();
       if (type === 'custom') {
@@ -258,7 +258,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
   const handleCreateTask = async (e) => {
     e.preventDefault();
     if (!newTask.title) {
-      toast.error("O tÃ­tulo da tarefa Ã© obrigatÃ³rio.");
+      toast.error("O título da tarefa é obrigatório.");
       return;
     }
     try {
@@ -289,7 +289,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
   return (
     <div className="p-4 bg-black/20 rounded-lg">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-white">Central de AÃ§Ãµes</h2>
+        <h2 className="text-xl font-bold text-white">Central de Ações</h2>
         <Button onClick={() => setShowTaskForm(true)} className="bg-cyan-600 hover:bg-cyan-700">
           <Plus className="w-4 h-4 mr-2" />
           Adicionar Tarefa
@@ -310,14 +310,14 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
                   <Input
                     value={newTask.title}
                     onChange={(e) => setNewTask(p => ({ ...p, title: e.target.value }))}
-                    placeholder="TÃ­tulo da tarefa"
+                    placeholder="Título da tarefa"
                     className="bg-gray-800 border-gray-700"
                     required
                   />
                   <Textarea
                     value={newTask.description}
                     onChange={(e) => setNewTask(p => ({ ...p, description: e.target.value }))}
-                    placeholder="DescriÃ§Ã£o..."
+                    placeholder="Descrição..."
                     className="bg-gray-800 border-gray-700"
                   />
                   <Select
@@ -345,7 +345,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="low">Baixa</SelectItem>
-                        <SelectItem value="medium">MÃ©dia</SelectItem>
+                        <SelectItem value="medium">Média</SelectItem>
                         <SelectItem value="high">Alta</SelectItem>
                         <SelectItem value="urgent">Urgente</SelectItem>
                       </SelectContent>
@@ -373,15 +373,15 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
       
       {(pendingPerformance.length + pendingMarketing.length + pendingUploads.length + pendingCustom.length) > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Coluna de AnÃ¡lises de Performance */}
+          {/* Coluna de Análises de Performance */}
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-yellow-400">AnÃ¡lise de Performance ({pendingPerformance.length})</h3>
+            <h3 className="text-lg font-semibold text-yellow-400">Análise de Performance ({pendingPerformance.length})</h3>
             {pendingPerformance.map(item => (
               <TaskCard key={item.id} item={item} user={getUserById(item.user_id)} type="performance" onComplete={handleCompleteTask} onClick={() => setEditingItem({item, type: 'performance'})} />
             ))}
           </div>
 
-          {/* Coluna de SolicitaÃ§Ãµes de Marketing */}
+          {/* Coluna de Solicitações de Marketing */}
           <div className="space-y-2">
             <h3 className="text-lg font-semibold text-fuchsia-400">Marketing ({pendingMarketing.length})</h3>
             {pendingMarketing.map(item => (
@@ -412,7 +412,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
         <Button variant="outline" onClick={() => setShowHistory(!showHistory)} className="w-full justify-between">
             <div className="flex items-center gap-2">
                 <History className="w-4 h-4"/>
-                HistÃ³rico de Tarefas ConcluÃ­das
+                Histórico de Tarefas Concluídas
             </div>
             <ChevronDown className={`w-4 h-4 transition-transform ${showHistory ? 'rotate-180' : ''}`}/>
         </Button>
@@ -423,7 +423,7 @@ export default function AdminActionCenter({ performanceData, marketingRequests, 
                         <CompletedTaskItem key={task.id + task.type} task={task} user={getUserById(task.user_id || task.related_user_id)}/>
                     ))
                 ) : (
-                    <p className="text-gray-500 text-center py-4">Nenhuma tarefa concluÃ­da recentemente.</p>
+                    <p className="text-gray-500 text-center py-4">Nenhuma tarefa concluída recentemente.</p>
                 )}
             </div>
         )}

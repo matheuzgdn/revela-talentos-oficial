@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ import { appClient } from "@/api/backendClient";
 
 
 import { toast } from "sonner";
-// Componente para Informar PrÃ³ximo Jogo
+// Componente para Informar Próximo Jogo
 const NextGameForm = ({ user }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [gameData, setGameData] = useState({
@@ -33,7 +33,7 @@ const NextGameForm = ({ user }) => {
   const handleGameSubmit = async (e) => {
     e.preventDefault();
     if (!user || !gameData.opponent || !gameData.game_date || !gameData.venue) {
-      toast.error("Preencha todos os campos do prÃ³ximo jogo.");
+      toast.error("Preencha todos os campos do próximo jogo.");
       return;
     }
     setIsSubmitting(true);
@@ -44,10 +44,10 @@ const NextGameForm = ({ user }) => {
         location: gameData.venue,
         status: 'scheduled'
       });
-      toast.success("PrÃ³ximo jogo informado com sucesso!");
+      toast.success("Próximo jogo informado com sucesso!");
       setGameData({ opponent: "", game_date: "", venue: "" });
     } catch (error) {
-      toast.error("Erro ao informar prÃ³ximo jogo.");
+      toast.error("Erro ao informar próximo jogo.");
     }
     setIsSubmitting(false);
   };
@@ -59,15 +59,15 @@ const NextGameForm = ({ user }) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-green-400 z-10 relative">
           <Calendar className="w-5 h-5" />
-          Informar PrÃ³ximo Jogo
+          Informar Próximo Jogo
         </CardTitle>
       </CardHeader>
       <CardContent className="z-10 relative">
-        <p className="text-gray-400 text-sm mb-4">Mantenha nossa equipe de scouting informada sobre suas prÃ³ximas partidas.</p>
+        <p className="text-gray-400 text-sm mb-4">Mantenha nossa equipe de scouting informada sobre suas próximas partidas.</p>
         <form onSubmit={handleGameSubmit} className="space-y-4">
           <Input
             name="opponent"
-            placeholder="AdversÃ¡rio"
+            placeholder="Adversário"
             value={gameData.opponent}
             onChange={(e) => setGameData({ ...gameData, opponent: e.target.value })}
             className="bg-gray-800 border-gray-700"
@@ -81,14 +81,14 @@ const NextGameForm = ({ user }) => {
           />
           <Input
             name="venue"
-            placeholder="Local (EstÃ¡dio, Cidade)"
+            placeholder="Local (Estádio, Cidade)"
             value={gameData.venue}
             onChange={(e) => setGameData({ ...gameData, venue: e.target.value })}
             className="bg-gray-800 border-gray-700"
           />
           <Button type="submit" disabled={isSubmitting} className="w-full bg-green-600 hover:bg-green-700">
             {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-            Enviar InformaÃ§Ãµes
+            Enviar Informações
           </Button>
         </form>
       </CardContent>
@@ -118,7 +118,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
       setRequests(userRequests);
     } catch (error) {
       console.error("Error loading marketing requests:", error);
-      toast.error("Erro ao carregar histÃ³rico de solicitaÃ§Ãµes.");
+      toast.error("Erro ao carregar histórico de solicitações.");
     }
     setIsHistoryLoading(false);
   }, [user]);
@@ -146,7 +146,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
     }
 
     setIsLoading(true);
-    toast.info("Enviando solicitaÃ§Ã£o e fazendo upload dos arquivos...");
+    toast.info("Enviando solicitação e fazendo upload dos arquivos...");
 
     try {
       let uploadedPhotoUrls = [];
@@ -162,7 +162,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
             file_name: photo.name,
             file_type: 'photo',
             category: 'marketing',
-            description: `Foto para ${formData.flyer_title || 'solicitaÃ§Ã£o de marketing'}`,
+            description: `Foto para ${formData.flyer_title || 'solicitação de marketing'}`,
             processing_status: 'completed',
             file_size: photo.size
           });
@@ -181,7 +181,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
 
       await appClient.entities.Marketing.create(payload);
 
-      toast.success("SolicitaÃ§Ã£o enviada com sucesso!");
+      toast.success("Solicitação enviada com sucesso!");
       setFormData({
         video_urls: "",
         flyer_title: "",
@@ -194,15 +194,15 @@ export default function MarketingHub({ user, onUploadComplete }) {
 
     } catch (error) {
       console.error("Error creating marketing request:", error);
-      toast.error("Falha ao enviar solicitaÃ§Ã£o.");
+      toast.error("Falha ao enviar solicitação.");
     }
     setIsLoading(false);
   };
 
   const statusConfig = {
     pending: { label: "Pendente", color: "bg-yellow-500", icon: Clock },
-    in_progress: { label: "Em ProduÃ§Ã£o", color: "bg-blue-500", icon: Loader2 },
-    completed: { label: "ConcluÃ­do", color: "bg-green-500", icon: CheckCircle },
+    in_progress: { label: "Em Produção", color: "bg-blue-500", icon: Loader2 },
+    completed: { label: "Concluído", color: "bg-green-500", icon: CheckCircle },
     rejected: { label: "Rejeitado", color: "bg-red-500", icon: Eye }
   };
 
@@ -210,7 +210,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
     <div className="space-y-8 p-4 md:p-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-4xl font-bold text-white">Central de Marketing</h1>
-        <p className="text-gray-400 mt-2">Solicite peÃ§as de marketing e informe seus prÃ³ximos jogos Ã  nossa equipe.</p>
+        <p className="text-gray-400 mt-2">Solicite peças de marketing e informe seus próximos jogos à nossa equipe.</p>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -234,7 +234,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-purple-400 z-10 relative">
                 <PlusCircle className="w-5 h-5" />
-                Solicitar Material de DivulgaÃ§Ã£o
+                Solicitar Material de Divulgação
               </CardTitle>
             </CardHeader>
             <CardContent className="z-10 relative">
@@ -254,7 +254,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
                     className={`flex-1 text-sm transition-all ${requestType === 'video_highlight' ? 'bg-purple-600 text-white shadow-md' : 'bg-transparent text-gray-300 hover:bg-gray-700/50'}`}
                   >
                     <Video className="w-4 h-4 mr-2" />
-                    VÃ­deo Destaque
+                    Vídeo Destaque
                   </Button>
                 </div>
 
@@ -262,14 +262,14 @@ export default function MarketingHub({ user, onUploadComplete }) {
                   <div className="space-y-4">
                     <Input
                       name="flyer_title"
-                      placeholder="TÃ­tulo do Flyer (Ex: Jogo da Semana!)"
+                      placeholder="Título do Flyer (Ex: Jogo da Semana!)"
                       value={formData.flyer_title}
                       onChange={handleInputChange}
                       className="bg-gray-800 border-gray-700 text-white"
                     />
                     <Input
                       name="flyer_subtitle"
-                      placeholder="SubtÃ­tulo (Ex: Flamengo vs Vasco)"
+                      placeholder="Subtítulo (Ex: Flamengo vs Vasco)"
                       value={formData.flyer_subtitle}
                       onChange={handleInputChange}
                       className="bg-gray-800 border-gray-700 text-white"
@@ -295,7 +295,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
                   <div className="space-y-4">
                     <Textarea
                       name="video_urls"
-                      placeholder="Cole as URLs dos seus melhores vÃ­deos, separadas por vÃ­rgula"
+                      placeholder="Cole as URLs dos seus melhores vídeos, separadas por vírgula"
                       value={formData.video_urls}
                       onChange={handleInputChange}
                       className="bg-gray-800 border-gray-700 text-white h-24"
@@ -305,7 +305,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
 
                 <Textarea
                   name="additional_info"
-                  placeholder="InstruÃ§Ãµes adicionais (opcional)."
+                  placeholder="Instruções adicionais (opcional)."
                   value={formData.additional_info}
                   onChange={handleInputChange}
                   className="bg-gray-800 border-gray-700 text-white h-24"
@@ -317,7 +317,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
                   ) : (
                     <Send className="w-4 h-4 mr-2" />
                   )}
-                  Enviar SolicitaÃ§Ã£o
+                  Enviar Solicitação
                 </Button>
               </form>
             </CardContent>
@@ -335,12 +335,12 @@ export default function MarketingHub({ user, onUploadComplete }) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-white">
               <History className="w-5 h-5 text-gray-400" />
-              Minhas SolicitaÃ§Ãµes
+              Minhas Solicitações
             </CardTitle>
           </CardHeader>
           <CardContent>
             {isHistoryLoading ? (
-              <div className="text-center text-gray-400 py-8">Carregando histÃ³rico...</div>
+              <div className="text-center text-gray-400 py-8">Carregando histórico...</div>
             ) : requests.length > 0 ? (
               <div className="space-y-3">
                 {requests.map(req => {
@@ -350,7 +350,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
                     <div key={req.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
                       <div>
                         <p className="font-medium text-white">
-                          {req.request_type === 'flyer' ? 'Flyer' : 'VÃ­deo Destaque'}
+                          {req.request_type === 'flyer' ? 'Flyer' : 'Vídeo Destaque'}
                           {req.flyer_title && `: ${req.flyer_title}`}
                         </p>
                         <p className="text-xs text-gray-400">
@@ -366,7 +366,7 @@ export default function MarketingHub({ user, onUploadComplete }) {
                 })}
               </div>
             ) : (
-              <p className="text-center text-gray-500 py-8">Nenhuma solicitaÃ§Ã£o encontrada.</p>
+              <p className="text-center text-gray-500 py-8">Nenhuma solicitação encontrada.</p>
             )}
           </CardContent>
         </Card>

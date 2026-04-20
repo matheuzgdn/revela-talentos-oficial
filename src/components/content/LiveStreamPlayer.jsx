@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,19 +61,19 @@ export default function LiveStreamPlayer({ content, onClose }) {
 
   useEffect(() => {
     if (isExternalEmbed && content.live_embed_code) {
-      // Para vÃ­deos/lives incorporados, usar o cÃ³digo embed diretamente
+      // Para vídeos/lives incorporados, usar o código embed diretamente
       const embedContainer = document.getElementById('live-embed-container');
       if (embedContainer) {
         let processedEmbed = content.live_embed_code;
 
-        // Processar cÃ³digos do Wix
+        // Processar códigos do Wix
         if (processedEmbed.includes('wixstatic.com') || processedEmbed.includes('wix.com')) {
-          // Para Wix, manter o embed original mas remover controles se possÃ­vel
+          // Para Wix, manter o embed original mas remover controles se possível
           processedEmbed = processedEmbed.replace(/controls/g, 'controls="false"');
           processedEmbed = processedEmbed.replace(/showinfo="1"/g, 'showinfo="0"');
         }
 
-        // Processar cÃ³digos do YouTube
+        // Processar códigos do YouTube
         if (processedEmbed.includes('youtube.com') || processedEmbed.includes('youtu.be')) {
           processedEmbed = processedEmbed.replace(/src="([^"]+)"/, (match, src) => {
             const url = new URL(src);
@@ -90,7 +90,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
           });
         }
 
-        // Para lives, sempre bloquear navegaÃ§Ã£o externa
+        // Para lives, sempre bloquear navegação externa
         processedEmbed = processedEmbed.replace(/allowfullscreen/g, '');
         processedEmbed = processedEmbed.replace(/allow="[^"]*"/g, '');
 
@@ -105,7 +105,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
           iframe.removeAttribute('width');
           iframe.removeAttribute('height');
 
-          // Bloquear navegaÃ§Ã£o externa para lives
+          // Bloquear navegação externa para lives
           iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
         }
       }
@@ -156,7 +156,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
           setLiveViewers(shuffled.slice(0, Math.min(viewerCount, allUsers.length)));
         }
       } catch (error) {
-        console.warn("NÃ£o foi possÃ­vel carregar usuÃ¡rios para simular espectadores.", error);
+        console.warn("Não foi possível carregar usuários para simular espectadores.", error);
       }
     };
     fetchViewers();
@@ -192,9 +192,9 @@ export default function LiveStreamPlayer({ content, onClose }) {
       await appClient.entities.Comment.create({ user_id: user.id, content_id: content.id, comment_text: newComment });
       setNewComment('');
       loadComments();
-      toast.success('ComentÃ¡rio enviado!');
+      toast.success('Comentário enviado!');
     } catch (error) {
-      toast.error('Erro ao enviar comentÃ¡rio');
+      toast.error('Erro ao enviar comentário');
     }
   };
 
@@ -245,7 +245,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
   return (
     <div className="fixed inset-0 bg-black z-50 flex">
       <div className="flex-1 relative group">
-        {/* BotÃ£o de Fechar */}
+        {/* Botão de Fechar */}
         <Button
           variant="ghost"
           size="icon"
@@ -416,7 +416,7 @@ export default function LiveStreamPlayer({ content, onClose }) {
         )}
       </AnimatePresence>
 
-      {/* BotÃ£o para Mostrar Chat quando escondido */}
+      {/* Botão para Mostrar Chat quando escondido */}
       {!showComments && (
         <Button
           className="fixed bottom-24 md:bottom-4 right-4 z-50 rounded-full bg-red-600 hover:bg-red-700"

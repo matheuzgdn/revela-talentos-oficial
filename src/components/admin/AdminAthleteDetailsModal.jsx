@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { appClient } from "@/api/backendClient";
 import { motion } from "framer-motion";
 import {
@@ -86,7 +86,7 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
     try {
       const { id, ...allData } = editingUser;
 
-      // Garantir booleanos explÃ­citos para evitar problemas no backend
+      // Garantir booleanos explícitos para evitar problemas no backend
       if ('is_approved' in allData) {
         allData.is_approved = !!allData.is_approved;
       }
@@ -99,7 +99,7 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
       await appClient.entities.Notification.create({
         user_id: id,
         title: "Perfil Atualizado",
-        message: "Seu perfil foi atualizado pela administraÃ§Ã£o.",
+        message: "Seu perfil foi atualizado pela administração.",
         type: "general",
         priority: "medium"
       });
@@ -136,40 +136,40 @@ export default function AdminAthleteDetailsModal({ user, isOpen, onClose, onSave
     setIsProcessingAnalysis(true);
 
     try {
-      const prompt = `VocÃª Ã© um analista de desempenho esportivo especializado em futebol. Analise este vÃ­deo de ${selectedVideo.athlete_name}, ${selectedVideo.position}.
+      const prompt = `Você é um analista de desempenho esportivo especializado em futebol. Analise este vídeo de ${selectedVideo.athlete_name}, ${selectedVideo.position}.
 
-TÃ­tulo: ${selectedVideo.title}
-DescriÃ§Ã£o: ${selectedVideo.description || 'Sem descriÃ§Ã£o'}
+Título: ${selectedVideo.title}
+Descrição: ${selectedVideo.description || 'Sem descrição'}
 Categoria: ${selectedVideo.category}
 
-ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
+Forneça uma análise DETALHADA no seguinte formato JSON:
 {
-  "overall_score": nÃºmero de 0 a 100,
+  "overall_score": número de 0 a 100,
   "video_quality": {
-    "score": nÃºmero de 0 a 100,
-    "resolution": "boa/mÃ©dia/ruim",
-    "lighting": "boa/mÃ©dia/ruim",
-    "angle": "boa/mÃ©dia/ruim",
-    "stability": "boa/mÃ©dia/ruim"
+    "score": número de 0 a 100,
+    "resolution": "boa/média/ruim",
+    "lighting": "boa/média/ruim",
+    "angle": "boa/média/ruim",
+    "stability": "boa/média/ruim"
   },
   "performance_analysis": {
-    "technical_skills": nÃºmero de 0 a 100,
-    "positioning": nÃºmero de 0 a 100,
-    "decision_making": nÃºmero de 0 a 100,
-    "physical_condition": nÃºmero de 0 a 100
+    "technical_skills": número de 0 a 100,
+    "positioning": número de 0 a 100,
+    "decision_making": número de 0 a 100,
+    "physical_condition": número de 0 a 100
   },
   "detected_events": [
     {
       "type": "gol/assistencia/defesa/passe/drible/finalizacao",
       "timestamp": "00:00",
-      "description": "descriÃ§Ã£o do evento",
+      "description": "descrição do evento",
       "quality": "excelente/boa/regular"
     }
   ],
   "strengths": ["ponto forte 1", "ponto forte 2", "ponto forte 3"],
   "weaknesses": ["ponto fraco 1", "ponto fraco 2"],
-  "recommendations": ["recomendaÃ§Ã£o 1", "recomendaÃ§Ã£o 2", "recomendaÃ§Ã£o 3"],
-  "summary": "resumo completo da anÃ¡lise"
+  "recommendations": ["recomendação 1", "recomendação 2", "recomendação 3"],
+  "summary": "resumo completo da análise"
 }`;
 
       const analysisResult = await appClient.integrations.Core.InvokeLLM({
@@ -194,7 +194,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
         status: 'approved'
       });
 
-      toast.success("AnÃ¡lise de IA processada com sucesso!");
+      toast.success("Análise de IA processada com sucesso!");
 
       // Recarregar dados
       await loadAthleteData(user.id);
@@ -203,8 +203,8 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
       setSelectedVideo(updatedVideos.find((v) => v.id === selectedVideo.id));
 
     } catch (error) {
-      console.error("Erro ao processar anÃ¡lise:", error);
-      toast.error("Erro ao processar anÃ¡lise de IA");
+      console.error("Erro ao processar análise:", error);
+      toast.error("Erro ao processar análise de IA");
     }
 
     setIsProcessingAnalysis(false);
@@ -221,10 +221,10 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
 
       toast.success("Feedback salvo com sucesso!");
 
-      // Atualizar o vÃ­deo selecionado
+      // Atualizar o vídeo selecionado
       setSelectedVideo({ ...selectedVideo, admin_feedback: adminVideoFeedback });
 
-      // Recarregar lista de vÃ­deos
+      // Recarregar lista de vídeos
       const updatedVideos = await appClient.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
       setVideos(updatedVideos || []);
 
@@ -237,7 +237,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
   const handleApproveVideo = async (videoId, status) => {
     try {
       await appClient.entities.AthleteVideo.update(videoId, { status });
-      toast.success(`VÃ­deo ${status === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso!`);
+      toast.success(`Vídeo ${status === 'approved' ? 'aprovado' : 'rejeitado'} com sucesso!`);
 
       // Recarregar dados
       const updatedVideos = await appClient.entities.AthleteVideo.filter({ athlete_id: user.id }, '-created_date', 20);
@@ -247,20 +247,20 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
       }
     } catch (error) {
       console.error("Erro ao atualizar status:", error);
-      toast.error("Erro ao atualizar status do vÃ­deo");
+      toast.error("Erro ao atualizar status do vídeo");
     }
   };
 
   if (!editingUser) return null;
 
-  // Preparar dados para grÃ¡ficos
+  // Preparar dados para gráficos
   const fifaData = [
     { attribute: 'VEL', value: editingUser.fifa_attributes?.pace || 50 },
     { attribute: 'FIN', value: editingUser.fifa_attributes?.shooting || 50 },
     { attribute: 'PAS', value: editingUser.fifa_attributes?.passing || 50 },
     { attribute: 'DRI', value: editingUser.fifa_attributes?.dribbling || 50 },
     { attribute: 'DEF', value: editingUser.fifa_attributes?.defending || 50 },
-    { attribute: 'FÃS', value: editingUser.fifa_attributes?.physicality || 50 }];
+    { attribute: 'FÍS', value: editingUser.fifa_attributes?.physicality || 50 }];
 
 
   const performanceChartData = weeklyAssessments.slice(0, 6).reverse().map((w, idx) => ({
@@ -292,7 +292,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
       <DialogContent className="max-w-[95vw] w-full md:w-[1400px] max-h-[95vh] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border-2 border-[#00E5FF]/30 text-white p-0 overflow-hidden flex flex-col">
         {/* Hidden title for accessibility */}
         <DialogTitle className="sr-only">Detalhes do Atleta: {editingUser.full_name}</DialogTitle>
-        <DialogDescription className="sr-only">Painel administrativo para editar dados, vÃ­deos e permissÃµes do atleta.</DialogDescription>
+        <DialogDescription className="sr-only">Painel administrativo para editar dados, vídeos e permissões do atleta.</DialogDescription>
         {/* HEADER ESTILO FIFA */}
         <div className="relative overflow-hidden">
           {/* BackgroundPattern */}
@@ -327,7 +327,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                   </h2>
                   <div className="flex items-center gap-2 flex-wrap mb-2">
                     <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/30 font-bold text-[10px] md:text-xs">
-                      {editingUser.position?.toUpperCase() || 'SEM POSIÃ‡ÃƒO'}
+                      {editingUser.position?.toUpperCase() || 'SEM POSI�!ÒO'}
                     </Badge>
                     {editingUser.current_club_name &&
                       <Badge className="bg-white/10 text-white border border-white/20 text-[10px] md:text-xs">
@@ -382,7 +382,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
 
                   <Video className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
-                  <span className="hidden md:inline">VÃ­deos ({videos.length})</span>
+                  <span className="hidden md:inline">Vídeos ({videos.length})</span>
                   <span className="md:hidden">({videos.length})</span>
                 </TabsTrigger>
                 <TabsTrigger
@@ -397,7 +397,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
 
                   <Shield className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
-                  <span className="hidden md:inline">PermissÃµes</span>
+                  <span className="hidden md:inline">Permissões</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -445,7 +445,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
 
                   <h3 className="text-white font-bold mb-4 flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-purple-400" />
-                    EvoluÃ§Ã£o de Performance
+                    Evolução de Performance
                   </h3>
                   {performanceChartData.length > 0 ?
                     <ResponsiveContainer width="100%" height={300}>
@@ -483,9 +483,9 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
                 {[
                   { label: 'Gols', value: weeklyAssessments.reduce((s, w) => s + (w.goals || 0), 0), icon: CircleDot, color: 'from-red-500 to-orange-500' },
-                  { label: 'AssistÃªncias', value: weeklyAssessments.reduce((s, w) => s + (w.assists || 0), 0), icon: Footprints, color: 'from-blue-500 to-cyan-500' },
+                  { label: 'Assistências', value: weeklyAssessments.reduce((s, w) => s + (w.assists || 0), 0), icon: Footprints, color: 'from-blue-500 to-cyan-500' },
                   { label: 'Jogos', value: weeklyAssessments.filter((w) => w.had_game).length, icon: Trophy, color: 'from-purple-500 to-pink-500' },
-                  { label: 'VÃ­deos', value: videos.length, icon: Video, color: 'from-green-500 to-emerald-500' }].
+                  { label: 'Vídeos', value: videos.length, icon: Video, color: 'from-green-500 to-emerald-500' }].
                   map((stat, idx) =>
                     <motion.div
                       key={stat.label}
@@ -515,7 +515,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                     }
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge className="bg-[#00E5FF]/20 text-[#00E5FF] border border-[#00E5FF]/30">
-                        {selectedVideo.position?.toUpperCase() || 'POSIÃ‡ÃƒO'}
+                        {selectedVideo.position?.toUpperCase() || 'POSI�!ÒO'}
                       </Badge>
                       <Badge className="bg-purple-500/20 text-purple-400 border border-purple-500/30">
                         {selectedVideo.category}
@@ -528,7 +528,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                         selectedVideo.status === 'pending' ?
                           <Badge className="bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
                             <Clock className="w-3 h-3 mr-1" />
-                            Em AnÃ¡lise
+                            Em Análise
                           </Badge> :
 
                           <Badge className="bg-red-500/20 text-red-400 border border-red-500/30">
@@ -539,7 +539,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                     </div>
                   </div>
 
-                  {/* Video Player CinematogrÃ¡fico */}
+                  {/* Video Player Cinematográfico */}
                   <div className="relative aspect-video bg-black rounded-2xl overflow-hidden border-2 border-[#00E5FF]/30">
                     <video
                       ref={videoRef}
@@ -623,7 +623,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-white font-bold flex items-center gap-2 text-sm md:text-base">
                           <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-purple-400" />
-                          AnÃ¡lise da IA
+                          Análise da IA
                         </h3>
                         <Badge className="bg-purple-500/20 text-purple-300 text-base md:text-lg px-3 md:px-4 py-1">
                           {selectedVideo.ai_analysis.overall_score}/100
@@ -726,7 +726,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                     {!selectedVideo.ai_analysis &&
                       <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <p className="text-gray-300 text-sm">Este vÃ­deo ainda nÃ£o foi analisado pela IA</p>
+                          <p className="text-gray-300 text-sm">Este vídeo ainda não foi analisado pela IA</p>
                           <Button
                             onClick={handleProcessAIAnalysis}
                             disabled={isProcessingAnalysis}
@@ -741,7 +741,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
 
                               <>
                                 <Sparkles className="w-4 h-4 mr-2" />
-                                Processar AnÃ¡lise IA
+                                Processar Análise IA
                               </>
                             }
                           </Button>
@@ -754,7 +754,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                       <Textarea
                         value={adminVideoFeedback}
                         onChange={(e) => setAdminVideoFeedback(e.target.value)}
-                        placeholder="Escreva seu feedback sobre a performance do atleta neste vÃ­deo..."
+                        placeholder="Escreva seu feedback sobre a performance do atleta neste vídeo..."
                         className="bg-white/5 border-white/20 text-white placeholder:text-gray-500 min-h-[120px] focus:border-[#00E5FF]" />
 
                       <Button
@@ -772,7 +772,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                     variant="outline"
                     className="w-full border-white/10 text-white hover:bg-white/10">
 
-                    â† Voltar aos VÃ­deos
+                    � � Voltar aos Vídeos
                   </Button>
                 </div> :
 
@@ -818,7 +818,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                   {videos.length === 0 &&
                     <div className="col-span-full bg-white/5 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
                       <Video className="w-12 h-12 md:w-16 md:h-16 text-gray-600 mx-auto mb-4" />
-                      <p className="text-gray-400 text-sm md:text-base">Nenhum vÃ­deo enviado ainda</p>
+                      <p className="text-gray-400 text-sm md:text-base">Nenhum vídeo enviado ainda</p>
                     </div>
                   }
                 </div>
@@ -850,10 +850,10 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent className="bg-[#1A1A1A] border-white/10">
-                        <SelectItem value="ðŸ‡§ðŸ‡·">ðŸ‡§ðŸ‡· Brasil</SelectItem>
-                        <SelectItem value="ðŸ‡¦ðŸ‡·">ðŸ‡¦ðŸ‡· Argentina</SelectItem>
-                        <SelectItem value="ðŸ‡µðŸ‡¹">ðŸ‡µðŸ‡¹ Portugal</SelectItem>
-                        <SelectItem value="ðŸ‡ªðŸ‡¸">ðŸ‡ªðŸ‡¸ Espanha</SelectItem>
+                        <SelectItem value="�x!��x!�">�x!��x!� Brasil</SelectItem>
+                        <SelectItem value="�x!��x!�">�x!��x!� Argentina</SelectItem>
+                        <SelectItem value="�x!��x!�">�x!��x!� Portugal</SelectItem>
+                        <SelectItem value="�x!��x!�">�x!��x!� Espanha</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -894,7 +894,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   <div>
-                    <Label className="text-gray-400 text-xs mb-2 block">PosiÃ§Ã£o</Label>
+                    <Label className="text-gray-400 text-xs mb-2 block">Posição</Label>
                     <Select value={editingUser.position || ""} onValueChange={(v) => handleFieldChange('position', v)}>
                       <SelectTrigger className="bg-white/5 border-white/20 text-white">
                         <SelectValue placeholder="Selecione" />
@@ -940,7 +940,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                     </Select>
                   </div>
                   <div>
-                    <Label className="text-gray-400 text-xs mb-2 block">PÃ© Dominante</Label>
+                    <Label className="text-gray-400 text-xs mb-2 block">Pé Dominante</Label>
                     <Select
                       value={editingUser.foot || editingUser.preferred_foot || "direito"}
                       onValueChange={(v) => {
@@ -986,7 +986,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
 
                   </div>
                   <div>
-                    <Label className="text-gray-400 text-xs mb-2 block">NÃ­vel</Label>
+                    <Label className="text-gray-400 text-xs mb-2 block">Nível</Label>
                     <Select value={editingUser.career_level || "iniciante"} onValueChange={(v) => handleFieldChange('career_level', v)}>
                       <SelectTrigger className="bg-white/5 border-white/20 text-white">
                         <SelectValue />
@@ -1011,11 +1011,11 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   {[
                     { key: 'pace', label: 'Velocidade', icon: Wind, color: 'green' },
-                    { key: 'shooting', label: 'FinalizaÃ§Ã£o', icon: CircleDot, color: 'red' },
+                    { key: 'shooting', label: 'Finalização', icon: CircleDot, color: 'red' },
                     { key: 'passing', label: 'Passe', icon: Move, color: 'blue' },
                     { key: 'dribbling', label: 'Drible', icon: Footprints, color: 'purple' },
                     { key: 'defending', label: 'Defesa', icon: Shield, color: 'cyan' },
-                    { key: 'physicality', label: 'FÃ­sico', icon: Dumbbell, color: 'orange' }].
+                    { key: 'physicality', label: 'Físico', icon: Dumbbell, color: 'orange' }].
                     map((attr) =>
                       <div key={attr.key} className="space-y-2 bg-white/5 rounded-xl p-3 md:p-4 border border-white/10">
                         <div className="flex items-center justify-between">
@@ -1063,7 +1063,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
 
                   </div>
                   <div>
-                    <Label className="text-gray-400 text-xs mb-2 block">Conquistas & TÃ­tulos</Label>
+                    <Label className="text-gray-400 text-xs mb-2 block">Conquistas & Títulos</Label>
                     <Textarea
                       value={editingUser.achievements || ""}
                       onChange={(e) => handleFieldChange('achievements', e.target.value)}
@@ -1085,7 +1085,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                       <Unlock className="w-5 h-5 text-green-400" /> :
                       <Lock className="w-5 h-5 text-red-400" />
                     }
-                    <span>Acesso Aprovado Ã  Plataforma</span>
+                    <span>Acesso Aprovado à Plataforma</span>
                   </Label>
                   <Switch
                     checked={!!editingUser.is_approved}
@@ -1094,7 +1094,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
 
                 </div>
 
-                {/* Toggle: Bloquear ConteÃºdo */}
+                {/* Toggle: Bloquear Conteúdo */}
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/30 rounded-xl">
                   <Label className="flex items-center gap-3 text-white font-medium">
                     {editingUser.has_revela_talentos_access === false
@@ -1102,11 +1102,11 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                       : <Unlock className="w-5 h-5 text-green-400" />
                     }
                     <div>
-                      <span className="block">Bloquear ConteÃºdo da Plataforma</span>
+                      <span className="block">Bloquear Conteúdo da Plataforma</span>
                       <span className="text-xs text-gray-400 font-normal">
                         {editingUser.has_revela_talentos_access === false
-                          ? "Ativo â€” usuÃ¡rio vÃª cadeado em todos os conteÃºdos"
-                          : "Inativo â€” usuÃ¡rio acessa normalmente"}
+                          ? "Ativo � usuário vê cadeado em todos os conteúdos"
+                          : "Inativo � usuário acessa normalmente"}
                       </span>
                     </div>
                   </Label>
@@ -1116,7 +1116,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                     className="data-[state=checked]:bg-red-500" />
                 </div>
 
-                {/* Toggle: Ãrea de Membros */}
+                {/* Toggle: Área de Membros */}
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-[#00a8e1]/10 to-blue-500/10 border border-[#00a8e1]/30 rounded-xl">
                   <Label className="flex items-center gap-3 text-white font-medium">
                     {editingUser.has_zona_membros_access
@@ -1124,11 +1124,11 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                       : <Lock className="w-5 h-5 text-gray-400" />
                     }
                     <div>
-                      <span className="block">Ãrea de Membros</span>
+                      <span className="block">Área de Membros</span>
                       <span className="text-xs text-gray-400 font-normal">
                         {editingUser.has_zona_membros_access
-                          ? "Ativo â€” usuÃ¡rio Ã© direcionado Ã  Zona de Membros"
-                          : "Inativo â€” usuÃ¡rio acessa normalmente"}
+                          ? "Ativo � usuário é direcionado à Zona de Membros"
+                          : "Inativo � usuário acessa normalmente"}
                       </span>
                     </div>
                   </Label>
@@ -1166,7 +1166,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                 <div className="flex items-center justify-between p-5 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/30 rounded-xl">
                   <Label className="flex items-center gap-3 text-white font-medium">
                     <Shield className="w-5 h-5 text-red-400" />
-                    <span>FunÃ§Ã£o / PermissÃ£o</span>
+                    <span>Função / Permissão</span>
                   </Label>
                   <Select
                     value={editingUser.role === 'admin' ? 'admin' : editingUser.is_revela_admin ? 'revela_admin' : 'user'}
@@ -1176,7 +1176,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1A1A1A] border-white/10">
-                      <SelectItem value="user">UsuÃ¡rio PadrÃ£o</SelectItem>
+                      <SelectItem value="user">Usuário Padrão</SelectItem>
                       <SelectItem value="revela_admin">Admin Revela</SelectItem>
                       <SelectItem value="admin">Admin Geral</SelectItem>
                     </SelectContent>
@@ -1214,7 +1214,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                   <h3 className="text-white font-bold mb-4 flex items-center gap-2">
                     <Upload className="w-5 h-5 text-[#00E5FF]" />
-                    MÃ­dias
+                    Mídias
                   </h3>
                   <div className="space-y-3">
                     <div>
@@ -1247,7 +1247,7 @@ ForneÃ§a uma anÃ¡lise DETALHADA no seguinte formato JSON:
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-gray-400 text-xs md:text-sm">Ãšltima atualizaÃ§Ã£o: {new Date(editingUser.updated_date || Date.now()).toLocaleDateString('pt-BR')}</span>
+              <span className="text-gray-400 text-xs md:text-sm">�altima atualização: {new Date(editingUser.updated_date || Date.now()).toLocaleDateString('pt-BR')}</span>
             </div>
             <div className="flex gap-2 md:gap-3 w-full md:w-auto">
               <Button

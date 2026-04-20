@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { appClient } from "@/api/backendClient";
@@ -119,7 +119,7 @@ function LayoutInner({ children, currentPageName }) {
 
 
 
-  // Visitantes sem login: ZonaMembros exige login; demais pÃ¡ginas permanecem pÃºblicas
+  // Visitantes sem login: ZonaMembros exige login; demais páginas permanecem públicas
   useEffect(() => {
     if (isLoading || user) return;
     if (currentPageName === 'ZonaMembros') {
@@ -165,7 +165,7 @@ function LayoutInner({ children, currentPageName }) {
 
   }
 
-  // ZonaMembros tem seu proprio sidebar â€” nao aplicar o Layout.jsx
+  // ZonaMembros tem seu proprio sidebar � nao aplicar o Layout.jsx
   if (currentPageName === 'ZonaMembros') {
     return <>{children}</>;
   }

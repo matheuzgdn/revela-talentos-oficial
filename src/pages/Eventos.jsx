@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { appClient } from "@/api/backendClient";
 import MobileBottomNav from "@/components/mobile/MobileBottomNav";
 import { MapPin, Calendar, Map as MapIcon, Trophy, Globe, Sparkles, Loader2 } from 'lucide-react';
@@ -16,7 +16,7 @@ function getMeta(type) {
     return typeMeta[type] || typeMeta.presencial;
 }
 
-// Fallback: eventos estÃ¡ticos EC10 (exibidos se nÃ£o houver eventos no banco)
+// Fallback: eventos estáticos EC10 (exibidos se não houver eventos no banco)
 const eventosEC10 = [
     {
         id: 'ec10-1',
@@ -48,7 +48,7 @@ const eventosEC10 = [
 ];
 
 function formatMes(dateStr) {
-    if (!dateStr) return 'â€”';
+    if (!dateStr) return '�';
     return new Date(dateStr).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
 }
 
@@ -70,8 +70,8 @@ export default function Eventos() {
 
     useEffect(() => { loadEvents(); }, [loadEvents]);
 
-    // Mapeia eventos do banco para o formato do mapa (usa posiÃ§Ã£o do campo `location` se tiver coordenadas, senÃ£o usa fallback)
-    // Eventos do banco sÃ£o listados embaixo; os marcadores do mapa sÃ£o sempre os estÃ¡ticos EC10
+    // Mapeia eventos do banco para o formato do mapa (usa posição do campo `location` se tiver coordenadas, senão usa fallback)
+    // Eventos do banco são listados embaixo; os marcadores do mapa são sempre os estáticos EC10
     const listaEventos = dbEvents.length > 0 ? dbEvents : null;
 
     return (
@@ -81,7 +81,7 @@ export default function Eventos() {
             <div className="absolute inset-0 bg-[linear-gradient(rgba(0,243,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,243,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-            {/* CabeÃ§alho */}
+            {/* Cabeçalho */}
             <header className="w-full max-w-7xl mx-auto pt-12 pb-6 px-6 relative z-10 flex flex-col items-center justify-center text-center">
                 <div className="flex items-center justify-center gap-3 mb-4">
                     <Trophy className="w-8 h-8 text-[#00f3ff] animate-pulse" />
@@ -136,7 +136,7 @@ export default function Eventos() {
                                     <MapPin className="relative w-8 h-8 text-[#00f3ff] drop-shadow-[0_0_10px_rgba(0,243,255,1)]" />
                                 </div>
 
-                                {/* CartÃ£o de Popup */}
+                                {/* Cartão de Popup */}
                                 <div className={`
                   absolute w-64 p-1 transition-all duration-300 ease-out
                   ${isBottomHalf ? 'bottom-full mb-4 origin-bottom' : 'top-full mt-4 origin-top'}
@@ -176,7 +176,7 @@ export default function Eventos() {
                         Agenda <span className="text-[#00f3ff]">Global</span>
                     </h2>
 
-                    {/* Eventos estÃ¡ticos EC10 */}
+                    {/* Eventos estáticos EC10 */}
                     {eventosEC10.map((evento) => (
                         <div
                             key={`list-${evento.id}`}
@@ -255,9 +255,9 @@ export default function Eventos() {
                 </div>
             </main>
 
-            {/* RodapÃ© */}
+            {/* Rodapé */}
             <footer className="w-full text-center py-6 pb-24 md:pb-6 text-gray-600 text-sm border-t border-cyan-900/30 relative z-10">
-                <p>Â© 2026 EC10 Talentos. Todos os direitos reservados.</p>
+                <p>© 2026 EC10 Talentos. Todos os direitos reservados.</p>
             </footer>
 
             {/* Bottom Nav Mobile */}

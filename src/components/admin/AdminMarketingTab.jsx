@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect, useCallback } from 'react';
 
 
@@ -62,7 +62,7 @@ const CampaignCard = ({ campaign, onEdit, onToggleStatus }) => {
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="font-semibold text-white mb-1">{campaign.campaign_name}</h3>
-            <p className="text-sm text-gray-400">{campaign.platform} â€¢ {campaign.campaign_type}</p>
+            <p className="text-sm text-gray-400">{campaign.platform} ⬢ {campaign.campaign_type}</p>
           </div>
           <div className="flex gap-2">
             <Badge className={`${getStatusColor(campaign.status)} text-white`}>
@@ -234,13 +234,13 @@ const CalendarView = ({ posts, onDateSelect, selectedDate }) => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-white">CalendÃ¡rio Editorial</h3>
+        <h3 className="text-lg font-semibold text-white">Calendário Editorial</h3>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setCurrentDate(addDays(currentDate, -7))}>
             Semana Anterior
           </Button>
           <Button variant="outline" onClick={() => setCurrentDate(addDays(currentDate, 7))}>
-            PrÃ³xima Semana
+            Próxima Semana
           </Button>
         </div>
       </div>
@@ -303,10 +303,10 @@ const MaterialLibrary = ({ materials, onUpload, onDelete }) => {
             <SelectContent>
               <SelectItem value="all">Todos os Materiais</SelectItem>
               <SelectItem value="arte">Artes</SelectItem>
-              <SelectItem value="video">VÃ­deos</SelectItem>
+              <SelectItem value="video">Vídeos</SelectItem>
               <SelectItem value="copy">Copies</SelectItem>
               <SelectItem value="template">Templates</SelectItem>
-              <SelectItem value="apresentacao">ApresentaÃ§Ãµes</SelectItem>
+              <SelectItem value="apresentacao">Apresentações</SelectItem>
             </SelectContent>
           </Select>
           <Button onClick={onUpload} className="bg-purple-600 hover:bg-purple-700">
@@ -392,7 +392,7 @@ const MarketingReports = ({ campaigns, posts, ideas }) => {
           <CardContent className="p-4 text-center">
             <BarChart3 className="w-8 h-8 text-purple-400 mx-auto mb-2" />
             <p className="text-2xl font-bold text-white">R$ {avgCPL.toFixed(2)}</p>
-            <p className="text-xs text-purple-300">CPL MÃ©dio</p>
+            <p className="text-xs text-purple-300">CPL Médio</p>
           </CardContent>
         </Card>
         <Card className="bg-orange-900/20 border-orange-800">
@@ -424,7 +424,7 @@ const MarketingReports = ({ campaigns, posts, ideas }) => {
 
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-white">DistribuiÃ§Ã£o por Plataforma</CardTitle>
+            <CardTitle className="text-white">Distribuição por Plataforma</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -452,7 +452,7 @@ const MarketingReports = ({ campaigns, posts, ideas }) => {
   );
 };
 
-// --- MODAIS DE FORMULÃRIO ---
+// --- MODAIS DE FORMULÁRIO ---
 
 const CampaignFormModal = ({ isOpen, onClose, onSave, campaign, services, platforms, types }) => {
   const [formData, setFormData] = useState({});
@@ -509,7 +509,7 @@ const CampaignFormModal = ({ isOpen, onClose, onSave, campaign, services, platfo
             <Select name="status" value={formData.status} onValueChange={(v) => handleSelectChange('status', v)}><SelectTrigger className="bg-gray-800"><SelectValue/></SelectTrigger><SelectContent>{campaignStatus.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div><Label>InÃ­cio</Label><Input name="start_date" type="date" value={formData.start_date || ''} onChange={handleChange} className="bg-gray-800"/></div>
+            <div><Label>Início</Label><Input name="start_date" type="date" value={formData.start_date || ''} onChange={handleChange} className="bg-gray-800"/></div>
             <div><Label>Fim</Label><Input name="end_date" type="date" value={formData.end_date || ''} onChange={handleChange} className="bg-gray-800"/></div>
           </div>
            <div className="grid grid-cols-3 gap-4">
@@ -618,8 +618,8 @@ const IdeaFormModal = ({ isOpen, onClose, onSave, idea }) => {
             <DialogContent className="bg-gray-900 border-gray-800 text-white">
                 <DialogHeader><DialogTitle>{idea ? 'Editar Ideia' : 'Nova Ideia'}</DialogTitle></DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <Input name="title" placeholder="TÃ­tulo da ideia" value={formData.title || ''} onChange={handleChange} required className="bg-gray-800"/>
-                    <Textarea name="description" placeholder="DescriÃ§Ã£o..." value={formData.description || ''} onChange={handleChange} className="bg-gray-800 h-20"/>
+                    <Input name="title" placeholder="Título da ideia" value={formData.title || ''} onChange={handleChange} required className="bg-gray-800"/>
+                    <Textarea name="description" placeholder="Descrição..." value={formData.description || ''} onChange={handleChange} className="bg-gray-800 h-20"/>
                     <div className="grid grid-cols-2 gap-4">
                         <Select name="content_type" value={formData.content_type} onValueChange={(v) => handleSelectChange('content_type', v)}><SelectTrigger className="bg-gray-800"><SelectValue/></SelectTrigger><SelectContent>{ideaContentTypes.map(c => <SelectItem value={c} key={c}>{c}</SelectItem>)}</SelectContent></Select>
                         <Select name="priority" value={formData.priority} onValueChange={(v) => handleSelectChange('priority', v)}><SelectTrigger className="bg-gray-800"><SelectValue/></SelectTrigger><SelectContent>{ideaPriorities.map(p => <SelectItem value={p} key={p}>{p}</SelectItem>)}</SelectContent></Select>
@@ -667,8 +667,8 @@ const MaterialFormModal = ({ isOpen, onClose, onSave }) => {
             <DialogContent className="bg-gray-900 border-gray-800 text-white">
                 <DialogHeader><DialogTitle>Upload de Material</DialogTitle></DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <Input name="title" placeholder="TÃ­tulo do material" value={formData.title} onChange={e => setFormData(p => ({ ...p, title: e.target.value }))} required className="bg-gray-800"/>
-                    <Textarea name="description" placeholder="DescriÃ§Ã£o" value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} className="bg-gray-800"/>
+                    <Input name="title" placeholder="Título do material" value={formData.title} onChange={e => setFormData(p => ({ ...p, title: e.target.value }))} required className="bg-gray-800"/>
+                    <Textarea name="description" placeholder="Descrição" value={formData.description} onChange={e => setFormData(p => ({ ...p, description: e.target.value }))} className="bg-gray-800"/>
                     <div className="grid grid-cols-2 gap-4">
                         <Select value={formData.category} onValueChange={v => setFormData(p => ({ ...p, category: v }))}><SelectTrigger className="bg-gray-800"><SelectValue/></SelectTrigger><SelectContent>{materialCategories.map(c => <SelectItem value={c} key={c}>{c}</SelectItem>)}</SelectContent></Select>
                         <Select value={formData.service_related} onValueChange={v => setFormData(p => ({ ...p, service_related: v }))}><SelectTrigger className="bg-gray-800"><SelectValue/></SelectTrigger><SelectContent>{services.map(s => <SelectItem value={s} key={s}>{s}</SelectItem>)}</SelectContent></Select>
@@ -741,7 +741,7 @@ export default function AdminMarketingTab() {
     loadData();
   }, [loadData]);
 
-  // FunÃ§Ãµes de manipulaÃ§Ã£o
+  // Funções de manipulação
   const handleSaveCampaign = async (campaignData) => {
     try {
       if (editingItem) {
@@ -871,15 +871,15 @@ export default function AdminMarketingTab() {
         <TabsList className="bg-gray-800 grid w-full grid-cols-6">
           <TabsTrigger value="campanhas">Campanhas</TabsTrigger>
           <TabsTrigger value="social">Social Media</TabsTrigger>
-          <TabsTrigger value="calendario">CalendÃ¡rio</TabsTrigger>
+          <TabsTrigger value="calendario">Calendário</TabsTrigger>
           <TabsTrigger value="ideias">Banco de Ideias</TabsTrigger>
           <TabsTrigger value="materiais">Materiais</TabsTrigger>
-          <TabsTrigger value="relatorios">RelatÃ³rios</TabsTrigger>
+          <TabsTrigger value="relatorios">Relatórios</TabsTrigger>
         </TabsList>
 
         <TabsContent value="campanhas" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-white">GestÃ£o de Campanhas</h3>
+            <h3 className="text-lg font-semibold text-white">Gestão de Campanhas</h3>
             <Button onClick={() => { setEditingItem(null); setShowCampaignModal(true); }} className="bg-blue-600 hover:bg-blue-700">
               <Plus className="w-4 h-4 mr-2" />
               Nova Campanha
@@ -905,7 +905,7 @@ export default function AdminMarketingTab() {
 
         <TabsContent value="social" className="space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-white">GestÃ£o de Social Media</h3>
+            <h3 className="text-lg font-semibold text-white">Gestão de Social Media</h3>
             <Button onClick={() => { setEditingItem(null); setShowPostModal(true); }} className="bg-purple-600 hover:bg-purple-700">
               <Plus className="w-4 h-4 mr-2" />
               Novo Post

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { appClient } from '@/api/backendClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -27,7 +27,7 @@ const adminTabsConfig = [
     name: 'Dashboard',
     icon: LayoutDashboard,
     component: AdminDashboard,
-    description: 'VisÃ£o geral da plataforma',
+    description: 'Visão geral da plataforma',
     requiredRole: 'admin',
     gradient: 'from-cyan-500 to-blue-600'
   },
@@ -36,7 +36,7 @@ const adminTabsConfig = [
     name: 'Atletas',
     icon: Users,
     component: AdminUsersTab,
-    description: 'GestÃ£o de atletas e usuÃ¡rios',
+    description: 'Gestão de atletas e usuários',
     requiredRole: 'admin',
     gradient: 'from-purple-500 to-pink-600'
   },
@@ -45,7 +45,7 @@ const adminTabsConfig = [
     name: 'Seletivas',
     icon: Target,
     component: AdminSeletivasTab,
-    description: 'Peneiras e avaliaÃ§Ãµes',
+    description: 'Peneiras e avaliações',
     requiredRole: 'revela_admin',
     gradient: 'from-green-500 to-emerald-600'
   },
@@ -54,7 +54,7 @@ const adminTabsConfig = [
     name: 'Destaques',
     icon: Star,
     component: AdminStoriesTab,
-    description: 'Atletas em evidÃªncia',
+    description: 'Atletas em evidência',
     requiredRole: 'revela_admin',
     gradient: 'from-yellow-500 to-orange-600'
   },
@@ -78,19 +78,19 @@ const adminTabsConfig = [
   },
   {
     id: 'services',
-    name: 'ServiÃ§os',
+    name: 'Serviços',
     icon: Zap,
     component: AdminServicesTab,
-    description: 'ServiÃ§os em destaque',
+    description: 'Serviços em destaque',
     requiredRole: 'admin',
     gradient: 'from-indigo-500 to-purple-600'
   },
   {
     id: 'content',
-    name: 'ConteÃºdo',
+    name: 'Conteúdo',
     icon: FileText,
     component: AdminContentTab,
-    description: 'VÃ­deos e materiais',
+    description: 'Vídeos e materiais',
     requiredRole: 'revela_admin',
     gradient: 'from-blue-500 to-cyan-600'
   },
@@ -99,7 +99,7 @@ const adminTabsConfig = [
     name: 'Lives',
     icon: Radio,
     component: AdminLivesTab,
-    description: 'EstÃºdio de transmissÃ£o ao vivo',
+    description: 'Estúdio de transmissão ao vivo',
     requiredRole: 'admin',
     gradient: 'from-red-500 to-pink-600'
   }
@@ -198,7 +198,7 @@ export default function AdminPage() {
               <div>
                 <h1 className="text-lg font-black tracking-tight">EC10 Admin</h1>
                 <p className="text-xs text-gray-500">
-                  {isRevelaAdmin ? 'Revela Talentos' : 'GestÃ£o Premium'}
+                  {isRevelaAdmin ? 'Revela Talentos' : 'Gestão Premium'}
                 </p>
               </div>
             )}

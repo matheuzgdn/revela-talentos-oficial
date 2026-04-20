@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { appClient } from "@/api/backendClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -71,9 +71,9 @@ export default function AdminStoriesManagement() {
     try {
       const { file_url } = await appClient.integrations.Core.UploadFile({ file });
       setFormData({ ...formData, video_url: file_url });
-      toast.success("VÃ­deo enviado com sucesso!");
+      toast.success("Vídeo enviado com sucesso!");
     } catch (error) {
-      toast.error("Erro ao enviar vÃ­deo");
+      toast.error("Erro ao enviar vídeo");
     }
     setIsUploading(false);
   };
@@ -95,7 +95,7 @@ export default function AdminStoriesManagement() {
 
   const handleSubmit = () => {
     if (!formData.title || !formData.video_url) {
-      toast.error("Preencha tÃ­tulo e vÃ­deo");
+      toast.error("Preencha título e vídeo");
       return;
     }
 
@@ -152,7 +152,7 @@ export default function AdminStoriesManagement() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-white">Stories de Abertura</h2>
-          <p className="text-gray-400 text-sm">VÃ­deos verticais exibidos ao iniciar o app</p>
+          <p className="text-gray-400 text-sm">Vídeos verticais exibidos ao iniciar o app</p>
         </div>
         <Button
           onClick={() => setIsDialogOpen(true)}
@@ -178,7 +178,7 @@ export default function AdminStoriesManagement() {
                     <CardTitle className="text-white text-sm mb-1">{story.title}</CardTitle>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-400">Ordem: {story.order}</span>
-                      <span className="text-xs text-gray-400">â€¢</span>
+                      <span className="text-xs text-gray-400">⬢</span>
                       <span className="text-xs text-gray-400">{story.duration}s</span>
                     </div>
                   </div>
@@ -242,7 +242,7 @@ export default function AdminStoriesManagement() {
 
           <div className="space-y-4">
             <div>
-              <Label>TÃ­tulo *</Label>
+              <Label>Título *</Label>
               <Input
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -252,12 +252,12 @@ export default function AdminStoriesManagement() {
             </div>
 
             <div>
-              <Label>VÃ­deo Vertical (9:16) *</Label>
+              <Label>Vídeo Vertical (9:16) *</Label>
               <div className="flex gap-2">
                 <Input
                   value={formData.video_url}
                   onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
-                  placeholder="URL do vÃ­deo"
+                  placeholder="URL do vídeo"
                   className="bg-white/5 border-white/20 text-white flex-1"
                 />
                 <Button
@@ -315,7 +315,7 @@ export default function AdminStoriesManagement() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>DuraÃ§Ã£o (segundos)</Label>
+                <Label>Duração (segundos)</Label>
                 <Input
                   type="number"
                   value={formData.duration}
@@ -335,7 +335,7 @@ export default function AdminStoriesManagement() {
             </div>
 
             <div>
-              <Label>PÃºblico-Alvo</Label>
+              <Label>Público-Alvo</Label>
               <Select
                 value={formData.target_audience}
                 onValueChange={(value) => setFormData({ ...formData, target_audience: value })}

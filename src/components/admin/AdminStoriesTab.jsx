@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { appClient } from '@/api/backendClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -151,11 +151,11 @@ export default function AdminStoriesTab() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-white text-sm font-medium mb-2">TÃ­tulo *</label>
+                <label className="block text-white text-sm font-medium mb-2">Título *</label>
                 <Input
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Ex: JoÃ£o Silva, Vaga Lateral, Nova Parceria"
+                  placeholder="Ex: João Silva, Vaga Lateral, Nova Parceria"
                   className="bg-gray-800 border-gray-700 text-white"
                   required
                 />
@@ -169,24 +169,24 @@ export default function AdminStoriesTab() {
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2"
                   required
                 >
-                  <option value="atleta">ðŸ‘¤ Atleta</option>
-                  <option value="vaga">ðŸ’¼ Vaga</option>
-                  <option value="novidade">ðŸ“° Novidade</option>
+                  <option value="atleta">Atleta</option>
+                  <option value="vaga">Vaga</option>
+                  <option value="novidade">Novidade</option>
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-white text-sm font-medium mb-2">Tipo de MÃ­dia *</label>
+                <label className="block text-white text-sm font-medium mb-2">Tipo de Mídia *</label>
                 <select
                   value={formData.media_type}
                   onChange={(e) => setFormData({ ...formData, media_type: e.target.value })}
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-md px-3 py-2"
                   required
                 >
-                  <option value="photo">ðŸ“· Foto</option>
-                  <option value="video">ðŸŽ¥ VÃ­deo</option>
+                  <option value="photo">Foto</option>
+                  <option value="video">Vídeo</option>
                 </select>
               </div>
 
@@ -203,13 +203,13 @@ export default function AdminStoriesTab() {
 
             <div>
               <label className="block text-white text-sm font-medium mb-2">
-                {formData.media_type === 'video' ? 'URL do VÃ­deo' : 'URL da Foto'} *
+                {formData.media_type === 'video' ? 'URL do Vídeo' : 'URL da Foto'} *
               </label>
               <div className="flex gap-2">
                 <Input
                   value={formData.media_url}
                   onChange={(e) => setFormData({ ...formData, media_url: e.target.value })}
-                  placeholder="Cole a URL ou faÃ§a upload"
+                  placeholder="Cole a URL ou faça upload"
                   className="bg-gray-800 border-gray-700 text-white"
                   required
                 />
@@ -235,7 +235,7 @@ export default function AdminStoriesTab() {
                   <Input
                     value={formData.thumbnail_url}
                     onChange={(e) => setFormData({ ...formData, thumbnail_url: e.target.value })}
-                    placeholder="Thumbnail para o vÃ­deo"
+                    placeholder="Thumbnail para o vídeo"
                     className="bg-gray-800 border-gray-700 text-white"
                   />
                   <label className="cursor-pointer">
@@ -255,11 +255,11 @@ export default function AdminStoriesTab() {
             )}
 
             <div>
-              <label className="block text-white text-sm font-medium mb-2">DescriÃ§Ã£o</label>
+              <label className="block text-white text-sm font-medium mb-2">Descrição</label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Adicione uma descriÃ§Ã£o"
+                placeholder="Adicione uma descrição"
                 className="bg-gray-800 border-gray-700 text-white"
                 rows={3}
               />
@@ -287,7 +287,7 @@ export default function AdminStoriesTab() {
                   className="w-4 h-4 text-cyan-600 bg-gray-800 border-gray-700 rounded"
                 />
                 <label htmlFor="is_featured" className="text-white text-sm cursor-pointer">
-                  â­ Destaque
+                  ⭐ Destaque
                 </label>
               </div>
 
@@ -300,7 +300,7 @@ export default function AdminStoriesTab() {
                   className="w-4 h-4 text-cyan-600 bg-gray-800 border-gray-700 rounded"
                 />
                 <label htmlFor="is_active" className="text-white text-sm cursor-pointer">
-                  âœ… Ativo
+                  Ativo
                 </label>
               </div>
             </div>
@@ -335,21 +335,21 @@ export default function AdminStoriesTab() {
           onClick={() => setFilterCategory('atleta')}
           size="sm"
         >
-          ðŸ‘¤ Atletas ({stories.filter(s => s.category === 'atleta').length})
+          Atletas ({stories.filter(s => s.category === 'atleta').length})
         </Button>
         <Button
           variant={filterCategory === 'vaga' ? 'default' : 'outline'}
           onClick={() => setFilterCategory('vaga')}
           size="sm"
         >
-          ðŸ’¼ Vagas ({stories.filter(s => s.category === 'vaga').length})
+          Vagas ({stories.filter(s => s.category === 'vaga').length})
         </Button>
         <Button
           variant={filterCategory === 'novidade' ? 'default' : 'outline'}
           onClick={() => setFilterCategory('novidade')}
           size="sm"
         >
-          ðŸ“° Novidades ({stories.filter(s => s.category === 'novidade').length})
+          Novidades ({stories.filter(s => s.category === 'novidade').length})
         </Button>
       </div>
 
@@ -443,7 +443,7 @@ export default function AdminStoriesTab() {
                         <div className="flex items-center gap-2 mb-3">
                           <div className={`flex-1 h-1 bg-gradient-to-r ${gradients[story.category]} rounded-full`} />
                           <span className="text-xs text-gray-500 font-mono">
-                            {story.media_type === 'video' ? 'ðŸŽ¥' : 'ðŸ“·'}
+                            {story.media_type === 'video' ? 'Vídeo' : 'Foto'}
                           </span>
                         </div>
 

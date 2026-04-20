@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect, useCallback } from "react";
 import { appClient } from "@/api/backendClient";
 
@@ -47,17 +47,17 @@ export default function CommentSection({ contentId, currentUser }) {
         comment_text: newComment,
       });
       setNewComment("");
-      toast.success("ComentÃ¡rio enviado!");
+      toast.success("Comentário enviado!");
       fetchCommentsAndUsers(); // Refresh comments
     } catch (error) {
       console.error("Error posting comment:", error);
-      toast.error("Erro ao enviar comentÃ¡rio.");
+      toast.error("Erro ao enviar comentário.");
     }
     setIsPosting(false);
   };
   
   const getUserDisplayName = (userId) => {
-    return users[userId]?.full_name || "UsuÃ¡rio";
+    return users[userId]?.full_name || "Usuário";
   }
 
   const getUserAvatar = (userId) => {
@@ -66,7 +66,7 @@ export default function CommentSection({ contentId, currentUser }) {
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl font-semibold mb-4 text-white">DiscussÃ£o</h3>
+      <h3 className="text-xl font-semibold mb-4 text-white">Discussão</h3>
       <div className="space-y-4">
         {/* Post Comment Form */}
         <div className="flex gap-4">
@@ -76,7 +76,7 @@ export default function CommentSection({ contentId, currentUser }) {
           </Avatar>
           <div className="flex-1">
             <Textarea
-              placeholder="Adicione um comentÃ¡rio..."
+              placeholder="Adicione um comentário..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               className="bg-gray-800 border-gray-700 text-white"

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { appClient } from "@/api/backendClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";

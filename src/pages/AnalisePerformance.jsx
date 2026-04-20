@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { appClient } from "@/api/backendClient";
 
 import { motion } from "framer-motion";
@@ -64,8 +64,8 @@ export default function AnalisePerformancePage() {
   const stats = [
     { label: "Jogos Analisados", value: totalGames, icon: Trophy, color: "text-blue-400" },
     { label: "Gols Marcados", value: totalGoals, icon: Target, color: "text-green-400" },
-    { label: "AssistÃªncias", value: totalAssists, icon: TrendingUp, color: "text-yellow-400" },
-    { label: "Nota MÃ©dia", value: `${averageRating}/10`, icon: Star, color: "text-purple-400" }
+    { label: "Assistências", value: totalAssists, icon: TrendingUp, color: "text-yellow-400" },
+    { label: "Nota Média", value: `${averageRating}/10`, icon: Star, color: "text-purple-400" }
   ];
 
   if (isLoading) {
@@ -73,7 +73,7 @@ export default function AnalisePerformancePage() {
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-blue-400 font-medium">Carregando sua AnÃ¡lise...</p>
+          <p className="text-blue-400 font-medium">Carregando sua Análise...</p>
         </div>
       </div>
     );
@@ -86,9 +86,9 @@ export default function AnalisePerformancePage() {
           <div className="w-20 h-20 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-6">
             <Database className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-2xl font-bold mb-4">Acesso NecessÃ¡rio</h2>
+          <h2 className="text-2xl font-bold mb-4">Acesso Necessário</h2>
           <p className="text-gray-400 mb-6">
-            FaÃ§a login para acessar sua AnÃ¡lise de Performance.
+            Faça login para acessar sua Análise de Performance.
           </p>
           <Button asChild className="bg-gradient-to-r from-blue-600 to-cyan-500">
             <Link to={createPageUrl("Hub")}>Voltar ao Hub</Link>
@@ -113,12 +113,12 @@ export default function AnalisePerformancePage() {
               </Link>
             </Button>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white">AnÃ¡lise de Performance</h1>
-              <p className="text-gray-400">Seu diÃ¡rio de futebol: registre suas partidas e receba feedbacks.</p>
+              <h1 className="text-3xl md:text-4xl font-bold text-white">Análise de Performance</h1>
+              <p className="text-gray-400">Seu diário de futebol: registre suas partidas e receba feedbacks.</p>
             </div>
           </div>
           <Badge className="bg-gradient-to-r from-blue-500 to-cyan-400 text-black font-bold px-4 py-2 hidden md:flex">
-            {completedAnalyses.length} AnÃ¡lises ConcluÃ­das
+            {completedAnalyses.length} Análises Concluídas
           </Badge>
         </motion.div>
 
@@ -163,7 +163,7 @@ export default function AnalisePerformancePage() {
                 <CardHeader>
                   <CardTitle className="text-blue-400 flex items-center gap-3">
                     <TrendingUp className="w-6 h-6" />
-                    EvoluÃ§Ã£o da Performance
+                    Evolução da Performance
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -183,10 +183,10 @@ export default function AnalisePerformancePage() {
               <Card className="bg-black border border-blue-400/30 max-w-2xl mx-auto">
                 <CardContent className="p-12">
                   <Database className="w-16 h-16 text-blue-400 mx-auto mb-6" />
-                  <h3 className="text-2xl font-bold text-white mb-4">Seu DiÃ¡rio de Futebol ComeÃ§a Aqui</h3>
+                  <h3 className="text-2xl font-bold text-white mb-4">Seu Diário de Futebol Começa Aqui</h3>
                   <p className="text-gray-400 mb-8">
-                    Use o formulÃ¡rio acima para registrar sua primeira partida. Envie o vÃ­deo,
-                    suas impressÃµes e aguarde o feedback dos nossos especialistas.
+                    Use o formulário acima para registrar sua primeira partida. Envie o vídeo,
+                    suas impressões e aguarde o feedback dos nossos especialistas.
                   </p>
                 </CardContent>
               </Card>
@@ -200,7 +200,7 @@ export default function AnalisePerformancePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <h2 className="text-2xl font-bold text-white mb-4">HistÃ³rico de Partidas</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">Histórico de Partidas</h2>
             <div className="space-y-4">
               {performanceData.map((game) => (
                 <PerformanceHistoryItem key={game.id} game={game} />

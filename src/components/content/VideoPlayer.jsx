@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -97,10 +97,10 @@ export default function VideoPlayer({
       });
       setNewComment('');
       loadComments();
-      toast.success('ComentÃ¡rio adicionado!');
+      toast.success('Comentário adicionado!');
     } catch (error) {
       console.error('Error adding comment:', error);
-      toast.error('Erro ao adicionar comentÃ¡rio');
+      toast.error('Erro ao adicionar comentário');
     }
   };
 
@@ -432,7 +432,7 @@ export default function VideoPlayer({
           }}
         >
           {isExternalEmbed ? (
-            // VÃ­deo Incorporado via Embed Code (e.g., Twitch, custom streams)
+            // Vídeo Incorporado via Embed Code (e.g., Twitch, custom streams)
             <div id="embed-container" className="w-full h-full" />
           ) : isYouTubeAPIPlayer ? (
             // YouTube Player via API (from content.video_url, if not external embed)
@@ -446,15 +446,15 @@ export default function VideoPlayer({
               onPause={() => setIsPlaying(false)}
             >
               <source src={content.video_url} type="video/mp4" />
-              Seu navegador nÃ£o suporta o elemento de vÃ­deo.
+              Seu navegador não suporta o elemento de vídeo.
             </video>
           ) : (
             <div className="text-white text-center">
-              <p>ConteÃºdo nÃ£o disponÃ­vel</p>
+              <p>Conteúdo não disponível</p>
             </div>
           )}
 
-          {/* Camada de proteÃ§Ã£o APENAS para lives incorporadas */}
+          {/* Camada de proteção APENAS para lives incorporadas */}
           {isLiveContent && isExternalEmbed && (
             <div
               className="absolute inset-0 z-10 bg-transparent"
@@ -495,7 +495,7 @@ export default function VideoPlayer({
                 </div>
               )}
 
-              {/* BotÃµes de Controle */}
+              {/* Botões de Controle */}
               <div className="flex items-center gap-4 justify-between">
                 <div className="flex items-center gap-4">
                   {/* Play/Pause */}
@@ -571,7 +571,7 @@ export default function VideoPlayer({
           >
             <div className="p-4 border-b border-gray-800">
               <h3 className="text-white font-semibold">
-                {isLiveContent ? 'Chat da Live' : 'ComentÃ¡rios'}
+                {isLiveContent ? 'Chat da Live' : 'Comentários'}
               </h3>
             </div>
 
@@ -593,7 +593,7 @@ export default function VideoPlayer({
                 <Input
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  placeholder={isLiveContent ? "Digite sua mensagem..." : "Adicionar comentÃ¡rio..."}
+                  placeholder={isLiveContent ? "Digite sua mensagem..." : "Adicionar comentário..."}
                   className="bg-gray-800 border-gray-700 text-white"
                   onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
                 />
