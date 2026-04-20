@@ -56,6 +56,42 @@ O caminho oficial agora e:
 
 Mais detalhes operacionais estao em `supabase/README.md`.
 
+## Deploy na Vercel
+
+O repositorio ja esta preparado para ser conectado direto na Vercel:
+
+- framework: `Vite`
+- comando de build: `npm run build`
+- output: `dist`
+- SPA rewrite: configurado em `vercel.json` para suportar rotas como `/login`, `/RevelaTalentos` e `/ZonaMembros`
+
+### Variaveis de ambiente na Vercel
+
+Cadastre estas variaveis no painel do projeto:
+
+```bash
+VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sua_chave_anon
+VITE_HMS_ROOM_ID=room_id_publico
+VITE_HMS_SUBDOMAIN=seu-subdominio-100ms
+```
+
+### Depois do primeiro deploy
+
+Quando a Vercel gerar a URL final do app, atualize o Supabase Auth para esse dominio:
+
+```bash
+npm run supabase:configure-google -- --site-url https://seu-dominio.com
+```
+
+Esse comando agora atualiza:
+
+- `site_url`
+- redirects do Google no dominio de producao
+- redirects locais de desenvolvimento
+
+Se voce usar um dominio customizado e tambem `www`, rode o comando uma vez para cada base de URL que deseja liberar.
+
 ## Observacoes
 
 - a pasta de migracao historica permanece apenas como referencia tecnica

@@ -14,6 +14,29 @@ const defaultRedirects = [
   'http://localhost:5173/**',
 ];
 
+const normalizeSiteUrl = (value) => {
+  if (!value) return null;
+
+  const parsed = new URL(value);
+  const pathname = parsed.pathname.replace(/\/+$/, '');
+
+  return `${parsed.origin}${pathname}`;
+};
+
+const buildProductionRedirects = (siteUrl) => {
+  const normalized = normalizeSiteUrl(siteUrl);
+  if (!normalized) return [];
+
+  const loginPath = `${normalized}/login`;
+
+  return [
+    normalized,
+    `${normalized}/**`,
+    loginPath,
+    `${loginPath}/**`,
+  ];
+};
+
 const parseArgs = () => {
   const args = process.argv.slice(2);
   const parsed = {};
@@ -82,13 +105,13 @@ const request = async (pathName, init = {}) => {
   return response.json();
 };
 
-const mergeRedirects = (currentValue) => {
+const mergeRedirects = (currentValue, extraRedirects = []) => {
   const existing = String(currentValue || '')
     .split(',')
     .map((entry) => entry.trim())
     .filter(Boolean);
 
-  return Array.from(new Set([...existing, ...defaultRedirects])).join(',');
+  return Array.from(new Set([...existing, ...defaultRedirects, ...extraRedirects])).join(',');
 };
 
 const main = async () => {
@@ -104,11 +127,12 @@ const main = async () => {
   }
 
   const currentConfig = await request('/config/auth', { method: 'GET' });
+  const productionRedirects = buildProductionRedirects(siteUrl);
   const payload = {
     external_google_enabled: true,
     external_google_client_id: clientId,
     external_google_secret: clientSecret,
-    uri_allow_list: mergeRedirects(currentConfig.uri_allow_list),
+    uri_allow_list: mergeRedirects(currentConfig.uri_allow_list, productionRedirects),
   };
 
   if (siteUrl) {
