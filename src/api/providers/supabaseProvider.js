@@ -1,6 +1,6 @@
 import { supabase } from '@/api/supabaseClient';
 
-// ── Entity name → Supabase table name mapping ──────────────────────────────
+// â”€â”€ Entity name â†’ Supabase table name mapping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ENTITY_TABLE = {
   Content: 'content',
   Comment: 'comments',
@@ -60,7 +60,7 @@ const ENTITY_TABLE = {
 const resolveTable = (entityName) =>
   ENTITY_TABLE[entityName] ?? entityName.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '') + 's';
 
-// ── Sort helper ─────────────────────────────────────────────────────────────
+// â”€â”€ Sort helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // The app sends sort strings like "-created_date" (desc) or "created_date" (asc)
 const applySort = (query, sort) => {
   if (!sort) return query;
@@ -69,7 +69,7 @@ const applySort = (query, sort) => {
   return query.order(column, { ascending: !desc });
 };
 
-// ── Filter helper ───────────────────────────────────────────────────────────
+// â”€â”€ Filter helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // The app sends filters like { user_id: "abc", status: "pending" }
 // Also supports $or arrays
 const applyFilters = (query, filters) => {
@@ -100,7 +100,7 @@ const applyFilters = (query, filters) => {
   return query;
 };
 
-// ── Throw on Supabase errors ────────────────────────────────────────────────
+// â”€â”€ Throw on Supabase errors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const throwOnError = (result, context = '') => {
   if (result.error) {
     const err = new Error(result.error.message || `Supabase error${context ? ` (${context})` : ''}`);
@@ -139,12 +139,6 @@ const normalizeContentRecord = (record) => {
   };
 };
 
-const normalizeEntityRecord = (entityName, record) =>
-  entityName === 'Content' ? normalizeContentRecord(record) : record;
-
-const normalizeEntityCollection = (entityName, rows) =>
-  Array.isArray(rows) ? rows.map((row) => normalizeEntityRecord(entityName, row)) : rows;
-
 const normalizeContentPayload = (payload = {}) => {
   const normalized = { ...payload };
 
@@ -167,8 +161,58 @@ const normalizeContentPayload = (payload = {}) => {
   return normalized;
 };
 
+const normalizeUserProgressRecord = (record) => {
+  if (!record || typeof record !== 'object') return record;
+
+  const progressPercent = Number(record.progress_percent ?? record.progress_percentage ?? 0);
+  const lastPositionSeconds = Number(record.last_position_seconds ?? record.watch_time_seconds ?? 0);
+
+  return {
+    ...record,
+    progress_percent: progressPercent,
+    progress_percentage: progressPercent,
+    watch_time_seconds: Number(record.watch_time_seconds ?? lastPositionSeconds ?? 0),
+    last_position_seconds: lastPositionSeconds,
+    last_watched: record.last_watched ?? record.updated_date ?? record.created_date ?? null,
+  };
+};
+
+const normalizeUserProgressPayload = (payload = {}) => {
+  const normalized = { ...payload };
+
+  if ('progress_percentage' in normalized && !('progress_percent' in normalized)) {
+    normalized.progress_percent = normalized.progress_percentage;
+  }
+
+  delete normalized.progress_percentage;
+
+  if ('last_position_seconds' in normalized && !('watch_time_seconds' in normalized)) {
+    normalized.watch_time_seconds = normalized.last_position_seconds;
+  }
+
+  if ('watch_time_seconds' in normalized && !('last_position_seconds' in normalized)) {
+    normalized.last_position_seconds = normalized.watch_time_seconds;
+  }
+
+  return normalized;
+};
+
 const normalizeEntityPayload = (entityName, payload) =>
-  entityName === 'Content' ? normalizeContentPayload(payload) : payload;
+  entityName === 'Content'
+    ? normalizeContentPayload(payload)
+    : entityName === 'UserProgress'
+      ? normalizeUserProgressPayload(payload)
+      : payload;
+
+const normalizeEntityRecordByType = (entityName, record) =>
+  entityName === 'Content'
+    ? normalizeContentRecord(record)
+    : entityName === 'UserProgress'
+      ? normalizeUserProgressRecord(record)
+      : record;
+
+const normalizeEntityCollection = (entityName, rows) =>
+  Array.isArray(rows) ? rows.map((row) => normalizeEntityRecordByType(entityName, row)) : rows;
 
 const fetchProfileForUser = async (user, { retries = 5, delayMs = 250 } = {}) => {
   for (let attempt = 0; attempt < retries; attempt += 1) {
@@ -196,7 +240,7 @@ const fetchProfileForUser = async (user, { retries = 5, delayMs = 250 } = {}) =>
   throw err;
 };
 
-// ── Entity client factory ───────────────────────────────────────────────────
+// â”€â”€ Entity client factory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const createEntityClient = (entityName) => {
   const table = resolveTable(entityName);
 
@@ -226,7 +270,7 @@ const createEntityClient = (entityName) => {
       if (property === 'get') {
         return async (id) => {
           const result = await supabase.from(table).select('*').eq('id', id).single();
-          return normalizeEntityRecord(entityName, throwOnError(result, `${entityName}.get`));
+          return normalizeEntityRecordByType(entityName, throwOnError(result, `${entityName}.get`));
         };
       }
 
@@ -238,7 +282,7 @@ const createEntityClient = (entityName) => {
         return async (payload) => {
           const normalizedPayload = normalizeEntityPayload(entityName, payload);
           const result = await supabase.from(table).insert(normalizedPayload).select().single();
-          return normalizeEntityRecord(entityName, throwOnError(result, `${entityName}.create`));
+          return normalizeEntityRecordByType(entityName, throwOnError(result, `${entityName}.create`));
         };
       }
 
@@ -251,7 +295,7 @@ const createEntityClient = (entityName) => {
             .eq('id', id)
             .select()
             .single();
-          return normalizeEntityRecord(entityName, throwOnError(result, `${entityName}.update`));
+          return normalizeEntityRecordByType(entityName, throwOnError(result, `${entityName}.update`));
         };
       }
 
@@ -275,7 +319,7 @@ const createEntityClient = (entityName) => {
   });
 };
 
-// ── Auth adapter ────────────────────────────────────────────────────────────
+// â”€â”€ Auth adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const auth = {
   async signup(payload) {
     const { email, password, ...meta } = payload;
@@ -400,7 +444,7 @@ const auth = {
   }
 };
 
-// ── Storage adapter ─────────────────────────────────────────────────────────
+// â”€â”€ Storage adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const uploadFile = async (rawInput) => {
   const file = rawInput?.file ?? rawInput;
   if (!file) throw new Error('No file provided.');
@@ -430,19 +474,19 @@ const uploadFile = async (rawInput) => {
   return rawInput?.file ? uploadResult : uploadResult.file_url;
 };
 
-// ── Integrations adapter ────────────────────────────────────────────────────
+// â”€â”€ Integrations adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const integrations = {
   Core: {
     UploadFile: uploadFile,
 
     async SendEmail(payload) {
-      // Stub — log only. Replace with Edge Function when ready.
+      // Stub â€” log only. Replace with Edge Function when ready.
       console.log('[Supabase] SendEmail stub:', payload);
       return { success: true, delivery: { status: 'logged_only', ...payload } };
     },
 
     async InvokeLLM(payload) {
-      // Stub — no LLM configured. Replace with Edge Function when ready.
+      // Stub â€” no LLM configured. Replace with Edge Function when ready.
       const promptText = typeof payload?.prompt === 'string' ? payload.prompt.trim() : '';
       const shortened = promptText
         ? `${promptText.slice(0, 220)}${promptText.length > 220 ? '...' : ''}`
@@ -452,7 +496,7 @@ const integrations = {
   }
 };
 
-// ── Users adapter ───────────────────────────────────────────────────────────
+// â”€â”€ Users adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const users = {
   async inviteUser(email, role = 'user') {
     // Create an invite record
@@ -472,7 +516,7 @@ const users = {
   }
 };
 
-// ── App logs adapter ────────────────────────────────────────────────────────
+// â”€â”€ App logs adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const appLogs = {
   async logUserInApp(pageName) {
     const { data: { session } } = await supabase.auth.getSession();
@@ -485,7 +529,7 @@ const appLogs = {
   }
 };
 
-// ── Public API (same shape as localProvider) ────────────────────────────────
+// â”€â”€ Public API (same shape as localProvider) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const createSupabaseProvider = () => ({
   auth,
   entities: new Proxy({}, {
