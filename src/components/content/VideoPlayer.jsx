@@ -155,6 +155,53 @@ export default function VideoPlayer({
     }
   }, [user, loadComments]);
 
+  const handleAddComment = async () => {
+    if (!newComment.trim() || !user) return;
+
+    try {
+      await appClient.entities.Comment.create({
+        user_id: user.id,
+        content_id: content.id,
+        comment_text: newComment
+      });
+      setNewComment('');
+      loadComments();
+      toast.success('Comentario adicionado!');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      toast.error('Erro ao adicionar comentario');
+    }
+  };
+
+  const applyInitialSeek = useCallback((seekToSeconds, totalDuration = 0) => {
+    if (initialSeekAppliedRef.current) {
+      return;
+    }
+
+    let resumeSeconds = initialResumeTimeRef.current;
+
+    if (resumeSeconds <= 0 && totalDuration > 0 && initialResumeProgressRef.current > 0) {
+      resumeSeconds = (initialResumeProgressRef.current / 100) * totalDuration;
+    }
+
+    if (resumeSeconds <= 0) {
+      return;
+    }
+
+    const normalizedDuration = Number(totalDuration || 0);
+    const clampedSeconds = normalizedDuration > 0
+      ? clampNumber(resumeSeconds, 0, Math.max(normalizedDuration - 1, 0))
+      : Math.max(0, resumeSeconds);
+
+    seekToSeconds(clampedSeconds);
+    initialSeekAppliedRef.current = true;
+    setCurrentTime(clampedSeconds);
+
+    if (normalizedDuration > 0) {
+      setProgress((clampedSeconds / normalizedDuration) * 100);
+    }
+  }, []);
+
   useEffect(() => {
     if (!user || progressEntry || initialSeekAppliedRef.current) {
       return undefined;
@@ -210,53 +257,6 @@ export default function VideoPlayer({
       isMounted = false;
     };
   }, [applyInitialSeek, content.id, isHtml5PlayerWithVideoURL, isYouTubeAPIPlayer, progressEntry, user]);
-
-  const handleAddComment = async () => {
-    if (!newComment.trim() || !user) return;
-
-    try {
-      await appClient.entities.Comment.create({
-        user_id: user.id,
-        content_id: content.id,
-        comment_text: newComment
-      });
-      setNewComment('');
-      loadComments();
-      toast.success('Comentario adicionado!');
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      toast.error('Erro ao adicionar comentario');
-    }
-  };
-
-  const applyInitialSeek = useCallback((seekToSeconds, totalDuration = 0) => {
-    if (initialSeekAppliedRef.current) {
-      return;
-    }
-
-    let resumeSeconds = initialResumeTimeRef.current;
-
-    if (resumeSeconds <= 0 && totalDuration > 0 && initialResumeProgressRef.current > 0) {
-      resumeSeconds = (initialResumeProgressRef.current / 100) * totalDuration;
-    }
-
-    if (resumeSeconds <= 0) {
-      return;
-    }
-
-    const normalizedDuration = Number(totalDuration || 0);
-    const clampedSeconds = normalizedDuration > 0
-      ? clampNumber(resumeSeconds, 0, Math.max(normalizedDuration - 1, 0))
-      : Math.max(0, resumeSeconds);
-
-    seekToSeconds(clampedSeconds);
-    initialSeekAppliedRef.current = true;
-    setCurrentTime(clampedSeconds);
-
-    if (normalizedDuration > 0) {
-      setProgress((clampedSeconds / normalizedDuration) * 100);
-    }
-  }, []);
 
   const getPlaybackSnapshot = useCallback(() => {
     if (isYouTubeAPIPlayer) {
