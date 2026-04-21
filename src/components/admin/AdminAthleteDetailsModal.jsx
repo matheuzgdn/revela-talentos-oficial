@@ -286,15 +286,16 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
     Object.values(editingUser.fifa_attributes || {}).reduce((a, b) => a + b, 0) / (
       Object.keys(editingUser.fifa_attributes || {}).length || 1)
   );
+  const overviewChartHeight = "clamp(170px, 22vh, 240px)";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-full md:w-[1400px] max-h-[95vh] bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] border-2 border-[#00E5FF]/30 text-white p-0 overflow-hidden flex flex-col">
+      <DialogContent className="flex h-[min(96vh,920px)] w-full max-w-[95vw] flex-col overflow-hidden border-2 border-[#00E5FF]/30 bg-gradient-to-br from-[#0A0A0A] via-[#0D1117] to-[#0A0A0A] p-0 text-white md:w-[1400px]">
         {/* Hidden title for accessibility */}
         <DialogTitle className="sr-only">Detalhes do Atleta: {editingUser.full_name}</DialogTitle>
         <DialogDescription className="sr-only">Painel administrativo para editar dados, vídeos e permissões do atleta.</DialogDescription>
         {/* HEADER ESTILO FIFA */}
-        <div className="relative overflow-hidden">
+        <div className="relative shrink-0 overflow-hidden">
           {/* BackgroundPattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
@@ -303,8 +304,8 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
             }} />
           </div>
 
-          <div className="relative p-4 md:p-6 pb-4">
-            <div className="flex flex-col md:flex-row items-start justify-between mb-4 gap-4">
+          <div className="relative p-3 pb-2 md:p-4 md:pb-3">
+            <div className="mb-3 flex flex-col items-start justify-between gap-3 md:mb-4 md:flex-row md:gap-4">
               <div className="flex items-center gap-3 md:gap-6 w-full md:w-auto">
                 {/* Player Card Style */}
                 <div className="relative flex-shrink-0">
@@ -342,16 +343,16 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                 </div>
 
                 {/* Quick Stats FIFA Style */}
-                <div className="grid grid-cols-3 gap-2 md:gap-3 w-full md:w-auto">
-                  <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3 text-center backdrop-blur-sm">
+                 <div className="grid w-full grid-cols-3 gap-2 md:w-auto md:gap-2.5">
+                   <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 text-center backdrop-blur-sm">
                     <p className="text-[#00E5FF] text-lg md:text-2xl font-black">{age || '--'}</p>
                     <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider font-bold">Idade</p>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3 text-center backdrop-blur-sm">
+                   <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 text-center backdrop-blur-sm">
                     <p className="text-green-400 text-lg md:text-2xl font-black">{editingUser.height || '--'}</p>
                     <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider font-bold">Altura</p>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3 text-center backdrop-blur-sm">
+                   <div className="bg-white/5 border border-white/10 rounded-lg md:rounded-xl p-2 text-center backdrop-blur-sm">
                     <p className="text-purple-400 text-lg md:text-2xl font-black">{editingUser.weight || '--'}</p>
                     <p className="text-gray-400 text-[8px] md:text-[10px] uppercase tracking-wider font-bold">Peso</p>
                   </div>
@@ -369,44 +370,42 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
 
             {/* Tabs FIFA Style */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full bg-white/5 border border-white/10 p-1 grid grid-cols-4 gap-1">
+              <div className="overflow-x-auto pb-1">
+              <TabsList className="w-max min-w-full flex-nowrap gap-1 border border-white/10 bg-white/5 p-1">
                 <TabsTrigger
                   value="overview"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
-
-                  <BarChart3 className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
-                  <span className="hidden md:inline">Overview</span>
+                  className="min-w-[140px] flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-[11px] sm:text-xs md:text-sm">
+                  <BarChart3 className="mr-2 h-3 w-3 shrink-0 md:h-4 md:w-4" />
+                  <span className="truncate">Overview</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="videos"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
-
-                  <Video className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
-                  <span className="hidden md:inline">Vídeos ({videos.length})</span>
-                  <span className="md:hidden">({videos.length})</span>
+                  className="min-w-[140px] flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-[11px] sm:text-xs md:text-sm">
+                  <Video className="mr-2 h-3 w-3 shrink-0 md:h-4 md:w-4" />
+                  <span className="truncate">Vídeos ({videos.length})</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="attributes"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
-
-                  <Trophy className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
-                  <span className="hidden md:inline">Atributos</span>
+                  className="min-w-[140px] flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-[11px] sm:text-xs md:text-sm">
+                  <Trophy className="mr-2 h-3 w-3 shrink-0 md:h-4 md:w-4" />
+                  <span className="truncate">Atributos</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="settings"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-xs md:text-sm">
-
-                  <Shield className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
-                  <span className="hidden md:inline">Permissões</span>
+                  className="min-w-[140px] flex-1 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00E5FF] data-[state=active]:to-[#0066FF] data-[state=active]:text-black font-bold text-[11px] sm:text-xs md:text-sm">
+                  <Shield className="mr-2 h-3 w-3 shrink-0 md:h-4 md:w-4" />
+                  <span className="truncate">Permissões</span>
                 </TabsTrigger>
               </TabsList>
+              </div>
             </Tabs>
           </div>
         </div>
 
         {/* CONTENT AREA */}
-        <ScrollArea className="flex-1 px-3 md:px-6">
-          <Tabs value={activeTab} className="w-full">
+        <div className="min-h-0 flex-1">
+          <ScrollArea className="h-full min-h-0 px-3 md:px-6">
+          <Tabs value={activeTab} className="w-full pb-3 md:pb-6">
             {/* OVERVIEW TAB */}
             <TabsContent value="overview" className="mt-0 space-y-3 md:space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
@@ -414,20 +413,22 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="bg-gradient-to-br from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/30 rounded-2xl p-6">
+                  className="bg-gradient-to-br from-[#00E5FF]/10 to-[#0066FF]/10 border border-[#00E5FF]/30 rounded-2xl p-4 md:p-5">
 
                   <h3 className="text-white font-bold mb-4 flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-[#FFD700]" />
                     Atributos FIFA
                   </h3>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <div style={{ height: overviewChartHeight }}>
+                    <ResponsiveContainer width="100%" height="100%">
                     <RadarChart data={fifaData}>
                       <PolarGrid stroke="#ffffff20" />
                       <PolarAngleAxis dataKey="attribute" stroke="#fff" tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 'bold' }} />
                       <PolarRadiusAxis angle={90} domain={[0, 100]} stroke="#ffffff20" tick={{ fill: '#6B7280' }} />
                       <Radar name="Atributos" dataKey="value" stroke="#00E5FF" fill="#00E5FF" fillOpacity={0.6} />
                     </RadarChart>
-                  </ResponsiveContainer>
+                    </ResponsiveContainer>
+                  </div>
                   <div className="text-center mt-4">
                     <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#FFD700] to-[#FFA500] px-6 py-3 rounded-xl">
                       <Trophy className="w-5 h-5 text-black" />
@@ -441,18 +442,19 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-6">
+                  className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 md:p-5">
 
                   <h3 className="text-white font-bold mb-4 flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-purple-400" />
                     Evolução de Performance
                   </h3>
-                  {performanceChartData.length > 0 ?
-                    <ResponsiveContainer width="100%" height={300}>
-                      <AreaChart data={performanceChartData}>
-                        <defs>
-                          <linearGradient id="colorGols" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
+                   {performanceChartData.length > 0 ?
+                     <div style={{ height: overviewChartHeight }}>
+                       <ResponsiveContainer width="100%" height="100%">
+                       <AreaChart data={performanceChartData}>
+                         <defs>
+                           <linearGradient id="colorGols" x1="0" y1="0" x2="0" y2="1">
+                             <stop offset="5%" stopColor="#10B981" stopOpacity={0.8} />
                             <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
                           </linearGradient>
                           <linearGradient id="colorAssists" x1="0" y1="0" x2="0" y2="1">
@@ -467,20 +469,21 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                           contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }}
                           labelStyle={{ color: '#fff', fontWeight: 'bold' }} />
 
-                        <Area type="monotone" dataKey="gols" stroke="#10B981" fillOpacity={1} fill="url(#colorGols)" strokeWidth={2} />
-                        <Area type="monotone" dataKey="assists" stroke="#3B82F6" fillOpacity={1} fill="url(#colorAssists)" strokeWidth={2} />
-                      </AreaChart>
-                    </ResponsiveContainer> :
+                         <Area type="monotone" dataKey="gols" stroke="#10B981" fillOpacity={1} fill="url(#colorGols)" strokeWidth={2} />
+                         <Area type="monotone" dataKey="assists" stroke="#3B82F6" fillOpacity={1} fill="url(#colorAssists)" strokeWidth={2} />
+                       </AreaChart>
+                       </ResponsiveContainer>
+                     </div> :
 
-                    <div className="h-[300px] flex items-center justify-center text-gray-500">
-                      <p>Sem dados de performance ainda</p>
-                    </div>
-                  }
+                     <div className="flex items-center justify-center text-gray-500" style={{ height: overviewChartHeight }}>
+                       <p>Sem dados de performance ainda</p>
+                     </div>
+                   }
                 </motion.div>
               </div>
 
               {/* Quick Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
                 {[
                   { label: 'Gols', value: weeklyAssessments.reduce((s, w) => s + (w.goals || 0), 0), icon: CircleDot, color: 'from-red-500 to-orange-500' },
                   { label: 'Assistências', value: weeklyAssessments.reduce((s, w) => s + (w.assists || 0), 0), icon: Footprints, color: 'from-blue-500 to-cyan-500' },
@@ -492,7 +495,7 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.1 }}
-                      className={`bg-gradient-to-br ${stat.color} bg-opacity-10 border border-white/10 rounded-xl p-3 md:p-4 text-center relative overflow-hidden`}>
+                      className={`bg-gradient-to-br ${stat.color} bg-opacity-10 border border-white/10 rounded-xl p-2.5 md:p-3 text-center relative overflow-hidden`}>
 
                       <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/20" />
                       <stat.icon className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 text-white relative z-10" />
@@ -1241,9 +1244,10 @@ Forneça uma análise DETALHADA no seguinte formato JSON:
 
           </Tabs>
         </ScrollArea>
+        </div>
 
         {/* FOOTER ESTILO FIFA */}
-        <div className="border-t border-[#00E5FF]/20 bg-gradient-to-r from-[#0A0A0A] to-[#0D1117] p-3 md:p-6">
+        <div className="shrink-0 border-t border-[#00E5FF]/20 bg-gradient-to-r from-[#0A0A0A] to-[#0D1117] p-2.5 md:p-3">
           <div className="flex flex-col md:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />

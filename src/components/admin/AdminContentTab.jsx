@@ -316,7 +316,7 @@ export default function AdminContentTab() {
       </div>
 
       {/* Sub-Tabs */}
-      <div className="flex gap-2 border-b border-gray-800">
+      <div className="flex flex-wrap gap-2 border-b border-gray-800">
         <button
           onClick={() => setActiveSubTab("videos")}
           className={`px-4 py-2 font-medium transition-colors ${activeSubTab === "videos"
@@ -570,7 +570,7 @@ export default function AdminContentTab() {
           )}
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2 bg-gray-800">
+            <TabsList className="grid w-full grid-cols-1 bg-gray-800 sm:grid-cols-2">
               <TabsTrigger value="videos" className="flex items-center gap-2"><Video className="w-4 h-4" />Conteúdos & Lives</TabsTrigger>
               <TabsTrigger value="planos" className="flex items-center gap-2"><Package className="w-4 h-4" />Planos</TabsTrigger>
             </TabsList>

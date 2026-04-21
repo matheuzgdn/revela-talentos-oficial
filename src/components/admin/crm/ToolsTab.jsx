@@ -240,7 +240,7 @@ export default function ToolsTab({ materials: initialMaterials, salesRep, onNavi
       <QuickActions onNavigate={onNavigate} />
 
       <Tabs defaultValue="documents" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-gray-800">
+        <TabsList className="grid w-full grid-cols-1 bg-gray-800 sm:grid-cols-3">
           <TabsTrigger value="documents" className="data-[state=active]:bg-gray-700 data-[state=active]:text-white">
             <FileText className="w-4 h-4 mr-2" />Documentos
           </TabsTrigger>
