@@ -8,6 +8,7 @@ import {
   Target,
   Star,
   Zap,
+  Settings2,
   Menu,
   ChevronLeft,
   ChevronRight,
@@ -23,6 +24,7 @@ import AdminServicesTab from '@/components/admin/AdminServicesTab';
 import AdminStoriesManagement from '@/components/admin/AdminStoriesManagement';
 import AdminFeaturedAthletesTab from '@/components/admin/AdminFeaturedAthletesTab';
 import AdminLivesTab from '@/components/admin/AdminLivesSettingsTab';
+import AdminPlatformSettingsTab from '@/components/admin/AdminPlatformSettingsTab';
 
 const adminTabsConfig = [
   {
@@ -33,6 +35,15 @@ const adminTabsConfig = [
     description: 'Visão geral da plataforma',
     requiredRole: 'admin',
     gradient: 'from-cyan-500 to-blue-600'
+  },
+  {
+    id: 'platform',
+    name: 'Plataforma',
+    icon: Settings2,
+    component: AdminPlatformSettingsTab,
+    description: 'Acesso, manutencao e ajustes globais',
+    requiredRole: 'admin',
+    gradient: 'from-slate-500 to-cyan-600'
   },
   {
     id: 'users',
@@ -72,12 +83,12 @@ const adminTabsConfig = [
   },
   {
     id: 'stories_abertura',
-    name: 'Stories',
+    name: 'Stories App',
     icon: Star,
     component: AdminStoriesManagement,
     description: 'Stories de abertura do app',
     requiredRole: 'admin',
-    gradie: 'from-pink-500 to-rose-600'
+    gradient: 'from-pink-500 to-rose-600'
   },
   {
     id: 'services',
