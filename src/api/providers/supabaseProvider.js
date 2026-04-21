@@ -124,6 +124,52 @@ const buildLoginRedirectUrl = (nextPath) => {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const normalizeContentRecord = (record) => {
+  if (!record || typeof record !== 'object') return record;
+
+  const normalizedDescription = record.description ?? record.content ?? null;
+  const normalizedTop10 = record.is_top_10 ?? record.top_10 ?? false;
+
+  return {
+    ...record,
+    description: normalizedDescription,
+    content: record.content ?? normalizedDescription,
+    is_top_10: normalizedTop10,
+    top_10: record.top_10 ?? normalizedTop10,
+  };
+};
+
+const normalizeEntityRecord = (entityName, record) =>
+  entityName === 'Content' ? normalizeContentRecord(record) : record;
+
+const normalizeEntityCollection = (entityName, rows) =>
+  Array.isArray(rows) ? rows.map((row) => normalizeEntityRecord(entityName, row)) : rows;
+
+const normalizeContentPayload = (payload = {}) => {
+  const normalized = { ...payload };
+
+  if ('content' in normalized && !('description' in normalized)) {
+    normalized.description = normalized.content;
+  }
+
+  if ('description' in normalized && !('content' in normalized)) {
+    normalized.content = normalized.description;
+  }
+
+  if ('top_10' in normalized && !('is_top_10' in normalized)) {
+    normalized.is_top_10 = normalized.top_10;
+  }
+
+  if ('is_top_10' in normalized && !('top_10' in normalized)) {
+    normalized.top_10 = normalized.is_top_10;
+  }
+
+  return normalized;
+};
+
+const normalizeEntityPayload = (entityName, payload) =>
+  entityName === 'Content' ? normalizeContentPayload(payload) : payload;
+
 const fetchProfileForUser = async (user, { retries = 5, delayMs = 250 } = {}) => {
   for (let attempt = 0; attempt < retries; attempt += 1) {
     const { data, error } = await supabase
@@ -162,7 +208,7 @@ const createEntityClient = (entityName) => {
           query = applySort(query, sort);
           if (limit) query = query.limit(limit);
           const result = await query;
-          return throwOnError(result, `${entityName}.list`);
+          return normalizeEntityCollection(entityName, throwOnError(result, `${entityName}.list`));
         };
       }
 
@@ -173,14 +219,14 @@ const createEntityClient = (entityName) => {
           query = applySort(query, sort);
           if (limit) query = query.limit(limit);
           const result = await query;
-          return throwOnError(result, `${entityName}.filter`);
+          return normalizeEntityCollection(entityName, throwOnError(result, `${entityName}.filter`));
         };
       }
 
       if (property === 'get') {
         return async (id) => {
           const result = await supabase.from(table).select('*').eq('id', id).single();
-          return throwOnError(result, `${entityName}.get`);
+          return normalizeEntityRecord(entityName, throwOnError(result, `${entityName}.get`));
         };
       }
 
@@ -190,20 +236,22 @@ const createEntityClient = (entityName) => {
 
       if (property === 'create') {
         return async (payload) => {
-          const result = await supabase.from(table).insert(payload).select().single();
-          return throwOnError(result, `${entityName}.create`);
+          const normalizedPayload = normalizeEntityPayload(entityName, payload);
+          const result = await supabase.from(table).insert(normalizedPayload).select().single();
+          return normalizeEntityRecord(entityName, throwOnError(result, `${entityName}.create`));
         };
       }
 
       if (property === 'update') {
         return async (id, payload) => {
+          const normalizedPayload = normalizeEntityPayload(entityName, payload);
           const result = await supabase
             .from(table)
-            .update(payload)
+            .update(normalizedPayload)
             .eq('id', id)
             .select()
             .single();
-          return throwOnError(result, `${entityName}.update`);
+          return normalizeEntityRecord(entityName, throwOnError(result, `${entityName}.update`));
         };
       }
 

@@ -23,7 +23,7 @@ const normalizeSiteUrl = (value) => {
   return `${parsed.origin}${pathname}`;
 };
 
-const buildProductionRedirects = (siteUrl) => {
+const buildRedirectsForSite = (siteUrl) => {
   const normalized = normalizeSiteUrl(siteUrl);
   if (!normalized) return [];
 
@@ -36,6 +36,13 @@ const buildProductionRedirects = (siteUrl) => {
     `${loginPath}/**`,
   ];
 };
+
+const buildProductionRedirects = (siteUrls = []) =>
+  Array.from(
+    new Set(
+      siteUrls.flatMap((siteUrl) => buildRedirectsForSite(siteUrl))
+    )
+  );
 
 const parseArgs = () => {
   const args = process.argv.slice(2);
@@ -54,7 +61,14 @@ const parseArgs = () => {
       continue;
     }
 
-    parsed[key] = nextValue;
+    if (parsed[key]) {
+      parsed[key] = Array.isArray(parsed[key])
+        ? [...parsed[key], nextValue]
+        : [parsed[key], nextValue];
+    } else {
+      parsed[key] = nextValue;
+    }
+
     index += 1;
   }
 
@@ -79,8 +93,21 @@ const loadEnv = () => {
   }
 };
 
+const toArray = (value) => {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => toArray(entry));
+  }
+
+  return String(value)
+    .split(',')
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+};
+
 const request = async (pathName, init = {}) => {
-  const accessToken = process.env.SUPABASE_ACCESS_TOKEN;
+  const accessToken = process.env.SUPABASE_ACCESS_TOKEN?.trim();
 
   if (!accessToken) {
     throw new Error('SUPABASE_ACCESS_TOKEN is missing. Add it to supabase/.env.local.');
@@ -121,9 +148,10 @@ const main = async () => {
   const clientId = args['client-id'] || process.env.GOOGLE_CLIENT_ID || process.env.GOOGLE_OAUTH_CLIENT_ID;
   const clientSecret = args['client-secret'] || process.env.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_OAUTH_CLIENT_SECRET;
   const siteUrl = args['site-url'] || process.env.APP_SITE_URL || process.env.SITE_URL || null;
+  const siteAliases = toArray(args['site-alias'] || process.env.APP_SITE_ALIASES || process.env.SITE_ALIASES);
 
   const currentConfig = await request('/config/auth', { method: 'GET' });
-  const productionRedirects = buildProductionRedirects(siteUrl);
+  const productionRedirects = buildProductionRedirects([siteUrl, ...siteAliases]);
   const payload = {
     uri_allow_list: mergeRedirects(currentConfig.uri_allow_list, productionRedirects),
   };
