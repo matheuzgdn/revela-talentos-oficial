@@ -155,6 +155,62 @@ export default function VideoPlayer({
     }
   }, [user, loadComments]);
 
+  useEffect(() => {
+    if (!user || progressEntry || initialSeekAppliedRef.current) {
+      return undefined;
+    }
+
+    let isMounted = true;
+
+    const loadExistingProgress = async () => {
+      try {
+        const existingProgressEntries = await appClient.entities.UserProgress.filter(
+          { user_id: user.id, content_id: content.id },
+          '-last_watched',
+          1
+        );
+        const existingProgress = existingProgressEntries?.[0];
+
+        if (!isMounted || !existingProgress) {
+          return;
+        }
+
+        progressRecordRef.current = existingProgress;
+        initialResumeProgressRef.current = Number(existingProgress.progress_percent ?? 0);
+        initialResumeTimeRef.current = Number(
+          existingProgress.last_position_seconds
+          ?? existingProgress.watch_time_seconds
+          ?? 0
+        );
+        lastSavedProgressRef.current = initialResumeProgressRef.current;
+        lastSavedPositionRef.current = initialResumeTimeRef.current;
+        setProgress(initialResumeProgressRef.current);
+        setCurrentTime(initialResumeTimeRef.current);
+
+        if (isYouTubeAPIPlayer) {
+          const player = playerInstanceRef.current;
+
+          if (player && typeof player.seekTo === 'function') {
+            const playerDuration = Number(player.getDuration?.() || 0);
+            applyInitialSeek((seconds) => player.seekTo(seconds, true), playerDuration);
+          }
+        } else if (isHtml5PlayerWithVideoURL && videoRef.current && videoRef.current.readyState >= 1) {
+          applyInitialSeek((seconds) => {
+            videoRef.current.currentTime = seconds;
+          }, Number(videoRef.current.duration || 0));
+        }
+      } catch (error) {
+        console.error('Error loading existing progress:', error);
+      }
+    };
+
+    loadExistingProgress();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [applyInitialSeek, content.id, isHtml5PlayerWithVideoURL, isYouTubeAPIPlayer, progressEntry, user]);
+
   const handleAddComment = async () => {
     if (!newComment.trim() || !user) return;
 
