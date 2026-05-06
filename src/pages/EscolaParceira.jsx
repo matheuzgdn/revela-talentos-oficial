@@ -553,6 +553,42 @@ export default function EscolaParceira({ audience = "schools" }) {
     window.location.href = schoolPartnerWhatsAppGroupUrl;
   };
 
+  const createLeadRecord = async ({ payload, sourcePage, objectives, notes, context }) => {
+    try {
+      await base44.entities.Lead.create({
+        name: payload.full_name,
+        email: payload.email,
+        phone: payload.phone,
+        source: sourcePage,
+        status: "new",
+        notes,
+        extra_data: {
+          full_name: payload.full_name,
+          school: payload.school,
+          lead_category: "revela_talentos",
+          source_page: sourcePage,
+          objectives,
+          lgpd_consent: true,
+          context,
+        },
+      });
+    } catch (error) {
+      console.error(`Erro ao registrar lead de ${context}:`, error);
+    }
+  };
+
+  const syncLeadToSheets = async ({ flow, payload, page, context }) => {
+    try {
+      await syncSchoolPartnerLeadToSheets({
+        flow,
+        payload,
+        page,
+      });
+    } catch (error) {
+      console.error(`Erro ao sincronizar ${context} no Google Sheets:`, error);
+    }
+  };
+
   const handlePreRegistrationSubmit = async (event) => {
     event.preventDefault();
     const validation = validateSchoolPartnerForm(scheduleForm, partnerSchools, pageCopy);
@@ -566,16 +602,26 @@ export default function EscolaParceira({ audience = "schools" }) {
 
     try {
       const payload = validation.data;
-      await base44.entities.Lead.create({
-        full_name: payload.full_name,
-        email: payload.email,
-        phone: payload.phone,
-        lead_category: "revela_talentos",
-        source_page: pageCopy.sourcePagePreRegistration,
+      persistPreRegistration(payload, {
+        pre_registered_at: new Date().toISOString(),
+      });
+      setIsEntryGateOpen(false);
+      toast.success("Pre-cadastro confirmado. Agora voce pode escolher como quer seguir.");
+
+      void createLeadRecord({
+        payload,
+        sourcePage: pageCopy.sourcePagePreRegistration,
         objectives: pageCopy.preRegistrationObjective,
         notes: pageCopy.preRegistrationNote(payload.school),
-        lgpd_consent: true,
+        context: "pre-cadastro",
       });
+      void syncLeadToSheets({
+        flow: "pre_cadastro",
+        payload,
+        page: pageCopy.sheetsPage,
+        context: "pre-cadastro",
+      });
+      return;
 
       try {
         await syncSchoolPartnerLeadToSheets({
@@ -612,16 +658,37 @@ export default function EscolaParceira({ audience = "schools" }) {
     const payload = validation.data;
     setIsSubmittingSchedule(true);
     try {
-      await base44.entities.Lead.create({
-        full_name: payload.full_name,
-        email: payload.email,
-        phone: payload.phone,
-        lead_category: "revela_talentos",
-        source_page: pageCopy.sourcePageSchedule,
+      persistPreRegistration(payload, {
+        last_choice: "inscrever_agora",
+        last_choice_at: new Date().toISOString(),
+        pre_registered_at: storedPreRegistration?.pre_registered_at || new Date().toISOString(),
+      });
+      toast.success("Agendamento confirmado para o lancamento dia 25/05.");
+      setIsSchedulingOpen(false);
+      setIsScheduleConfirmed(true);
+
+      if (whatsappRedirectTimeoutRef.current) {
+        window.clearTimeout(whatsappRedirectTimeoutRef.current);
+      }
+      whatsappRedirectTimeoutRef.current = window.setTimeout(() => {
+        redirectToSchoolPartnerWhatsAppGroup();
+      }, 1400);
+
+      void createLeadRecord({
+        payload,
+        sourcePage: pageCopy.sourcePageSchedule,
         objectives: pageCopy.scheduleObjective,
         notes: pageCopy.scheduleNote(payload.school),
-        lgpd_consent: true,
+        context: "agendamento",
       });
+      void syncLeadToSheets({
+        flow: "agendamento_live",
+        payload,
+        page: pageCopy.sheetsPage,
+        context: "agendamento",
+      });
+      return;
+
       try {
         await syncSchoolPartnerLeadToSheets({
           flow: "agendamento_live",
