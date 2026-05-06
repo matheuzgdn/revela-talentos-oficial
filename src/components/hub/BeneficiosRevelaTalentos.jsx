@@ -1,9 +1,10 @@
 import React from 'react';
+import { LazyImage, LazyVideo } from '../ui/LazyMedia';
 
 const servicesSection = {
   eyebrow: '/ Vantagens Exclusivas',
-  title: 'OUTROS',
-  outlinedWord: 'BENEFÍCIOS',
+  title: 'BENEF\u00cdCIOS DA',
+  outlinedWord: 'PLATAFORMA',
   services: [
     {
       title: 'Nutricionista',
@@ -26,7 +27,7 @@ const servicesSection = {
       highlight: '',
       text: 'Edição de vídeo, flyers, fotos e divulgação da imagem do atleta em nossas redes sociais, criando uma vitrine profissional de alto nível.',
       media:
-        'https://video.wixstatic.com/video/933cdd_dda817e38175467796a8ba4ae14b52bc/1080p/mp4/file.mp4',
+        'https://video.wixstatic.com/video/933cdd_dda817e38175467796a8ba4ae14b52bc/720p/mp4/file.mp4',
       isVideo: true,
     },
     {
@@ -70,20 +71,21 @@ function InfoCard({ title, text, media, isVideo, highlight, expanded, onToggle }
   return (
     <article className="group relative min-h-[22rem] overflow-hidden rounded-[1.4rem] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.45)] transition-all duration-500 hover:-translate-y-2 hover:border-[#00f3ff]/25 sm:min-h-[30rem] sm:rounded-[2rem]">
       {isVideo ? (
-        <video
+        <LazyVideo
           className="absolute inset-0 h-full w-full object-cover opacity-50 transition-opacity duration-700 group-hover:opacity-70"
           autoPlay
           loop
           muted
           playsInline
-        >
-          <source src={media} type="video/mp4" />
-        </video>
+          rootMargin="220px 0px"
+          src={media}
+        />
       ) : (
-        <img
+        <LazyImage
           className={`absolute inset-0 h-full w-full ${coverPositionClass} object-cover opacity-50 transition-opacity duration-700 group-hover:opacity-70`}
           src={media}
           alt={title}
+          rootMargin="220px 0px"
         />
       )}
 
@@ -150,9 +152,10 @@ export default function BeneficiosRevelaTalentos() {
     <section
       id="servicos"
       className="relative overflow-hidden border-b border-white/5 bg-[#030305] py-12 sm:py-14 md:py-24"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 1200px' }}
     >
-      <div className="container relative z-10 mx-auto border-t border-white/5 px-4 pt-10 text-center sm:pt-12 md:pt-16">
-        <div className="mx-auto mb-10 max-w-4xl sm:mb-16">
+      <div className="container relative z-10 mx-auto border-t border-white/5 px-4 pt-10 sm:pt-12 md:pt-16">
+        <div className="mx-auto mb-10 max-w-5xl text-center sm:mb-16">
           <span className="mb-4 block font-mono text-xs uppercase tracking-widest text-[#00f3ff]">
             {servicesSection.eyebrow}
           </span>
@@ -162,6 +165,7 @@ export default function BeneficiosRevelaTalentos() {
               {servicesSection.outlinedWord}
             </span>
           </h2>
+          <div className="mx-auto mt-5 h-px w-24 bg-gradient-to-r from-transparent via-[#00f3ff] to-transparent"></div>
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:hidden">

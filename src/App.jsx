@@ -4,22 +4,35 @@ import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import MojibakeTextGuard from '@/lib/MojibakeTextGuard'
 import { pagesConfig } from './pages.config'
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import CheckoutSuccess from './pages/checkout';
-import LoginPage from './pages/Login';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { redirectToPlatformLogin } from '@/lib/auth-routing';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+const EmptyPage = () => null;
+const MainPage = mainPageKey ? Pages[mainPageKey] : EmptyPage;
+const CheckoutSuccess = lazy(() => import('./pages/checkout'));
+const LoginPage = lazy(() => import('./pages/Login'));
+
+const PageFallback = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-[#040507]">
+    <div className="w-8 h-8 border-4 border-cyan-300/20 border-t-cyan-300 rounded-full animate-spin"></div>
+  </div>
+);
 
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
+
+const SuspendedPage = ({ children }) => (
+  <Suspense fallback={<PageFallback />}>
+    {children}
+  </Suspense>
+);
 
 // Helper to redirect to login when hitting a protected route
 const LoginRedirect = () => {
@@ -68,38 +81,59 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={
+        <SuspendedPage>
+          <LoginPage />
+        </SuspendedPage>
+      } />
       <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
+        <SuspendedPage>
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        </SuspendedPage>
       } />
       <Route path="/thanks" element={
         <ProtectedRoute isPublic={true}>
-          <LayoutWrapper currentPageName="checkout">
-            <CheckoutSuccess isPending={true} />
-          </LayoutWrapper>
+          <SuspendedPage>
+            <LayoutWrapper currentPageName="checkout">
+              <CheckoutSuccess isPending={true} />
+            </LayoutWrapper>
+          </SuspendedPage>
         </ProtectedRoute>
       } />
       <Route path="/thanks1" element={
         <ProtectedRoute isPublic={true}>
-          <LayoutWrapper currentPageName="checkout">
-            <CheckoutSuccess platformUrlOverride="https://revelatalentos.com/login?from_url=https%3A%2F%2Frevelatalentos.com%2F" />
-          </LayoutWrapper>
+          <SuspendedPage>
+            <LayoutWrapper currentPageName="checkout">
+              <CheckoutSuccess platformUrlOverride="https://revelatalentos.com/login?from_url=https%3A%2F%2Frevelatalentos.com%2F" />
+            </LayoutWrapper>
+          </SuspendedPage>
         </ProtectedRoute>
       } />
       <Route path="/checkout" element={<Navigate to="/thanks" replace />} />
       {Object.entries(Pages).map(([path, Page]) => {
-        const isPublicPage = ['cases-sucesso-atletas', 'escola-parceira', 'vsl-escola-parceira', 'evento', 'vsl-evento'].includes(path);
+        const isPublicPage = [
+          'cases-sucesso-atletas',
+          'escola-parceira',
+          'escolas-parceiras',
+          'pais-atletas',
+          'pais-e-atletas',
+          'vsl-escola-parceira',
+          'evento',
+          'vsl-evento'
+        ].includes(path);
         return (
           <Route
             key={path}
             path={`/${path}`}
             element={
               <ProtectedRoute isPublic={isPublicPage}>
-                <LayoutWrapper currentPageName={path}>
-                  <Page />
-                </LayoutWrapper>
+                <SuspendedPage>
+                  <LayoutWrapper currentPageName={path}>
+                    <Page />
+                  </LayoutWrapper>
+                </SuspendedPage>
               </ProtectedRoute>
             }
           />
@@ -137,7 +171,15 @@ const BrowserThemeManager = () => {
   useEffect(() => {
     if (typeof document === 'undefined') return;
 
-    const isEscolaFlow = ['/escola-parceira', '/vsl-escola-parceira', '/evento', '/vsl-evento'].includes(location.pathname);
+    const isEscolaFlow = [
+      '/escola-parceira',
+      '/escolas-parceiras',
+      '/pais-atletas',
+      '/pais-e-atletas',
+      '/vsl-escola-parceira',
+      '/evento',
+      '/vsl-evento'
+    ].includes(location.pathname);
     const themeColor = isEscolaFlow ? '#07111f' : '#040507';
     const background = isEscolaFlow
       ? 'linear-gradient(180deg, #040507 0%, #07111f 100%)'

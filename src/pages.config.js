@@ -47,30 +47,33 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Admin from './pages/Admin';
-import AdminDashboard from './pages/AdminDashboard';
-import AnalisePerformance from './pages/AnalisePerformance';
-import AthleteProfile from './pages/AthleteProfile';
-import AthleteVideos from './pages/AthleteVideos';
-import CasesSucessoAtletas from './pages/CasesSucessoAtletas';
-import DatacenterDocumentation from './pages/DatacenterDocumentation';
-import Eventos from './pages/Eventos';
-import Home from './pages/Home';
-import Hub from './pages/Hub';
-import Lives from './pages/Lives';
-import MeusServicos from './pages/MeusServicos';
-import PlanoCarreira from './pages/PlanoCarreira';
-import PlanoInternacional from './pages/PlanoInternacional';
-import RenderPage from './pages/RenderPage';
-import RevelaTalentos from './pages/RevelaTalentos';
-import SearchAthletes from './pages/SearchAthletes';
-import SeletivaOnline from './pages/SeletivaOnline';
-import ZonaMembros from './pages/ZonaMembros';
-import EscolaParceira from './pages/EscolaParceira';
-import VSLEscolaParceira from './pages/VSLEscolaParceira';
-import Evento from './pages/Evento';
-import VSLEvento from './pages/VSLEvento';
-import __Layout from './Layout.jsx';
+import { lazy } from 'react';
+
+const __Layout = lazy(() => import('./Layout.jsx'));
+const Admin = lazy(() => import('./pages/Admin'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AnalisePerformance = lazy(() => import('./pages/AnalisePerformance'));
+const AthleteProfile = lazy(() => import('./pages/AthleteProfile'));
+const AthleteVideos = lazy(() => import('./pages/AthleteVideos'));
+const CasesSucessoAtletas = lazy(() => import('./pages/CasesSucessoAtletas'));
+const DatacenterDocumentation = lazy(() => import('./pages/DatacenterDocumentation'));
+const Eventos = lazy(() => import('./pages/Eventos'));
+const Home = lazy(() => import('./pages/Home'));
+const Hub = lazy(() => import('./pages/Hub'));
+const Lives = lazy(() => import('./pages/Lives'));
+const MeusServicos = lazy(() => import('./pages/MeusServicos'));
+const PlanoCarreira = lazy(() => import('./pages/PlanoCarreira'));
+const PlanoInternacional = lazy(() => import('./pages/PlanoInternacional'));
+const RenderPage = lazy(() => import('./pages/RenderPage'));
+const RevelaTalentos = lazy(() => import('./pages/RevelaTalentos'));
+const SearchAthletes = lazy(() => import('./pages/SearchAthletes'));
+const SeletivaOnline = lazy(() => import('./pages/SeletivaOnline'));
+const ZonaMembros = lazy(() => import('./pages/ZonaMembros'));
+const EscolaParceira = lazy(() => import('./pages/EscolaParceira'));
+const PaisAtletas = lazy(() => import('./pages/PaisAtletas'));
+const VSLEscolaParceira = lazy(() => import('./pages/VSLEscolaParceira'));
+const Evento = lazy(() => import('./pages/Evento'));
+const VSLEvento = lazy(() => import('./pages/VSLEvento'));
 
 
 export const PAGES = {
@@ -94,6 +97,9 @@ export const PAGES = {
     "SeletivaOnline": SeletivaOnline,
     "ZonaMembros": ZonaMembros,
     "escola-parceira": EscolaParceira,
+    "escolas-parceiras": EscolaParceira,
+    "pais-atletas": PaisAtletas,
+    "pais-e-atletas": PaisAtletas,
     "vsl-escola-parceira": VSLEscolaParceira,
     "evento": Evento,
     "vsl-evento": VSLEvento,

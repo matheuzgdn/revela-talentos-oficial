@@ -48,6 +48,9 @@ export default function FifaAthleteCard({ story, index }) {
             <img
               src={imageUrl}
               alt={title}
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
               className="w-full h-full object-cover filter contrast-125 brightness-110"
             />
 

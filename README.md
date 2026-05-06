@@ -65,6 +65,16 @@ O repositorio ja esta preparado para ser conectado direto na Vercel:
 - output: `dist`
 - SPA rewrite: configurado em `vercel.json` para suportar rotas como `/login`, `/RevelaTalentos` e `/ZonaMembros`
 
+## Paginas publicas sincronizadas
+
+As paginas publicas principais foram sincronizadas com o projeto Base44 de referencia:
+
+- `/` e `/RevelaTalentos`: landing principal com a mesma narrativa comercial.
+- `/escola-parceira` e `/escolas-parceiras`: cadastro de escolas parceiras, data oficial `25/05`, confirmacao de agendamento e redirecionamento para o grupo oficial do WhatsApp.
+- `/pais-atletas` e `/pais-e-atletas`: versao para pais, responsaveis e atletas, usando apenas nome completo e WhatsApp e marcando a origem como `trafego` no envio para a planilha.
+
+O envio para Google Sheets usa `VITE_GOOGLE_SHEETS_SCHOOL_PARTNER_WEBHOOK_URL` quando configurado. Sem essa variavel, o frontend usa o webhook padrao ja definido em `src/lib/schoolPartnerSheets.js`.
+
 ### Variaveis de ambiente na Vercel
 
 Cadastre estas variaveis no painel do projeto:

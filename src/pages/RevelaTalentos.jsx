@@ -16,6 +16,9 @@ import LanguageToggle from "@/components/i18n/LanguageToggle";
 import { createPageUrl } from "@/utils";
 import { redirectToPlatformLogin } from "@/lib/auth-routing";
 
+const HERO_POSTER_URL = "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&auto=format&fit=crop&q=75";
+const HERO_VIDEO_URL = "https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4";
+
 export default function RevelaTalentosPage() {
   const { t } = useLanguage();
   const [user, setUser] = useState(null);
@@ -34,6 +37,8 @@ export default function RevelaTalentosPage() {
   const [isLive, setIsLive] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+  const [shouldLoadHeroVideo, setShouldLoadHeroVideo] = useState(false);
+  const [isHeroVideoReady, setIsHeroVideoReady] = useState(false);
 
   const handleOpportunityClick = useCallback((opportunity) => {
     setSelectedOpportunity(opportunity);
@@ -50,26 +55,39 @@ export default function RevelaTalentosPage() {
 
   const loadContentData = useCallback(async (currentUser) => {
     try {
-      const fetchedContents = await appClient.entities.Content.filter({
+      const contentsRequest = appClient.entities.Content.filter({
         is_published: true
       }, "-created_date", 50).catch(() => []);
-      setContents(fetchedContents);
 
-      // Carregar atletas em destaque
-      const stories = await appClient.entities.AthleteStory.filter({
+      const storiesRequest = appClient.entities.AthleteStory.filter({
         is_active: true,
         category: 'atleta'
       }, "display_order", 20).catch(() => []);
-      setAthleteStories(stories);
 
-      if (currentUser) {
-        appClient.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).then(progress => {
-          setUserProgress(progress);
-        }).catch(() => { });
-      }
+      const progressRequest = currentUser
+        ? appClient.entities.UserProgress.filter({ user_id: currentUser.id }, "-updated_date", 20).catch(() => [])
+        : Promise.resolve([]);
+
+      const [fetchedContents, stories, progress] = await Promise.all([
+        contentsRequest,
+        storiesRequest,
+        progressRequest
+      ]);
+
+      setContents(fetchedContents);
+      setAthleteStories(stories);
+      setUserProgress(progress);
     } catch (error) {
       console.error("Error loading data:", error);
     }
+  }, []);
+
+  const applyPlatformSettings = useCallback((settings = []) => {
+    const restrictionSetting = settings.find(s => s.setting_key === 'is_platform_restricted');
+    setIsPlatformRestricted(restrictionSetting?.setting_value === 'true');
+
+    const liveSetting = settings.find(s => s.setting_key === 'is_live');
+    setIsLive(liveSetting?.setting_value === 'true');
   }, []);
 
   const checkAccess = useCallback(async () => {
@@ -96,9 +114,7 @@ export default function RevelaTalentosPage() {
       // Aguardar platform settings ANTES de finalizar o loading
       try {
         const platformSettings = await appClient.entities.PlatformSettings.list();
-        const restrictionSetting = platformSettings.find(s => s.setting_key === 'is_platform_restricted');
-        const isRestricted = restrictionSetting?.setting_value === 'true';
-        setIsPlatformRestricted(isRestricted);
+        applyPlatformSettings(platformSettings);
       } catch { }
 
       loadContentData(currentUser);
@@ -111,7 +127,7 @@ export default function RevelaTalentosPage() {
       setIsCheckingAccess(false);
       loadContentData(null);
     }
-  }, [isAdminUser, loadContentData]);
+  }, [applyPlatformSettings, isAdminUser, loadContentData]);
 
 
 
@@ -119,7 +135,28 @@ export default function RevelaTalentosPage() {
     checkAccess();
   }, [checkAccess]);
 
-  // Poll live status every 15 seconds
+  useEffect(() => {
+    let timerId;
+    let idleId;
+    const startLoadingVideo = () => setShouldLoadHeroVideo(true);
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(startLoadingVideo, { timeout: 1600 });
+    } else {
+      timerId = window.setTimeout(startLoadingVideo, 1200);
+    }
+
+    return () => {
+      if (idleId && typeof window !== 'undefined' && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timerId) {
+        window.clearTimeout(timerId);
+      }
+    };
+  }, []);
+
+  // Keep live status fresh without adding an extra request during first paint.
   useEffect(() => {
     const checkLive = async () => {
       try {
@@ -128,9 +165,12 @@ export default function RevelaTalentosPage() {
         setIsLive(liveSetting?.setting_value === 'true');
       } catch { }
     };
-    checkLive();
-    const interval = setInterval(checkLive, 15000);
-    return () => clearInterval(interval);
+    const initialTimer = setTimeout(checkLive, 10000);
+    const interval = setInterval(checkLive, 45000);
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
@@ -191,8 +231,8 @@ export default function RevelaTalentosPage() {
     const ec10Hero = {
       id: 'ec10-hero',
       title: t('home.hero.title'),
-      thumbnail_url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200',
-      video_url: 'https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4',
+      thumbnail_url: HERO_POSTER_URL,
+      video_url: HERO_VIDEO_URL,
       category: 'hero',
       is_featured: true
     };
@@ -319,15 +359,36 @@ export default function RevelaTalentosPage() {
               className="relative aspect-[4/3] md:aspect-[16/9] rounded-[24px] overflow-hidden cursor-pointer group shadow-2xl"
             >
               {activeSlide?.id === 'ec10-hero' ? (
-                <video
-                  src={activeSlide.video_url}
-                  autoPlay muted loop playsInline
-                  className="w-full h-full object-cover"
-                />
+                <div className="relative w-full h-full bg-[#07111f]">
+                  <img
+                    src={activeSlide.thumbnail_url}
+                    alt={activeSlide.title}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${isHeroVideoReady ? 'opacity-0' : 'opacity-100'}`}
+                  />
+                  {shouldLoadHeroVideo && (
+                    <video
+                      src={activeSlide.video_url}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      poster={activeSlide.thumbnail_url}
+                      onCanPlay={() => setIsHeroVideoReady(true)}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${isHeroVideoReady ? 'opacity-100' : 'opacity-0'}`}
+                    />
+                  )}
+                </div>
               ) : (
                 <img
-                  src={activeSlide?.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200"}
+                  src={activeSlide?.thumbnail_url || HERO_POSTER_URL}
                   alt={activeSlide?.title}
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               )}
@@ -830,6 +891,9 @@ function ContentCard({ content, index, onClick, progress, showRank, rank, t, isL
         <img
           src={content.thumbnail_url || "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"}
           alt={content.title}
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
           className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${isLocked ? 'blur-[2px] brightness-50' : ''}`}
         />
 
@@ -905,6 +969,9 @@ function PlanCard({ plano, index, onClick, t }) {
         <img
           src={plano.thumbnail_url || "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600"}
           alt={plano.title}
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
