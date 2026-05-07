@@ -3,8 +3,7 @@ import { createPageUrl } from '@/utils';
 import { appClient } from '@/api/backendClient';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-
-const isAdminUser = (user) => user?.role === 'admin' || user?.is_revela_admin === true;
+import { getDefaultAuthenticatedPath } from '@/lib/auth-routing';
 
 export default function PageNotFound({}) {
     const location = useLocation();
@@ -29,12 +28,8 @@ export default function PageNotFound({}) {
         if (lower === 'bemvindo' || lower === 'bem-vindo') {
             if (!isFetched) return;
             const user = authData?.user;
-            const target = user
-              ? (isAdminUser(user)
-                ? 'RevelaTalentos'
-                : (user.has_zona_membros_access ? 'ZonaMembros' : (user.has_plano_carreira_access ? 'PlanoCarreira' : 'RevelaTalentos')))
-              : 'RevelaTalentos';
-            navigate(createPageUrl(target), { replace: true });
+            const target = user ? getDefaultAuthenticatedPath(user) : createPageUrl('RevelaTalentos');
+            navigate(target, { replace: true });
         }
     }, [pageName, isFetched, authData, navigate]);
     

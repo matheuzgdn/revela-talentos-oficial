@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { appClient } from '@/api/backendClient';
 import { Home, Tv, Globe, BookOpen, Award, X, Play, Calendar, Check, Star, Search, Clock, AlertTriangle, Trophy, Flame, CheckCircle, Map, AlertCircle, Hourglass, Rocket, ShieldCheck, Bell, MoreHorizontal, LockKeyhole, MapPin, Sparkles, ShoppingCart, Lock, LogOut, Settings, Plus, Minus, RotateCcw, User } from 'lucide-react';
 import ProfileSetup from '@/components/athlete/ProfileSetup';
+import VideoPlayer from '@/components/content/VideoPlayer';
+import LiveStreamPlayer from '@/components/content/LiveStreamPlayer';
+import { createPageUrl } from '@/utils';
+import { isAdminUser } from '@/lib/auth-routing';
 /* ================== CONSTANTS ================== */
 const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c';
 const EVENTS = [
@@ -528,6 +532,12 @@ export default function ZonaMembros() {
                     appClient.entities.Content.filter({ is_published: true }, '-created_date', 50).catch(() => []),
                     appClient.entities.PlatformSettings.list().catch(() => []),
                 ]);
+
+                if (isAdminUser(u)) {
+                    window.location.href = createPageUrl('Admin');
+                    return;
+                }
+
                 setUser(u);
                 // Auto-translate content titles/descriptions to Spanish
                 const translated = await translateContents(c || []);
@@ -548,6 +558,10 @@ export default function ZonaMembros() {
                     appClient.entities.PlatformSettings.list().catch(() => []),
                 ]);
                 if (u) {
+                    if (isAdminUser(u)) {
+                        window.location.href = createPageUrl('Admin');
+                        return;
+                    }
                     setUser(u);
                     // Se admin removeu o acesso a Area de Membros, redirecionar de volta
                     if (u.has_zona_membros_access !== true) {
@@ -568,29 +582,13 @@ export default function ZonaMembros() {
         setSel(item);
     }, []);
 
-    // Video player view
-    if (sel) return (
-        <>
-            <GS />
-            <div className="min-h-screen bg-[#05080a] text-white flex flex-col items-center justify-center p-4">
-                <div className="w-full max-w-4xl">
-                    <button onClick={() => setSel(null)} className="mb-4 flex items-center gap-2 text-[#00a8e1] font-bold text-sm hover:text-white transition-colors">
-                        Volver
-                    </button>
-                    <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-[#00a8e1]/30">
-                        {sel.live_embed_code ? (
-                            <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: sel.live_embed_code }} />
-                        ) : sel.video_url
-                            ? <video src={sel.video_url} controls autoPlay className="w-full h-full" />
-                            : <div className="w-full h-full flex items-center justify-center text-white/40"><Play className="w-12 h-12 opacity-20" /></div>
-                        }
-                    </div>
-                    <h2 className="mt-4 text-xl font-black text-white">{sel.title}</h2>
-                    {sel.description && <p className="mt-2 text-gray-400 text-sm">{sel.description}</p>}
-                </div>
-            </div>
-        </>
-    );
+    if (sel?.category === 'live' && sel?.status === 'live') {
+        return <LiveStreamPlayer content={sel} onClose={() => setSel(null)} />;
+    }
+
+    if (sel) {
+        return <VideoPlayer content={sel} user={user} onClose={() => setSel(null)} />;
+    }
 
     // Loading state
     if (loading) return (

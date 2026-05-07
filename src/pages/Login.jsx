@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { completeAuthSessionFromUrl } from '@/api/supabaseClient';
 import { createPageUrl } from '@/utils';
 import { appClient } from '@/api/backendClient';
+import { resolveAuthenticatedRedirectPath } from '@/lib/auth-routing';
 
 const isAbsoluteUrl = (value) => /^https?:\/\//i.test(value);
 
@@ -35,13 +36,15 @@ export default function LoginPage() {
     return params.get('from_url') || createPageUrl('RevelaTalentos');
   }, [location.search]);
 
-  const goToTarget = () => {
-    if (isAbsoluteUrl(redirectTarget)) {
-      window.location.href = redirectTarget;
+  const goToTarget = (user) => {
+    const resolvedTarget = resolveAuthenticatedRedirectPath(user, redirectTarget);
+
+    if (isAbsoluteUrl(resolvedTarget)) {
+      window.location.href = resolvedTarget;
       return;
     }
 
-    window.location.href = redirectTarget.startsWith('/') ? redirectTarget : `/${redirectTarget}`;
+    window.location.href = resolvedTarget.startsWith('/') ? resolvedTarget : `/${resolvedTarget}`;
   };
 
   useEffect(() => {
@@ -72,9 +75,9 @@ export default function LoginPage() {
           console.error('OAuth callback finalization skipped:', error);
         }
 
-        await appClient.auth.me();
+        const currentUser = await appClient.auth.me();
         if (isMounted) {
-          goToTarget();
+          goToTarget(currentUser);
         }
       } catch {
         if (isMounted) {
@@ -141,8 +144,8 @@ export default function LoginPage() {
           <AuthCredentialsForm
             showRegisterHint={false}
             oauthRedirectTarget={redirectTarget}
-            onSuccess={() => {
-              goToTarget();
+            onSuccess={(user) => {
+              goToTarget(user);
             }}
           />
         </div>

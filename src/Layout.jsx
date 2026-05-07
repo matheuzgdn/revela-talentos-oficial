@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { appClient } from "@/api/backendClient";
-import { redirectToPlatformLogin } from "@/lib/auth-routing";
+import { getDefaultAuthenticatedPath, isAdminUser, redirectToPlatformLogin } from "@/lib/auth-routing";
 
 
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
@@ -57,8 +57,6 @@ const getNavigationItems = (user, t) => {
 
   return items;
 };
-
-const isAdminUser = (user) => user?.role === 'admin' || user?.is_revela_admin === true;
 
 function LayoutInner({ children, currentPageName }) {
   const { t, language } = useLanguage();
@@ -132,12 +130,8 @@ function LayoutInner({ children, currentPageName }) {
   useEffect(() => {
     if (isLoading) return;
     if (currentPageName === 'BemVindo') {
-      const target = user
-        ? (isAdminUser(user)
-          ? 'RevelaTalentos'
-          : (user.has_zona_membros_access ? 'ZonaMembros' : (user.has_plano_carreira_access ? 'PlanoCarreira' : 'RevelaTalentos')))
-        : 'RevelaTalentos';
-      navigate(createPageUrl(target), { replace: true });
+      const target = user ? getDefaultAuthenticatedPath(user) : createPageUrl('RevelaTalentos');
+      navigate(target, { replace: true });
     }
   }, [isLoading, user, currentPageName, navigate]);
 
