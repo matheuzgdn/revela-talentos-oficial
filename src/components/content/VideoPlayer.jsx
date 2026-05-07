@@ -25,6 +25,7 @@ const MIN_PROGRESS_DELTA_PERCENT = 1;
 const clampNumber = (value, min, max) => Math.min(max, Math.max(min, value));
 
 const isYouTubeUrl = (url) => url && (url.includes('youtube.com') || url.includes('youtu.be'));
+const IMAGE_FILE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.avif'];
 
 const extractYouTubeVideoId = (url) => {
   if (!url) return '';
@@ -32,6 +33,23 @@ const extractYouTubeVideoId = (url) => {
   const match = url.match(/(?:youtube\.com\/(?:watch\?v=|live\/)|youtu\.be\/)([^&\n?#]+)/);
   return match ? match[1] : '';
 };
+
+const getNormalizedUrlPath = (url) => {
+  if (!url) return '';
+
+  try {
+    return new URL(url).pathname.toLowerCase();
+  } catch {
+    return String(url).toLowerCase();
+  }
+};
+
+const hasFileExtension = (url, extensions) => {
+  const pathname = getNormalizedUrlPath(url);
+  return extensions.some((extension) => pathname.endsWith(extension));
+};
+
+const isImageUrl = (url) => hasFileExtension(url, IMAGE_FILE_EXTENSIONS);
 
 export default function VideoPlayer({
   content,
@@ -72,11 +90,23 @@ export default function VideoPlayer({
   const [currentTime, setCurrentTime] = useState(initialResumeTimeRef.current);
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(initialResumeProgressRef.current);
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
+  const [videoError, setVideoError] = useState('');
 
   const isLiveContent = content.category === 'live' && content.status === 'live';
   const isExternalEmbed = Boolean(content.live_embed_code);
   const isYouTubeAPIPlayer = !isExternalEmbed && isYouTubeUrl(content.video_url);
-  const isHtml5PlayerWithVideoURL = !isExternalEmbed && !isYouTubeAPIPlayer && Boolean(content.video_url);
+  const isInvalidImageAsset = !isExternalEmbed && !isYouTubeAPIPlayer && isImageUrl(content.video_url);
+  const isHtml5PlayerWithVideoURL = !isExternalEmbed && !isYouTubeAPIPlayer && !isInvalidImageAsset && Boolean(content.video_url);
+
+  useEffect(() => {
+    setIsVideoLoading(isHtml5PlayerWithVideoURL);
+    setVideoError(
+      isInvalidImageAsset
+        ? 'Este item esta apontando para uma imagem, nao para um video.'
+        : ''
+    );
+  }, [content.id, content.video_url, isHtml5PlayerWithVideoURL, isInvalidImageAsset]);
 
   useEffect(() => {
     userRef.current = user;
@@ -654,20 +684,36 @@ export default function VideoPlayer({
       }, video.duration);
     };
 
+    const handleLoadedData = () => {
+      setIsVideoLoading(false);
+      setVideoError('');
+    };
+
+    const handleVideoError = () => {
+      setIsVideoLoading(false);
+      setIsPlaying(false);
+      setVideoError('Nao foi possivel reproduzir este video aqui. Use o link direto abaixo.');
+    };
+
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('error', handleVideoError);
 
     if (autoPlay) {
       video.play().then(() => {
         setIsPlaying(true);
       }).catch((error) => {
         console.warn('Autoplay prevented:', error);
+        setIsVideoLoading(false);
       });
     }
 
     return () => {
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('error', handleVideoError);
     };
   }, [applyInitialSeek, autoPlay, isHtml5PlayerWithVideoURL]);
 
@@ -849,7 +895,7 @@ export default function VideoPlayer({
   };
 
   const handleMouseMove = () => {
-    if (isExternalEmbed) {
+    if (isExternalEmbed || isHtml5PlayerWithVideoURL) {
       return;
     }
 
@@ -879,16 +925,59 @@ export default function VideoPlayer({
           ) : isYouTubeAPIPlayer ? (
             <div ref={playerContainerRef} id="youtube-player" className="w-full h-full" />
           ) : isHtml5PlayerWithVideoURL ? (
-            <video
-              ref={videoRef}
-              className="max-w-full max-h-full object-contain"
-              onPlay={() => setIsPlaying(true)}
-              onPause={handlePlayerPause}
-              onEnded={handlePlayerEnded}
-            >
-              <source src={content.video_url} type="video/mp4" />
-              Seu navegador nao suporta o elemento de video.
-            </video>
+            <div className="relative flex h-full w-full items-center justify-center bg-black">
+              <video
+                key={content.video_url}
+                ref={videoRef}
+                src={content.video_url}
+                poster={content.thumbnail_url || undefined}
+                preload="metadata"
+                controls
+                playsInline
+                crossOrigin="anonymous"
+                className="max-h-full max-w-full object-contain"
+                onPlay={() => setIsPlaying(true)}
+                onPause={handlePlayerPause}
+                onEnded={handlePlayerEnded}
+              >
+                Seu navegador nao suporta o elemento de video.
+              </video>
+
+              {isVideoLoading && !videoError && (
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/35">
+                  {content.thumbnail_url ? (
+                    <img
+                      src={content.thumbnail_url}
+                      alt={content.title}
+                      className="absolute inset-0 h-full w-full object-cover opacity-35"
+                    />
+                  ) : null}
+                  <div className="relative z-10 h-12 w-12 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                  <p className="relative z-10 text-sm text-white/80">Carregando video...</p>
+                </div>
+              )}
+            </div>
+          ) : videoError ? (
+            <div className="flex max-w-lg flex-col items-center gap-4 px-6 text-center text-white">
+              {content.thumbnail_url ? (
+                <img
+                  src={content.thumbnail_url}
+                  alt={content.title}
+                  className="max-h-[40vh] w-full rounded-2xl object-cover opacity-80"
+                />
+              ) : null}
+              <p className="text-base font-semibold">{videoError}</p>
+              {content.video_url ? (
+                <a
+                  href={content.video_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl bg-white px-4 py-3 font-semibold text-black"
+                >
+                  Abrir arquivo original
+                </a>
+              ) : null}
+            </div>
           ) : (
             <div className="text-white text-center">
               <p>Conteudo nao disponivel</p>
@@ -908,7 +997,7 @@ export default function VideoPlayer({
         </div>
 
         <AnimatePresence>
-          {showControls && !isExternalEmbed && (
+          {showControls && !isExternalEmbed && !isHtml5PlayerWithVideoURL && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

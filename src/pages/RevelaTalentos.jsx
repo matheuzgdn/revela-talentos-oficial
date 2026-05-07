@@ -18,6 +18,26 @@ import { redirectToPlatformLogin } from "@/lib/auth-routing";
 
 const HERO_POSTER_URL = "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&auto=format&fit=crop&q=75";
 const HERO_VIDEO_URL = "https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4";
+const IMAGE_FILE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.avif'];
+
+const isImageUrl = (url) => {
+  if (!url) return false;
+
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    return IMAGE_FILE_EXTENSIONS.some((extension) => pathname.endsWith(extension));
+  } catch {
+    const normalizedUrl = String(url).toLowerCase();
+    return IMAGE_FILE_EXTENSIONS.some((extension) => normalizedUrl.endsWith(extension));
+  }
+};
+
+const isPlayableContentItem = (content) => {
+  if (!content) return false;
+  if (content.live_embed_code) return true;
+  if (!content.video_url) return false;
+  return !isImageUrl(content.video_url);
+};
 
 export default function RevelaTalentosPage() {
   const { t } = useLanguage();
@@ -224,7 +244,10 @@ export default function RevelaTalentosPage() {
     { id: "preparacao_fisica", name: t('category.physical') },
   ], [t]);
 
-  const regularContents = useMemo(() => contents.filter(c => !['live', 'planos', 'atletas'].includes(c.category)), [contents]);
+  const regularContents = useMemo(
+    () => contents.filter((content) => !['live', 'planos', 'atletas'].includes(content.category) && isPlayableContentItem(content)),
+    [contents]
+  );
 
   // Hero: EC10 destaque + mentorias gravadas recentes
   const heroContents = useMemo(() => {
@@ -238,7 +261,7 @@ export default function RevelaTalentosPage() {
     };
 
     const mentoriasRecentes = contents
-      .filter(c => c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended'))
+      .filter(c => (c.category === 'mentoria' || (c.category === 'live' && c.status === 'ended')) && isPlayableContentItem(c))
       .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
       .slice(0, 9);
 
