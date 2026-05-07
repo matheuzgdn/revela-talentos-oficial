@@ -68,7 +68,7 @@ function LayoutInner({ children, currentPageName }) {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [hasLiveContent, setHasLiveContent] = useState(false);
-  const isLandingPage = ['escola-parceira', 'vsl-escola-parceira', 'evento', 'vsl-evento', 'cases-sucesso-atletas'].includes(currentPageName);
+  const isLandingPage = ['escola-parceira', 'vsl-escola-parceira', 'evento', 'vsl-evento', 'cases-sucesso-atletas', 'libertacademy'].includes(currentPageName);
 
 
   const loadUser = useCallback(async () => {

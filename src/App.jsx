@@ -119,6 +119,7 @@ const AuthenticatedApp = () => {
           'escolas-parceiras',
           'pais-atletas',
           'pais-e-atletas',
+          'libertacademy',
           'vsl-escola-parceira',
           'evento',
           'vsl-evento'
@@ -176,6 +177,7 @@ const BrowserThemeManager = () => {
       '/escolas-parceiras',
       '/pais-atletas',
       '/pais-e-atletas',
+      '/libertacademy',
       '/vsl-escola-parceira',
       '/evento',
       '/vsl-evento'

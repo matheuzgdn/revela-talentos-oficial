@@ -60,6 +60,7 @@ const DatacenterDocumentation = lazy(() => import('./pages/DatacenterDocumentati
 const Eventos = lazy(() => import('./pages/Eventos'));
 const Home = lazy(() => import('./pages/Home'));
 const Hub = lazy(() => import('./pages/Hub'));
+const LibertAcademy = lazy(() => import('./pages/LibertAcademy'));
 const Lives = lazy(() => import('./pages/Lives'));
 const MeusServicos = lazy(() => import('./pages/MeusServicos'));
 const PlanoCarreira = lazy(() => import('./pages/PlanoCarreira'));
@@ -87,6 +88,7 @@ export const PAGES = {
     "Eventos": Eventos,
     "Home": Home,
     "Hub": Hub,
+    "libertacademy": LibertAcademy,
     "Lives": Lives,
     "MeusServicos": MeusServicos,
     "PlanoCarreira": PlanoCarreira,
