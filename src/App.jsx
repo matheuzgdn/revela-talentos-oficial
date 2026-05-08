@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation, useNavig
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import { redirectToPlatformLogin } from '@/lib/auth-routing';
+import { buildPlatformLoginUrl, redirectToPlatformLogin, toPlatformUrl } from '@/lib/auth-routing';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -106,7 +106,7 @@ const AuthenticatedApp = () => {
         <ProtectedRoute isPublic={true}>
           <SuspendedPage>
             <LayoutWrapper currentPageName="checkout">
-              <CheckoutSuccess platformUrlOverride="https://revelatalentos.com/login?from_url=https%3A%2F%2Frevelatalentos.com%2F" />
+              <CheckoutSuccess platformUrlOverride={buildPlatformLoginUrl(toPlatformUrl('/'))} />
             </LayoutWrapper>
           </SuspendedPage>
         </ProtectedRoute>

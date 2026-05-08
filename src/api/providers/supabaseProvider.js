@@ -1,4 +1,5 @@
 import { supabase } from '@/api/supabaseClient';
+import { buildPlatformLoginUrl } from '@/lib/auth-routing';
 
 // â”€â”€ Entity name â†’ Supabase table name mapping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ENTITY_TABLE = {
@@ -109,17 +110,6 @@ const throwOnError = (result, context = '') => {
     throw err;
   }
   return result.data;
-};
-
-const buildLoginRedirectUrl = (nextPath) => {
-  if (typeof window === 'undefined') return null;
-
-  const loginUrl = new URL('/login', window.location.origin);
-  if (nextPath) {
-    loginUrl.searchParams.set('from_url', nextPath);
-  }
-
-  return loginUrl.toString();
 };
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -371,7 +361,7 @@ const auth = {
       throw new Error('Google login is only available in the browser.');
     }
 
-    const redirectTo = buildLoginRedirectUrl(nextPath);
+    const redirectTo = buildPlatformLoginUrl(nextPath);
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -440,7 +430,7 @@ const auth = {
 
   redirectToLogin(nextPath) {
     if (typeof window === 'undefined') return;
-    window.location.href = buildLoginRedirectUrl(nextPath);
+    window.location.href = buildPlatformLoginUrl(nextPath);
   }
 };
 

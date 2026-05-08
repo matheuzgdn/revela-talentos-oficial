@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/AuthContext';
+import { toPlatformUrl } from '@/lib/auth-routing';
 
 import jsPDF from 'jspdf';
 import {
@@ -63,7 +64,7 @@ export default function CheckoutSuccess({
       return;
     }
 
-    window.location.href = 'https://revelatalentos.com/';
+    window.location.href = toPlatformUrl('/');
   };
 
   const downloadReceipt = () => {

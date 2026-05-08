@@ -9,12 +9,92 @@ const ZONA_MEMBROS_PATH = createPageUrl('ZonaMembros');
 const ADMIN_PATH = createPageUrl('Admin');
 const REVELA_TALENTOS_PATH = createPageUrl('RevelaTalentos');
 const PLANO_CARREIRA_PATH = createPageUrl('PlanoCarreira');
+const DEFAULT_PLATFORM_ORIGIN = 'https://revelatalentos.com.br';
+const KNOWN_PLATFORM_HOSTS = new Set([
+  'revelatalentos.com',
+  'www.revelatalentos.com',
+  'revelatalentos.com.br',
+  'www.revelatalentos.com.br',
+]);
+
+const parseOrigin = (value) => {
+  if (!value) return null;
+
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+};
+
+const isKnownPlatformHost = (hostname = '') => KNOWN_PLATFORM_HOSTS.has(String(hostname).toLowerCase());
+
+export const getPlatformOrigin = () => {
+  const configuredOrigin = parseOrigin(import.meta.env.VITE_PUBLIC_APP_ORIGIN);
+  if (configuredOrigin) {
+    return configuredOrigin;
+  }
+
+  if (typeof window === 'undefined') {
+    return DEFAULT_PLATFORM_ORIGIN;
+  }
+
+  const runtimeOrigin = parseOrigin(window.location.origin);
+  if (!runtimeOrigin) {
+    return DEFAULT_PLATFORM_ORIGIN;
+  }
+
+  try {
+    const runtimeUrl = new URL(runtimeOrigin);
+    return isKnownPlatformHost(runtimeUrl.hostname) ? DEFAULT_PLATFORM_ORIGIN : runtimeOrigin;
+  } catch {
+    return DEFAULT_PLATFORM_ORIGIN;
+  }
+};
+
+export const toPlatformUrl = (targetPath = '/', { absolute = true } = {}) => {
+  const platformOrigin = getPlatformOrigin();
+  const fallbackUrl = new URL(targetPath || '/', platformOrigin);
+
+  try {
+    const resolvedUrl = new URL(targetPath || '/', platformOrigin);
+
+    if (isKnownPlatformHost(resolvedUrl.hostname)) {
+      const canonicalUrl = new URL(
+        `${resolvedUrl.pathname}${resolvedUrl.search}${resolvedUrl.hash}`,
+        platformOrigin,
+      );
+
+      return absolute
+        ? canonicalUrl.toString()
+        : `${canonicalUrl.pathname}${canonicalUrl.search}${canonicalUrl.hash}`;
+    }
+
+    return absolute
+      ? resolvedUrl.toString()
+      : `${resolvedUrl.pathname}${resolvedUrl.search}${resolvedUrl.hash}`;
+  } catch {
+    return absolute
+      ? fallbackUrl.toString()
+      : `${fallbackUrl.pathname}${fallbackUrl.search}${fallbackUrl.hash}`;
+  }
+};
+
+export const buildPlatformLoginUrl = (nextPath) => {
+  const loginUrl = new URL(LOGIN_PATH, getPlatformOrigin());
+
+  if (nextPath) {
+    loginUrl.searchParams.set('from_url', toPlatformUrl(nextPath));
+  }
+
+  return loginUrl.toString();
+};
 
 const normalizePathname = (targetPath) => {
   if (!targetPath) return '';
 
   try {
-    const url = new URL(targetPath, typeof window !== 'undefined' ? window.location.origin : 'https://example.com');
+    const url = new URL(targetPath, getPlatformOrigin());
     return url.pathname || '';
   } catch {
     return targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
@@ -55,12 +135,5 @@ export const resolveAuthenticatedRedirectPath = (user, requestedPath) => {
 
 export const redirectToPlatformLogin = (nextPath) => {
   if (typeof window === 'undefined') return;
-
-  const loginUrl = new URL(LOGIN_PATH, window.location.origin);
-
-  if (nextPath) {
-    loginUrl.searchParams.set('from_url', nextPath);
-  }
-
-  window.location.href = loginUrl.toString();
+  window.location.href = buildPlatformLoginUrl(nextPath);
 };

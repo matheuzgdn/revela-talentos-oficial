@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { LazyImage, LazySection, LazyVideo } from '../ui/LazyMedia';
+import { redirectToPlatformLogin } from '@/lib/auth-routing';
 const CTA_LINK = "https://www.ec10talentos.com/_paylink/AZ1-ne5r";
 const WHATSAPP_LINK = `https://wa.me/553182331411?text=${encodeURIComponent("Quero saber mais sobre o plano de carreira da Revela Talentos.")}`;
 const HERO_VIDEO_SRC = "https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/720p/mp4/file.mp4";
@@ -329,7 +330,7 @@ export default function RevelaTalentosLanding({ onLoginClick }) {
       return;
     }
 
-    window.location.href = `${window.location.origin}/login?from_url=${encodeURIComponent(window.location.href)}`;
+    redirectToPlatformLogin(window.location.href);
   }, [onLoginClick]);
 
   useEffect(() => {

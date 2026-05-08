@@ -5,7 +5,7 @@ import ProfileSetup from '@/components/athlete/ProfileSetup';
 import VideoPlayer from '@/components/content/VideoPlayer';
 import LiveStreamPlayer from '@/components/content/LiveStreamPlayer';
 import { createPageUrl } from '@/utils';
-import { isAdminUser } from '@/lib/auth-routing';
+import { isAdminUser, toPlatformUrl } from '@/lib/auth-routing';
 /* ================== CONSTANTS ================== */
 const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c';
 const EVENTS = [
@@ -502,7 +502,7 @@ export default function ZonaMembros() {
 
     const handleLogout = async () => {
         try {
-            await appClient.auth.logout(window.location.origin);
+            await appClient.auth.logout(toPlatformUrl('/'));
         } catch (error) {
             console.error("Erro no logout:", error);
         }

@@ -1,10 +1,12 @@
 import { appClient } from '@/api/backendClient';
+import { createPageUrl } from '@/utils';
+import { toPlatformUrl } from '@/lib/auth-routing';
 
 export const normalizeInviteEmail = (email = '') => email.trim().toLowerCase();
 
 export const buildZonaMembrosInviteMessage = ({ email, fullName, destinationUrl }) => {
   const safeEmail = normalizeInviteEmail(email);
-  const zonaLink = destinationUrl || `${window.location.origin}/ZonaMembros`;
+  const zonaLink = destinationUrl || toPlatformUrl(createPageUrl('ZonaMembros'));
 
   return `Olá${fullName ? ` ${fullName}` : ''}!
 

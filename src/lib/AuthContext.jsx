@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { completeAuthSessionFromUrl, supabase } from '@/api/supabaseClient';
 import { appClient } from '@/api/backendClient';
+import { buildPlatformLoginUrl } from '@/lib/auth-routing';
 
 const AuthContext = createContext();
 
@@ -132,13 +133,13 @@ export const AuthProvider = ({ children }) => {
     await supabase.auth.signOut();
 
     if (shouldRedirect && typeof window !== 'undefined') {
-      window.location.href = '/login';
+      window.location.href = buildPlatformLoginUrl();
     }
   };
 
   const navigateToLogin = () => {
     if (typeof window !== 'undefined') {
-      window.location.href = '/login';
+      window.location.href = buildPlatformLoginUrl(window.location.href);
     }
   };
 

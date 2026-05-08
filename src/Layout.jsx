@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { appClient } from "@/api/backendClient";
-import { getDefaultAuthenticatedPath, isAdminUser, redirectToPlatformLogin } from "@/lib/auth-routing";
+import { getDefaultAuthenticatedPath, isAdminUser, redirectToPlatformLogin, toPlatformUrl } from "@/lib/auth-routing";
 
 
 import { LanguageProvider, useLanguage } from "@/components/i18n/LanguageContext";
@@ -138,7 +138,7 @@ function LayoutInner({ children, currentPageName }) {
 
 
   const handleLogout = () => {
-    appClient.auth.logout(window.location.origin);
+    appClient.auth.logout(toPlatformUrl('/'));
   };
 
   const handleNavClick = (item) => {
