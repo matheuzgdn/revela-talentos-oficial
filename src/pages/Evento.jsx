@@ -662,7 +662,7 @@ export default function Evento() {
 
                   <div className="flex flex-wrap items-stretch gap-3 pt-1">
                     <Button asChild className="hero-cta-primary h-auto min-h-[56px] justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-6 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white">
-                      <a href="https://www.ec10talentos.com/_paylink/AZ1-ne5r" target="_blank" rel="noreferrer">
+                      <a href="https://ec10talentos.wixsite.com/website-10/_paylink/AZ5ihGoP" target="_blank" rel="noreferrer">
                         <Calendar className="h-5 w-5" />
                         Quero participar
                       </a>
@@ -808,7 +808,7 @@ export default function Evento() {
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-stretch">
                 <Button asChild className="hero-cta-primary h-auto min-h-[52px] w-full justify-center gap-3 whitespace-normal rounded-[1.15rem] border border-cyan-200/35 px-5 py-3 text-sm font-semibold uppercase leading-tight tracking-[0.04em] text-white sm:min-h-[58px] md:w-auto md:px-6 md:text-base">
-                  <a href="https://www.ec10talentos.com/_paylink/AZ1-ne5r" target="_blank" rel="noreferrer">
+                  <a href="https://ec10talentos.wixsite.com/website-10/_paylink/AZ5ihGoP" target="_blank" rel="noreferrer">
                     <Calendar className="h-5 w-5" />
                     Quero participar
                   </a>

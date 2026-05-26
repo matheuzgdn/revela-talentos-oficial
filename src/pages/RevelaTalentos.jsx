@@ -876,7 +876,7 @@ export default function RevelaTalentosPage() {
                 Este conteúdo faz parte do pacote completo da plataforma EC10 Talentos. Adquira agora para ter acesso ilimitado a todos os conteúdos, vídeos e recursos exclusivos.
               </p>
               <a
-                href="https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c"
+                href="https://ec10talentos.wixsite.com/website-10/_paylink/AZ5ihGoP"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-gradient-to-r from-[#00E5FF] to-[#0066FF] hover:from-[#00BFFF] hover:to-[#0055EE] text-black font-black text-base rounded-2xl shadow-xl shadow-[#00E5FF]/30 transition-all duration-300 hover:-translate-y-0.5 relative overflow-hidden group mb-3"

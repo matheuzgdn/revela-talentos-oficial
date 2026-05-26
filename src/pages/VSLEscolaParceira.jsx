@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 
 const videoUrl = 'https://video.wixstatic.com/video/933cdd_0331ab67517b44d0af21dd72e8b0cb59/1080p/mp4/file.mp4';
 const posterUrl = 'https://static.wixstatic.com/media/933cdd_7baddddb15fc4bb0ad2e2455589ba598~mv2.jpg/v1/fill/w_1200,h_675,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/Eric%20Cena.jpg';
-const enrollmentUrl = 'https://www.ec10talentos.com/_paylink/AZ1-ne5r';
+const enrollmentUrl = 'https://ec10talentos.wixsite.com/website-10/_paylink/AZ5ihGoP';
 
 export default function VSLEscolaParceira() {
   const [isFocusedPlayback, setIsFocusedPlayback] = useState(false);

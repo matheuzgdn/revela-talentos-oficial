@@ -7,7 +7,7 @@ import LiveStreamPlayer from '@/components/content/LiveStreamPlayer';
 import { createPageUrl } from '@/utils';
 import { isAdminUser, toPlatformUrl } from '@/lib/auth-routing';
 /* ================== CONSTANTS ================== */
-const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/checkout-1?checkoutId=ca727402-ea59-4e7a-84dc-e0f05aa8f174&currency=BRL&contentAppId=324cf725-53d9-4bb2-b8f6-0c8ec9a77f45&contentComponentId=4ca49999-12ba-46d7-8dca-03ee4a6c1b7c';
+const PURCHASE_URL = 'https://ec10talentos.wixsite.com/website-10/_paylink/AZ5ihGoP';
 const EVENTS = [
     { id: 1, nome: 'Sudacademy', city: 'Belo Horizonte', country: 'Brasil', month: 'Diciembre', pos: { top: '61.5%', left: '37.5%' } },
     { id: 2, nome: 'Libertacademy', city: 'Buenos Aires', country: 'Argentina', month: 'Julio', pos: { top: '76.4%', left: '34.3%' } },
