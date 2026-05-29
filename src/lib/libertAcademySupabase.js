@@ -1,6 +1,7 @@
 import { supabase } from "@/api/supabaseClient";
 
 export const LIBERT_ACADEMY_CATEGORIES = ["Sub10", "Sub12", "Sub14"];
+export const LIBERT_ACADEMY_ACCESS_SLUG = "acesso";
 
 export const normalizeLibertAcademySlug = (value = "") =>
   String(value)
@@ -18,8 +19,16 @@ export const getLibertAcademyRegistrationUrl = (slug, origin = window.location.o
     : `${origin}/libertacademy`;
 };
 
+export const getLibertAcademyAccessUrl = (origin = window.location.origin) =>
+  `${origin}/libertacademy/escola/${LIBERT_ACADEMY_ACCESS_SLUG}`;
+
 export const getLibertAcademyPortalUrl = (slug, accessKey, origin = window.location.origin) => {
   const normalizedSlug = normalizeLibertAcademySlug(slug);
+  if (!normalizedSlug || normalizedSlug === LIBERT_ACADEMY_ACCESS_SLUG) {
+    const keySuffix = accessKey ? `?senha=${encodeURIComponent(accessKey)}` : "";
+    return `${getLibertAcademyAccessUrl(origin)}${keySuffix}`;
+  }
+
   const keySuffix = accessKey ? `?key=${encodeURIComponent(accessKey)}` : "";
   return `${origin}/libertacademy/escola/${encodeURIComponent(normalizedSlug)}${keySuffix}`;
 };
@@ -59,13 +68,13 @@ export async function submitLibertAcademyRegistration(payload = {}) {
 
 export async function getLibertAcademySchoolPortal(slug, accessKey) {
   const normalizedSlug = normalizeLibertAcademySlug(slug);
-  if (!normalizedSlug || !accessKey) {
-    throw new Error("Informe a escola e a chave de acesso.");
+  if (!accessKey) {
+    throw new Error("Informe a senha da escola.");
   }
 
   const { data, error } = await supabase
     .rpc("libertacademy_get_school_portal", {
-      p_school_slug: normalizedSlug,
+      p_school_slug: normalizedSlug && normalizedSlug !== LIBERT_ACADEMY_ACCESS_SLUG ? normalizedSlug : null,
       p_access_key: accessKey,
     })
     .single();
@@ -75,5 +84,16 @@ export async function getLibertAcademySchoolPortal(slug, accessKey) {
     ...data,
     registrations: Array.isArray(data?.registrations) ? data.registrations : [],
     category_counts: data?.category_counts || {},
+  };
+}
+
+export async function getLibertAcademyAdminPortal() {
+  const { data, error } = await supabase
+    .rpc("libertacademy_get_admin_portal");
+
+  if (error) throw error;
+  return {
+    ...data,
+    schools: Array.isArray(data?.schools) ? data.schools : [],
   };
 }

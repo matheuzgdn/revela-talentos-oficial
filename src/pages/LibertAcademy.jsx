@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { syncLibertAcademyRegistrationToSheets } from "@/lib/libertAcademySheets";
 import {
   LIBERT_ACADEMY_CATEGORIES,
-  getLibertAcademyPortalUrl,
+  getLibertAcademyAccessUrl,
   getLibertAcademyPublicSchool,
   getLibertAcademyRegistrationUrl,
   normalizeLibertAcademySlug,
@@ -69,7 +69,7 @@ const copy = {
     copy: "Copiar",
     copied: "Copiado.",
     registrationLink: "Link de cadastro da escola",
-    portalLink: "Link privado do painel",
+    portalLink: "Link unico de acesso",
     portalPassword: "Senha da escola",
     portalWarning: "Compartilhe o link do painel e a senha apenas com o responsavel da escola.",
     ruleOne: "Categorias Sub10, Sub12 e Sub14.",
@@ -119,7 +119,7 @@ const copy = {
     copy: "Copiar",
     copied: "Copiado.",
     registrationLink: "Enlace de registro de la escuela",
-    portalLink: "Enlace privado del panel",
+    portalLink: "Enlace unico de acceso",
     portalPassword: "Contrasena de la escuela",
     portalWarning: "Comparte el enlace del panel y la contrasena solamente con el responsable de la escuela.",
     ruleOne: "Categorias Sub10, Sub12 y Sub14.",
@@ -231,7 +231,7 @@ export default function LibertAcademy() {
       ? getLibertAcademyRegistrationUrl(linkedSchool.slug)
       : "";
   const schoolPortalUrl = submitResult?.school_created
-    ? getLibertAcademyPortalUrl(submitResult.school_slug)
+    ? getLibertAcademyAccessUrl()
     : "";
   const schoolPortalPassword = submitResult?.school_created ? submitResult.school_portal_password : "";
 
@@ -360,7 +360,7 @@ export default function LibertAcademy() {
             <div className="flex items-center gap-2">
               {linkedSchool?.slug && (
                 <Button asChild variant="outline" className="hidden rounded-md border-white/15 bg-white/5 text-white hover:bg-white/10 sm:inline-flex">
-                  <Link to={`/libertacademy/escola/${linkedSchool.slug}`}>
+                  <Link to="/libertacademy/escola/acesso">
                     <LockKeyhole className="mr-2 h-4 w-4" />
                     {t.portalCta}
                   </Link>
