@@ -52,6 +52,8 @@ const ENTITY_TABLE = {
   AppLog: 'app_logs',
   LivePlaybackLog: 'live_playback_logs',
   LivePlaybackLogs: 'live_playback_logs',
+  LibertAcademySchool: 'libertacademy_schools',
+  LibertAcademyRegistration: 'libertacademy_registrations',
   Invite: 'invites',
   AccessWhitelist: 'access_whitelist',
   PlatformSettings: 'platform_settings',

@@ -17,6 +17,7 @@ const EmptyPage = () => null;
 const MainPage = mainPageKey ? Pages[mainPageKey] : EmptyPage;
 const CheckoutSuccess = lazy(() => import('./pages/checkout'));
 const LoginPage = lazy(() => import('./pages/Login'));
+const LibertAcademySchoolPortal = lazy(() => import('./pages/LibertAcademySchoolPortal'));
 
 const PageFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#040507]">
@@ -112,6 +113,15 @@ const AuthenticatedApp = () => {
         </ProtectedRoute>
       } />
       <Route path="/checkout" element={<Navigate to="/thanks" replace />} />
+      <Route path="/libertacademy/escola/:schoolSlug" element={
+        <ProtectedRoute isPublic={true}>
+          <SuspendedPage>
+            <LayoutWrapper currentPageName="libertacademy-school">
+              <LibertAcademySchoolPortal />
+            </LayoutWrapper>
+          </SuspendedPage>
+        </ProtectedRoute>
+      } />
       {Object.entries(Pages).map(([path, Page]) => {
         const isPublicPage = [
           'cases-sucesso-atletas',
@@ -181,7 +191,7 @@ const BrowserThemeManager = () => {
       '/vsl-escola-parceira',
       '/evento',
       '/vsl-evento'
-    ].includes(location.pathname);
+    ].includes(location.pathname) || location.pathname.startsWith('/libertacademy/escola/');
     const themeColor = isEscolaFlow ? '#07111f' : '#040507';
     const background = isEscolaFlow
       ? 'linear-gradient(180deg, #040507 0%, #07111f 100%)'
