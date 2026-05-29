@@ -63,14 +63,15 @@ const copy = {
     loadingSchool: "Carregando escola...",
     schoolNotFound: "Escola nao encontrada. O formulario foi aberto em modo geral.",
     success: "Cadastro enviado com sucesso.",
-    newSchoolSuccess: "Escola criada. Guarde os links abaixo para os proximos cadastros.",
+    newSchoolSuccess: "Escola criada. Guarde o link do painel e a senha da escola.",
     errorRequired: "Preencha nome completo, data de nascimento, escola e categoria.",
     errorGeneral: "Nao foi possivel enviar o cadastro agora. Tente novamente.",
     copy: "Copiar",
     copied: "Copiado.",
     registrationLink: "Link de cadastro da escola",
     portalLink: "Link privado do painel",
-    portalWarning: "Compartilhe o link do painel apenas com o responsavel da escola.",
+    portalPassword: "Senha da escola",
+    portalWarning: "Compartilhe o link do painel e a senha apenas com o responsavel da escola.",
     ruleOne: "Categorias Sub10, Sub12 e Sub14.",
     ruleTwo: "Disputa em Buenos Aires, Argentina.",
     ruleThree: "Painel privado por escola, sem acesso aos dados de outras equipes.",
@@ -112,14 +113,15 @@ const copy = {
     loadingSchool: "Cargando escuela...",
     schoolNotFound: "Escuela no encontrada. El formulario se abrio en modo general.",
     success: "Registro enviado con exito.",
-    newSchoolSuccess: "Escuela creada. Guarda los enlaces abajo para los proximos registros.",
+    newSchoolSuccess: "Escuela creada. Guarda el enlace del panel y la contrasena de la escuela.",
     errorRequired: "Completa nombre, fecha de nacimiento, escuela y categoria.",
     errorGeneral: "No fue posible enviar el registro ahora. Intentalo nuevamente.",
     copy: "Copiar",
     copied: "Copiado.",
     registrationLink: "Enlace de registro de la escuela",
     portalLink: "Enlace privado del panel",
-    portalWarning: "Comparte el enlace del panel solamente con el responsable de la escuela.",
+    portalPassword: "Contrasena de la escuela",
+    portalWarning: "Comparte el enlace del panel y la contrasena solamente con el responsable de la escuela.",
     ruleOne: "Categorias Sub10, Sub12 y Sub14.",
     ruleTwo: "Competencia en Buenos Aires, Argentina.",
     ruleThree: "Panel privado por escuela, sin acceso a datos de otros equipos.",
@@ -175,6 +177,31 @@ function LinkBox({ label, value, onCopy, warning }) {
   );
 }
 
+function SecretBox({ label, value, onCopy }) {
+  if (!value) return null;
+
+  return (
+    <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#f2c94c]">{label}</p>
+          <code className="mt-2 block break-all text-base font-black leading-6 text-white">{value}</code>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => onCopy(value)}
+          className="shrink-0 rounded-md border-white/15 bg-white/5 text-white hover:bg-white/10"
+        >
+          <Clipboard className="mr-2 h-4 w-4" />
+          Copiar
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function LibertAcademy() {
   const [searchParams] = useSearchParams();
   const schoolSlugParam = normalizeLibertAcademySlug(
@@ -203,9 +230,10 @@ export default function LibertAcademy() {
     : linkedSchool?.slug
       ? getLibertAcademyRegistrationUrl(linkedSchool.slug)
       : "";
-  const schoolPortalUrl = submitResult?.school_created && submitResult?.school_access_key
-    ? getLibertAcademyPortalUrl(submitResult.school_slug, submitResult.school_access_key)
+  const schoolPortalUrl = submitResult?.school_created
+    ? getLibertAcademyPortalUrl(submitResult.school_slug)
     : "";
+  const schoolPortalPassword = submitResult?.school_created ? submitResult.school_portal_password : "";
 
   useEffect(() => {
     document.title = `${t.title} - ${t.location}`;
@@ -397,6 +425,7 @@ export default function LibertAcademy() {
                 </div>
                 <LinkBox label={t.registrationLink} value={schoolRegistrationUrl} onCopy={handleCopy} />
                 <LinkBox label={t.portalLink} value={schoolPortalUrl} onCopy={handleCopy} warning={t.portalWarning} />
+                <SecretBox label={t.portalPassword} value={schoolPortalPassword} onCopy={handleCopy} />
               </div>
             )}
 

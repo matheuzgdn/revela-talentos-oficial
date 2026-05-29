@@ -24,11 +24,11 @@ import {
 const portalCopy = {
   title: "Painel da escola",
   subtitle: "Acompanhe os atletas cadastrados para a LibertAcademy.",
-  keyLabel: "Chave de acesso",
-  keyPlaceholder: "Cole a chave da escola",
+  keyLabel: "Senha da escola",
+  keyPlaceholder: "Digite a senha da escola",
   load: "Acessar painel",
   loading: "Carregando...",
-  invalid: "Nao foi possivel abrir o painel. Verifique a chave de acesso.",
+  invalid: "Nao foi possivel abrir o painel. Verifique a senha da escola.",
   registrationLink: "Link de cadastro",
   copy: "Copiar",
   copied: "Copiado.",
@@ -65,8 +65,8 @@ export default function LibertAcademySchoolPortal() {
   const { schoolSlug = "" } = useParams();
   const [searchParams] = useSearchParams();
   const normalizedSlug = normalizeLibertAcademySlug(schoolSlug);
-  const storageKey = `libertacademy-school-key:${normalizedSlug}`;
-  const initialKey = searchParams.get("key") || sessionStorage.getItem(storageKey) || "";
+  const storageKey = `libertacademy-school-password:${normalizedSlug}`;
+  const initialKey = searchParams.get("senha") || searchParams.get("key") || sessionStorage.getItem(storageKey) || "";
   const [accessKey, setAccessKey] = useState(initialKey);
   const [portalData, setPortalData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -171,10 +171,10 @@ export default function LibertAcademySchoolPortal() {
             </div>
 
             <div className="mt-6 space-y-3">
-              <Label htmlFor="school-access-key" className="text-white/82">{portalCopy.keyLabel}</Label>
+              <Label htmlFor="school-password" className="text-white/82">{portalCopy.keyLabel}</Label>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Input
-                  id="school-access-key"
+                  id="school-password"
                   type="password"
                   value={accessKey}
                   onChange={(event) => setAccessKey(event.target.value)}
@@ -294,7 +294,7 @@ export default function LibertAcademySchoolPortal() {
             ) : (
               <div className="rounded-lg border border-white/10 bg-white/[0.04] p-8 text-center">
                 <LockKeyhole className="mx-auto h-8 w-8 text-[#f2c94c]" />
-                <h2 className="mt-4 text-2xl font-black">Digite a chave para abrir o painel</h2>
+                <h2 className="mt-4 text-2xl font-black">Digite a senha para abrir o painel</h2>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-white/58">
                   Esse painel mostra somente os alunos da escola vinculada ao link.
                 </p>
