@@ -46,14 +46,16 @@ const copy = {
     fullName: "Nome completo",
     fullNamePlaceholder: "Nome completo do atleta",
     birthDate: "Data de nascimento",
-    documentId: "CPF ou documento",
-    documentPlaceholder: "Documento do atleta",
+    documentId: "CPF (opcional)",
+    documentPlaceholder: "CPF do atleta, se tiver",
     schoolName: "Nome da escola",
     schoolPlaceholder: "Nome da escola participante",
+    contactDetails: "Dados da escola (opcional)",
+    contactDetailsText: "Use somente se quiser deixar um contato para a organizacao ou receber os links depois.",
     contactName: "Responsavel da escola",
     contactNamePlaceholder: "Nome do responsavel",
-    contactEmail: "E-mail do responsavel",
-    contactPhone: "WhatsApp do responsavel",
+    contactEmail: "E-mail do responsavel (opcional)",
+    contactPhone: "WhatsApp do responsavel (opcional)",
     category: "Categoria",
     categoryPlaceholder: "Selecione a categoria",
     submit: "Cadastrar atleta",
@@ -62,7 +64,7 @@ const copy = {
     schoolNotFound: "Escola nao encontrada. O formulario foi aberto em modo geral.",
     success: "Cadastro enviado com sucesso.",
     newSchoolSuccess: "Escola criada. Guarde os links abaixo para os proximos cadastros.",
-    errorRequired: "Preencha nome completo, data de nascimento, documento, escola e categoria.",
+    errorRequired: "Preencha nome completo, data de nascimento, escola e categoria.",
     errorGeneral: "Nao foi possivel enviar o cadastro agora. Tente novamente.",
     copy: "Copiar",
     copied: "Copiado.",
@@ -93,14 +95,16 @@ const copy = {
     fullName: "Nombre completo",
     fullNamePlaceholder: "Nombre completo del atleta",
     birthDate: "Fecha de nacimiento",
-    documentId: "CPF o documento",
-    documentPlaceholder: "Documento del atleta",
+    documentId: "CPF (opcional)",
+    documentPlaceholder: "CPF del atleta, si tiene",
     schoolName: "Nombre de la escuela",
     schoolPlaceholder: "Nombre de la escuela participante",
+    contactDetails: "Datos de la escuela (opcional)",
+    contactDetailsText: "Usa solo si quieres dejar un contacto para la organizacion o recibir los enlaces despues.",
     contactName: "Responsable de la escuela",
     contactNamePlaceholder: "Nombre del responsable",
-    contactEmail: "E-mail del responsable",
-    contactPhone: "WhatsApp del responsable",
+    contactEmail: "E-mail del responsable (opcional)",
+    contactPhone: "WhatsApp del responsable (opcional)",
     category: "Categoria",
     categoryPlaceholder: "Selecciona la categoria",
     submit: "Registrar atleta",
@@ -109,7 +113,7 @@ const copy = {
     schoolNotFound: "Escuela no encontrada. El formulario se abrio en modo general.",
     success: "Registro enviado con exito.",
     newSchoolSuccess: "Escuela creada. Guarda los enlaces abajo para los proximos registros.",
-    errorRequired: "Completa nombre, fecha de nacimiento, documento, escuela y categoria.",
+    errorRequired: "Completa nombre, fecha de nacimiento, escuela y categoria.",
     errorGeneral: "No fue posible enviar el registro ahora. Intentalo nuevamente.",
     copy: "Copiar",
     copied: "Copiado.",
@@ -260,7 +264,6 @@ export default function LibertAcademy() {
     Boolean(
       normalizeValue(formData.athlete_full_name) &&
       formData.birth_date &&
-      normalizeValue(formData.document_id) &&
       normalizeValue(formData.school_name) &&
       formData.category
     );
@@ -399,58 +402,6 @@ export default function LibertAcademy() {
 
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="space-y-2">
-                <Label htmlFor="libert-school" className="text-white/82">{t.schoolName}</Label>
-                <Input
-                  id="libert-school"
-                  value={formData.school_name}
-                  onChange={(event) => handleFieldChange("school_name", event.target.value)}
-                  placeholder={t.schoolPlaceholder}
-                  autoComplete="organization"
-                  readOnly={isSchoolLocked}
-                  className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35 read-only:bg-white/[0.08]"
-                />
-              </div>
-
-              {!isSchoolLocked && (
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <div className="space-y-2">
-                    <Label htmlFor="libert-contact-name" className="text-white/82">{t.contactName}</Label>
-                    <Input
-                      id="libert-contact-name"
-                      value={formData.contact_name}
-                      onChange={(event) => handleFieldChange("contact_name", event.target.value)}
-                      placeholder={t.contactNamePlaceholder}
-                      autoComplete="name"
-                      className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="libert-contact-email" className="text-white/82">{t.contactEmail}</Label>
-                    <Input
-                      id="libert-contact-email"
-                      type="email"
-                      value={formData.contact_email}
-                      onChange={(event) => handleFieldChange("contact_email", event.target.value)}
-                      placeholder="email@escola.com"
-                      autoComplete="email"
-                      className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="libert-contact-phone" className="text-white/82">{t.contactPhone}</Label>
-                    <Input
-                      id="libert-contact-phone"
-                      value={formData.contact_phone}
-                      onChange={(event) => handleFieldChange("contact_phone", event.target.value)}
-                      placeholder="+55 31 99999-9999"
-                      autoComplete="tel"
-                      className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-2">
                 <Label htmlFor="libert-full-name" className="text-white/82">{t.fullName}</Label>
                 <Input
                   id="libert-full-name"
@@ -486,20 +437,77 @@ export default function LibertAcademy() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="libert-category" className="text-white/82">{t.category}</Label>
-                <select
-                  id="libert-category"
-                  value={formData.category}
-                  onChange={(event) => handleFieldChange("category", event.target.value)}
-                  className="h-12 w-full rounded-md border border-white/12 bg-[#15150f] px-3 text-sm text-white outline-none ring-offset-background focus:ring-2 focus:ring-[#f2c94c]/50"
-                >
-                  <option value="" className="bg-[#11110d]">{t.categoryPlaceholder}</option>
-                  {LIBERT_ACADEMY_CATEGORIES.map((category) => (
-                    <option key={category} value={category} className="bg-[#11110d]">{category}</option>
-                  ))}
-                </select>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="libert-school" className="text-white/82">{t.schoolName}</Label>
+                  <Input
+                    id="libert-school"
+                    value={formData.school_name}
+                    onChange={(event) => handleFieldChange("school_name", event.target.value)}
+                    placeholder={t.schoolPlaceholder}
+                    autoComplete="organization"
+                    readOnly={isSchoolLocked}
+                    className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35 read-only:bg-white/[0.08]"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="libert-category" className="text-white/82">{t.category}</Label>
+                  <select
+                    id="libert-category"
+                    value={formData.category}
+                    onChange={(event) => handleFieldChange("category", event.target.value)}
+                    className="h-12 w-full rounded-md border border-white/12 bg-[#15150f] px-3 text-sm text-white outline-none ring-offset-background focus:ring-2 focus:ring-[#f2c94c]/50"
+                  >
+                    <option value="" className="bg-[#11110d]">{t.categoryPlaceholder}</option>
+                    {LIBERT_ACADEMY_CATEGORIES.map((category) => (
+                      <option key={category} value={category} className="bg-[#11110d]">{category}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
+
+              {!isSchoolLocked && (
+                <details className="rounded-md border border-white/10 bg-white/[0.025] p-4">
+                  <summary className="cursor-pointer text-sm font-bold text-white/82">{t.contactDetails}</summary>
+                  <p className="mt-2 text-xs leading-5 text-white/52">{t.contactDetailsText}</p>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="libert-contact-name" className="text-white/82">{t.contactName}</Label>
+                      <Input
+                        id="libert-contact-name"
+                        value={formData.contact_name}
+                        onChange={(event) => handleFieldChange("contact_name", event.target.value)}
+                        placeholder={t.contactNamePlaceholder}
+                        autoComplete="name"
+                        className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="libert-contact-email" className="text-white/82">{t.contactEmail}</Label>
+                      <Input
+                        id="libert-contact-email"
+                        type="email"
+                        value={formData.contact_email}
+                        onChange={(event) => handleFieldChange("contact_email", event.target.value)}
+                        placeholder="email@escola.com"
+                        autoComplete="email"
+                        className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="libert-contact-phone" className="text-white/82">{t.contactPhone}</Label>
+                      <Input
+                        id="libert-contact-phone"
+                        value={formData.contact_phone}
+                        onChange={(event) => handleFieldChange("contact_phone", event.target.value)}
+                        placeholder="+55 31 99999-9999"
+                        autoComplete="tel"
+                        className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+                      />
+                    </div>
+                  </div>
+                </details>
+              )}
 
               <Button
                 type="submit"
