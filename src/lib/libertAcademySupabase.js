@@ -87,6 +87,25 @@ export async function getLibertAcademySchoolPortal(slug, accessKey) {
   };
 }
 
+export async function updateLibertAcademySchoolRegistration(slug, accessKey, registrationId, payload = {}) {
+  const normalizedSlug = normalizeLibertAcademySlug(slug);
+  if (!accessKey || !registrationId) {
+    throw new Error("Dados de acesso da escola invalidos.");
+  }
+
+  const { data, error } = await supabase.rpc("libertacademy_update_school_registration", {
+    p_school_slug: normalizedSlug || null,
+    p_access_key: accessKey,
+    p_registration_id: registrationId,
+    p_birth_date: payload.birth_date || null,
+    p_document_id: payload.document_id || null,
+    p_category: payload.category || null,
+  });
+
+  if (error) throw error;
+  return data;
+}
+
 export async function getLibertAcademyAdminPortal() {
   const { data, error } = await supabase
     .rpc("libertacademy_get_admin_portal");
