@@ -12,10 +12,21 @@ import {
   RefreshCcw,
   Search,
   ShieldCheck,
+  Trash2,
   Trophy,
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -39,6 +50,7 @@ import { buildPlatformLoginUrl, isAdminUser } from "@/lib/auth-routing";
 import {
   LIBERT_ACADEMY_ACCESS_SLUG,
   createLibertAcademySchoolRegistration,
+  deleteLibertAcademySchoolRegistration,
   getLibertAcademyAccessUrl,
   getLibertAcademyAdminPortal,
   getLibertAcademyRegistrationUrl,
@@ -120,7 +132,7 @@ function downloadRowsAsCsv(rows, filename) {
   URL.revokeObjectURL(url);
 }
 
-function SchoolTable({ registrations, onEdit }) {
+function SchoolTable({ registrations, onEdit, onDelete }) {
   return (
     <div className="overflow-hidden rounded-lg border border-white/10 bg-[#11110d]">
       <div className="divide-y divide-white/8 md:hidden">
@@ -145,16 +157,33 @@ function SchoolTable({ registrations, onEdit }) {
                 <p className="mt-1 text-white/78">{registration.document_id || "-"}</p>
               </div>
             </div>
-            {onEdit && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onEdit(registration)}
-                className="mt-4 w-full rounded-md border-[#f2c94c]/35 bg-[#f2c94c]/10 text-[#f7d76e] hover:bg-[#f2c94c]/20 hover:text-white"
-              >
-                <FilePenLine className="mr-2 h-4 w-4" />
-                {registration.birth_date && registration.category ? portalCopy.editData : portalCopy.completeData}
-              </Button>
+            {(onEdit || onDelete) && (
+              <div className="mt-4 flex gap-2">
+                {onEdit && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onEdit(registration)}
+                    className="flex-1 rounded-md border-[#f2c94c]/35 bg-[#f2c94c]/10 text-[#f7d76e] hover:bg-[#f2c94c]/20 hover:text-white"
+                  >
+                    <FilePenLine className="mr-2 h-4 w-4" />
+                    {registration.birth_date && registration.category ? portalCopy.editData : portalCopy.completeData}
+                  </Button>
+                )}
+                {onDelete && (
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="outline"
+                    onClick={() => onDelete(registration)}
+                    aria-label={`Excluir ${registration.athlete_full_name}`}
+                    title={`Excluir ${registration.athlete_full_name}`}
+                    className="shrink-0 rounded-md border-red-400/30 bg-red-400/10 text-red-200 hover:bg-red-400/20 hover:text-white"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             )}
           </div>
         ))}
@@ -172,7 +201,7 @@ function SchoolTable({ registrations, onEdit }) {
               <th className="px-4 py-3">{portalCopy.document}</th>
               <th className="px-4 py-3">{portalCopy.category}</th>
               <th className="px-4 py-3">{portalCopy.submittedAt}</th>
-              {onEdit && (
+              {(onEdit || onDelete) && (
                 <th className="sticky right-0 z-10 bg-[#191914] px-4 py-3 text-right shadow-[-12px_0_18px_rgba(0,0,0,0.28)]">
                   {portalCopy.actions}
                 </th>
@@ -187,27 +216,44 @@ function SchoolTable({ registrations, onEdit }) {
                 <td className="px-4 py-3">{registration.document_id || "-"}</td>
                 <td className="px-4 py-3">{registration.category || "-"}</td>
                 <td className="px-4 py-3">{formatDate(registration.submitted_at)}</td>
-                {onEdit && (
+                {(onEdit || onDelete) && (
                   <td className="sticky right-0 bg-[#11110d] px-4 py-3 text-right shadow-[-12px_0_18px_rgba(0,0,0,0.28)]">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onEdit(registration)}
-                      className="rounded-md border-[#f2c94c]/35 bg-[#f2c94c]/10 text-[#f7d76e] hover:bg-[#f2c94c]/20 hover:text-white"
-                    >
-                      <FilePenLine className="mr-2 h-4 w-4" />
-                      {registration.birth_date && registration.category
-                        ? portalCopy.editData
-                        : portalCopy.completeData}
-                    </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      {onEdit && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onEdit(registration)}
+                          className="rounded-md border-[#f2c94c]/35 bg-[#f2c94c]/10 text-[#f7d76e] hover:bg-[#f2c94c]/20 hover:text-white"
+                        >
+                          <FilePenLine className="mr-2 h-4 w-4" />
+                          {registration.birth_date && registration.category
+                            ? portalCopy.editData
+                            : portalCopy.completeData}
+                        </Button>
+                      )}
+                      {onDelete && (
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="outline"
+                          onClick={() => onDelete(registration)}
+                          aria-label={`Excluir ${registration.athlete_full_name}`}
+                          title={`Excluir ${registration.athlete_full_name}`}
+                          className="rounded-md border-red-400/30 bg-red-400/10 text-red-200 hover:bg-red-400/20 hover:text-white"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 )}
               </tr>
             ))}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={onEdit ? 6 : 5} className="px-4 py-8 text-center text-white/52">{portalCopy.empty}</td>
+                <td colSpan={onEdit || onDelete ? 6 : 5} className="px-4 py-8 text-center text-white/52">{portalCopy.empty}</td>
               </tr>
             )}
           </tbody>
@@ -238,8 +284,10 @@ export default function LibertAcademySchoolPortal() {
   const [adminSearch, setAdminSearch] = useState("");
   const [selectedSchoolSlug, setSelectedSchoolSlug] = useState("");
   const [registrationDialog, setRegistrationDialog] = useState(null);
+  const [deletionDialog, setDeletionDialog] = useState(null);
   const [editForm, setEditForm] = useState(emptyRegistrationForm);
   const [isSavingRegistration, setIsSavingRegistration] = useState(false);
+  const [isDeletingRegistration, setIsDeletingRegistration] = useState(false);
 
   const isAdmin = isAdminUser(user);
   const accessUrl = getLibertAcademyAccessUrl();
@@ -353,6 +401,37 @@ export default function LibertAcademySchoolPortal() {
       document_id: registration.document_id || "",
       category: registration.category || "",
     });
+  };
+
+  const handleDeleteRegistration = (registration, context) => {
+    setDeletionDialog({ registration, ...context });
+  };
+
+  const handleConfirmDeleteRegistration = async () => {
+    if (!deletionDialog) return;
+
+    setIsDeletingRegistration(true);
+    try {
+      await deleteLibertAcademySchoolRegistration(
+        deletionDialog.schoolSlug,
+        deletionDialog.schoolAccessKey,
+        deletionDialog.registration.id
+      );
+
+      if (deletionDialog.source === "admin") {
+        await loadAdminPortal();
+      } else {
+        await loadPortal(deletionDialog.schoolAccessKey);
+      }
+
+      setDeletionDialog(null);
+      toast.success("Atleta excluido da lista.");
+    } catch (error) {
+      console.error("LibertAcademy registration delete error:", error);
+      toast.error("Nao foi possivel excluir o atleta.");
+    } finally {
+      setIsDeletingRegistration(false);
+    }
   };
 
   const handleSaveRegistration = async () => {
@@ -605,6 +684,11 @@ export default function LibertAcademySchoolPortal() {
                     schoolAccessKey: accessKey.trim(),
                     source: "school",
                   })}
+                  onDelete={(registration) => handleDeleteRegistration(registration, {
+                    schoolSlug: loadedSchoolSlug,
+                    schoolAccessKey: accessKey.trim(),
+                    source: "school",
+                  })}
                 />
               </>
             ) : (
@@ -790,6 +874,11 @@ export default function LibertAcademySchoolPortal() {
                           schoolAccessKey: selectedSchool.portal_password,
                           source: "admin",
                         })}
+                        onDelete={(registration) => handleDeleteRegistration(registration, {
+                          schoolSlug: selectedSchool.slug,
+                          schoolAccessKey: selectedSchool.portal_password,
+                          source: "admin",
+                        })}
                       />
                     </>
                   ) : (
@@ -894,6 +983,41 @@ export default function LibertAcademySchoolPortal() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        open={Boolean(deletionDialog)}
+        onOpenChange={(open) => {
+          if (!open && !isDeletingRegistration) setDeletionDialog(null);
+        }}
+      >
+        <AlertDialogContent className="border-white/12 bg-[#11110d] text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-black">Excluir atleta?</AlertDialogTitle>
+            <AlertDialogDescription className="leading-6 text-white/60">
+              <strong className="text-white">{deletionDialog?.registration.athlete_full_name}</strong> sera removido da lista desta escola. Esta acao exige confirmacao.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={isDeletingRegistration}
+              className="rounded-md border-white/15 bg-white/5 text-white hover:bg-white/10"
+            >
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(event) => {
+                event.preventDefault();
+                handleConfirmDeleteRegistration();
+              }}
+              disabled={isDeletingRegistration}
+              className="rounded-md bg-red-600 font-black text-white hover:bg-red-500"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {isDeletingRegistration ? "Excluindo..." : "Excluir atleta"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }

@@ -126,6 +126,22 @@ export async function createLibertAcademySchoolRegistration(slug, accessKey, pay
   return data;
 }
 
+export async function deleteLibertAcademySchoolRegistration(slug, accessKey, registrationId) {
+  const normalizedSlug = normalizeLibertAcademySlug(slug);
+  if (!normalizedSlug || !accessKey || !registrationId) {
+    throw new Error("Dados de acesso da escola invalidos.");
+  }
+
+  const { data, error } = await supabase.rpc("libertacademy_delete_school_registration", {
+    p_school_slug: normalizedSlug,
+    p_access_key: accessKey,
+    p_registration_id: registrationId,
+  });
+
+  if (error) throw error;
+  return data;
+}
+
 export async function getLibertAcademyAdminPortal() {
   const { data, error } = await supabase
     .rpc("libertacademy_get_admin_portal");
