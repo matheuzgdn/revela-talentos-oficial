@@ -8,6 +8,7 @@ import {
   FilePenLine,
   KeyRound,
   LockKeyhole,
+  Plus,
   RefreshCcw,
   Search,
   ShieldCheck,
@@ -37,6 +38,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { buildPlatformLoginUrl, isAdminUser } from "@/lib/auth-routing";
 import {
   LIBERT_ACADEMY_ACCESS_SLUG,
+  createLibertAcademySchoolRegistration,
   getLibertAcademyAccessUrl,
   getLibertAcademyAdminPortal,
   getLibertAcademyRegistrationUrl,
@@ -77,6 +79,14 @@ const portalCopy = {
   schools: "Escolas",
   password: "Senha",
   search: "Buscar escola ou atleta",
+  addAthlete: "Cadastrar atleta",
+};
+
+const emptyRegistrationForm = {
+  athlete_full_name: "",
+  birth_date: "",
+  document_id: "",
+  category: "",
 };
 
 function formatDate(value) {
@@ -113,8 +123,48 @@ function downloadRowsAsCsv(rows, filename) {
 function SchoolTable({ registrations, onEdit }) {
   return (
     <div className="overflow-hidden rounded-lg border border-white/10 bg-[#11110d]">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[760px] text-left text-sm">
+      <div className="divide-y divide-white/8 md:hidden">
+        {registrations.map((registration) => (
+          <div key={registration.id} className="p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-black text-white">{registration.athlete_full_name}</p>
+                <p className="mt-1 text-xs text-white/42">Enviado em {formatDate(registration.submitted_at)}</p>
+              </div>
+              <span className="rounded-md bg-white/[0.06] px-2 py-1 text-xs font-bold text-white/68">
+                {registration.category || "Sem categoria"}
+              </span>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-[10px] font-bold uppercase text-white/38">Nascimento</p>
+                <p className="mt-1 text-white/78">{formatBirthDate(registration.birth_date)}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase text-white/38">Documento</p>
+                <p className="mt-1 text-white/78">{registration.document_id || "-"}</p>
+              </div>
+            </div>
+            {onEdit && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onEdit(registration)}
+                className="mt-4 w-full rounded-md border-[#f2c94c]/35 bg-[#f2c94c]/10 text-[#f7d76e] hover:bg-[#f2c94c]/20 hover:text-white"
+              >
+                <FilePenLine className="mr-2 h-4 w-4" />
+                {registration.birth_date && registration.category ? portalCopy.editData : portalCopy.completeData}
+              </Button>
+            )}
+          </div>
+        ))}
+        {registrations.length === 0 && (
+          <p className="p-8 text-center text-sm text-white/52">{portalCopy.empty}</p>
+        )}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[880px] text-left text-sm">
           <thead className="border-b border-white/10 bg-white/[0.04] text-[11px] uppercase tracking-[0.16em] text-white/48">
             <tr>
               <th className="px-4 py-3">{portalCopy.athlete}</th>
@@ -122,7 +172,11 @@ function SchoolTable({ registrations, onEdit }) {
               <th className="px-4 py-3">{portalCopy.document}</th>
               <th className="px-4 py-3">{portalCopy.category}</th>
               <th className="px-4 py-3">{portalCopy.submittedAt}</th>
-              {onEdit && <th className="px-4 py-3 text-right">{portalCopy.actions}</th>}
+              {onEdit && (
+                <th className="sticky right-0 z-10 bg-[#191914] px-4 py-3 text-right shadow-[-12px_0_18px_rgba(0,0,0,0.28)]">
+                  {portalCopy.actions}
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-white/8">
@@ -134,7 +188,7 @@ function SchoolTable({ registrations, onEdit }) {
                 <td className="px-4 py-3">{registration.category || "-"}</td>
                 <td className="px-4 py-3">{formatDate(registration.submitted_at)}</td>
                 {onEdit && (
-                  <td className="px-4 py-3 text-right">
+                  <td className="sticky right-0 bg-[#11110d] px-4 py-3 text-right shadow-[-12px_0_18px_rgba(0,0,0,0.28)]">
                     <Button
                       type="button"
                       size="sm"
@@ -183,8 +237,8 @@ export default function LibertAcademySchoolPortal() {
   const [adminError, setAdminError] = useState("");
   const [adminSearch, setAdminSearch] = useState("");
   const [selectedSchoolSlug, setSelectedSchoolSlug] = useState("");
-  const [editingRegistration, setEditingRegistration] = useState(null);
-  const [editForm, setEditForm] = useState({ birth_date: "", document_id: "", category: "" });
+  const [registrationDialog, setRegistrationDialog] = useState(null);
+  const [editForm, setEditForm] = useState(emptyRegistrationForm);
   const [isSavingRegistration, setIsSavingRegistration] = useState(false);
 
   const isAdmin = isAdminUser(user);
@@ -286,9 +340,15 @@ export default function LibertAcademySchoolPortal() {
     }
   };
 
-  const handleEditRegistration = (registration) => {
-    setEditingRegistration(registration);
+  const handleCreateRegistration = (context) => {
+    setRegistrationDialog({ mode: "create", ...context });
+    setEditForm(emptyRegistrationForm);
+  };
+
+  const handleEditRegistration = (registration, context) => {
+    setRegistrationDialog({ mode: "edit", registration, ...context });
     setEditForm({
+      athlete_full_name: registration.athlete_full_name || "",
       birth_date: registration.birth_date || "",
       document_id: registration.document_id || "",
       category: registration.category || "",
@@ -296,28 +356,38 @@ export default function LibertAcademySchoolPortal() {
   };
 
   const handleSaveRegistration = async () => {
-    if (!editingRegistration) return;
-    if (!editForm.birth_date || !editForm.category) {
-      toast.error("Informe a data de nascimento e a categoria.");
+    if (!registrationDialog) return;
+    if (!editForm.athlete_full_name.trim() || !editForm.birth_date || !editForm.category) {
+      toast.error("Informe nome, data de nascimento e categoria.");
       return;
     }
 
     setIsSavingRegistration(true);
     try {
-      const updatedRegistration = await updateLibertAcademySchoolRegistration(
-        loadedSchoolSlug,
-        accessKey.trim(),
-        editingRegistration.id,
-        editForm
-      );
-      setPortalData((current) => ({
-        ...current,
-        registrations: (current?.registrations || []).map((registration) =>
-          registration.id === updatedRegistration.id ? updatedRegistration : registration
-        ),
-      }));
-      setEditingRegistration(null);
-      toast.success("Dados do atleta atualizados.");
+      const payload = { ...editForm, athlete_full_name: editForm.athlete_full_name.trim() };
+      if (registrationDialog.mode === "create") {
+        await createLibertAcademySchoolRegistration(
+          registrationDialog.schoolSlug,
+          registrationDialog.schoolAccessKey,
+          payload
+        );
+      } else {
+        await updateLibertAcademySchoolRegistration(
+          registrationDialog.schoolSlug,
+          registrationDialog.schoolAccessKey,
+          registrationDialog.registration.id,
+          payload
+        );
+      }
+
+      if (registrationDialog.source === "admin") {
+        await loadAdminPortal();
+      } else {
+        await loadPortal(registrationDialog.schoolAccessKey);
+      }
+
+      setRegistrationDialog(null);
+      toast.success(registrationDialog.mode === "create" ? "Atleta cadastrado." : "Dados do atleta atualizados.");
     } catch (error) {
       console.error("LibertAcademy registration update error:", error);
       toast.error("Nao foi possivel salvar. Tente novamente.");
@@ -463,6 +533,18 @@ export default function LibertAcademySchoolPortal() {
                 <div className="flex flex-wrap gap-3">
                   <Button
                     type="button"
+                    onClick={() => handleCreateRegistration({
+                      schoolSlug: loadedSchoolSlug,
+                      schoolAccessKey: accessKey.trim(),
+                      source: "school",
+                    })}
+                    className="rounded-md bg-[#f2c94c] font-black text-black hover:bg-[#ffe078]"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    {portalCopy.addAthlete}
+                  </Button>
+                  <Button
+                    type="button"
                     variant="outline"
                     onClick={() => loadPortal()}
                     className="rounded-md border-white/15 bg-white/5 text-white hover:bg-white/10"
@@ -474,7 +556,7 @@ export default function LibertAcademySchoolPortal() {
                     type="button"
                     onClick={handleSchoolExportCsv}
                     disabled={registrations.length === 0}
-                    className="rounded-md bg-[#f2c94c] font-black text-black hover:bg-[#ffe078]"
+                    className="rounded-md border-white/15 bg-white/5 font-black text-white hover:bg-white/10"
                   >
                     <Download className="mr-2 h-4 w-4" />
                     {portalCopy.exportCsv}
@@ -516,7 +598,14 @@ export default function LibertAcademySchoolPortal() {
                     </p>
                   </div>
                 )}
-                <SchoolTable registrations={registrations} onEdit={handleEditRegistration} />
+                <SchoolTable
+                  registrations={registrations}
+                  onEdit={(registration) => handleEditRegistration(registration, {
+                    schoolSlug: loadedSchoolSlug,
+                    schoolAccessKey: accessKey.trim(),
+                    source: "school",
+                  })}
+                />
               </>
             ) : (
               <div className="rounded-lg border border-white/10 bg-white/[0.04] p-8 text-center">
@@ -651,15 +740,29 @@ export default function LibertAcademySchoolPortal() {
                             <h3 className="mt-2 text-2xl font-black">{selectedSchool.name}</h3>
                             <p className="mt-1 text-sm text-white/52">{selectedSchool.registration_count || 0} alunos cadastrados</p>
                           </div>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => handleCopy(selectedSchool.portal_password)}
-                            className="w-fit rounded-md border-white/15 bg-white/5 text-white hover:bg-white/10"
-                          >
-                            <Clipboard className="mr-2 h-4 w-4" />
-                            Copiar senha
-                          </Button>
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              type="button"
+                              onClick={() => handleCreateRegistration({
+                                schoolSlug: selectedSchool.slug,
+                                schoolAccessKey: selectedSchool.portal_password,
+                                source: "admin",
+                              })}
+                              className="w-fit rounded-md bg-[#f2c94c] font-black text-black hover:bg-[#ffe078]"
+                            >
+                              <Plus className="mr-2 h-4 w-4" />
+                              {portalCopy.addAthlete}
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => handleCopy(selectedSchool.portal_password)}
+                              className="w-fit rounded-md border-white/15 bg-white/5 text-white hover:bg-white/10"
+                            >
+                              <Clipboard className="mr-2 h-4 w-4" />
+                              Copiar senha
+                            </Button>
+                          </div>
                         </div>
 
                         <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -680,7 +783,14 @@ export default function LibertAcademySchoolPortal() {
                         </div>
                       </div>
 
-                      <SchoolTable registrations={selectedSchool.registrations || []} />
+                      <SchoolTable
+                        registrations={selectedSchool.registrations || []}
+                        onEdit={(registration) => handleEditRegistration(registration, {
+                          schoolSlug: selectedSchool.slug,
+                          schoolAccessKey: selectedSchool.portal_password,
+                          source: "admin",
+                        })}
+                      />
                     </>
                   ) : (
                     <div className="rounded-lg border border-white/10 bg-white/[0.035] p-8 text-center text-white/52">
@@ -695,20 +805,34 @@ export default function LibertAcademySchoolPortal() {
       </section>
 
       <Dialog
-        open={Boolean(editingRegistration)}
+        open={Boolean(registrationDialog)}
         onOpenChange={(open) => {
-          if (!open && !isSavingRegistration) setEditingRegistration(null);
+          if (!open && !isSavingRegistration) setRegistrationDialog(null);
         }}
       >
         <DialogContent className="border-white/12 bg-[#11110d] text-white sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black">Dados do atleta</DialogTitle>
+            <DialogTitle className="text-xl font-black">
+              {registrationDialog?.mode === "create" ? "Cadastrar atleta" : "Editar atleta"}
+            </DialogTitle>
             <DialogDescription className="text-white/58">
-              Atualize o cadastro de {editingRegistration?.athlete_full_name}. O documento e opcional.
+              {registrationDialog?.mode === "create"
+                ? "O atleta sera incluido diretamente na lista desta escola."
+                : "Altere os dados e salve no mesmo cadastro."} O documento e opcional.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="registration-athlete-name" className="text-white/82">Nome completo</Label>
+              <Input
+                id="registration-athlete-name"
+                value={editForm.athlete_full_name}
+                onChange={(event) => setEditForm((current) => ({ ...current, athlete_full_name: event.target.value }))}
+                placeholder="Nome completo do atleta"
+                className="h-12 rounded-md border-white/12 bg-white/[0.04] text-white placeholder:text-white/35"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="registration-birth-date" className="text-white/82">Data de nascimento</Label>
               <Input
@@ -751,7 +875,7 @@ export default function LibertAcademySchoolPortal() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setEditingRegistration(null)}
+              onClick={() => setRegistrationDialog(null)}
               disabled={isSavingRegistration}
               className="rounded-md border-white/15 bg-white/5 text-white hover:bg-white/10"
             >
@@ -763,7 +887,9 @@ export default function LibertAcademySchoolPortal() {
               disabled={isSavingRegistration}
               className="rounded-md bg-[#f2c94c] font-black text-black hover:bg-[#ffe078]"
             >
-              {isSavingRegistration ? "Salvando..." : "Salvar dados"}
+              {isSavingRegistration
+                ? "Salvando..."
+                : registrationDialog?.mode === "create" ? "Cadastrar atleta" : "Salvar alteracoes"}
             </Button>
           </DialogFooter>
         </DialogContent>

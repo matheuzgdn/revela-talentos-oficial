@@ -97,6 +97,26 @@ export async function updateLibertAcademySchoolRegistration(slug, accessKey, reg
     p_school_slug: normalizedSlug || null,
     p_access_key: accessKey,
     p_registration_id: registrationId,
+    p_athlete_full_name: payload.athlete_full_name,
+    p_birth_date: payload.birth_date || null,
+    p_document_id: payload.document_id || null,
+    p_category: payload.category || null,
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function createLibertAcademySchoolRegistration(slug, accessKey, payload = {}) {
+  const normalizedSlug = normalizeLibertAcademySlug(slug);
+  if (!normalizedSlug || !accessKey) {
+    throw new Error("Dados de acesso da escola invalidos.");
+  }
+
+  const { data, error } = await supabase.rpc("libertacademy_create_school_registration", {
+    p_school_slug: normalizedSlug,
+    p_access_key: accessKey,
+    p_athlete_full_name: payload.athlete_full_name,
     p_birth_date: payload.birth_date || null,
     p_document_id: payload.document_id || null,
     p_category: payload.category || null,
