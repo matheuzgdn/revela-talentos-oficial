@@ -634,7 +634,9 @@ const MentoriasNetflixView = ({ contents, onPlay }) => {
     const realMentorias = (contents || []).filter(item => item.category === 'mentoria' && item.video_url).slice(0, 6);
     const usedTitles = new Set(realMentorias.map(item => (item.title || '').trim().toLowerCase()));
     const previews = MENTORSHIP_PREVIEWS.filter(item => !usedTitles.has(item.title.toLowerCase()));
-    const catalog = [...realMentorias, ...previews].slice(0, 10);
+    const freePreviews = previews.filter(item => item.preview_locked !== true);
+    const lockedPreviews = previews.filter(item => item.preview_locked === true);
+    const catalog = [...freePreviews, ...realMentorias, ...lockedPreviews].slice(0, 10);
     const featured = catalog.find(item => item.preview_locked !== true && (item.is_zona_membros_unlocked || item.access_level === 'zona_membros')) || MENTORSHIP_PREVIEWS[0];
     const lockedCount = catalog.filter(item => item.preview_locked === true || (!item.is_zona_membros_unlocked && item.access_level !== 'zona_membros')).length;
     const unlockedCount = Math.max(1, catalog.length - lockedCount);
