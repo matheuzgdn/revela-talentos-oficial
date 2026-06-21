@@ -14,6 +14,73 @@ const EVENTS = [
     { id: 3, nome: 'Eurocamp', city: 'Madrid', country: 'España', month: 'Agosto', pos: { top: '28%', left: '48.5%' } },
 ];
 
+const MENTORSHIP_PREVIEWS = [
+    {
+        id: 'mentoria-preview-mentalidad',
+        title: 'Mentalidad de atleta: control y confianza',
+        description: 'Aprende a controlar la presión y competir con una mentalidad preparada para oportunidades reales.',
+        category: 'mentoria',
+        duration: '08 min',
+        level: 'Episodio 1',
+        video_url: 'https://video.wixstatic.com/video/933cdd_388c6e2a108d49f089ef70033306e785/1080p/mp4/file.mp4',
+        thumbnail_url: 'https://static.wixstatic.com/media/933cdd_935b59f989b64c2aa3e721fd2a3ce15e~mv2.png',
+        access_level: 'zona_membros',
+        is_zona_membros_unlocked: true,
+    },
+    {
+        id: 'mentoria-preview-evaluacion',
+        title: 'Cómo prepararte para una evaluación',
+        description: 'Los detalles que el atleta y su familia deben organizar antes de presentarse ante un club.',
+        category: 'mentoria',
+        duration: '11 min',
+        level: 'Episodio 2',
+        video_url: 'https://video.wixstatic.com/video/933cdd_3c7f7a7df9104933a3552be77fb0b0a2/1080p/mp4/file.mp4',
+        thumbnail_url: 'https://static.wixstatic.com/media/933cdd_d2b3680f343c4f139ee7387948611868~mv2.jpg',
+        access_level: 'zona_membros',
+        is_zona_membros_unlocked: true,
+    },
+    {
+        id: 'mentoria-preview-lectura',
+        title: 'Lectura técnica individual',
+        description: 'Análisis de puntos fuertes, correcciones y prioridades para acelerar tu evolución.',
+        category: 'mentoria',
+        duration: '16 min',
+        level: 'Módulo avanzado',
+        thumbnail_url: 'https://static.wixstatic.com/media/933cdd_79702467cdc644c3b4f378bb3feed589~mv2.jpeg',
+        preview_locked: true,
+    },
+    {
+        id: 'mentoria-preview-posicionamiento',
+        title: 'Posicionamiento y toma de decisión',
+        description: 'Entiende mejor el juego, ocupa espacios con intención y decide con más velocidad.',
+        category: 'mentoria',
+        duration: '19 min',
+        level: 'Módulo avanzado',
+        thumbnail_url: 'https://static.wixstatic.com/media/933cdd_5a8acbfba7eb428ca9a13031d12334db~mv2.jpg',
+        preview_locked: true,
+    },
+    {
+        id: 'mentoria-preview-carrera',
+        title: 'Carrera internacional sin atajos',
+        description: 'Planificación, documentación y decisiones seguras para cada etapa de la carrera.',
+        category: 'mentoria',
+        duration: '22 min',
+        level: 'Exclusivo Prime',
+        thumbnail_url: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?w=1200&auto=format&fit=crop',
+        preview_locked: true,
+    },
+    {
+        id: 'mentoria-preview-imagen',
+        title: 'Imagen y posicionamiento del atleta',
+        description: 'Cómo construir presencia profesional y comunicar tu valor dentro y fuera del campo.',
+        category: 'mentoria',
+        duration: '14 min',
+        level: 'Exclusivo Prime',
+        thumbnail_url: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&auto=format&fit=crop',
+        preview_locked: true,
+    },
+];
+
 /* ================== AUTO-TRANSLATION ================== */
 const TRANS_CACHE_KEY = 'zm_trans_cache_v1';
 const getTransCache = () => { try { return JSON.parse(localStorage.getItem(TRANS_CACHE_KEY) || '{}'); } catch { return {}; } };
@@ -55,6 +122,21 @@ const GS = () => (
     .zc:hover{transform:translateY(-4px);box-shadow:0 15px 30px -10px rgba(0,0,0,0.9),0 0 20px rgba(0,168,225,0.3);border-color:#00a8e1;}
     @keyframes zp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
     .zp{animation:zp 0.5s cubic-bezier(0.2,0.8,0.2,1) forwards;}
+    @keyframes mentoriaNeonPulse{
+      0%,100%{box-shadow:0 0 0 1px rgba(0,229,255,.7),0 0 14px rgba(0,168,225,.48),0 0 36px rgba(0,102,255,.22);filter:saturate(1);}
+      50%{box-shadow:0 0 0 2px rgba(137,244,255,.95),0 0 24px rgba(0,229,255,.88),0 0 58px rgba(0,102,255,.42);filter:saturate(1.25);}
+    }
+    @keyframes mentoriaSweep{0%{transform:translateX(-140%) skewX(-18deg);}100%{transform:translateX(340%) skewX(-18deg);}}
+    @keyframes mentoriaLockPulse{0%,100%{opacity:.62;transform:scale(.94);}50%{opacity:1;transform:scale(1.04);}}
+    .mentoria-neon-btn{position:relative;isolation:isolate;overflow:hidden;animation:mentoriaNeonPulse 1.65s ease-in-out infinite;}
+    .mentoria-neon-btn:before{content:'';position:absolute;z-index:-1;inset:-30% auto -30% -35%;width:25%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);animation:mentoriaSweep 2.4s linear infinite;}
+    .mentoria-lock-pulse{animation:mentoriaLockPulse 1.8s ease-in-out infinite;}
+    .mentoria-card{transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s ease,box-shadow .35s ease;}
+    .mentoria-card:hover,.mentoria-card:focus-visible{transform:translateY(-7px) scale(1.025);border-color:rgba(0,229,255,.85);box-shadow:0 18px 45px rgba(0,0,0,.55),0 0 28px rgba(0,168,225,.26);}
+    @media (prefers-reduced-motion:reduce){
+      .mentoria-neon-btn,.mentoria-neon-btn:before,.mentoria-lock-pulse{animation:none;}
+      .mentoria-card{transition:none;}
+    }
   `}</style>
 );
 
@@ -486,6 +568,137 @@ const MentoriasView = () => (
     </div>
 );
 
+const MentoriaPreviewCard = ({ item, onPlay }) => {
+    const videoRef = useRef(null);
+    const isLocked = item.preview_locked === true || (!item.is_zona_membros_unlocked && item.access_level !== 'zona_membros');
+
+    const startPreview = () => {
+        if (isLocked || !videoRef.current) return;
+        videoRef.current.play().catch(() => { });
+    };
+    const stopPreview = () => {
+        if (!videoRef.current) return;
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+    };
+
+    return (
+        <button type="button" onClick={() => onPlay(item)} onMouseEnter={startPreview} onMouseLeave={stopPreview}
+            onFocus={startPreview} onBlur={stopPreview}
+            className="mentoria-card group relative flex-none w-[78vw] max-w-[330px] md:w-[360px] md:max-w-none aspect-video overflow-hidden rounded-2xl border border-white/10 bg-[#071017] text-left snap-start focus:outline-none">
+            <img src={item.thumbnail_url} alt="" className={`absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105 ${isLocked ? 'brightness-[.38] saturate-[.55]' : 'brightness-[.7]'}`} />
+            {!isLocked && item.video_url && (
+                <video ref={videoRef} src={item.video_url} poster={item.thumbnail_url} muted loop playsInline preload="metadata"
+                    className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus:opacity-100" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#030609] via-[#030609]/20 to-transparent" />
+            <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3 md:p-4">
+                <span className="rounded-full border border-white/15 bg-black/65 px-2.5 py-1 text-[9px] font-black uppercase tracking-[.18em] text-white/80 backdrop-blur-md">
+                    {item.level || 'Mentoría EC10'}
+                </span>
+                {isLocked ? (
+                    <span className="mentoria-lock-pulse flex h-9 w-9 items-center justify-center rounded-full border border-[#00e5ff]/60 bg-[#061019]/90 shadow-[0_0_20px_rgba(0,229,255,.42)]">
+                        <LockKeyhole className="h-4 w-4 text-[#00e5ff]" />
+                    </span>
+                ) : (
+                    <span className="mentoria-neon-btn flex h-9 w-9 items-center justify-center rounded-full bg-[#00a8e1] text-black">
+                        <Play className="ml-0.5 h-4 w-4 fill-current" />
+                    </span>
+                )}
+            </div>
+            <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+                <div className="mb-1.5 flex items-center gap-2 text-[9px] font-black uppercase tracking-[.16em] text-[#52e7ff]">
+                    <span>{isLocked ? 'Contenido exclusivo' : 'Vista previa liberada'}</span>
+                    {item.duration && <><span className="h-1 w-1 rounded-full bg-white/40" /><span>{item.duration}</span></>}
+                </div>
+                <h3 className="line-clamp-2 text-sm font-black leading-tight text-white md:text-lg">{item._title_es || item.title}</h3>
+            </div>
+        </button>
+    );
+};
+
+const MentoriaRail = ({ eyebrow, title, items, onPlay }) => (
+    <section className="mt-8 md:mt-12">
+        <p className="mb-1 text-[9px] font-black uppercase tracking-[.24em] text-[#00a8e1] md:text-[10px]">{eyebrow}</p>
+        <div className="mb-4 flex items-end justify-between gap-4">
+            <h2 className="text-xl font-black tracking-tight text-white md:text-3xl">{title}</h2>
+            <span className="hidden text-xs font-bold text-white/35 md:block">Desliza para explorar →</span>
+        </div>
+        <div className="zh flex snap-x snap-mandatory gap-4 overflow-x-auto pb-5 md:gap-5">
+            {items.map(item => <MentoriaPreviewCard key={item.id} item={item} onPlay={onPlay} />)}
+        </div>
+    </section>
+);
+
+const MentoriasNetflixView = ({ contents, onPlay }) => {
+    const realMentorias = (contents || []).filter(item => item.category === 'mentoria' && item.video_url).slice(0, 6);
+    const usedTitles = new Set(realMentorias.map(item => (item.title || '').trim().toLowerCase()));
+    const previews = MENTORSHIP_PREVIEWS.filter(item => !usedTitles.has(item.title.toLowerCase()));
+    const catalog = [...realMentorias, ...previews].slice(0, 10);
+    const featured = catalog.find(item => item.preview_locked !== true && (item.is_zona_membros_unlocked || item.access_level === 'zona_membros')) || MENTORSHIP_PREVIEWS[0];
+    const lockedCount = catalog.filter(item => item.preview_locked === true || (!item.is_zona_membros_unlocked && item.access_level !== 'zona_membros')).length;
+    const unlockedCount = Math.max(1, catalog.length - lockedCount);
+    const advanced = [...catalog.slice(2), ...catalog.slice(0, 2)].slice(0, 8);
+    const firstLocked = catalog.find(item => item.preview_locked === true || (!item.is_zona_membros_unlocked && item.access_level !== 'zona_membros'));
+
+    return (
+        <div className="zp mx-auto max-w-7xl pb-12 pt-1 md:pt-4">
+            <section className="relative min-h-[530px] overflow-hidden rounded-[1.7rem] border border-[#00a8e1]/30 bg-black shadow-[0_22px_70px_rgba(0,0,0,.62),0_0_34px_rgba(0,168,225,.12)] md:min-h-[570px] md:rounded-[2.25rem]">
+                <video src={featured.video_url} poster={featured.thumbnail_url} autoPlay muted loop playsInline preload="metadata"
+                    className="absolute inset-0 h-full w-full object-cover opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#03070a] via-[#03070a]/45 to-black/15 md:bg-gradient-to-r md:from-[#03070a] md:via-[#03070a]/78 md:to-black/10" />
+                <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(0,168,225,.11)_1px,transparent_1px),linear-gradient(90deg,rgba(0,168,225,.11)_1px,transparent_1px)] [background-size:42px_42px]" />
+
+                <div className="relative z-10 flex min-h-[530px] max-w-3xl flex-col justify-end p-5 pb-7 md:min-h-[570px] md:justify-center md:p-12 lg:p-16">
+                    <div className="mb-4 flex flex-wrap items-center gap-2">
+                        <Bdg txt="MENTORÍAS EC10" type="rv" Ic={Award} />
+                        <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-emerald-300">
+                            {unlockedCount} episodios liberados
+                        </span>
+                    </div>
+                    <p className="mb-2 text-[10px] font-black uppercase tracking-[.26em] text-[#5cecff] md:text-xs">Vive el juego antes del próximo partido</p>
+                    <h1 className="max-w-2xl text-3xl font-black leading-[.98] tracking-[-.04em] text-white sm:text-4xl md:text-6xl">
+                        Tu evolución empieza con la decisión correcta.
+                    </h1>
+                    <p className="mt-4 max-w-xl text-sm font-medium leading-relaxed text-white/72 md:text-base">
+                        Mira una parte de nuestra metodología y descubre cómo trabajamos mentalidad, técnica y carrera con cada atleta.
+                    </p>
+                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                        <button type="button" onClick={() => onPlay(featured)}
+                            className="mentoria-neon-btn flex min-h-12 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#00a8e1] via-[#48e9ff] to-[#0878ff] px-7 text-xs font-black uppercase tracking-[.08em] text-black md:text-sm">
+                            <Play className="h-5 w-5 fill-current" /> Ver episodio gratuito
+                        </button>
+                        <button type="button" onClick={() => firstLocked && onPlay(firstLocked)}
+                            className="flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-black/45 px-7 text-xs font-black uppercase tracking-[.08em] text-white backdrop-blur-md transition hover:border-[#00a8e1]/80 hover:bg-[#00a8e1]/10 md:text-sm">
+                            <LockKeyhole className="h-4 w-4 text-[#00e5ff]" /> Desbloquear mentorías
+                        </button>
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[10px] font-bold uppercase tracking-[.12em] text-white/52 md:text-xs">
+                        <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-[#00a8e1]" /> Orientación profesional</span>
+                        <span className="flex items-center gap-1.5"><Star className="h-4 w-4 text-[#00a8e1]" /> Contenido exclusivo</span>
+                        <span className="flex items-center gap-1.5"><Lock className="h-4 w-4 text-[#00a8e1]" /> {lockedCount} módulos bloqueados</span>
+                    </div>
+                </div>
+            </section>
+
+            <MentoriaRail eyebrow="Empieza por aquí" title="Primeros pasos para competir mejor" items={catalog.slice(0, 8)} onPlay={onPlay} />
+            <MentoriaRail eyebrow="Siguiente nivel" title="Mentalidad, técnica y carrera" items={advanced} onPlay={onPlay} />
+
+            <section className="mt-5 overflow-hidden rounded-3xl border border-[#00a8e1]/25 bg-gradient-to-br from-[#07131b] via-[#05090d] to-black p-6 md:flex md:items-center md:justify-between md:gap-10 md:p-9">
+                <div className="max-w-2xl">
+                    <p className="mb-2 text-[10px] font-black uppercase tracking-[.22em] text-[#00a8e1]">Plan de evolución individual</p>
+                    <h2 className="text-2xl font-black tracking-tight text-white md:text-4xl">No entrenes sin saber qué debes mejorar.</h2>
+                    <p className="mt-3 text-sm leading-relaxed text-white/60">Desbloquea el catálogo completo y recibe una dirección más clara para tu momento deportivo.</p>
+                </div>
+                <a href={PURCHASE_URL} target="_blank" rel="noopener noreferrer"
+                    className="mentoria-neon-btn mt-6 flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#00a8e1] px-7 text-xs font-black uppercase tracking-[.08em] text-black md:mt-0 md:text-sm">
+                    <Rocket className="h-5 w-5" /> Conocer el programa
+                </a>
+            </section>
+        </div>
+    );
+};
+
 /* ================== MAIN APP ================== */
 export default function ZonaMembros() {
     const [tab, setTab] = useState('inicio');
@@ -577,7 +790,7 @@ export default function ZonaMembros() {
 
 
     const handlePlay = useCallback((item) => {
-        const itemIsLocked = !item.is_zona_membros_unlocked && item.access_level !== 'zona_membros';
+        const itemIsLocked = item.preview_locked === true || (!item.is_zona_membros_unlocked && item.access_level !== 'zona_membros');
         if (itemIsLocked) { setUpg(true); return; }
         setSel(item);
     }, []);
@@ -606,7 +819,7 @@ export default function ZonaMembros() {
         envivo: <EnVivoView isLive={live} />,
         intercambio: <IntercambioView />,
         consejos: <ConsejosView contents={contents} onPlay={handlePlay} />,
-        mentorias: <MentoriasView />,
+        mentorias: <MentoriasNetflixView contents={contents} onPlay={handlePlay} />,
     };
 
     return (
