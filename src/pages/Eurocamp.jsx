@@ -53,76 +53,69 @@ export default function Eurocamp() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-36 md:pb-24 lg:pt-48 lg:pb-32 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/40 via-[#0a1120] to-[#060a13] min-h-[90vh] flex items-center">
-        {/* Decorative gradient slash */}
-        <div className="absolute bottom-0 right-0 w-1/2 h-4 bg-gradient-to-r from-green-600 via-yellow-500 to-red-600 transform -skew-x-12 translate-x-4"></div>
+      <section 
+        className="relative pt-28 pb-20 md:pt-40 md:pb-28 lg:pt-48 lg:pb-36 bg-cover bg-center bg-no-repeat md:bg-fixed min-h-[92vh] flex items-center overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(to right, rgba(6, 10, 19, 0.96) 0%, rgba(6, 10, 19, 0.75) 45%, rgba(6, 10, 19, 0.35) 100%), linear-gradient(to top, rgba(6, 10, 19, 1) 0%, transparent 35%), url('/images/eurocamp/hero-cinematic.png')`
+        }}
+      >
+        {/* Decorative gradient slash at the bottom */}
+        <div className="absolute bottom-0 right-0 w-1/2 h-3 bg-gradient-to-r from-green-600 via-yellow-500 to-red-600 transform -skew-x-12 translate-x-4 z-20"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="max-w-2xl">
             
-            <div className="lg:col-span-7">
-              {/* Hero Image / Brand Logo */}
-              <div className="mb-6 max-w-md">
-                <img 
-                  src="https://static.wixstatic.com/media/933cdd_16f2d1b837fb45538ae0cace2dd86d6f~mv2.png/v1/fill/w_600,h_257,al_c,q_85,enc_auto/933cdd_16f2d1b837fb45538ae0cace2dd86d6f~mv2.png" 
-                  alt="Eurocamp Logo" 
-                  className="w-full h-auto object-contain drop-shadow-[0_0_20px_rgba(234,179,8,0.2)]"
-                />
-              </div>
-
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black italic tracking-tighter text-white mb-2 leading-none">
-                EUROCAMP
-              </h1>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#eab308] mb-6">
-                Espanha / Portugal
-              </h2>
-              
-              <p className="text-gray-300 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-                Experiência internacional de futebol com jogos avaliativos, clubes parceiros, tours exclusivos e acompanhamento esportivo.
-              </p>
-              
-              <a 
-                href="https://wa.me/5511999999999?text=Olá,%20tenho%20interesse%20no%20Eurocamp" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="inline-flex items-center gap-2 bg-[#eab308] hover:bg-yellow-400 text-[#060a13] px-8 py-4 rounded-md font-bold text-sm md:text-base transition mb-12 shadow-[0_0_20px_rgba(234,179,8,0.4)] group"
-              >
-                QUERO PARTICIPAR 
-                <i className="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-              </a>
-
-              {/* Feature Icons row */}
-              <div className="flex flex-wrap gap-6 md:gap-10 border-t border-white/20 pt-8">
-                <div className="flex items-center gap-3">
-                  <i className="fa-regular fa-clipboard text-[#eab308] text-2xl"></i>
-                  <span className="text-xs font-semibold tracking-wider text-gray-300 leading-tight">AVALIAÇÃO<br />EM CLUBES</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <i className="fa-regular fa-user text-[#eab308] text-2xl"></i>
-                  <span className="text-xs font-semibold tracking-wider text-gray-300 leading-tight">ACOMPANHAMENTO<br />ESPORTIVO</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <i className="fa-solid fa-globe text-[#eab308] text-2xl"></i>
-                  <span className="text-xs font-semibold tracking-wider text-gray-300 leading-tight">VIVÊNCIA<br />INTERNACIONAL</span>
-                </div>
-              </div>
+            {/* Hero Image / Brand Logo */}
+            <div className="mb-6 max-w-sm sm:max-w-md">
+              <img 
+                src="https://static.wixstatic.com/media/933cdd_16f2d1b837fb45538ae0cace2dd86d6f~mv2.png/v1/fill/w_600,h_257,al_c,q_85,enc_auto/933cdd_16f2d1b837fb45538ae0cace2dd86d6f~mv2.png" 
+                alt="Eurocamp Logo" 
+                className="w-full h-auto object-contain filter drop-shadow-[0_0_25px_rgba(234,179,8,0.3)]"
+              />
             </div>
 
-            {/* Right Hero Image Card */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="relative p-2 bg-gradient-to-b from-[#eab308]/40 to-transparent rounded-2xl shadow-2xl max-w-sm w-full">
-                <img 
-                  src="/images/eurocamp/sevilha-player.png" 
-                  alt="Atleta Eurocamp" 
-                  className="rounded-xl w-full h-[450px] object-cover border border-white/10 shadow-2xl"
-                />
-                <div className="absolute bottom-6 left-6 right-6 bg-[#060a13]/90 backdrop-blur-md p-4 rounded-lg border border-[#eab308]/30">
-                  <p className="text-xs text-[#eab308] font-bold uppercase tracking-wider">Avaliação Internacional</p>
-                  <p className="text-sm font-bold text-white">Vivência em grandes clubes da Europa</p>
+            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black italic tracking-tighter text-white mb-2 leading-none">
+              EUROCAMP
+            </h1>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#eab308] mb-6 tracking-wide drop-shadow-md">
+              Espanha / Portugal
+            </h2>
+            
+            <p className="text-gray-200 text-lg sm:text-xl mb-10 max-w-xl leading-relaxed font-normal drop-shadow-sm">
+              Experiência internacional de futebol com jogos avaliativos, clubes parceiros, tours exclusivos e acompanhamento esportivo.
+            </p>
+            
+            <a 
+              href="https://wa.me/5511999999999?text=Olá,%20tenho%20interesse%20no%20Eurocamp" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="inline-flex items-center gap-3 bg-[#eab308] hover:bg-yellow-400 text-[#060a13] px-9 py-4.5 rounded-lg font-black text-base transition duration-300 transform hover:-translate-y-0.5 shadow-[0_0_25px_rgba(234,179,8,0.4)] group"
+            >
+              QUERO PARTICIPAR 
+              <i className="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform duration-300"></i>
+            </a>
+
+            {/* Feature Icons row */}
+            <div className="flex flex-wrap gap-6 sm:gap-10 border-t border-white/20 pt-8 mt-12 backdrop-blur-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#eab308]/10 border border-[#eab308]/30 flex items-center justify-center">
+                  <i className="fa-regular fa-clipboard text-[#eab308] text-lg"></i>
                 </div>
+                <span className="text-xs font-bold tracking-wider text-gray-200 leading-tight">AVALIAÇÃO<br />EM CLUBES</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#eab308]/10 border border-[#eab308]/30 flex items-center justify-center">
+                  <i className="fa-regular fa-user text-[#eab308] text-lg"></i>
+                </div>
+                <span className="text-xs font-bold tracking-wider text-gray-200 leading-tight">ACOMPANHAMENTO<br />ESPORTIVO</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#eab308]/10 border border-[#eab308]/30 flex items-center justify-center">
+                  <i className="fa-solid fa-globe text-[#eab308] text-lg"></i>
+                </div>
+                <span className="text-xs font-bold tracking-wider text-gray-200 leading-tight">VIVÊNCIA<br />INTERNACIONAL</span>
               </div>
             </div>
-
           </div>
         </div>
       </section>

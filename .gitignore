@@ -31,3 +31,4 @@ dist-ssr
 
 backend/data/runtime-db.json
 backend/storage/uploads/
+.vercel
