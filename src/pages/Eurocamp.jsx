@@ -375,13 +375,13 @@ export default function Eurocamp() {
               </div>
             </div>
 
-            {/* 6. FEIRENSE */}
+            {/* 6. FEIRENSE - Foto Wix fornecida */}
             <div className="snap-center shrink-0 w-44 flex flex-col">
               <div className="w-full aspect-[3/4] rounded-t-lg overflow-hidden relative bg-blue-800 border border-white/10 border-b-0">
                 <img 
-                  src="https://images.unsplash.com/photo-1518605368461-1ee7906d2039?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  src="https://static.wixstatic.com/media/933cdd_dd9e620898aa4c44ab1350e8961a6a62~mv2.png" 
                   alt="Feirense" 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover hover:scale-105 transition duration-300"
                 />
               </div>
               <div className="bg-[#111b33] py-2 text-center border border-white/10 border-t-0 rounded-b-lg">
