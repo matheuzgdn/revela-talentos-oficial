@@ -132,7 +132,9 @@ const AuthenticatedApp = () => {
           'libertacademy',
           'vsl-escola-parceira',
           'evento',
-          'vsl-evento'
+          'vsl-evento',
+          'eurocamp',
+          'Eurocamp'
         ].includes(path);
         return (
           <Route

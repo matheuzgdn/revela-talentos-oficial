@@ -75,6 +75,7 @@ const PaisAtletas = lazy(() => import('./pages/PaisAtletas'));
 const VSLEscolaParceira = lazy(() => import('./pages/VSLEscolaParceira'));
 const Evento = lazy(() => import('./pages/Evento'));
 const VSLEvento = lazy(() => import('./pages/VSLEvento'));
+const Eurocamp = lazy(() => import('./pages/Eurocamp'));
 
 
 export const PAGES = {
@@ -105,6 +106,8 @@ export const PAGES = {
     "vsl-escola-parceira": VSLEscolaParceira,
     "evento": Evento,
     "vsl-evento": VSLEvento,
+    "eurocamp": Eurocamp,
+    "Eurocamp": Eurocamp,
 }
 
 export const pagesConfig = {
@@ -112,3 +115,4 @@ export const pagesConfig = {
     Pages: PAGES,
     Layout: __Layout,
 };
+
